@@ -1,1 +1,61 @@
-<p>roles works!</p>
+<div class="container">
+    <h1 class="font-weight-bold">ROLES</h1>
+    <div class="formRol">
+        <h3 style="padding-top: 20pt;">Ingreso de roles</h3>
+        <form class="form-rol">
+            <div class="form cmp-form">
+                <label class="form-label">Nombre de rol:</label>
+                <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control" />
+    
+            </div>
+            <div class="form cmp-form">
+                <label class="form-label">Aplicacion:</label>
+                <input [(ngModel)]="aplicacion" name="aplicacion" type="text" id="form12" class="form-control" />
+    
+            </div>
+            <div class="form cmp-form">
+                <label class="form-label">Estado:</label>
+                <select class="form-select" name="estado" [(ngModel)]="estado">
+                    <option selected>Seleccione el estado</option>
+                    <option value="A">Activo</option>
+                    <option value="I">Inactivo</option>
+                </select>
+            </div>
+        </form>
+        <button [disabled]="!nombre || !aplicacion || !estado" 
+        type="submit" class="btn btn-primary" (click)="agregarRol()">Agregar rol</button>
+    </div>
+    
+
+    <div class="listRol">
+        <h3 style="padding-top: 20pt;">Roles registrados</h3>
+
+        <p class="text-danger" *ngIf="listaRoles.length === 0">No hay roles registrados.</p>
+
+        <table *ngIf="listaRoles.length != 0" class="table table-bordered table-striped text-center">
+            <thead>
+                <tr>
+                    <th scope="col">N°</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Aplicacion</th>
+                    <th scope="col">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let rol of listaRoles let i=index">
+                    <tr>
+                        <th>{{i+1}}</th>
+                        <td>{{rol.nombre}}</td>
+                        <td>{{rol.aplicacion}}</td>
+                        <td [ngSwitch]="rol.estado">
+                            <span *ngSwitchCase="'A'">Activo</span>
+                            <span *ngSwitchCase="'I'">Inactivo</span>
+                          </td>
+                        <td><span class="text-danger" (click)="eliminarRol(i)"><i class="bi bi-trash3-fill"></i></span></td>
+                    </tr>
+                </ng-container>
+            </tbody>
+            
+        </table>
+    </div>
+</div>

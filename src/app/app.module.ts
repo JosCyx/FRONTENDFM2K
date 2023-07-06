@@ -16,6 +16,7 @@ import { UsuariosComponent } from './components/configuracion/seguridad/usuarios
 import { RolesComponent } from './components/configuracion/seguridad/roles/roles.component';
 import { LoginComponent } from './components/login/login.component';
 import { MainComponent } from './components/main/main.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { MainComponent } from './components/main/main.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
