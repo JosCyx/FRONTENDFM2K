@@ -4,7 +4,6 @@ import { DocumentosComponent } from './components/configuracion/documentos/docum
 
 const routes: Routes = [
   {path:'documentos', component: DocumentosComponent},
-  
 ];
 
 @NgModule({
