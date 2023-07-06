@@ -1,8 +1,34 @@
-<div class="container">
+<div class="containerglobal sticky-top">
+  <h2 class="font-weight-bolt ruteo">RUTEO</h2>
+  <div class="container">
+    <div class="combos">
+      <div class="form">
+        <label class="form-label">Tipo de Solicitud</label>
+        <select class="form-select" name="estado" [(ngModel)]="tipo_solicitud">
+          <option selected>Seleccione el tipo de Solicitud</option>
+          <option value="A">Cotizacion</option>
+          <option value="I">Orden de Compra</option>
+          <option value="I">Pago</option>
+          <option value="I">Mariconada</option>
+        </select>
+      </div>
+
+      <div class="form">
+        <label class="form-label">Area:</label>
+        <select class="form-select" name="estado" [(ngModel)]="area">
+          <option selected>Seleccione la Area</option>
+          <option value="A">Operaciones</option>
+          <option value="I">Sistemas</option>
+          <option value="A">Marketing</option>
+          <option value="A">Compras</option>
+          <option value="A">Contabilidad</option>
+        </select>
+      </div>
+
+    </div>
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th>Área</th>
           <th>Nivel 1</th>
           <th>Nivel 2</th>
           <th>Nivel 3</th>
@@ -10,51 +36,23 @@
           <th>Nivel 5</th>
           <th>Nivel 6</th>
           <th>Nivel 7</th>
+
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Operaciones</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-        </tr>
-        <tr>
-          <td>Sistemas</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-        </tr>
-        <tr>
-          <td>Marketing</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-        </tr>
-        <tr>
-          <td>Contabilidad</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-          <td>...</td>
-        </tr>
-        <!-- Agrega más filas si es necesario -->
+        <ng-container *ngFor="let area of areas; let i = index">
+          <tr *ngIf="currentPage === i / itemsPerPage">
+            
+            <td><input type="checkbox" [checked]="isNivelChecked(area, 1)" (change)="toggleNivel(area, 1)"></td>
+            <td><input type="checkbox" [checked]="isNivelChecked(area, 2)" (change)="toggleNivel(area, 2)"></td>
+            <td><input type="checkbox" [checked]="isNivelChecked(area, 3)" (change)="toggleNivel(area, 3)"></td>
+            <td><input type="checkbox" [checked]="isNivelChecked(area, 4)" (change)="toggleNivel(area, 4)"></td>
+            <td><input type="checkbox" [checked]="isNivelChecked(area, 5)" (change)="toggleNivel(area, 5)"></td>
+            <td><input type="checkbox" [checked]="isNivelChecked(area, 6)" (change)="toggleNivel(area, 6)"></td>
+            <td><input type="checkbox" [checked]="isNivelChecked(area, 7)" (change)="toggleNivel(area, 7)"></td>
+          </tr>
+        </ng-container>
       </tbody>
     </table>
   </div>
-  
+</div>

@@ -8,6 +8,7 @@ import { UsuariosComponent } from './components/configuracion/seguridad/usuarios
 import { RolesComponent } from './components/configuracion/seguridad/roles/roles.component';
 import { LoginComponent } from './components/login/login.component';
 import { MainComponent } from './components/main/main.component';
+import { RuteoComponent } from './components/configuracion/ruteo/ruteo.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -18,7 +19,8 @@ const routes: Routes = [
   {path: 'functions', component: FuncionesComponent},
   {path: 'transact', component: TransaccionesComponent},
   {path: 'users', component: UsuariosComponent},
-  {path: 'rol', component: RolesComponent}
+  {path: 'rol', component: RolesComponent},
+  {path: 'ruteo', component: RuteoComponent},
 
 ];
 

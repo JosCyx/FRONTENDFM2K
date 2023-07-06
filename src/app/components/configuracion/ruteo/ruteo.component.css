@@ -1,0 +1,10 @@
+.dropdown.show .dropdown-menu {
+    display: block;
+  }
+  
+  .combos {
+    width: 40%;
+    display: flex;
+    gap: 30px;
+    padding-bottom: 50px;
+  }
