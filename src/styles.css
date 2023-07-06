@@ -1,0 +1,29 @@
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import '~bootstrap-icons/font/bootstrap-icons.min.css';
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 9999;
+    padding: 10px;
+  }
+  
+  .container-fluid {
+    margin-top: 80px; /* Ajusta el margen superior según el tamaño del header */
+  }
+  
+  .documentos {
+    padding: 20px;
+  }
+  
+  .containerglobal {
+    margin-top: 80px; /* Ajusta el margen superior según el tamaño del header */
+    margin-left: 220px; /* Ajusta el margen izquierdo según el tamaño del sidebar */
+    padding: 20px;
+  }
+  
