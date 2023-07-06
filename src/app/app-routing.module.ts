@@ -14,14 +14,12 @@ const routes: Routes = [
   {path:'login', component: LoginComponent},
   {path:'main', component: MainComponent},
   {path:'documentos', component: DocumentosComponent},
-
-  //componentes
   {path: 'apps', component: AplicacionesComponent},
   {path: 'functions', component: FuncionesComponent},
   {path: 'transact', component: TransaccionesComponent},
   {path: 'users', component: UsuariosComponent},
   {path: 'rol', component: RolesComponent}
-  
+
 ];
 
 @NgModule({
