@@ -5,6 +5,9 @@
 .cmp-form{
     margin: 15px;
 }
+.pass-form{
+    margin-left: 5px;
+}
 .form-label{
     padding-top: 5px;
 }

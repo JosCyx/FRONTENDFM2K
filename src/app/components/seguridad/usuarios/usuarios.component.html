@@ -1,0 +1,66 @@
+<div class="container">
+    <h1 class="font-weight-bold">REGISTRO DE USUARIOS</h1>
+
+    <div class="">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
+                        <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
+                        <button class="btn btn-primary m-2" (click)="changeView('editar')">Editar</button>
+                    </div>
+              </div>
+        </nav>
+    </div>
+
+
+    <!--FORMULARIO PARA CREAR LOS ROLES-->
+    <div class="formRol" *ngIf="changeview === 'crear'">
+        <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de usuario</h3>
+        <form class="form-rol">
+            <div class="form cmp-form">
+                <label class="form-label">Nombre completo:</label>
+                <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control" />
+    
+            </div>
+            <div class="form cmp-form">
+                <label class="form-label">Nombre de usuario:</label>
+                <input [(ngModel)]="user" name="user" type="text" id="form12" class="form-control" />
+    
+            </div>
+
+            <div class="form pass-form row">
+                <div class="col-md-5">
+                    <label class="form-label" for="registerPassword">Contraseña</label>
+                    <input type="password" [(ngModel)]="pass" name="pass" class="form-control" required/>
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label" for="registerPassword">Confirmar contraseña</label>
+                    <input type="password" [(ngModel)]="confirmPass" name="confirmPass" class="form-control" required/>
+                </div>
+                <!--
+                <div *ngIf="showMsjPassConfirm">
+                    <p class="text-danger" style="font-size: 8pt;margin-top: 0;">{{ mensajeText }}</p>
+                </div>-->
+            </div>
+            <div class="form cmp-form">
+                <label class="form-label">Estado:</label>
+                <select class="form-select" name="estado" [(ngModel)]="estado">
+                    <option value="A">Activo</option>
+                    <option value="I">Inactivo</option>
+                </select>
+            </div>
+        </form>
+        <div class="text-end">
+            <button [disabled]="!nombre || !user || !estado" 
+            type="submit" class="btn btn-primary m-2" (click)="agregarUsuario()">Agregar rol</button>
+            <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
+        </div>
+        
+    </div>
+
+   
+    
+
+    
+</div>

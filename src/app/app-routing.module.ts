@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DocumentosComponent } from './components/configuracion/documentos/documentos.component';
-import { AplicacionesComponent } from './components/configuracion/seguridad/aplicaciones/aplicaciones.component';
-import { FuncionesComponent } from './components/configuracion/seguridad/funciones/funciones.component';
-import { TransaccionesComponent } from './components/configuracion/seguridad/transacciones/transacciones.component';
-import { UsuariosComponent } from './components/configuracion/seguridad/usuarios/usuarios.component';
-import { RolesComponent } from './components/configuracion/seguridad/roles/roles.component';
+import { AplicacionesComponent } from './components/seguridad/aplicaciones/aplicaciones.component';
+import { FuncionesComponent } from './components/seguridad/funciones/funciones.component';
+import { TransaccionesComponent } from './components/seguridad/transacciones/transacciones.component';
+import { UsuariosComponent } from './components/seguridad/usuarios/usuarios.component';
+import { RolesComponent } from './components/seguridad/roles/roles.component';
 import { LoginComponent } from './components/login/login.component';
 import { MainComponent } from './components/main/main.component';
 import { RuteoComponent } from './components/configuracion/ruteo/ruteo.component';

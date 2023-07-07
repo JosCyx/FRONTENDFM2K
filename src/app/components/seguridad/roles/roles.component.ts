@@ -23,8 +23,8 @@ export class RolesComponent {
   listaRoles: Rol[] = [];
 
  
-
-  agregarRol():void{//agrega un nuevo rol a la lista
+  //agrega un nuevo rol a la lista
+  agregarRol():void{
     const rol: Rol = {
       codigo: this.codigo,
       nombre: this.nombre,
@@ -34,20 +34,24 @@ export class RolesComponent {
 
     this.listaRoles.push(rol);
   
+    //resetea las variables para que no muestren contenido en la vista
     this.codigo = '';
     this.nombre = '';
     this.aplicacion = '';
     this.estado = '';
 
-    this.changeview= 'consulta';//regresa a la vista consulta donde se muestran todos los roles
+    //regresa a la vista consulta donde se muestran todos los roles
+    this.changeview= 'consulta';
   }
 
+  //elimina el elemento en la posicion indicada por "index" de la lista de roles 
   eliminarRol(index:number):void{
     this.listaRoles.splice(index,1);
   }
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
   editarRol(rol: Rol, index: number): void {
+    //guarda el valor de la posicion del elemento a editar
     this.indice = index;
 
     // Asignar los valores del objeto rol a las propiedades existentes
@@ -56,6 +60,7 @@ export class RolesComponent {
     this.aplicacion = rol.aplicacion;
     this.estado = rol.estado;
 
+    //habilita la pestaña "Editar" y cambia la variable de vista para mostrar la pantalla de edicion
     this.edicion = true;
     this.changeview = 'editar';
   }
@@ -80,15 +85,18 @@ export class RolesComponent {
     this.aplicacion = '';
     this.estado = '';
 
+    //deshabilita el boton "Editar" y cambia la variable de vista para mostrar la lista de roles
     this.edicion = false;
     this.changeview = 'consulta';
   }
   
 
-  changeView(view: string): void {//controla la vista de las diferentes partes
+  //controla la vista de las diferentes partes
+  changeView(view: string): void {
     this.changeview = view;
   }
 
+  //resetea las variables a valores vacios y cambia la variable de vista para mostrar la lista de roles 
   cancelar():void{
     this.codigo = '';
     this.nombre = '';
