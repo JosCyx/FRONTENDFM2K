@@ -14,3 +14,8 @@
     width: 65%;
     margin: 0 auto;
 }
+.no-rol{
+    border: 1px red solid;
+    border-radius: 5px;
+    padding: 8pt;
+}

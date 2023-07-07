@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Rol } from 'src/app/models/Rol';
+import { Rol } from 'src/app/models/seguridad/Rol';
 
 
 @Component({
@@ -12,6 +12,9 @@ export class RolesComponent {
   nombre: string = '';
   aplicacion: string = '';
   estado: string = '';
+
+  changeview: string = 'consulta';
+  mensajeExito: string = '';
 
   listaRoles: Rol[] = [];
 
@@ -29,11 +32,15 @@ export class RolesComponent {
     this.nombre = '';
     this.aplicacion = '';
     this.estado = '';
+
+    this.changeview= 'consulta';
   }
 
   eliminarRol(index:number):void{
     this.listaRoles.splice(index,1);
   }
 
-
+  changeView(view: string): void {
+    this.changeview = view;
+  }
 }

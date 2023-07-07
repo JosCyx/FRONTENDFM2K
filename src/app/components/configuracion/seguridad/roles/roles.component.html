@@ -1,7 +1,21 @@
 <div class="container">
     <h1 class="font-weight-bold">ROLES</h1>
-    <div class="formRol">
-        <h3 style="padding-top: 20pt;">Ingreso de roles</h3>
+
+    <div class="">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                    <div class="navbar-nav">
+                        <a class="nav-link active" (click)="changeView('consulta')">Consultar</a>
+                        <a class="nav-link active" (click)="changeView('crear')">Crear</a>
+                        <a class="nav-link active" (click)="changeView('editar')">Editar</a>
+                    </div>
+              </div>
+        </nav>
+    </div>
+
+
+    <div class="formRol" *ngIf="changeview === 'crear'">
+        <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de roles</h3>
         <form class="form-rol">
             <div class="form cmp-form">
                 <label class="form-label">Nombre de rol:</label>
@@ -27,10 +41,10 @@
     </div>
     
 
-    <div class="listRol">
-        <h3 style="padding-top: 20pt;">Roles registrados</h3>
+    <div class="listRol" *ngIf="changeview === 'consulta'">
+        <h3 class="font-weight-bold" style="padding-top: 20pt;">Roles registrados</h3>
 
-        <p class="text-danger" *ngIf="listaRoles.length === 0">No hay roles registrados.</p>
+        <p class="text-danger no-rol text-center" *ngIf="listaRoles.length === 0">No hay roles registrados.</p>
 
         <table *ngIf="listaRoles.length != 0" class="table table-bordered table-striped text-center">
             <thead>
