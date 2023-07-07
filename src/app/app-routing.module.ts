@@ -9,6 +9,9 @@ import { RolesComponent } from './components/configuracion/seguridad/roles/roles
 import { LoginComponent } from './components/login/login.component';
 import { MainComponent } from './components/main/main.component';
 import { RuteoComponent } from './components/configuracion/ruteo/ruteo.component';
+import { SolicotiComponent } from './components/procesos/solicoti/solicoti.component';
+import { SoliocComponent } from './components/procesos/solioc/solioc.component';
+import { SolipagoComponent } from './components/procesos/solipago/solipago.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -21,6 +24,9 @@ const routes: Routes = [
   {path: 'users', component: UsuariosComponent},
   {path: 'rol', component: RolesComponent},
   {path: 'ruteo', component: RuteoComponent},
+  {path: 'solicoti', component: SolicotiComponent},
+  {path: 'solioc', component: SoliocComponent},
+  {path: 'solipago', component: SolipagoComponent},
 
 ];
 

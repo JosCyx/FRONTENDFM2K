@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Documento } from 'src/app/models/Documento';
+import { Documento } from 'src/app/models/configuracion/Documento';
 
 @Component({
   selector: 'app-documentos',

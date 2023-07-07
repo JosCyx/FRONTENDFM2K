@@ -113,3 +113,47 @@ header {
       display: none;
     }
   }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100vh;
+    background-color: #f8f9fa;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  
+  .sidebar .nav-item {
+    margin-bottom: 10px;
+  }
+  
+  .sidebar .nav-link {
+    color: #000;
+    display: block;
+  }
+  
+  .sidebar .sub-menu {
+    padding-left: 20px;
+  }
+  
+  .sidebar .sub-menu li {
+    margin-bottom: 5px;
+  }
+  
+  .main-content {
+    margin-left: 200px; /* Ancho del sidebar */
+    padding: 20px;
+    
+  }
+  /* Agrega estilos adicionales según tus necesidades */
+  
