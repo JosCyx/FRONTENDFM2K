@@ -19,6 +19,7 @@ export class RuteoComponent {
   currentPage: number = 0;
   itemsPerPage: number = 1;
 
+  changeview: string = 'consultar';  
   constructor() {}
 
   getNivelesByArea(area: string): boolean[] {
@@ -38,5 +39,12 @@ export class RuteoComponent {
 
   toggleDropdown(index: number): void {
     this.selectedRow = (this.selectedRow === index) ? -1 : index;
+  }
+
+  changeView(view: string): void {
+    this.changeview = view;
+  }
+  guardarNiveles(): void {
+this.changeview = "consultar";
   }
 }
