@@ -19,7 +19,8 @@ const routes: Routes = [
   {path: 'functions', component: FuncionesComponent},
   {path: 'transact', component: TransaccionesComponent},
   {path: 'users', component: UsuariosComponent},
-  {path: 'rol', component: RolesComponent}
+  {path: 'rol', component: RolesComponent},
+  {path: 'ruteo', component: RuteoComponent},
 
 ];
 
