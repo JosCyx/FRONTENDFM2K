@@ -1,13 +1,52 @@
 <div class="containerglobal sticky-top">
     <h2 class="font-weight-bolt ruteo">Solicitud de Cotizacion</h2>
-    <div class="">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="navbar-nav">
-            <a class="nav-link active" (click)="changeView('ingresar')">Ingresar</a>
-            <a class="nav-link active" (click)="changeView('consultar')">Consultar</a>
-            <a class="nav-link active" (click)="changeView('editar')">Editar</a>
-          </div>
-        </div>
-      </nav>
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link active" (click)="changeView('enviar')">Enviar</a>
+                    <a class="nav-link active" (click)="changeView('consulta')">Consultar</a>
+                </div>
+            </div>
+        </nav>
     </div>
+
+    <div class="formCoti" *ngIf="changeview === 'consulta'">
+        <h3 class="font-weight-bold" style="padding-top: 20pt;">Solicitudes de cotizacion registradas</h3>
+        <p class="text-danger no-rol text-center" *ngIf="listaCoti.length === 0">No hay solicitudes de cotizacion registradas.</p>
+
+        <table *ngIf="listaCoti.length != 0" class="table table-bordered table-striped text-center">
+            <thead>
+                <tr>
+                    <th scope="col">N°</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Aplicacion</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let solicoti of listaCoti; let i=index">
+                    <tr>
+                        <th>{{i+1}}</th>
+                        <td>{{solicoti.asunto}}</td>
+                        <td [ngSwitch]="solicoti.asunto">
+                            <span *ngSwitchCase="'ADMIN'">SEGURIDAD Y ACCESO</span>
+                            <span *ngSwitchCase="'SOL'">SOLICITUDES</span>
+                        </td>
+                        <td [ngSwitch]="solicoti.sector">
+                            <span *ngSwitchCase="'A'">Activo</span>
+                            <span *ngSwitchCase="'I'">Inactivo</span>
+                        </td>
+                        <td>
+                            <a class="text-success m-3" (click)="editarSolicoti(solicoti, i)"><i
+                                    class="bi bi-pencil-square h5"></i></a>
+                            <a class="text-danger m-3" (click)="eliminarSolicoti(i)"><i
+                                    class="bi bi-trash3-fill h5"></i></a>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+    </div>
+</div>
