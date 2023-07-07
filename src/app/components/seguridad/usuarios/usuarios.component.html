@@ -15,7 +15,7 @@
 
 
     <!--FORMULARIO PARA CREAR LOS ROLES-->
-    <div class="formRol" *ngIf="changeview === 'crear'">
+    <div class="formUser" *ngIf="changeview === 'crear'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de usuario</h3>
         <form class="form-rol">
             <div class="form cmp-form">
@@ -30,11 +30,11 @@
             </div>
 
             <div class="form pass-form row">
-                <div class="col-md-5">
+                <div class="col-md-6">
                     <label class="form-label" for="registerPassword">Contraseña</label>
                     <input type="password" [(ngModel)]="pass" name="pass" class="form-control" required/>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-6">
                     <label class="form-label" for="registerPassword">Confirmar contraseña</label>
                     <input type="password" [(ngModel)]="confirmPass" name="confirmPass" class="form-control" required/>
                 </div>
@@ -43,7 +43,7 @@
                     <p class="text-danger" style="font-size: 8pt;margin-top: 0;">{{ mensajeText }}</p>
                 </div>-->
             </div>
-            <div class="form cmp-form">
+            <div class="form pass-form col-md-4">
                 <label class="form-label">Estado:</label>
                 <select class="form-select" name="estado" [(ngModel)]="estado">
                     <option value="A">Activo</option>
@@ -51,16 +51,21 @@
                 </select>
             </div>
         </form>
-        <div class="text-end">
+        <div class="text-end mt-5">
             <button [disabled]="!nombre || !user || !estado" 
-            type="submit" class="btn btn-primary m-2" (click)="agregarUsuario()">Agregar rol</button>
+            type="submit" class="btn btn-primary m-2" (click)="agregarUsuario()">Agregar usuario</button>
             <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
         </div>
         
     </div>
 
    
-    
+    <div class="formUser" *ngIf="changeview==='consulta'">
+        <h3 class="font-weight-bold" style="padding-top: 20pt;">Usuarios registrados</h3>
+    </div>
 
+    <div class="formUser" *ngIf="changeview==='editar'">
+        <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar usuario</h3>
+    </div>
     
 </div>

@@ -6,13 +6,13 @@
     margin: 15px;
 }
 .pass-form{
-    margin-left: 5px;
+    margin-left: 0px;
 }
 .form-label{
     padding-top: 5px;
 }
 
-.listRol, .formRol{
+.formUser{
     padding-top: 30pt;
     width: 65%;
     margin: 0 auto;

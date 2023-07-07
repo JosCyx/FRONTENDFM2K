@@ -60,8 +60,7 @@ export class RolesComponent {
     this.aplicacion = rol.aplicacion;
     this.estado = rol.estado;
 
-    //habilita la pestaña "Editar" y cambia la variable de vista para mostrar la pantalla de edicion
-    this.edicion = true;
+    //cambia la variable de vista para mostrar la pantalla de edicion
     this.changeview = 'editar';
   }
   
@@ -85,7 +84,7 @@ export class RolesComponent {
     this.aplicacion = '';
     this.estado = '';
 
-    //deshabilita el boton "Editar" y cambia la variable de vista para mostrar la lista de roles
+    //cambia la variable de vista para mostrar la lista de roles
     this.edicion = false;
     this.changeview = 'consulta';
   }
@@ -94,6 +93,12 @@ export class RolesComponent {
   //controla la vista de las diferentes partes
   changeView(view: string): void {
     this.changeview = view;
+    this.edicion = false;
+    
+  }
+  editar(view:string):void{
+    this.changeview = view;
+    this.edicion = true;
   }
 
   //resetea las variables a valores vacios y cambia la variable de vista para mostrar la lista de roles 
