@@ -19,3 +19,6 @@
     border-radius: 5px;
     padding: 8pt;
 }
+ a:hover{
+    cursor: pointer;
+ }
