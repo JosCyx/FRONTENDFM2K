@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HeaderComponent } from './components/plantillas/header/header.component';
 import { DocumentosComponent } from './components/configuracion/documentos/documentos.component';
 import { EmpleadosComponent } from './components/configuracion/empleados/empleados.component';
 import { RuteoComponent } from './components/configuracion/ruteo/ruteo.component';
@@ -19,11 +18,13 @@ import { FormsModule } from '@angular/forms';
 import { SolicotiComponent } from './components/procesos/solicoti/solicoti.component';
 import { SoliocComponent } from './components/procesos/solioc/solioc.component';
 import { SolipagoComponent } from './components/procesos/solipago/solipago.component';
+import { MainSeguridadComponent } from './components/seguridad/main-seguridad.component';
+import { MainConfiguracionComponent } from './components/configuracion/main-configuracion.component';
+import { MenuComponent } from './components/templates/menu/menu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HeaderComponent,
     DocumentosComponent,
     EmpleadosComponent,
     RuteoComponent,
@@ -36,7 +37,10 @@ import { SolipagoComponent } from './components/procesos/solipago/solipago.compo
     MainComponent,
     SolicotiComponent,
     SoliocComponent,
-    SolipagoComponent
+    SolipagoComponent,
+    MainSeguridadComponent,
+    MainConfiguracionComponent,
+    MenuComponent
   ],
   imports: [
     BrowserModule,

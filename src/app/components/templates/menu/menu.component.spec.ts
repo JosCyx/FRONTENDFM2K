@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RuteoComponent } from './ruteo.component';
+import { MenuComponent } from './menu.component';
 
-describe('RuteoComponent', () => {
-  let component: RuteoComponent;
-  let fixture: ComponentFixture<RuteoComponent>;
+describe('MenuComponent', () => {
+  let component: MenuComponent;
+  let fixture: ComponentFixture<MenuComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [RuteoComponent]
+      declarations: [MenuComponent]
     });
-    fixture = TestBed.createComponent(RuteoComponent);
+    fixture = TestBed.createComponent(MenuComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

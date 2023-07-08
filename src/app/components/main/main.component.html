@@ -1,1 +1,22 @@
-<p>main works!</p>
+<app-menu></app-menu>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="card m-5" style="width: 18rem;">
+            <img src="../../../assets/img/shield.webp" class="card-img-top" alt=".">
+            <div class="card-body">
+                <h5 class="card-title font-weight-bold text-center">SEGURIDAD Y ACCESO</h5>
+                <p class="card-text">Some text.</p>
+                <a (click)="goAdmin()" class="btn btn-primary col-md-3 text-light">Ir</a>
+            </div>
+        </div>
+        <div class="card m-5" style="width: 18rem;">
+            <img src="../../../assets/img/request.webp" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title font-weight-bold text-center">SOLICITUDES</h5>
+                <p class="card-text">Some text.</p>
+                <a (click)="goRequests()" class="btn btn-primary col-md-3 text-light">Ir</a>
+            </div>
+        </div>
+    </div>
+
+</div>

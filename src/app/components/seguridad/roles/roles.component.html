@@ -1,3 +1,4 @@
+<app-menu></app-menu>
 <div class="container">
     <h1 class="font-weight-bold">ROLES</h1>
 
@@ -106,9 +107,11 @@
         </form>
         <div class="text-end">
             <button [disabled]="!nombre || !aplicacion || !estado" 
-            type="submit" class="btn btn-primary m-2" (click)="guardarEdicion()">Guardar</button>
+            type="submit" class="btn btn-primary m-2" (click)="guardarEdicion()">Guardar cambios</button>
             <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
         </div>
     </div>
+
+    
     
 </div>

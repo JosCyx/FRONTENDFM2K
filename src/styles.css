@@ -1,29 +1,91 @@
-
+@import '~bootstrap/dist/css/bootstrap.min.css';
+@import '~bootstrap-icons/font/bootstrap-icons.min.css';
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
-@import '~bootstrap/dist/css/bootstrap.min.css';
-@import '~bootstrap-icons/font/bootstrap-icons.min.css';
+
+
 header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 9999;
+    background-color: #f8f9fa;
     padding: 10px;
+   
+}
+
+.header-container img {
+    max-width: 100%;
+    height: auto;
   }
   
-  .container-fluid {
-    margin-top: 80px; /* Ajusta el margen superior según el tamaño del header */
+
+.logo {
+    width: 400px;
+    height: auto;
   }
   
-  .documentos {
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-link {
+    color: #000;
+}
+
+
+.form-inline {
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.form-control {
+    width: 300px;
+}
+
+.btn-outline-success {
+    color: #28a745;
+    border-color: #28a745;
+}
+
+  
+  /* Estilos específicos para pantallas grandes */
+  @media screen and (min-width: 768px) {
+    .menu-toggle {
+      display: none;
+    }
+  }
+
+  .sidebar {
+    float: left;
+    background-color: #f8f9fa;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 250px;
   }
   
-  .containerglobal {
-    margin-top: 80px; /* Ajusta el margen superior según el tamaño del header */
-    margin-left: 220px; /* Ajusta el margen izquierdo según el tamaño del sidebar */
-    padding: 20px;
+  .sidebar ul {
+    list-style: none;
+    padding-left: 0;
   }
+  
+  .sidebar .sub-menu {
+    padding-left: 20px;
+  }
+  
+  .sidebar .sub-menu li {
+    margin-bottom: 5px;
+  }
+  
+  a{
+    text-decoration: none !important;
+  }
+  a:hover{
+    cursor: pointer;
+  }
+  /* Agrega estilos adicionales según tus necesidades */
+  
+
   

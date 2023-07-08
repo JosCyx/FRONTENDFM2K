@@ -1,0 +1,65 @@
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
+        <div class="header-container">
+            <img src="../../../../assets/img/logo.png" alt="logo" class="logo">
+        </div>
+         
+        <form *ngIf="appSelected" class="form-inline">
+            <input class="form-control mr-sm-2" type="search" placeholder="Buscar" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="bi bi-search"></i></button>
+        </form>
+        <div *ngIf="isLogin">
+          <button class="btn btn-primary mr-5">FAQ</button>
+          <button class="btn btn-primary ml-2 text-end"> <i class="bi bi-person-circle"></i></button>
+        </div>   
+    </nav>
+</header>
+
+<nav class="sidebar" *ngIf="appSelected">
+    <ul class="nav flex-column">
+      <span *ngIf="sol">
+        <li class="nav-item">
+          <a class="nav-link">Configuración</a>
+          <ul class="sub-menu">
+            <li><a routerLink="norute">Empleados</a></li>
+            <li><a routerLink="/ruteo">Ruteo</a></li>
+            <li><a routerLink="/documentos">Documentos</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link">Procesos</a>
+          <ul class="sub-menu">
+            <li><a routerLink="/solicoti">Solicitud de cotizacion</a></li>
+            <li><a routerLink="/solioc">Solicitud de O/C</a></li>
+            <li><a routerLink="/solipago">Solicitud de pago</a></li>
+            <li><a routerLink="norute">Todas las solicitudes</a></li>
+            <li><a routerLink="norute">Solicitudes abiertas</a></li>
+            <li><a routerLink="norute">Solicitudes no aprobadas</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link">Consultas</a>
+          <ul class="sub-menu">
+            <li><a routerLink="norute">Consulta 1</a></li>
+            <li><a routerLink="norute">Consulta 2</a></li>
+            <li><a routerLink="norute">Consulta 3</a></li>
+          </ul>
+        </li>
+      </span>
+      <span *ngIf="admin">
+        <li class="nav-item">
+          <a class="nav-link">Seguridad</a>
+          <ul class="sub-menu">
+            <li><a routerLink="/rol">Roles</a></li>
+            <li><a routerLink="/users">Usuarios</a></li>
+            <li><a routerLink="/apps">Aplicaciones</a></li>
+            <li><a routerLink="/functions">Funciones</a></li>
+            <li><a routerLink="/transact">Transacciones</a></li>
+          </ul>
+        </li>
+      </span>
+      <div class="text-center">
+        <button class="btn btn-primary mt-5 col-md-5" (click)="backToMain()">Regresar</button>
+      </div>
+    </ul>
+  </nav>

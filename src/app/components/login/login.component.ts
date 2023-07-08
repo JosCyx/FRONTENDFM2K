@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { GlobalService } from 'src/app/services/global.service';
 
 @Component({
   selector: 'app-login',
@@ -7,4 +9,11 @@ import { Component } from '@angular/core';
 })
 export class LoginComponent {
 
+  constructor(private router: Router,private globalService: GlobalService) { }
+
+  login():void{
+    this.globalService.isLogin = true;
+    this.router.navigate(['main']);
+
+  }
 }

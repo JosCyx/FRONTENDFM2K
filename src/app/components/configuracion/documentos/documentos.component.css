@@ -5,3 +5,13 @@
 .ruteo{
     padding: 20px;
 }
+
+.documentos {
+    padding: 20px;
+  }
+  
+  .containerglobal {
+    margin-top: 80px; /* Ajusta el margen superior según el tamaño del header */
+    margin-left: 220px; /* Ajusta el margen izquierdo según el tamaño del sidebar */
+    padding: 20px;
+  }
