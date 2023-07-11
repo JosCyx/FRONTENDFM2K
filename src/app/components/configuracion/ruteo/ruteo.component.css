@@ -21,7 +21,7 @@
 }
 
 .listaruteo{
-  width: 50%;
+  width: 95%;
   margin: auto;
 }
 
@@ -29,5 +29,8 @@
   margin: auto;
 }
 
-
+.container{
+  padding-left: 200px;
+  padding-top: 25px;
+}
 

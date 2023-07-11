@@ -20,3 +20,8 @@
     width: 50%;
     margin: auto;
   }
+
+  .container{
+    padding-left: 200px;
+    padding-top: 25px;
+}

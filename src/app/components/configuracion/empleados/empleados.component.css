@@ -1,0 +1,36 @@
+.dropdown.show .dropdown-menu {
+    display: block;
+  }
+  
+  .combos {
+    width: 40%;
+    display: flex;
+    gap: 30px;
+    padding-bottom: 50px;
+    margin: auto;
+  }
+  
+  a:hover{
+    cursor:pointer;
+  }
+
+  .listRol, .formRol{
+    padding-top: 30pt;
+    width: 80%;
+    margin: auto;
+}
+
+.listaruteo{
+  width: 95%;
+  margin: auto;
+}
+
+.navbaruteo{
+  margin: auto;
+}
+
+.container{
+  padding-left: 200px;
+  padding-top: 25px;
+}
+
