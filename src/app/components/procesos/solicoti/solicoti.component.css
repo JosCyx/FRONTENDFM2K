@@ -22,3 +22,8 @@
  a:hover{
     cursor: pointer;
  }
+
+ .aviso{
+    width: 40%;
+    margin: auto;
+  }

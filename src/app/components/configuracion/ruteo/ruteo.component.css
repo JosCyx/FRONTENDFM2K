@@ -7,8 +7,27 @@
     display: flex;
     gap: 30px;
     padding-bottom: 50px;
+    margin: auto;
   }
   
   a:hover{
     cursor:pointer;
   }
+
+  .listRol, .formRol{
+    padding-top: 30pt;
+    width: 80%;
+    margin: auto;
+}
+
+.listaruteo{
+  width: 50%;
+  margin: auto;
+}
+
+.navbaruteo{
+  margin: auto;
+}
+
+
+
