@@ -1,19 +1,19 @@
 <app-menu></app-menu>
-<div class="containerglobal sticky-top">
+<!--<div class="containerglobal sticky-top"></div> -->
     <!-- Contenido del componente "documentos" -->
   
   
-<div class="documentos">
+<div class="documentos container">
     <h2>Documentos</h2>
   
 
   
-    <div class="form-group ">
+    <div class="form-group docs">
         <label for="campo1">Descripción</label> 
         <textarea rows="1" id="descripcion" name="descripcion"  class="form-control"></textarea>
       </div>
       
-      <div class="form-group">
+      <div class="form-group docs">
         <label for="campo2">Estado</label>
         <select id="estado" name="estado"  class="form-control">
             <option>Seleccione el estado</option>
@@ -26,7 +26,7 @@
     </div>  
   
     <!-- Tabla -->
-    <table class="table">
+    <table class="table docs">
       <thead>
         <tr>
           <th>Clave</th>
@@ -48,4 +48,3 @@
       </tbody>
     </table>
   </div>
-</div>
