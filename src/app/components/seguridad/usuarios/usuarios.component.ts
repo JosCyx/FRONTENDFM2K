@@ -47,6 +47,13 @@ export class UsuariosComponent {
 
   //controla la vista de las diferentes partes
   changeView(view: string): void {
+    this.user = '';
+    this.pass = '';
+    this.nombre = '';
+    this.estado = '';
+    this.fechaInicio = new Date;
+    this.fechaFin = new Date;
+    
     this.changeview = view;
   }
 

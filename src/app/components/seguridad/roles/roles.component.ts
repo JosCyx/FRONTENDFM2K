@@ -92,10 +92,18 @@ export class RolesComponent {
 
   //controla la vista de las diferentes partes
   changeView(view: string): void {
+    //vacía las variables antes de cambiar de vista para que no muestren datos
+    this.codigo = '';
+    this.nombre = '';
+    this.aplicacion = '';
+    this.estado = '';
+    
     this.changeview = view;
     this.edicion = false;
     
   }
+
+  //cambia la vista a "consulta" para listar los roles registrados y define la variable edicion como true para mostrar la columna de edicion
   editar(view:string):void{
     this.changeview = view;
     this.edicion = true;
