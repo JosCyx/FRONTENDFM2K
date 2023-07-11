@@ -10,7 +10,7 @@
         </form>
         <div *ngIf="isLogin">
           <button class="btn btn-primary mr-5">FAQ</button>
-          <button class="btn btn-primary ml-2 text-end">Usuario <i class="bi bi-person-circle"></i></button>
+          <button class="btn btn-primary ml-2 text-end" (click)="logOut()">Cerrar sesión <i class="bi bi-person-circle"></i></button>
         </div>   
     </nav>
 </header>

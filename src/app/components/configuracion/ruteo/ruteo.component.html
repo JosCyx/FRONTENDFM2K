@@ -2,15 +2,16 @@
 
   <div class="container">
     <h2 class="font-weight-bolt ruteo">RUTEO DE AREA</h2>
-    <div>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light navbaruteo">
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-          <div class="navbar-nav">
-            <a class="nav-link active" (click)="changeView('ingresar')">Ingresar</a>
-            <a class="nav-link active" (click)="changeView('consultar')">Consultar</a>
-            <a class="nav-link active" (click)="changeView('editar')">Editar</a>
-          </div>
-        </div>
+    
+    <div class="">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                  <div class="navbar-nav">
+                      <button class="btn btn-primary m-2" (click)="changeView('ingresar')">Ingresar</button>
+                      <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar</button>
+                      <button class="btn btn-primary m-2" (click)="changeView('editar')" >Editar</button>
+                  </div>
+            </div>
       </nav>
     </div>
 
