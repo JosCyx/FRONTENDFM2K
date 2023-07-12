@@ -8,7 +8,7 @@
                     <div class="navbar-nav">
                         <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
                         <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
-                        <button class="btn btn-primary m-2" (click)="editar('consulta')" >Editar</button>
+                        <button class="btn btn-primary m-2" (click)="editar('consulta')">Editar</button>
                     </div>
               </div>
         </nav>
@@ -25,11 +25,6 @@
             </div>
             <div class="form cmp-form">
                 <label class="form-label">Aplicacion:</label>
-                <!-- <select class="form-select" name="aplicacion" [(ngModel)]="aplicacion">
-                    <option value="ADMIN">Seguridad y acceso</option>
-                    <option value="SOL">Solicitudes</option>
-                </select> -->
-
                 <select class="form-control" name="inspectionTypeId" id="inspectionTypeId" [(ngModel)]="idAplicacion">
                     <option selected></option>
                     <option *ngFor="let app of appsList$|async" [value]="app.apCodigo">{{app.apNombre}}</option>
@@ -55,8 +50,7 @@
     <!--LISTA DE LOS ROLES-->
     <div class="listRol" *ngIf="changeview === 'consulta'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Roles registrados</h3>
-        <!--LISTA DE LOS ROLES
-        <p class="text-danger no-rol text-center" *ngIf="listaRoles.length === 0">No hay roles registrados.</p>-->
+        <!--<p class="text-danger no-rol text-center" *ngIf="listaRoles.length === 0">No hay roles registrados.</p>-->
 
         <table class="table table-bordered table-striped text-center">
             <thead>
@@ -70,7 +64,7 @@
             </thead>
             <tbody>
                 <ng-container  *ngFor="let item of rolList$|async let i=index">
-                    <tr>
+                    <tr *ngIf="item.roEstado === 'A'">
                         <th>{{i+1}}</th>
                         <td>{{item.roNombre}}</td>
                         <td [ngSwitch]="item.roAplicacion">
@@ -80,7 +74,8 @@
                             <span *ngSwitchCase="'A'">Activo</span>
                             <span *ngSwitchCase="'I'">Inactivo</span></td>
                         <td *ngIf="edicion"><a class="text-success m-3" (click)="editarRol(item,i)"><i class="bi bi-pencil-square h5"></i></a>
-                            <a class="text-danger m-3" (click)="eliminarRol(i)"><i class="bi bi-trash3-fill h5"></i></a></td>
+                            <!--<a class="text-danger m-3" (click)="eliminarRol(i)"><i class="bi bi-trash3-fill h5"></i></a>-->
+                        </td>
                     </tr>
                 </ng-container>
             </tbody>
