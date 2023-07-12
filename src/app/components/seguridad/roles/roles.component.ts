@@ -11,7 +11,13 @@ import { CommunicationApiService } from 'src/app/services/communication-api.serv
   styleUrls: ['./roles.component.css']
 })
 export class RolesComponent implements OnInit{
+  //variables para guardar los datos del rol nuevo
+  nombre: string = '';
+  aplicacion: string = '';
+  idAplicacion: number = 0;
+  estado: string = '';
 
+  //listas
   rolList$!:Observable<any[]>;
   appsList$!: Observable<any[]>;
 
@@ -25,15 +31,37 @@ export class RolesComponent implements OnInit{
     this.appsList$ = this.service.getAplicacionesList();
   }
 
+  agregarRol(): void {
+  // Crear el objeto JSON con los datos del rol
+  const data = {
+    roEmpresa: this.idAplicacion, // Ajusta el valor según tus requisitos
+    roNombre: this.nombre,
+    roEstado: this.estado,
+    roAplicacion: this.idAplicacion // Ajusta el valor según tus requisitos
+  };
+
+  // Llamar al método addRols() del servicio para enviar los datos a la API
+  this.service.addRols(data).subscribe(
+    response => {
+      // Manejar la respuesta de la API aquí si es necesario
+      console.log('Rol agregado exitosamente:', response);
+    },
+    error => {
+      // Manejar cualquier error que ocurra durante la llamada a la API aquí
+      console.error('Error al agregar el rol:', error);
+    }
+  );
+  this.changeview= 'consulta';
+}
 
 
 
 
   //PROPIEDADES DE LOS ROLES
   codigo: string = '';
-  nombre: string = '';
-  aplicacion: string = '';
-  estado: string = '';
+
+
+  
 
   //VARIABLE USADA PARA CONTROLAR FUNCIONES DE LA PAGINA
   changeview: string = 'consulta';
@@ -43,27 +71,6 @@ export class RolesComponent implements OnInit{
   //LISTAS DONDE SE GUARDAN LOS ROLES
   listaRoles: Rol[] = [];
 
- 
-  //agrega un nuevo rol a la lista
-  agregarRol():void{
-    const rol: Rol = {
-      codigo: this.codigo,
-      nombre: this.nombre,
-      aplicacion: this.aplicacion,
-      estado: this.estado
-    }
-
-    this.listaRoles.push(rol);
-  
-    //resetea las variables para que no muestren contenido en la vista
-    this.codigo = '';
-    this.nombre = '';
-    this.aplicacion = '';
-    this.estado = '';
-
-    //regresa a la vista consulta donde se muestran todos los roles
-    this.changeview= 'consulta';
-  }
 
   //elimina el elemento en la posicion indicada por "index" de la lista de roles 
   eliminarRol(index:number):void{
