@@ -31,4 +31,16 @@ export class CommunicationApiService {
   deleteRols(Rocodigo:number|string) {
     return this.http.delete(this.APIUrl + `/Rols/${Rocodigo}`);
   }
+
+  obtenerSolicitudes():Observable<any[]> {
+    return this.http.get<any>(this.APIUrl +'/NivelesRuteos');
+  }
+
+  obtenerSolicitud():Observable<any[]> {
+    return this.http.get<any>(this.APIUrl +'/TipoSolicituds');
+  }
+
+  obtenerDepartamento():Observable<any[]> {
+    return this.http.get<any>(this.APIUrl +'/Departamentoes');
+  }
 }
