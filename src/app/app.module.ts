@@ -21,6 +21,9 @@ import { SolipagoComponent } from './components/procesos/solipago/solipago.compo
 import { MainSeguridadComponent } from './components/seguridad/main-seguridad.component';
 import { MainConfiguracionComponent } from './components/configuracion/main-configuracion.component';
 import { MenuComponent } from './components/templates/menu/menu.component';
+import { HttpClientModule } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -46,9 +49,21 @@ import { MenuComponent } from './components/templates/menu/menu.component';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+@Injectable()
+export class TuServicio {
+  private apiUrl = 'https://localhost:7086/swagger/index.html'; // Ajusta la URL de la API según tu configuración
+
+  constructor(private http: HttpClient) { }
+
+  guardarSolicitud(solicitud: any) {
+    return this.http.post(this.apiUrl, solicitud);
+  }
+}

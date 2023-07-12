@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-ruteo',
@@ -48,3 +49,4 @@ export class RuteoComponent {
 this.changeview = "consultar";
   }
 }
+
