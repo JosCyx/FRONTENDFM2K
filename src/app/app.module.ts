@@ -22,8 +22,8 @@ import { SolipagoComponent } from './components/procesos/solipago/solipago.compo
 import { MainSeguridadComponent } from './components/seguridad/main-seguridad.component';
 import { MainConfiguracionComponent } from './components/configuracion/main-configuracion.component';
 import { MenuComponent } from './components/templates/menu/menu.component';
-
-
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { CommunicationApiService } from './services/communication-api.service';
 
 

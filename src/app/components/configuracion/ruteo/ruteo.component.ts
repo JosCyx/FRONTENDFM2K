@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { CommunicationApiService } from 'src/app/services/communication-api.service';
 
 @Component({
   selector: 'app-ruteo',
@@ -16,12 +18,29 @@ export class RuteoComponent {
     { area: 'Marketing', niveles: [false, false, false, false, false, false,false] },
     { area: 'Contabilidad', niveles: [false, false, false, false, false, false, false] }
   ];
+  NivelesList$!:Observable<any[]>;
+  SolicotiList$!:Observable<any[]>;
+  DepartamentoList$!:Observable<any[]>;
+
+   // Map to display data associate with foreign keys
+   nivelesMap:Map<number, string> = new Map()
+
+
   selectedRow: number = -1;
   currentPage: number = 0;
   itemsPerPage: number = 1;
 
   changeview: string = 'consultar';  
-  constructor() {}
+  constructor(private servicios:CommunicationApiService) {
+
+  }
+  ngOnInit(){
+    this.NivelesList$ = this.servicios.obtenerSolicitudes();
+    this.SolicotiList$ = this.servicios.obtenerSolicitud();
+    this.DepartamentoList$ = this.servicios.obtenerDepartamento();
+  }
+  
+
 
   getNivelesByArea(area: string): boolean[] {
     const nivelObj = this.niveles.find(nivel => nivel.area === area);
@@ -48,5 +67,7 @@ export class RuteoComponent {
   guardarNiveles(): void {
 this.changeview = "consultar";
   }
+
+  
 }
 
