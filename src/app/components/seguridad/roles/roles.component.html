@@ -49,10 +49,10 @@
     <!--LISTA DE LOS ROLES-->
     <div class="listRol" *ngIf="changeview === 'consulta'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Roles registrados</h3>
+        <!--LISTA DE LOS ROLES
+        <p class="text-danger no-rol text-center" *ngIf="listaRoles.length === 0">No hay roles registrados.</p>-->
 
-        <p class="text-danger no-rol text-center" *ngIf="listaRoles.length === 0">No hay roles registrados.</p>
-
-        <table *ngIf="listaRoles.length != 0" class="table table-bordered table-striped text-center">
+        <table class="table table-bordered table-striped text-center">
             <thead>
                 <tr>
                     <th scope="col">N°</th>
@@ -63,17 +63,17 @@
                 </tr>
             </thead>
             <tbody>
-                <ng-container *ngFor="let rol of listaRoles let i=index">
+                <ng-container  *ngFor="let item of rolList$|async let i=index">
                     <tr>
                         <th>{{i+1}}</th>
-                        <td>{{rol.nombre}}</td>
-                        <td [ngSwitch]="rol.aplicacion">
-                            <span *ngSwitchCase="'ADMIN'">SEGURIDAD Y ACCESO</span>
-                            <span *ngSwitchCase="'SOL'">SOLICITUDES</span></td>
-                        <td [ngSwitch]="rol.estado">
+                        <td>{{item.roNombre}}</td>
+                        <td [ngSwitch]="item.roAplicacion">
+                            <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
+                            <span *ngSwitchCase="'2'">SOLICITUDES</span></td>
+                        <td [ngSwitch]="item.roEstado">
                             <span *ngSwitchCase="'A'">Activo</span>
                             <span *ngSwitchCase="'I'">Inactivo</span></td>
-                        <td *ngIf="edicion"><a class="text-success m-3" (click)="editarRol(rol,i)"><i class="bi bi-pencil-square h5"></i></a>
+                        <td *ngIf="edicion"><a class="text-success m-3" (click)="editarRol(item,i)"><i class="bi bi-pencil-square h5"></i></a>
                             <a class="text-danger m-3" (click)="eliminarRol(i)"><i class="bi bi-trash3-fill h5"></i></a></td>
                     </tr>
                 </ng-container>

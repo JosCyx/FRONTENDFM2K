@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit  } from '@angular/core';
 import { Rol } from 'src/app/models/seguridad/Rol';
+import { Observable } from 'rxjs';
+import { CommunicationApiService } from 'src/app/services/communication-api.service';
+
 
 
 @Component({
@@ -7,7 +10,23 @@ import { Rol } from 'src/app/models/seguridad/Rol';
   templateUrl: './roles.component.html',
   styleUrls: ['./roles.component.css']
 })
-export class RolesComponent {
+export class RolesComponent implements OnInit{
+
+  rolList$!:Observable<any[]>;
+
+  // Map to display data associate with foreign keys
+  rolsMap:Map<number, string> = new Map()
+
+  constructor(private service:CommunicationApiService){}
+
+  ngOnInit(){
+    this.rolList$ = this.service.getRolsList();
+  }
+
+
+
+
+  
   //PROPIEDADES DE LOS ROLES
   codigo: string = '';
   nombre: string = '';
@@ -92,10 +111,18 @@ export class RolesComponent {
 
   //controla la vista de las diferentes partes
   changeView(view: string): void {
+    //vacía las variables antes de cambiar de vista para que no muestren datos
+    this.codigo = '';
+    this.nombre = '';
+    this.aplicacion = '';
+    this.estado = '';
+    
     this.changeview = view;
     this.edicion = false;
     
   }
+
+  //cambia la vista a "consulta" para listar los roles registrados y define la variable edicion como true para mostrar la columna de edicion
   editar(view:string):void{
     this.changeview = view;
     this.edicion = true;

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -14,16 +15,20 @@ import { UsuariosComponent } from './components/seguridad/usuarios/usuarios.comp
 import { RolesComponent } from './components/seguridad/roles/roles.component';
 import { LoginComponent } from './components/login/login.component';
 import { MainComponent } from './components/main/main.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { SolicotiComponent } from './components/procesos/solicoti/solicoti.component';
 import { SoliocComponent } from './components/procesos/solioc/solioc.component';
 import { SolipagoComponent } from './components/procesos/solipago/solipago.component';
 import { MainSeguridadComponent } from './components/seguridad/main-seguridad.component';
 import { MainConfiguracionComponent } from './components/configuracion/main-configuracion.component';
 import { MenuComponent } from './components/templates/menu/menu.component';
+<<<<<<< HEAD
 import { HttpClientModule } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+=======
+import { CommunicationApiService } from './services/communication-api.service';
+>>>>>>> 38fd27e1b1f611ac20027399a40599e32235b251
 
 @NgModule({
   declarations: [
@@ -50,9 +55,13 @@ import { HttpClient } from '@angular/common/http';
     AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,
+<<<<<<< HEAD
+=======
+    ReactiveFormsModule,
+>>>>>>> 38fd27e1b1f611ac20027399a40599e32235b251
     HttpClientModule
   ],
-  providers: [],
+  providers: [CommunicationApiService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

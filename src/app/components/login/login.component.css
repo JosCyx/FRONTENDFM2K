@@ -9944,6 +9944,13 @@ a.text-dark:hover {
 .login{
     padding: 15%;
 }
+.container{
+    width: 40%;
+}
+
+.btn-login{
+    margin: 0 auto;
+}
 
 
 /*# sourceMappingURL=bootstrap.min.css.map */

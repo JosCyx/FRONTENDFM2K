@@ -29,4 +29,10 @@ export class MenuComponent {
 
     this.router.navigate(['main']);
   }
+
+  logOut(){
+    this.globalService.isLogin = false;
+    this.router.navigate(['login']);
+
+  }
 }
