@@ -25,11 +25,17 @@
             </div>
             <div class="form cmp-form">
                 <label class="form-label">Aplicacion:</label>
-                <select class="form-select" name="aplicacion" [(ngModel)]="aplicacion">
+                <!-- <select class="form-select" name="aplicacion" [(ngModel)]="aplicacion">
                     <option value="ADMIN">Seguridad y acceso</option>
                     <option value="SOL">Solicitudes</option>
+                </select> -->
+
+                <select class="form-control" name="inspectionTypeId" id="inspectionTypeId" [(ngModel)]="idAplicacion">
+                    <option selected></option>
+                    <option *ngFor="let app of appsList$|async" [value]="app.apCodigo">{{app.apNombre}}</option>
                 </select>
             </div>
+            
             <div class="form cmp-form">
                 <label class="form-label">Estado:</label>
                 <select class="form-select" name="estado" [(ngModel)]="estado">
@@ -39,7 +45,7 @@
             </div>
         </form>
         <div class="text-end">
-            <button [disabled]="!nombre || !aplicacion || !estado" 
+            <button [disabled]="!nombre || !idAplicacion || !estado" 
             type="submit" class="btn btn-primary m-2" (click)="agregarRol()">Agregar rol</button>
             <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
         </div>

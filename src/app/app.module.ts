@@ -26,6 +26,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommunicationApiService } from './services/communication-api.service';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,13 +60,3 @@ import { CommunicationApiService } from './services/communication-api.service';
 })
 export class AppModule { }
 
-@Injectable()
-export class TuServicio {
-  private apiUrl = 'https://localhost:7086/swagger/index.html'; // Ajusta la URL de la API según tu configuración
-
-  constructor(private http: HttpClient) { }
-
-  guardarSolicitud(solicitud: any) {
-    return this.http.post(this.apiUrl, solicitud);
-  }
-}
