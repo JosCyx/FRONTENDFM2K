@@ -11,7 +11,7 @@ export class CommunicationApiService {
 
   constructor(private http:HttpClient) { }
 
-  //metodos crud para los roles
+  //metodos crud
   //obtener toda la lista
   getRolsList():Observable<any[]> {
     return this.http.get<any>(this.APIUrl + '/Rols');
@@ -30,5 +30,10 @@ export class CommunicationApiService {
   //eliminar un elemento de la lista
   deleteRols(Rocodigo:number|string) {
     return this.http.delete(this.APIUrl + `/Rols/${Rocodigo}`);
+  }
+
+  //obtener lista de aplicaciones
+  getAplicacionesList():Observable<any[]>{
+    return this.http.get<any>(this.APIUrl + '/Aplicaciones')
   }
 }

@@ -13,6 +13,7 @@ import { CommunicationApiService } from 'src/app/services/communication-api.serv
 export class RolesComponent implements OnInit{
 
   rolList$!:Observable<any[]>;
+  appsList$!: Observable<any[]>;
 
   // Map to display data associate with foreign keys
   rolsMap:Map<number, string> = new Map()
@@ -21,12 +22,13 @@ export class RolesComponent implements OnInit{
 
   ngOnInit(){
     this.rolList$ = this.service.getRolsList();
+    this.appsList$ = this.service.getAplicacionesList();
   }
 
 
 
 
-  
+
   //PROPIEDADES DE LOS ROLES
   codigo: string = '';
   nombre: string = '';
