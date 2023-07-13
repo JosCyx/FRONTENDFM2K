@@ -17,6 +17,11 @@ export class CommunicationApiService {
     return this.http.get<any>(this.APIUrl + '/Rols');
   }
 
+  //obtiene un rol dependiendo del codigo que se le pase como parametro
+  getRolById(Rocodigo: number):Observable<any> {
+    return this.http.get<any>(this.APIUrl + `/Rols/${Rocodigo}`);
+  }
+
   //añadir elementos a la lista
   addRols(data:any) {
     return this.http.post(this.APIUrl + '/Rols', data);

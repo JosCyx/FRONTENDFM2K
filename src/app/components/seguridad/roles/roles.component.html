@@ -80,7 +80,7 @@
                                 <span *ngSwitchCase="'I'">Inactivo</span>
                             </td>
                             <td *ngIf="edicion">
-                                <a class="text-success m-3" (click)="editarRol(item, i)">
+                                <a class="text-success m-3" (click)="editarRol(item.roCodigo)">
                                     <i class="bi bi-pencil-square h5"></i>
                                 </a>
                             </td>
@@ -99,7 +99,7 @@
                                 <span *ngSwitchCase="'I'">Inactivo</span>
                             </td>
                             <td *ngIf="edicion">
-                                <a class="text-success m-3" (click)="editarRol(item, i)">
+                                <a class="text-success m-3" (click)="editarRol(item.roCodigo)">
                                     <i class="bi bi-pencil-square h5"></i>
                                 </a>
                             </td>
@@ -147,7 +147,7 @@
             </div>
         </form>
         <div class="text-end">
-            <button [disabled]="!nombre || !aplicacion || !estado" type="submit" class="btn btn-primary m-2"
+            <button [disabled]="!nombre || !idAplicacion || !estado" type="submit" class="btn btn-primary m-2"
                 (click)="guardarEdicion()">Guardar cambios</button>
             <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
         </div>
