@@ -68,8 +68,8 @@
             <tbody>
                 <ng-container *ngFor="let item of rolList$|async let i=index">
                     <tr *ngIf="!edicion; else showAllItems">
-                        <ng-container *ngIf="item.roEstado === 'A'">
-                            <td>{{ i + 1 }}</td>
+                        <ng-container *ngIf="item.roEstado === 'A'" updateCount()>
+                            <td>{{ count + 1 }}</td>
                             <td>{{ item.roNombre }}</td>
                             <td [ngSwitch]="item.roAplicacion">
                                 <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>

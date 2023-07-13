@@ -20,6 +20,11 @@ export class RolesComponent implements OnInit {
   changeview: string = 'consulta';
   edicion: boolean = false;
   mensajeExito: string = '';
+  count: number = 0;
+
+  updateCount(): void {
+    this.count++;
+  }
 
   //listas
   rolList$!: Observable<any[]>;
