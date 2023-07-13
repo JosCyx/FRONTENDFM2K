@@ -1,1 +1,25 @@
 <router-outlet></router-outlet>
+<!--En esta app solo funciona el modulo de roles por el momento, la idea es que los metodos crud se los controle con el servicio 
+    communication-api al en el cual se deben crear los metodos get, post, put y delete segun lo que se necesite, los cuales tambien 
+    deben estar creados en la api dentro de los controladores de cada clase. En el login se debe crear una sesion que verifique que
+    se ha iniciado sesion obviamente cuando se ingresen las credenciales correctas, esto se puede agregar al final del metodo de login().
+    Se debe controlar que solo los usuarios con cierto rol tengan acceso a la aplicacion Sistemas y Seguridad mientras que los demas
+    usuarios sin roles de administrador solo accedan a la aplicacion de Solicitudes. Existen 2 aplicaciones por el momento pero no se 
+    descarta que se puedan aumentar a futuro, cada aplicacion tiene 4 funciones y cada funcion tiene n transacciones.
+    En la api se ha creado el modelo de la base de datos con el comando 
+    "Sacffold-DbContext 'Name:ConnnectionStrings:conn' Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models" el cual crea un 
+    contexto y dependiendo de las tablas que esten en la base de datos, la conexion a la base se la define en el archivo appsettings.json 
+    en donde se debe añadir la cadena de conexion que en este caso esta llamada como "conn".
+
+    ***Si se realizan cambios grandes en la base de datos hay que actualizar el modelo de la API obligatoriamente o retornara errores, 
+    ya que el modelo que esta dentro de la API tiene su propia referencia a la base de datos.Si se añade alguna tabla o se cambia el 
+    tipo de datos, estos cambios si se los puede modificar manualmente en el modelo ya que son pequeños cambiando el tipo de dato de las 
+    clases y actualizando la definicion de esa clase en el contexto "SolicitudContext.cs".***
+
+    Se han creado tambien los controladores de ciertas tablas con las cuales hemos estado trabajando, aunque la idea era tener un solo 
+    controlador generico al que simplemente pasandole parametros podamos escoger a que clase del modelo (tabla) queremos acceder y los 
+    datos correspondientes con los cuales se haga una busqueda o una aliminacion por ejemplo, esto se pensaba hacer para reutilizar la
+    mayor cantidad de codigo y tener una API generica hasta cierto punto que nos sirva para todas las tablas. 
+    Para trabajar con procesos de la pagina(transacciones) que sean mas expecificas se pensaba realizar stored procedures en la base
+    y luego solo llamarlos desde la API para visualizar los datos en el front, estos procesos serian por ejemplo un select que traiga
+    datos de distintas tablas.-->
