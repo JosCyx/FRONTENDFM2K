@@ -58,5 +58,8 @@ export class CommunicationApiService {
     return this.http.get<any>(this.APIUrl + '/Ruteos');
   }
 
+  addRuteos(data:any) {
+    return this.http.post(this.APIUrl + '/Ruteos', data);
+  }
   
 }

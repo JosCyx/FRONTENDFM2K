@@ -22,7 +22,7 @@
             <label class="form-label">Tipo de Solicitud:</label>
             <select class="form-control" name="solicitud" id="solicitud" [(ngModel)]="tiposoli">
                 <option selected></option>
-                <option *ngFor="let app of TipoSolicitudesList$|async" [value]="app.tipoSolId">{{app.tipoSolNombre}}</option>
+                <option *ngFor="let app of TipoSolicitudesList$|async" [value]="app.tipoSolNombre">{{app.tipoSolNombre}}</option>
             </select> 
         </div>
             <div class="form cmp-form">
@@ -46,8 +46,8 @@
         </div>
         <div class="text-end">
             <button [disabled]="!tiposoli || !departamento || !estado" type="submit" class="btn btn-primary m-2"
-                >Agregar rol</button>
-            <button class="btn btn-danger m-2" >Cancelar</button>
+                (click)="agregarRut()">Agregar rol</button>
+            <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
         </div>
 
     </div>

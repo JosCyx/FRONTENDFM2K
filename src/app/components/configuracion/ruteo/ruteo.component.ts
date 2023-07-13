@@ -51,6 +51,33 @@ export class RuteoComponent {
     this.DepartamentoList$ = this.servicios.obtenerDepartamento();
   }
   
+  agregarRut(): void {
+    // Crear el objeto JSON con los datos del rol
+    const data = {
+      rutNombre: this.tiposoli,
+      rutEstado: this.estado,
+      rutArea: this.departamento
+    };
+
+    // Llamar al método addRols() del servicio para enviar los datos a la API
+    this.servicios.addRuteos(data).subscribe(
+      response => {
+        // Manejar la respuesta de la API aquí si es necesario
+        console.log('EXITO:', response);
+      },
+      error => {
+        // Manejar cualquier error que ocurra durante la llamada a la API aquí
+        console.error('ERROR:', error);
+      }
+    );
+
+    //muestra mensaje de exito y redirige a la otra vista luego de 1 segundo
+    this.mensajeExito = 'Ruteo registrado exitosamente.';
+    setTimeout(() => {
+      this.mensajeExito = '';
+      this.changeview = 'consultar';
+      }, 1000);
+  }
 
 
   getNivelesByArea(area: string): boolean[] {
@@ -98,6 +125,13 @@ this.changeview = "consultar";
   //   //cambia la variable de vista para mostrar la pantalla de edicion
   //   this.changeview = 'editar';
   // }
+  cancelar(): void {
+    this.nombre = '';
+    this.departamento = '';
+    this.estado = '';
+
+    this.changeview = 'consultar';
+  }
   
 }
 
