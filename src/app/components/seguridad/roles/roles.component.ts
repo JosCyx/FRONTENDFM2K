@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Rol } from 'src/app/models/seguridad/Rol';
 import { Observable } from 'rxjs';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
 
@@ -12,16 +11,14 @@ import { CommunicationApiService } from 'src/app/services/communication-api.serv
 })
 export class RolesComponent implements OnInit {
   //variables para guardar los datos del rol nuevo
+  roCodigo: number = 0;//almacena el id del rol que se seleccione
   nombre: string = '';
   idAplicacion: number = 0;
   estado: string = '';
 
-  codigo: string = '';
-
   //VARIABLE USADA PARA CONTROLAR FUNCIONES DE LA PAGINA
   changeview: string = 'consulta';
   edicion: boolean = false;
-  roCodigo: number = 0;//almacena el id del rol que se seleccione
   mensajeExito: string = '';
 
   //listas
@@ -29,7 +26,7 @@ export class RolesComponent implements OnInit {
   appsList$!: Observable<any[]>;
 
   // Map to display data associate with foreign keys
-  rolsMap: Map<number, string> = new Map()
+  //rolsMap: Map<number, string> = new Map()
 
   constructor(private service: CommunicationApiService) { }
 
@@ -70,7 +67,6 @@ export class RolesComponent implements OnInit {
   //controla la vista de las diferentes partes
   changeView(view: string): void {
     //vacía las variables antes de cambiar de vista para que no muestren datos
-    this.codigo = '';
     this.nombre = '';
     this.idAplicacion = 0;
     this.estado = '';
@@ -88,7 +84,6 @@ export class RolesComponent implements OnInit {
 
   //resetea las variables a valores vacios y cambia la variable de vista para mostrar la lista de roles 
   cancelar(): void {
-    this.codigo = '';
     this.nombre = '';
     this.idAplicacion = 0;
     this.estado = '';
@@ -105,7 +100,6 @@ export class RolesComponent implements OnInit {
     this.service.getRolById(this.roCodigo).subscribe(
       response => {
         // Asignar los valores del rol obtenido a las variables locales
-        this.codigo = response.roCodigo;
         this.nombre = response.roNombre;
         this.idAplicacion = response.roAplicacion;
         this.estado = response.roEstado;
@@ -145,7 +139,6 @@ export class RolesComponent implements OnInit {
     this.mensajeExito = 'Rol editado exitosamente.';
     setTimeout(() => {
       // Restablecer las variables locales a sus valores iniciales
-      this.codigo = '';
       this.nombre = '';
       this.idAplicacion = 0;
       this.estado = '';
@@ -154,8 +147,4 @@ export class RolesComponent implements OnInit {
       }, 1000);
   }
   
-  //elimina el elemento en la posicion indicada por "index" de la lista de roles 
-  eliminarRol(index: number): void {
-    //this.listaRoles.splice(index, 1);
-  }
 }
