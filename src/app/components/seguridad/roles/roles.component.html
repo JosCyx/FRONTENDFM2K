@@ -39,6 +39,9 @@
                 </select>
             </div>
         </form>
+        <div>
+            <span class="text-success">{{ mensajeExito }}</span>
+        </div>
         <div class="text-end">
             <button [disabled]="!nombre || !idAplicacion || !estado" type="submit" class="btn btn-primary m-2"
                 (click)="agregarRol()">Agregar rol</button>
@@ -84,21 +87,23 @@
                         </ng-container>
                     </tr>
                     <ng-template #showAllItems>
-                        <td>{{ i + 1 }}</td>
-                        <td>{{ item.roNombre }}</td>
-                        <td [ngSwitch]="item.roAplicacion">
-                            <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
-                            <span *ngSwitchCase="'2'">SOLICITUDES</span>
-                        </td>
-                        <td [ngSwitch]="item.roEstado">
-                            <span *ngSwitchCase="'A'">Activo</span>
-                            <span *ngSwitchCase="'I'">Inactivo</span>
-                        </td>
-                        <td *ngIf="edicion">
-                            <a class="text-success m-3" (click)="editarRol(item, i)">
-                                <i class="bi bi-pencil-square h5"></i>
-                            </a>
-                        </td>
+                        <tr>
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ item.roNombre }}</td>
+                            <td [ngSwitch]="item.roAplicacion">
+                                <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
+                                <span *ngSwitchCase="'2'">SOLICITUDES</span>
+                            </td>
+                            <td [ngSwitch]="item.roEstado">
+                                <span *ngSwitchCase="'A'">Activo</span>
+                                <span *ngSwitchCase="'I'">Inactivo</span>
+                            </td>
+                            <td *ngIf="edicion">
+                                <a class="text-success m-3" (click)="editarRol(item, i)">
+                                    <i class="bi bi-pencil-square h5"></i>
+                                </a>
+                            </td>
+                        </tr>
                     </ng-template>
                     <!-- <tr *ngIf="item.roEstado === 'A'">
                         <td>{{i+1}}</td>

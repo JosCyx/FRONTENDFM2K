@@ -17,6 +17,7 @@ export class RolesComponent implements OnInit {
   idAplicacion: number = 0;
   estado: string = '';
 
+  mensajeExito: string = '';
 
   activeStatus: boolean = false;
 
@@ -37,10 +38,10 @@ export class RolesComponent implements OnInit {
   agregarRol(): void {
     // Crear el objeto JSON con los datos del rol
     const data = {
-      roEmpresa: this.idAplicacion, // Ajusta el valor según tus requisitos
+      roEmpresa: 1, // define el valor por defecto de la empresa 
       roNombre: this.nombre,
       roEstado: this.estado,
-      roAplicacion: this.idAplicacion // Ajusta el valor según tus requisitos
+      roAplicacion: this.idAplicacion 
     };
 
     // Llamar al método addRols() del servicio para enviar los datos a la API
@@ -54,11 +55,14 @@ export class RolesComponent implements OnInit {
         console.error('Error al agregar el rol:', error);
       }
     );
-    this.changeview = 'consulta';
+
+    //muestra mensaje de exito y redirige a la otra vista luego de 1 segundo
+    this.mensajeExito = 'Rol registrado exitosamente.';
+    setTimeout(() => {
+      this.mensajeExito = '';
+      this.changeview = 'consulta';
+      }, 1000);
   }
-
-
-
 
   //PROPIEDADES DE LOS ROLES
   codigo: string = '';
