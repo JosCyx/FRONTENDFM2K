@@ -4,13 +4,13 @@
 
     <div class="">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav">
-                        <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
-                        <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
-                        <button class="btn btn-primary m-2" (click)="editar('consulta')">Editar</button>
-                    </div>
-              </div>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
+                    <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
+                    <button class="btn btn-primary m-2" (click)="editar('consulta')">Editar</button>
+                </div>
+            </div>
         </nav>
     </div>
 
@@ -21,7 +21,7 @@
             <div class="form cmp-form">
                 <label class="form-label">Nombre de rol:</label>
                 <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control" />
-    
+
             </div>
             <div class="form cmp-form">
                 <label class="form-label">Aplicacion:</label>
@@ -30,7 +30,7 @@
                     <option *ngFor="let app of appsList$|async" [value]="app.apCodigo">{{app.apNombre}}</option>
                 </select>
             </div>
-            
+
             <div class="form cmp-form">
                 <label class="form-label">Estado:</label>
                 <select class="form-select" name="estado" [(ngModel)]="estado">
@@ -40,13 +40,13 @@
             </div>
         </form>
         <div class="text-end">
-            <button [disabled]="!nombre || !idAplicacion || !estado" 
-            type="submit" class="btn btn-primary m-2" (click)="agregarRol()">Agregar rol</button>
+            <button [disabled]="!nombre || !idAplicacion || !estado" type="submit" class="btn btn-primary m-2"
+                (click)="agregarRol()">Agregar rol</button>
             <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
         </div>
-        
+
     </div>
-    
+
     <!--LISTA DE LOS ROLES-->
     <div class="listRol" *ngIf="changeview === 'consulta'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Roles registrados</h3>
@@ -63,9 +63,45 @@
                 </tr>
             </thead>
             <tbody>
-                <ng-container  *ngFor="let item of rolList$|async let i=index">
-                    <tr *ngIf="item.roEstado === 'A'">
-                        <th>{{i+1}}</th>
+                <ng-container *ngFor="let item of rolList$|async let i=index">
+                    <tr *ngIf="!edicion; else showAllItems">
+                        <ng-container *ngIf="item.roEstado === 'A'">
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ item.roNombre }}</td>
+                            <td [ngSwitch]="item.roAplicacion">
+                                <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
+                                <span *ngSwitchCase="'2'">SOLICITUDES</span>
+                            </td>
+                            <td [ngSwitch]="item.roEstado">
+                                <span *ngSwitchCase="'A'">Activo</span>
+                                <span *ngSwitchCase="'I'">Inactivo</span>
+                            </td>
+                            <td *ngIf="edicion">
+                                <a class="text-success m-3" (click)="editarRol(item, i)">
+                                    <i class="bi bi-pencil-square h5"></i>
+                                </a>
+                            </td>
+                        </ng-container>
+                    </tr>
+                    <ng-template #showAllItems>
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ item.roNombre }}</td>
+                        <td [ngSwitch]="item.roAplicacion">
+                            <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
+                            <span *ngSwitchCase="'2'">SOLICITUDES</span>
+                        </td>
+                        <td [ngSwitch]="item.roEstado">
+                            <span *ngSwitchCase="'A'">Activo</span>
+                            <span *ngSwitchCase="'I'">Inactivo</span>
+                        </td>
+                        <td *ngIf="edicion">
+                            <a class="text-success m-3" (click)="editarRol(item, i)">
+                                <i class="bi bi-pencil-square h5"></i>
+                            </a>
+                        </td>
+                    </ng-template>
+                    <!-- <tr *ngIf="item.roEstado === 'A'">
+                        <td>{{i+1}}</td>
                         <td>{{item.roNombre}}</td>
                         <td [ngSwitch]="item.roAplicacion">
                             <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
@@ -74,12 +110,11 @@
                             <span *ngSwitchCase="'A'">Activo</span>
                             <span *ngSwitchCase="'I'">Inactivo</span></td>
                         <td *ngIf="edicion"><a class="text-success m-3" (click)="editarRol(item,i)"><i class="bi bi-pencil-square h5"></i></a>
-                            <!--<a class="text-danger m-3" (click)="eliminarRol(i)"><i class="bi bi-trash3-fill h5"></i></a>-->
+                            <a class="text-danger m-3" (click)="eliminarRol(i)"><i class="bi bi-trash3-fill h5"></i></a>
                         </td>
-                    </tr>
+                    </tr> -->
                 </ng-container>
             </tbody>
-            
         </table>
     </div>
 
@@ -107,12 +142,12 @@
             </div>
         </form>
         <div class="text-end">
-            <button [disabled]="!nombre || !aplicacion || !estado" 
-            type="submit" class="btn btn-primary m-2" (click)="guardarEdicion()">Guardar cambios</button>
+            <button [disabled]="!nombre || !aplicacion || !estado" type="submit" class="btn btn-primary m-2"
+                (click)="guardarEdicion()">Guardar cambios</button>
             <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
         </div>
     </div>
 
-    
-    
+
+
 </div>
