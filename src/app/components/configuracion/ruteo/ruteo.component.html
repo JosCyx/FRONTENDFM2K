@@ -16,97 +16,120 @@
   </div>
 
   <div class="formRol" *ngIf="changeview === 'ingresar'">
-    <div>
-      <div class="combos">
-        <div class="form">
-          <label class="form-label">Tipo de Solicitud</label>
-          <select class="form-select" name="estado" [(ngModel)]="tipo_solicitud">
-            <option selected>Seleccione el tipo de Solicitud</option>
-            <option value="A">Cotizacion</option>
-            <option value="I">Orden de Compra</option>
-            <option value="I">Pago</option>
-            <option value="I">Mariconada</option>
-          </select>
+    <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de Solicitud</h3>
+        <form class="form-rol">
+          <div class="form cmp-form">
+            <label class="form-label">Tipo de Solicitud:</label>
+            <select class="form-control" name="solicitud" id="solicitud" [(ngModel)]="tiposoli">
+                <option selected></option>
+                <option *ngFor="let app of TipoSolicitudesList$|async" [value]="app.tipoSolId">{{app.tipoSolNombre}}</option>
+            </select> 
+        </div>
+            <div class="form cmp-form">
+                <label class="form-label">Departamento:</label>
+                <select class="form-control" name="solicitud" id="solicitud" [(ngModel)]="departamento">
+                    <option selected></option>
+                    <option *ngFor="let app of DepartamentoList$|async" [value]="app.codDep">{{app.descDep}}</option>
+                </select> 
+            </div>
+
+            <div class="form cmp-form">
+                <label class="form-label">Estado:</label>
+                <select class="form-select" name="estado" [(ngModel)]="estado">
+                    <option value="A">Activo</option>
+                    <option value="I">Inactivo</option>
+                </select>
+            </div>
+        </form>
+        <div>
+            <span class="text-success">{{ mensajeExito }}</span>
+        </div>
+        <div class="text-end">
+            <button [disabled]="!tiposoli || !departamento || !estado" type="submit" class="btn btn-primary m-2"
+                >Agregar rol</button>
+            <button class="btn btn-danger m-2" >Cancelar</button>
         </div>
 
-        <div class="form">
-          <label class="form-label">Area:</label>
-          <select class="form-select" name="estado" [(ngModel)]="area">
-            <option selected>Seleccione la Area</option>
-            <option value="A">Operaciones</option>
-            <option value="I">Sistemas</option>
-            <option value="A">Marketing</option>
-            <option value="A">Compras</option>
-            <option value="A">Contabilidad</option>
-          </select>
-        </div>
-
-      </div>
-      <table class="table table-bordered listaruteo">
-        <thead>
-          <tr>
-            <th>Nivel 10</th>
-            <th>Nivel 20</th>
-            <th>Nivel 30</th>
-            <th>Nivel 40</th>
-            <th>Nivel 50</th>
-            <th>Nivel 60</th>
-            <th>Nivel 70</th>
-
-          </tr>
-        </thead>
-        <tbody>
-          <ng-container *ngFor="let area of areas; let i = index">
-            <tr *ngIf="currentPage === i / itemsPerPage">
-
-              <td><input type="checkbox" [checked]="isNivelChecked(area, 1)" (change)="toggleNivel(area, 1)"></td>
-              <td><input type="checkbox" [checked]="isNivelChecked(area, 2)" (change)="toggleNivel(area, 2)"></td>
-              <td><input type="checkbox" [checked]="isNivelChecked(area, 3)" (change)="toggleNivel(area, 3)"></td>
-              <td><input type="checkbox" [checked]="isNivelChecked(area, 4)" (change)="toggleNivel(area, 4)"></td>
-              <td><input type="checkbox" [checked]="isNivelChecked(area, 5)" (change)="toggleNivel(area, 5)"></td>
-              <td><input type="checkbox" [checked]="isNivelChecked(area, 6)" (change)="toggleNivel(area, 6)"></td>
-              <td><input type="checkbox" [checked]="isNivelChecked(area, 7)" (change)="toggleNivel(area, 7)"></td>
-            </tr>
-          </ng-container>
-        </tbody>
-      </table>
-      <div class="text-end">
-        <button class="btn btn-primary" (click)="guardarNiveles()">Guardar</button>
-      </div>
     </div>
   </div>
 
   <div class="formRol" *ngIf="changeview === 'consultar'">
+    <h3 class="font-weight-bold" style="padding-top: 20pt;">Ruteo de Area</h3>
+        <!--<p class="text-danger no-rol text-center" *ngIf="listaRoles.length === 0">No hay roles registrados.</p>-->
 
-
-    <div class="listaruteo">
-      <table class="table table-bordered list">
-        <thead>
-          <tr>
-            <th>Area</th>
-            <th>Tipo de Solicitud</th>
-            <ng-container *ngFor="let item of NivelesList$|async let i=index">
-              <th>{{item.descRuteo}}</th>
-            </ng-container>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of DepartamentoList$|async let i=index">
-            <td>{{item.descDep}}</td>
-            <ng-container *ngFor="let item of SolicotiList$|async let i=index">
-              <td>{{item.tipoSolNombre}}</td>
-            </ng-container>
-          </tr>
-
-
-        </tbody>
-      </table>
-    </div>
-
-
-
-  </div>
+        <table class="table table-bordered table-striped text-center">
+            <thead>
+                <tr>
+                    <th scope="col">N°</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Departamento</th>
+                    <th scope="col">Estado</th>
+                    <th *ngIf="edicion" scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let item of SolicotiList$|async let i=index">
+                    <tr *ngIf="!edicion; else showAllItems">
+                        <ng-container *ngIf="item.rutEstado === 'A'">
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ item.rutNombre }}</td>
+                            <td [ngSwitch]="item.rutArea">
+                                <span *ngSwitchCase="'1'">Sistemas</span>
+                                <span *ngSwitchCase="'2'">Contabilidad</span>
+                                <span *ngSwitchCase="'3'">Compras</span>
+                                <span *ngSwitchCase="'4'">Financiero</span>
+                                <span *ngSwitchCase="'5'">Operaciones</span>
+                                <span *ngSwitchCase="'6'">Marketing</span>
+                            </td>
+                            <td [ngSwitch]="item.rutEstado">
+                                <span *ngSwitchCase="'A'">Activo</span>
+                                <span *ngSwitchCase="'I'">Inactivo</span>
+                            </td>
+                            <td *ngIf="edicion">
+                                <a class="text-success m-3">
+                                    <i class="bi bi-pencil-square h5"></i>
+                                </a>
+                            </td>
+                        </ng-container>
+                    </tr>
+                    <ng-template #showAllItems>
+                        <tr>
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ item.roNombre }}</td>
+                            <td [ngSwitch]="item.roAplicacion">
+                                <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
+                                <span *ngSwitchCase="'2'">SOLICITUDES</span>
+                            </td>
+                            <td [ngSwitch]="item.roEstado">
+                                <span *ngSwitchCase="'A'">Activo</span>
+                                <span *ngSwitchCase="'I'">Inactivo</span>
+                            </td>
+                            <td *ngIf="edicion">
+                                <a class="text-success m-3">
+                                    <i class="bi bi-pencil-square h5"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </ng-template>
+                    <!-- <tr *ngIf="item.roEstado === 'A'">
+                        <td>{{i+1}}</td>
+                        <td>{{item.roNombre}}</td>
+                        <td [ngSwitch]="item.roAplicacion">
+                            <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
+                            <span *ngSwitchCase="'2'">SOLICITUDES</span></td>
+                        <td [ngSwitch]="item.roEstado">
+                            <span *ngSwitchCase="'A'">Activo</span>
+                            <span *ngSwitchCase="'I'">Inactivo</span></td>
+                        <td *ngIf="edicion"><a class="text-success m-3" (click)="editarRol(item,i)"><i class="bi bi-pencil-square h5"></i></a>
+                            <a class="text-danger m-3" (click)="eliminarRol(i)"><i class="bi bi-trash3-fill h5"></i></a>
+                        </td>
+                    </tr> -->
+                </ng-container>
+            </tbody>
+        </table>
+  </div> 
+  
+  
 
   <div class="formRol" *ngIf="changeview === 'editar'">
 
@@ -114,7 +137,7 @@
       <div class="combos">
         <div class="form">
           <label class="form-label">Tipo de Solicitud</label>
-          <input class="form-control" type="text" name="estado" [(ngModel)]="tipo_solicitud" disabled>
+          <input class="form-control" type="text" name="estado" [(ngModel)]="tiposoli" disabled>
           <!--<select class="form-select" name="estado" [(ngModel)]="tipo_solicitud">
               <option selected>Seleccione el tipo de Solicitud</option>
               <option value="A" disabled>Cotizacion</option>
@@ -126,7 +149,7 @@
 
         <div class="form">
           <label class="form-label">Area:</label>
-          <input class="form-control" type="text" name="estado" [(ngModel)]="tipo_solicitud" disabled>
+          <input class="form-control" type="text" name="estado" [(ngModel)]="departamento" disabled>
           <!--<select class="form-select" name="estado" [(ngModel)]="area">
               <option selected>Seleccione la Area</option>
               <option value="A">Operaciones</option>
@@ -173,4 +196,3 @@
   </div>
 
 
-</div>

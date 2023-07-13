@@ -103,6 +103,7 @@ export class RolesComponent implements OnInit {
     this.changeview = 'editar';
   }
 
+  
 
   guardarEdicion(): void {
 
