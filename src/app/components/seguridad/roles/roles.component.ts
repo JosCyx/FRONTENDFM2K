@@ -20,11 +20,6 @@ export class RolesComponent implements OnInit {
   changeview: string = 'consulta';
   edicion: boolean = false;
   mensajeExito: string = '';
-  count: number = 0;
-
-  updateCount(): void {
-    this.count++;
-  }
 
   //listas
   rolList$!: Observable<any[]>;
@@ -150,6 +145,10 @@ export class RolesComponent implements OnInit {
       this.mensajeExito = '';
       this.changeview = 'consulta';
       }, 1000);
+  }
+  
+  hasRoleWithEstadoA(roles: any[]): boolean {
+    return roles?.some(item => item.roEstado === 'A');
   }
   
 }

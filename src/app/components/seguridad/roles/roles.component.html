@@ -53,12 +53,11 @@
     <!--LISTA DE LOS ROLES-->
     <div class="listRol" *ngIf="changeview === 'consulta'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Roles registrados</h3>
-        <!--<p class="text-danger no-rol text-center" *ngIf="listaRoles.length === 0">No hay roles registrados.</p>-->
+        <p class="text-danger no-rol text-center" *ngIf="(rolList$ | async)?.length === 0">No hay roles registrados.</p>
 
-        <table class="table table-bordered table-striped text-center">
+        <table class="table table-bordered table-striped text-center" *ngIf="(rolList$ | async)?.length != 0">
             <thead>
                 <tr>
-                    <th scope="col">N°</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Aplicacion</th>
                     <th scope="col">Estado</th>
@@ -68,8 +67,7 @@
             <tbody>
                 <ng-container *ngFor="let item of rolList$|async let i=index">
                     <tr *ngIf="!edicion; else showAllItems">
-                        <ng-container *ngIf="item.roEstado === 'A'" updateCount()>
-                            <td>{{ count + 1 }}</td>
+                        <ng-container *ngIf="item.roEstado === 'A'">
                             <td>{{ item.roNombre }}</td>
                             <td [ngSwitch]="item.roAplicacion">
                                 <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
@@ -79,16 +77,10 @@
                                 <span *ngSwitchCase="'A'">Activo</span>
                                 <span *ngSwitchCase="'I'">Inactivo</span>
                             </td>
-                            <td *ngIf="edicion">
-                                <a class="text-success m-3" (click)="editarRol(item.roCodigo)">
-                                    <i class="bi bi-pencil-square h5"></i>
-                                </a>
-                            </td>
                         </ng-container>
                     </tr>
                     <ng-template #showAllItems>
                         <tr>
-                            <td>{{ i + 1 }}</td>
                             <td>{{ item.roNombre }}</td>
                             <td [ngSwitch]="item.roAplicacion">
                                 <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
