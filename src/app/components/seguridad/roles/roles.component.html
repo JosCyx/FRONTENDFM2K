@@ -125,7 +125,7 @@
             </div>
             <div class="form cmp-form">
                 <label class="form-label">Aplicacion:</label>
-                <select class="form-control" name="inspectionTypeId" id="inspectionTypeId" [(ngModel)]="idAplicacion">
+                <select class="form-control" name="app" id="app" [(ngModel)]="idAplicacion">
                     <option selected></option>
                     <option *ngFor="let app of appsList$|async" [value]="app.apCodigo">{{app.apNombre}}</option>
                 </select>

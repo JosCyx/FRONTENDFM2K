@@ -1,36 +1,29 @@
-.dropdown.show .dropdown-menu {
-    display: block;
-  }
-  
-  .combos {
-    width: 40%;
-    display: flex;
-    gap: 30px;
-    padding-bottom: 50px;
-    margin: auto;
-  }
-  
-  a:hover{
-    cursor:pointer;
-  }
-
-  .listRol, .formRol{
-    padding-top: 30pt;
-    width: 80%;
-    margin: auto;
-}
-
-.listaruteo{
-  width: 95%;
-  margin: auto;
-}
-
-.navbaruteo{
-  margin: auto;
-}
-
 .container{
   padding-left: 200px;
   padding-top: 25px;
+  padding-bottom: 100px;
+}
+.cmp-form{
+  margin: 15px;
+}
+.form-label{
+  padding-top: 5px;
 }
 
+.listRol, .formRol{
+  padding-top: 30pt;
+  padding-bottom: 100px;
+  margin: 0 auto;
+}
+.formedit{
+  width: 65%;
+  margin: 0 auto;
+}
+.no-rol{
+  border: 1px red solid;
+  border-radius: 5px;
+  padding: 8pt;
+}
+a:hover{
+  cursor: pointer;
+}

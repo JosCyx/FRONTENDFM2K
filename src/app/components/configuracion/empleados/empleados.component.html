@@ -6,25 +6,96 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <button class="btn btn-primary m-2" (click)="changeView('ingresar')">Ingresar</button>
-          <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar</button>
-          <button class="btn btn-primary m-2" (click)="changeView('editar')">Editar</button>
+          <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
+          <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button> -->
+          <button class="btn btn-primary m-2" (click)="editar('consulta')">Editar</button>
         </div>
       </div>
     </nav>
   </div>
 
-  <div class="formRol" *ngIf="changeview === 'ingresar'">
+  <div class="formRol" *ngIf="changeview === 'crear'">
 
   </div>
 
 
-  <div class="formRol" *ngIf="changeview === 'consultar'">
+  <div class="listRol" *ngIf="changeview === 'consulta'">
+    <h3 class="font-weight-bold" style="padding-top: 20pt;">Roles registrados</h3>
+    <p class="text-danger no-rol text-center" *ngIf="(empleadoList$ | async)?.length === 0">No hay roles registrados.</p>
 
+    <table class="table table-bordered table-striped text-center" *ngIf="(empleadoList$ | async)?.length != 0">
+      <thead>
+        <tr>
+          <th scope="col">Identificacion</th>
+          <th scope="col">Nombres</th>
+          <th scope="col">Apellidos</th>
+          <th scope="col">Area</th>
+          <th scope="col">Telefono</th>
+          <th scope="col">Correo</th>
+          <th *ngIf="edicion" scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let item of empleadoList$|async let i=index">
+          <tr>
+              <td>{{ item.empleadoIdentificacion }}</td>
+              <td>{{ item.empleadoNombres }}</td>
+              <td>{{ item.empleadoApellidos }}</td>
+              <td [ngSwitch]="item.empleadoIdDpto">
+                <span *ngSwitchCase="'1'">Sistemas</span>
+                <span *ngSwitchCase="'2'">Contabilidad</span>
+                <span *ngSwitchCase="'3'">Compras</span>
+                <span *ngSwitchCase="'4'">Financiero</span>
+                <span *ngSwitchCase="'5'">Operaciones</span>
+                <span *ngSwitchCase="'6'">Marketing</span>
+              </td>
+              <td>{{ item.empleadoTelefono }}</td>
+              <td>{{ item.empleadoCorreo }}</td>
+              <td *ngIf="edicion">
+                <a class="text-success m-3" (click)="editarEmpleado(item.empleadoId)">
+                    <i class="bi bi-pencil-square h5"></i>
+                </a>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
   </div>
 
 
-  <div class="formRol" *ngIf="changeview === 'editar'">
-
-  </div>
+  <div class="formedit" *ngIf="changeview === 'editar'">
+    <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar empleado</h3>
+    <form class="form-rol">
+      <div class="form cmp-form">
+        <label class="form-label">Identificacion</label>
+        <input [(ngModel)]="empleadoIdentificacion" name="Identificacion" type="text" id="form12" class="form-control" disabled/>
+    </div>
+        <div class="form cmp-form">
+            <label class="form-label">Nombres:</label>
+            <input [(ngModel)]="empleadoNombres" name="Nombres" type="text" id="form12" class="form-control" disabled/>
+        </div>
+        <div class="form cmp-form">
+          <label class="form-label">Apellidos:</label>
+          <input [(ngModel)]="empleadoApellidos" name="Apellidos" type="text" id="form12" class="form-control" disabled/>
+      </div>
+      <div class="form cmp-form">
+        <label class="form-label">Correo:</label>
+        <input [(ngModel)]="empleadoCorreo" name="Correo" type="text" id="form12" class="form-control" disabled/>
+    </div>
+        <div class="form cmp-form">
+            <label class="form-label">Area:</label>
+            <select class="form-control" name="Area" id="Area" [(ngModel)]="empleadoDpto">
+                <option selected></option>
+                <option *ngFor="let dpto of dptoList$|async" [value]="dpto.codDep">{{dpto.descDep}}</option>
+            </select>
+        </div>
+    </form>
+    <div>
+        <span class="text-success">{{ mensajeExito }}</span>
+    </div>
+    <div class="text-end">
+        <button type="submit" class="btn btn-primary m-2"(click)="guardarEdicion()">Guardar cambios</button>
+        <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
+    </div>
+</div>
 </div>
