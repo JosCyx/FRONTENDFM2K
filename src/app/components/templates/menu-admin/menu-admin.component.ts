@@ -3,11 +3,11 @@ import { GlobalService } from 'src/app/services/global.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css']
+  selector: 'app-menu-admin',
+  templateUrl: './menu-admin.component.html',
+  styleUrls: ['./menu-admin.component.css']
 })
-export class MenuComponent {
+export class MenuAdminComponent {
   appSelected: boolean = false;
   isLogin: boolean = false;
 

@@ -147,8 +147,18 @@ export class RolesComponent implements OnInit {
       }, 1000);
   }
   
-  hasRoleWithEstadoA(roles: any[]): boolean {
-    return roles?.some(item => item.roEstado === 'A');
+  /*elimina un rol de la tabla roles de la base de datos, no se usa por el momento ya que la eliminacion de los elementos debe ser lógica
+  es decir se deben inactivar y no eliminar*/
+  eliminarRol(roCodigo : number):void{
+    this.service.deleteRols(roCodigo).subscribe(
+      response => {
+        // Manejar la respuesta de la API aquí si es necesario
+        console.log('Rol eliminadp exitosamente:', response);
+      },
+      error => {
+        // Manejar cualquier error que ocurra durante la llamada a la API aquí
+        console.error('Error al eliminar el rol:', error);
+      }
+    );
   }
-  
 }

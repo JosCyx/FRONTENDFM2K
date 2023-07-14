@@ -23,6 +23,7 @@ import { MainSeguridadComponent } from './components/seguridad/main-seguridad.co
 import { MainConfiguracionComponent } from './components/configuracion/main-configuracion.component';
 import { MenuComponent } from './components/templates/menu/menu.component';
 import { CommunicationApiService } from './services/communication-api.service';
+import { MenuAdminComponent } from './components/templates/menu-admin/menu-admin.component';
 
 
 @NgModule({
@@ -43,7 +44,8 @@ import { CommunicationApiService } from './services/communication-api.service';
     SolipagoComponent,
     MainSeguridadComponent,
     MainConfiguracionComponent,
-    MenuComponent
+    MenuComponent,
+    MenuAdminComponent
   ],
   imports: [
     BrowserModule,
