@@ -10,6 +10,10 @@ export class CommunicationApiService {
   readonly APIUrl = "https://localhost:7086/api";
 
   constructor(private http:HttpClient) { }
+  //metodos de login
+  login(user: any): Observable<any> {
+    return this.http.get<any>(this.APIUrl + `/Usuarios/${user}`);
+  }
 
   //metodos crud
   //obtener toda la lista
