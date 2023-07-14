@@ -11,9 +11,9 @@ export class CommunicationApiService {
 
   constructor(private http:HttpClient) { }
   //metodos de login
-  login(user: any): Observable<any> {
-    return this.http.get<any>(this.APIUrl + `/Usuarios/${user}`);
-  }
+  // login(user: any): Observable<any> {
+  //   return this.http.get<any>(this.APIUrl + `/Usuarios/${user}`);
+  // }
 
   //metodos crud
   //obtener toda la lista
