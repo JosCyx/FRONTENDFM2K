@@ -7,15 +7,13 @@ import { Observable } from 'rxjs';
 })
 export class CommunicationApiService {
 
+  //url de la api a donde se realizan las llamadas
   readonly APIUrl = "https://localhost:7086/api";
 
   constructor(private http:HttpClient) { }
-  //metodos de login
-  // login(user: any): Observable<any> {
-  //   return this.http.get<any>(this.APIUrl + `/Usuarios/${user}`);
-  // }
+  
+  //METODOS CRUD PARA CADA ENTIDAD, SE HAN ESCRITO UNICAMENTE LOS METODOS QUE SE ESTAN UTILIZANDO Y DE LOS CUALES SE HAYA CREADO UN CONTROLADOR
 
-  //metodos crud
   //obtener toda la lista
   getRolsList():Observable<any[]> {
     return this.http.get<any>(this.APIUrl + '/Rols');

@@ -64,6 +64,7 @@ export class EmpleadosComponent {
 
     this.service.getEmpleadoById(this.empId).subscribe(
       response => {
+        //aunque no se muestren en pantalla todas, guardamos todos los datos que trae nuestra tabla en variables locales para luego usarlas al enviar el put
         this.empNombres = response.empleadoNombres;
         this.empApellidos = response.empleadoApellidos;
         this.empIdentificacion = response.empleadoIdentificacion;
@@ -81,26 +82,9 @@ export class EmpleadosComponent {
     // Cambiar la variable de vista para mostrar la pantalla de edición
     this.changeview = 'editar';
   }
-  
-  /*"empId": 1,
-  "empIdDpto": 2,
-  "empCompania": 1,
-  "empTipoId": 3,
-  "empIdentificacion": "0987654321",
-  "empNombres": "Nombre editado",
-  "empApellidos": "Apellido editado",
-  "empSexo": "M",
-  "empTelefono": "0987654321",
-  "empCorreo": "correo@ejemplo.com"*/
-
-  /*empId: number = 0;
-  empNombres: string = '';
-  empApellidos: string = '';
-  empIdentificacion: string = '';
-  empCorreo: string = '';
-  empDpto: number = 0;*/
 
   guardarEdicion(): void {
+    //es necesario enviar todos los campos cuando se realiza u put (edicion), de lo contrario retornara errores
     const data = {
       empleadoId: this.empId,
       empleadoIdDpto: this.empDpto,
