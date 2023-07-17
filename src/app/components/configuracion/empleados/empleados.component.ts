@@ -8,12 +8,15 @@ import { CommunicationApiService } from 'src/app/services/communication-api.serv
   styleUrls: ['./empleados.component.css']
 })
 export class EmpleadosComponent {
-  empleadoId: number = 0;
-  empleadoNombres: string = '';
-  empleadoApellidos: string = '';
-  empleadoIdentificacion: string = '';
-  empleadoCorreo: string = '';
-  empleadoDpto: number = 0;
+  empId: number = 0;
+  empNombres: string = '';
+  empApellidos: string = '';
+  empIdentificacion: string = '';
+  empCorreo: string = '';
+  empDpto: number = 0;
+  empTipoId: string = '';
+  empSexo: string = '';
+  empTelefono: string = '';
 
 
   changeview: string = 'consulta';
@@ -42,25 +45,28 @@ export class EmpleadosComponent {
   }
 
   cancelar(): void {
-    this.empleadoNombres = '';
-    this.empleadoApellidos = '';
-    this.empleadoCorreo = '';
-    this.empleadoIdentificacion = '';
-    this.empleadoDpto = 0;
+    this.empNombres = '';
+    this.empApellidos = '';
+    this.empCorreo = '';
+    this.empIdentificacion = '';
+    this.empDpto = 0;
 
     this.changeview = 'consulta';
   }
 
   editarEmpleado(id:number){
-    this.empleadoId = id;
+    this.empId = id;
 
-    this.service.getEmpleadoById(this.empleadoId).subscribe(
+    this.service.getEmpleadoById(this.empId).subscribe(
       response => {
-        this.empleadoNombres = response.empleadoNombres;
-        this.empleadoApellidos = response.empleadoApellidos;
-        this.empleadoIdentificacion = response.empleadoIdentificacion;
-        this.empleadoCorreo = response.empleadoCorreo;
-        this.empleadoDpto = response.empleadoIdDpto;
+        this.empNombres = response.empleadoNombres;
+        this.empApellidos = response.empleadoApellidos;
+        this.empIdentificacion = response.empleadoIdentificacion;
+        this.empCorreo = response.empleadoCorreo;
+        this.empDpto = response.empleadoIdDpto;
+        this.empTipoId = response.empleadoTipoId;
+        this.empSexo = response.empleadoSexo;
+        this.empTelefono = response.empleadoTelefono;
       },
       error => {
         // Manejar cualquier error que ocurra durante la llamada a la API aquí
@@ -71,14 +77,40 @@ export class EmpleadosComponent {
     this.changeview = 'editar';
   }
   
+  /*"empId": 1,
+  "empIdDpto": 2,
+  "empCompania": 1,
+  "empTipoId": 3,
+  "empIdentificacion": "0987654321",
+  "empNombres": "Nombre editado",
+  "empApellidos": "Apellido editado",
+  "empSexo": "M",
+  "empTelefono": "0987654321",
+  "empCorreo": "correo@ejemplo.com"*/
+
+  /*empId: number = 0;
+  empNombres: string = '';
+  empApellidos: string = '';
+  empIdentificacion: string = '';
+  empCorreo: string = '';
+  empDpto: number = 0;*/
+
   guardarEdicion(): void {
     const data = {
-
-      
+      empleadoId: this.empId,
+      empleadoIdDpto: this.empDpto,
+      empleadoCompania: 1,
+      empleadoTipoId: this.empTipoId,
+      empleadoIdentificacion: this.empIdentificacion,
+      empleadoNombres: this.empNombres,
+      empleadoApellidos: this.empApellidos,
+      empleadoSexo: this.empSexo,
+      empleadoTelefono: this.empTelefono,
+      empleadoCorreo: this.empCorreo
     };
   
     // Llamar al método updateRols() del servicio para enviar los datos actualizados a la API
-    this.service.updateEmpelado(this.empleadoId, data).subscribe(
+    this.service.updateEmpelado(this.empId, data).subscribe(
       response => {
         // Manejar la respuesta de la API aquí si es necesario
         console.log('Empleado actualizado exitosamente:', response);
@@ -92,11 +124,11 @@ export class EmpleadosComponent {
     this.mensajeExito = 'Empleado editado exitosamente.';
     setTimeout(() => {
       // Restablecer las variables locales a sus valores iniciales
-      this.empleadoNombres = '';
-      this.empleadoApellidos = '';
-      this.empleadoCorreo = '';
-      this.empleadoIdentificacion = '';
-      this.empleadoDpto = 0;
+      this.empNombres = '';
+      this.empApellidos = '';
+      this.empCorreo = '';
+      this.empIdentificacion = '';
+      this.empDpto = 0;
       this.changeview = 'consulta';
       }, 1000);
   }
