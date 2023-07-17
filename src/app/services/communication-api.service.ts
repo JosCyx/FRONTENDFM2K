@@ -12,7 +12,7 @@ export class CommunicationApiService {
 
   constructor(private http:HttpClient) { }
   
-  //METODOS CRUD PARA CADA ENTIDAD, SE HAN ESCRITO UNICAMENTE LOS METODOS QUE SE ESTAN UTILIZANDO Y DE LOS CUALES SE HAYA CREADO UN CONTROLADOR
+  //METODOS CRUD PARA CADA ENTIDAD, SE HAN INCLUIDO UNICAMENTE LOS METODOS QUE SE ESTAN UTILIZANDO Y DE LOS CUALES SE HAYA CREADO UN CONTROLADOR
 
   //obtener toda la lista
   getRolsList():Observable<any[]> {
@@ -67,7 +67,6 @@ export class CommunicationApiService {
   getEmpleadosList():Observable<any[]> {
     return this.http.get<any>(this.APIUrl + '/Empleadoes');
   }
-
   
   updateEmpelado(empId:number|string, data:any) {
     return this.http.put(this.APIUrl + `/Empleadoes/${empId}`, data);
@@ -79,5 +78,9 @@ export class CommunicationApiService {
   
   getEmpleadoById(empleadoId:number):Observable<any> {
     return this.http.get<any>(this.APIUrl + `/Empleadoes/${empleadoId}`);
+  }
+
+  getAreaList():Observable<any[]> {
+    return this.http.get<any>(this.APIUrl + '/Areas');
   }
 }

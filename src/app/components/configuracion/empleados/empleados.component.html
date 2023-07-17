@@ -30,7 +30,7 @@
           <th scope="col">Identificación</th>
           <th scope="col">Nombres</th>
           <th scope="col">Apellidos</th>
-          <th scope="col">Departamento</th>
+          <th scope="col">Area</th>
           <th scope="col">Telefono</th>
           <th scope="col">Correo</th>
           <th *ngIf="edicion" scope="col">Acciones</th>
@@ -42,14 +42,9 @@
             <td>{{ item.empleadoIdentificacion }}</td>
             <td>{{ item.empleadoNombres }}</td>
             <td>{{ item.empleadoApellidos }}</td>
-            <td [ngSwitch]="item.empleadoIdDpto">
-              <span *ngSwitchCase=1>Sistemas</span>
-              <span *ngSwitchCase=2>Contabilidad</span>
-              <span *ngSwitchCase=3>Compras</span>
-              <span *ngSwitchCase=4>Financiero</span>
-              <span *ngSwitchCase=5>Operaciones</span>
-              <span *ngSwitchCase=6>Marketing</span>
-            </td>
+            <ng-container *ngFor="let area of areaList$|async">
+              <td *ngIf="area.areaId === item.empleadoIdDpto">{{ area.areaDescp }}</td>
+            </ng-container>
             <td>{{ item.empleadoTelefono }}</td>
             <td>{{ item.empleadoCorreo }}</td>
             <td *ngIf="edicion">
@@ -88,7 +83,7 @@
         <label class="form-label">Departamento:</label>
         <select class="form-control" name="Departamento" [(ngModel)]="empDpto">
           <option selected></option>
-          <option *ngFor="let dpto of dptoList$|async" [value]="dpto.depId">{{dpto.depDescp}}</option>
+          <option *ngFor="let area of areaList$|async" [value]="area.areaId">{{area.areaDescp}}</option>
         </select>
       </div>
     </form>

@@ -24,13 +24,15 @@ export class EmpleadosComponent {
   mensajeExito: string = '';
 
   empleadoList$!: Observable<any[]>;
+  areaList$!: Observable<any[]>;
   dptoList$!: Observable<any[]>;
 
   constructor(private service: CommunicationApiService) {}
 
   ngOnInit() {
     this.empleadoList$ = this.service.getEmpleadosList();
-    this.dptoList$ = this.service.obtenerDepartamento();
+    this.areaList$ = this.service.getAreaList();
+
   }
 
   editar(view: string): void {
