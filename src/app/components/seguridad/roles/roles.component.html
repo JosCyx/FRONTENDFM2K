@@ -38,10 +38,10 @@
                     <option value="I">Inactivo</option>
                 </select>
             </div>
+            <div class="form cmp-form">
+                <span class="text-success">{{ mensajeExito }}</span>
+            </div>
         </form>
-        <div>
-            <span class="text-success">{{ mensajeExito }}</span>
-        </div>
         <div class="text-end">
             <button [disabled]="!nombre || !idAplicacion || !estado" type="submit" class="btn btn-primary m-2"
                 (click)="agregarRol()">Agregar rol</button>
