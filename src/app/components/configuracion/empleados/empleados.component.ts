@@ -14,7 +14,7 @@ export class EmpleadosComponent {
   empIdentificacion: string = '';
   empCorreo: string = '';
   empDpto: number = 0;
-  empTipoId: string = '';
+  empTipoId: number = 0;
   empSexo: string = '';
   empTelefono: string = '';
 
@@ -44,12 +44,17 @@ export class EmpleadosComponent {
 
   }
 
+  //limpia las variables y regresa a la vista de consultar
   cancelar(): void {
     this.empNombres = '';
-    this.empApellidos = '';
-    this.empCorreo = '';
-    this.empIdentificacion = '';
-    this.empDpto = 0;
+      this.empApellidos = '';
+      this.empCorreo = '';
+      this.empIdentificacion = '';
+      this.empDpto = 0;
+      this.empId = 0;
+      this.empSexo = '';
+      this.empTelefono = '';
+      this.empTipoId = 0;
 
     this.changeview = 'consulta';
   }
@@ -129,9 +134,13 @@ export class EmpleadosComponent {
       this.empCorreo = '';
       this.empIdentificacion = '';
       this.empDpto = 0;
+      this.empId = 0;
+      this.empSexo = '';
+      this.empTelefono = '';
+      this.empTipoId = 0;
+
       this.changeview = 'consulta';
       }, 1000);
   }
 }
-
 
