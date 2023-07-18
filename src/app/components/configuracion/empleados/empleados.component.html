@@ -64,14 +64,14 @@
     <table class="table table-bordered table-striped text-center" *ngIf="(empleadoList$ | async)?.length != 0">
       <thead>
         <tr>
-          <th>Identificación</th>
-          <th>Nombres</th>
-          <th>Apellidos</th>
-          <th class="w-25">Area</th>
-          <th>Departamento</th>
-          <th>Correo</th>
-          <th *ngIf="edicion">Estado</th>
-          <th *ngIf="edicion">Acciones</th>
+          <th class="col-sm">Identificación</th>
+          <th class="col-sm">Nombres</th>
+          <th class="col-sm">Apellidos</th>
+          <th class="col-sm">Area</th>
+          <th class="col-sm">Departamento</th>
+          <th class="col-sm">Correo</th>
+          <th class="col-sm" *ngIf="edicion">Estado</th>
+          <th class="col-sm" *ngIf="edicion">Acciones</th>
         </tr>
       </thead>
       <tbody>
