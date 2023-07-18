@@ -51,6 +51,10 @@ export class CommunicationApiService {
     return this.http.get<any>(this.APIUrl +'/Departamentoes');
   }
 
+  getDptoById(dptoId:number):Observable<any> {
+    return this.http.get<any>(this.APIUrl + `/Departamentoes/${dptoId}`);
+  }
+
   //obtener lista de aplicaciones
   getAplicacionesList():Observable<any[]>{
     return this.http.get<any>(this.APIUrl + '/Aplicaciones');
