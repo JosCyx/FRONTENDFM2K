@@ -27,3 +27,7 @@
 a:hover{
   cursor: pointer;
 }
+
+.col-sm{
+  width: 10%;
+}

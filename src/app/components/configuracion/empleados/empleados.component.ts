@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
-import { Observable, combineLatest  } from 'rxjs';
-import {  switchMap, map } from 'rxjs/operators';
+import { Observable, map } from 'rxjs';
+import { PaginationInstance } from 'ngx-pagination';
 
 
 @Component({
@@ -12,14 +12,16 @@ import {  switchMap, map } from 'rxjs/operators';
 export class EmpleadosComponent implements OnInit {
   //variables que almacenan el contenido de la tabla empleados tenporalmente y nos sirve para editarlos
   empId: number = 0;
+  empIdNomina: number = 0;
   empNombres: string = '';
   empApellidos: string = '';
   empIdentificacion: string = '';
-  empCorreo: string = 'N/A';
+  empCorreo: string = '';
+  empArea: string = '';
   empDpto: number = 0;
   empTipoId: number = 0;
   empSexo: string = '';
-  empTelefono: string = 'N/A';
+  empTelefono: string = '';
   empEstado: string = '';
 
   //almacena el id del area al que pertenece un departamento
@@ -29,6 +31,7 @@ export class EmpleadosComponent implements OnInit {
   changeview: string = 'consulta';
   edicion: boolean = false;
   mensajeExito: string = '';
+  currentPage: number = 1 ;
 
   //listas que almacenan el contenido de las tablas
   empleadoList$!: Observable<any[]>;
@@ -48,6 +51,19 @@ export class EmpleadosComponent implements OnInit {
     );
   }
 
+  //incrementa el valor d la variable que controla la pagina actual que se muestra
+  nextPage():void {
+    this.currentPage++;
+  }
+
+  //decrementa el valor de la variable que controla la pagina actual que se muestra
+  prevPage():void {
+    if (this.currentPage > 1) {
+      this.currentPage--; // Disminuir currentPage en uno si no está en la primera página
+    }
+  }
+
+
   editar(view: string): void {
     this.changeview = view;
     this.edicion = true;
@@ -63,12 +79,14 @@ export class EmpleadosComponent implements OnInit {
   cancelar(): void {
     this.empNombres = '';
     this.empApellidos = '';
-    this.empCorreo = 'N/A';
+    this.empCorreo = '';
     this.empIdentificacion = '';
+    this.empArea = '';
     this.empDpto = 0;
     this.empId = 0;
+    this.empIdNomina = 0;
     this.empSexo = '';
-    this.empTelefono = 'N/A';
+    this.empTelefono = '';
     this.empTipoId = 0;
     this.empEstado = '';
 
@@ -85,15 +103,18 @@ export class EmpleadosComponent implements OnInit {
     this.service.getEmpleadoById(this.empId).subscribe(
       response => {
         //aunque no se muestren en pantalla todas, guardamos todos los datos que trae nuestra tabla en variables locales para luego usarlas al enviar el put
+        this.empIdNomina = response.empleadoIdNomina;
         this.empNombres = response.empleadoNombres;
         this.empApellidos = response.empleadoApellidos;
         this.empIdentificacion = response.empleadoIdentificacion;
         this.empCorreo = response.empleadoCorreo;
+        this.empArea = response.empleadoIdArea;
         this.empDpto = response.empleadoIdDpto;
         this.empTipoId = response.empleadoTipoId;
         this.empSexo = response.empleadoSexo;
         this.empTelefono = response.empleadoTelefono;
         this.empEstado = response.empleadoEstado;
+        console.log(this.empDpto);
       },
       error => {
         // Manejar cualquier error que ocurra durante la llamada a la API aquí
@@ -104,11 +125,31 @@ export class EmpleadosComponent implements OnInit {
     this.changeview = 'editar';
   }
 
+
+  /*{
+    +++"empleadoId": 1,
+    +++"empleadoCompania": 1,
+    +++"empleadoIdNomina": 1,
+    +++"empleadoIdDpto": 65,
+    +++"empleadoIdArea": 11,
+    +++"empleadoTipoId": "C",
+    +++"empleadoIdentificacion": "0914615638",
+    +++"empleadoNombres": "EDWARD FABIAN",
+    +++"empleadoApellidos": "FIGUEROA RIOS",
+    +++"empleadoSexo": "M",
+    +++"empleadoTelefono": "",
+    +++"empleadoCorreo": "presupuesto@malecon2000.org.ec",
+    +++"empleadoEstado": "A"
+  }*/
+
+
   guardarEdicion(): void {
     //es necesario enviar todos los campos cuando se realiza u put (edicion), de lo contrario retornara errores
     const data = {
       empleadoId: this.empId,
+      empleadoIdNomina: this.empIdNomina,
       empleadoIdDpto: this.empDpto,
+      empleadoIdArea: this.empArea,
       empleadoCompania: 1,
       empleadoTipoId: this.empTipoId,
       empleadoIdentificacion: this.empIdentificacion,
@@ -137,17 +178,20 @@ export class EmpleadosComponent implements OnInit {
       // Restablecer las variables locales a sus valores iniciales
       this.empNombres = '';
       this.empApellidos = '';
-      this.empCorreo = 'N/A';
+      this.empCorreo = '';
       this.empIdentificacion = '';
+      this.empArea = '';
       this.empDpto = 0;
       this.empId = 0;
+      this.empIdNomina = 0;
       this.empSexo = '';
-      this.empTelefono = 'N/A';
+      this.empTelefono = '';
       this.empTipoId = 0;
       this.empEstado = '';
 
       this.changeview = 'consulta';
     }, 1000);
   }
+
 }
 
