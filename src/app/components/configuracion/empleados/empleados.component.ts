@@ -19,7 +19,7 @@ export class EmpleadosComponent implements OnInit {
   empCorreo: string = '';
   empArea: string = '';
   empDpto: number = 0;
-  empTipoId: number = 0;
+  empTipoId: string = '';
   empSexo: string = '';
   empTelefono: string = '';
   empEstado: string = '';
@@ -32,6 +32,8 @@ export class EmpleadosComponent implements OnInit {
   edicion: boolean = false;
   mensajeExito: string = '';
   currentPage: number = 1 ;
+  showOther: boolean = false;
+  checkSexo: string = '';
 
   //listas que almacenan el contenido de las tablas
   empleadoList$!: Observable<any[]>;
@@ -63,7 +65,6 @@ export class EmpleadosComponent implements OnInit {
     }
   }
 
-
   editar(view: string): void {
     this.changeview = view;
     this.edicion = true;
@@ -72,9 +73,27 @@ export class EmpleadosComponent implements OnInit {
   changeView(view: string): void {
     this.changeview = view;
     this.edicion = false;
-
   }
 
+  checkOtro(){
+    if( this.checkSexo === 'M'){
+      this.showOther = false;
+      this.empSexo = this.checkSexo;
+      console.log(this.empSexo);
+    }else if(this.checkSexo === 'F'){
+      this.showOther = false;
+      this.empSexo = this.checkSexo;
+      console.log(this.empSexo);
+    }else if (this.checkSexo === 'otro'){
+      this.empSexo = '';
+      this.checkSexo = 'otro'
+      this.showOther = true;
+    }
+  }
+
+  si():void{
+    console.log(this.empNombres,this.empSexo);
+  }
   //limpia las variables y regresa a la vista de consultar
   cancelar(): void {
     this.empNombres = '';
@@ -87,14 +106,44 @@ export class EmpleadosComponent implements OnInit {
     this.empIdNomina = 0;
     this.empSexo = '';
     this.empTelefono = '';
-    this.empTipoId = 0;
+    this.empTipoId = '';
     this.empEstado = '';
 
     this.changeview = 'consulta';
   }
 
   agregarEmpleado(){
+    const data = {
+      empleadoIdNomina: this.empIdNomina,
+      empleadoIdDpto: this.empDpto,
+      empleadoIdArea: this.empArea,
+      empleadoCompania: 1,
+      empleadoTipoId: this.empTipoId,
+      empleadoIdentificacion: this.empIdentificacion,
+      empleadoNombres: this.empNombres,
+      empleadoApellidos: this.empApellidos,
+      empleadoSexo: this.empSexo,
+      empleadoTelefono: this.empTelefono,
+      empleadoCorreo: this.empCorreo,
+      empleadoEstado: this.empEstado
+    };
 
+    this.service.addEmpleados(data).subscribe(
+      response => {
+        // Manejar la respuesta de la API aquí si es necesario
+        console.log('Empleado agregado exitosamente:', response);
+      },
+      error => {
+        // Manejar cualquier error que ocurra durante la llamada a la API aquí
+        console.error('Error al agregar el empleado:', error);
+      }
+    );
+
+    this.mensajeExito = 'Empleado registrado exitosamente.';
+    setTimeout(() => {
+      this.mensajeExito = '';
+      this.changeview = 'consulta';
+      }, 1000);
   }
 
   editarEmpleado(id: number) {
@@ -124,24 +173,6 @@ export class EmpleadosComponent implements OnInit {
     // Cambiar la variable de vista para mostrar la pantalla de edición
     this.changeview = 'editar';
   }
-
-
-  /*{
-    +++"empleadoId": 1,
-    +++"empleadoCompania": 1,
-    +++"empleadoIdNomina": 1,
-    +++"empleadoIdDpto": 65,
-    +++"empleadoIdArea": 11,
-    +++"empleadoTipoId": "C",
-    +++"empleadoIdentificacion": "0914615638",
-    +++"empleadoNombres": "EDWARD FABIAN",
-    +++"empleadoApellidos": "FIGUEROA RIOS",
-    +++"empleadoSexo": "M",
-    +++"empleadoTelefono": "",
-    +++"empleadoCorreo": "presupuesto@malecon2000.org.ec",
-    +++"empleadoEstado": "A"
-  }*/
-
 
   guardarEdicion(): void {
     //es necesario enviar todos los campos cuando se realiza u put (edicion), de lo contrario retornara errores
@@ -186,7 +217,7 @@ export class EmpleadosComponent implements OnInit {
       this.empIdNomina = 0;
       this.empSexo = '';
       this.empTelefono = '';
-      this.empTipoId = 0;
+      this.empTipoId = '';
       this.empEstado = '';
 
       this.changeview = 'consulta';
