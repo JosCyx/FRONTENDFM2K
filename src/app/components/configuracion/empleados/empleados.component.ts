@@ -17,7 +17,7 @@ export class EmpleadosComponent implements OnInit {
   empApellidos: string = '';
   empIdentificacion: string = '';
   empCorreo: string = '';
-  empArea: string = '';
+  empArea: number = 0;
   empDpto: number = 0;
   empTipoId: string = '';
   empSexo: string = '';
@@ -71,6 +71,7 @@ export class EmpleadosComponent implements OnInit {
   }
 
   changeView(view: string): void {
+    this.clear();
     this.changeview = view;
     this.edicion = false;
   }
@@ -94,13 +95,13 @@ export class EmpleadosComponent implements OnInit {
   si():void{
     console.log(this.empNombres,this.empSexo);
   }
-  //limpia las variables y regresa a la vista de consultar
-  cancelar(): void {
+
+  clear():void{
     this.empNombres = '';
     this.empApellidos = '';
     this.empCorreo = '';
     this.empIdentificacion = '';
-    this.empArea = '';
+    this.empArea = 0;
     this.empDpto = 0;
     this.empId = 0;
     this.empIdNomina = 0;
@@ -108,16 +109,34 @@ export class EmpleadosComponent implements OnInit {
     this.empTelefono = '';
     this.empTipoId = '';
     this.empEstado = '';
+  }
+  //limpia las variables y regresa a la vista de consultar
+  cancelar(): void {
+    this.clear();
 
     this.changeview = 'consulta';
   }
 
+  // { arreglo para insertar datos en la base
+  //   "empleadoCompania": 1,
+  //   "empleadoIdNomina": 5555,
+  //   "empleadoIdDpto": 1,
+  //   "empleadoIdArea": 1,
+  //   "empleadoTipoId": "C",
+  //   "empleadoIdentificacion": "3216549870",
+  //   "empleadoNombres": "nombre empleado",
+  //   "empleadoApellidos": "apellido empleado",
+  //   "empleadoSexo": "no se",
+  //   "empleadoTelefono": "",
+  //   "empleadoCorreo": "",
+  //   "empleadoEstado": "A"
+  // }
   agregarEmpleado(){
     const data = {
+      empleadoCompania: 1,
       empleadoIdNomina: this.empIdNomina,
       empleadoIdDpto: this.empDpto,
       empleadoIdArea: this.empArea,
-      empleadoCompania: 1,
       empleadoTipoId: this.empTipoId,
       empleadoIdentificacion: this.empIdentificacion,
       empleadoNombres: this.empNombres,
@@ -207,18 +226,7 @@ export class EmpleadosComponent implements OnInit {
     this.mensajeExito = 'Empleado editado exitosamente.';
     setTimeout(() => {
       // Restablecer las variables locales a sus valores iniciales
-      this.empNombres = '';
-      this.empApellidos = '';
-      this.empCorreo = '';
-      this.empIdentificacion = '';
-      this.empArea = '';
-      this.empDpto = 0;
-      this.empId = 0;
-      this.empIdNomina = 0;
-      this.empSexo = '';
-      this.empTelefono = '';
-      this.empTipoId = '';
-      this.empEstado = '';
+      this.clear();
 
       this.changeview = 'consulta';
     }, 1000);

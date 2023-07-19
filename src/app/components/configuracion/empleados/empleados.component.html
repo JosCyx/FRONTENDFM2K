@@ -14,81 +14,99 @@
     </nav>
   </div>
 
-  <div class="formRol" *ngIf="changeview === 'crear'">
+  <div class="formCreate" *ngIf="changeview === 'crear'">
     <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de empleados</h3>
+
     <form class="form-rol">
       <div class="form cmp-form">
         <label class="form-label">Id de nómina:</label>
-        <input [(ngModel)]="empIdNomina" name="idnomina" type="text" class="form-control"/>
+        <input [(ngModel)]="empIdNomina" name="idnomina" type="text" class="form-control" placeholder="Ingrese el numero de nómina"/>
       </div>
-      <div class="form cmp-form">
-        <label class="form-label">Tipo de identificación:</label>
-        <select class="form-control" name="tipoid" [(ngModel)]="empTipoId" placeholder="Seleccione el tipo de id">
-          <option value="C">Cédula</option>
-          <option value="R">RUC</option>
-          <option value="P">Pasaporte</option>
-        </select>
-      </div>
-      <div class="form cmp-form">
-        <label class="form-label">Identificación:</label>
-        <input [(ngModel)]="empIdentificacion" name="Identificacion" type="text" class="form-control"/>
-      </div>
-      <div class="form cmp-form">
-        <label class="form-label">Nombres:</label>
-        <input [(ngModel)]="empNombres" name="Nombres" type="text" class="form-control"/>
-      </div>
-      <div class="form cmp-form">
-        <label class="form-label">Apellidos:</label>
-        <input [(ngModel)]="empApellidos" name="Apellidos" type="text" class="form-control"/>
-      </div>
-      <div class="form cmp-form">
-        <label class="form-label">Teléfono:</label>
-        <input [(ngModel)]="empTelefono" name="Telefono" type="text" class="form-control"/>
-      </div>
-      <div class="form cmp-form">
-        <label class="form-label">Sexo:</label>
-        <select class="form-control" name="Sexo" [(ngModel)]="checkSexo"  (change)="checkOtro()">
-          <option value="M">Masculino</option>
-          <option value="F">Femenino</option>
-          <option value="otro">Otro</option>
-        </select>
-        <div *ngIf="showOther" class="form-group mt-3">
-          <label for="otro">Especifique:</label>
-          <input type="text" class="form-control" name="Sexo" [(ngModel)]="empSexo">
+      <div class="d-flex row">
+        <div class="form cmp-form col">
+          <label class="form-label">Tipo de identificación:</label>
+          <select class="form-control" name="tipoid" [(ngModel)]="empTipoId" placeholder="Seleccione el tipo de id">
+            <option disabled selected value="">Selecciona una opción..</option>
+            <option value="C">Cédula</option>
+            <option value="R">RUC</option>
+            <option value="P">Pasaporte</option>
+          </select>
+        </div>
+        <div class="form cmp-form col">
+          <label class="form-label">Identificación:</label>
+          <input [(ngModel)]="empIdentificacion" name="Identificacion" type="text" class="form-control"  placeholder="Ingrese el numero identificación"/>
         </div>
       </div>
+      <div class="d-flex row">
+        <div class="form cmp-form col">
+          <label class="form-label">Nombres:</label>
+          <input [(ngModel)]="empNombres" name="Nombres" type="text" class="form-control"  placeholder="Ingrese los nombres"/>
+        </div>
+        <div class="form cmp-form col">
+          <label class="form-label">Apellidos:</label>
+          <input [(ngModel)]="empApellidos" name="Apellidos" type="text" class="form-control"  placeholder="Ingrese los apellidos"/>
+        </div>
+      </div>
+      <div class="d-flex row">
+        <div class="form cmp-form col">
+          <label class="form-label">Teléfono:</label>
+          <input [(ngModel)]="empTelefono" name="Telefono" type="text" class="form-control"  placeholder="Ingrese el numero de teléfono"/>
+        </div>
+        <div class="form cmp-form col">
+          <label class="form-label">Sexo:</label>
+          <select class="form-control" name="Sexo" [(ngModel)]="checkSexo" (change)="checkOtro()">
+            <option disabled selected value="">Selecciona una opción..</option>
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+            <option value="otro">Otro</option>
+          </select>
+          <div *ngIf="showOther" class="form-group mt-3">
+            <label for="otro">Especifique:</label>
+            <input type="text" class="form-control" name="Sexo" [(ngModel)]="empSexo">
+          </div>
+        </div>
+      </div>
+
       <div class="form cmp-form">
         <label class="form-label">Correo:</label>
-        <input [(ngModel)]="empCorreo" name="Correo" type="email" class="form-control"/>
+        <input [(ngModel)]="empCorreo" name="Correo" type="email" class="form-control"  placeholder="Ingrese la dirección de correo electrónico"/>
       </div>
-      <div class="form cmp-form">
-        <label class="form-label">Area:</label>
-        <select class="form-control" name="Area" [(ngModel)]="empArea">
-          <option selected></option>
-          <option *ngFor="let area of areaList$|async" [value]="area.areaIdNomina">{{area.areaDescp}}</option>
-        </select>
+      <div class="d-flex row">
+        <div class="form cmp-form col">
+          <label class="form-label">Area:</label>
+          <select class="form-control" name="Area" [(ngModel)]="empArea">
+            <option disabled selected value=0>Selecciona un departamento..</option>
+            <option *ngFor="let area of areaList$|async" [value]="area.areaIdNomina">{{area.areaDecp}}</option>
+          </select>
+        </div>
+        <div class="form cmp-form col">
+          <label class="form-label">Departamento:</label>
+          <select class="form-control" name="Departamento" [(ngModel)]="empDpto">
+            <option disabled selected value=0>Selecciona una area..</option>
+            <option *ngFor="let dpto of dptoList$|async" [value]="dpto.depIdNomina">{{dpto.depDescp}}</option>
+          </select>
+        </div>
       </div>
-      <div class="form cmp-form">
-        <label class="form-label">Departamento:</label>
-        <select class="form-control" name="Departamento" [(ngModel)]="empDpto">
-          <option selected></option>
-          <option *ngFor="let dpto of dptoList$|async" [value]="dpto.depIdNomina">{{dpto.depDescp}}</option>
-        </select>
-      </div>
+
       <div class="form cmp-form">
         <label class="form-label">Estado:</label>
         <select class="form-select" name="estado" [(ngModel)]="empEstado">
-          <option value="A">Activo</option>
+          <option disabled selected value=''>Selecciona una opción..</option>
+          <option value="A" selected>Activo</option>
           <option value="I">Inactivo</option>
         </select>
       </div>
     </form>
+
+
     <div>
       <span class="text-success">{{ mensajeExito }}</span>
     </div>
     <div class="text-end">
-      <button  type="submit" class="btn btn-primary m-2"
-        (click)="si()">Agregar empleado</button>
+      <button type="submit" class="btn btn-primary m-2" 
+        [disabled]="!empNombres || !empApellidos || empIdNomina === 0 || !empTipoId  || !empIdentificacion ||
+        !empSexo || empArea === 0 || empDpto === 0 || !empEstado"
+        (click)="agregarEmpleado()">Agregar empleado</button>
       <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
     </div>
   </div>
@@ -98,7 +116,8 @@
 
     <div class="d-flex align-items-center justify-content-between">
       <h3 class="font-weight-bold" style="padding-bottom: 5pt;">Empleados registrados</h3>
-      <p class="text-danger no-rol text-center" *ngIf="(empleadoList$ | async)?.length === 0">No hay empleados registrados.</p>
+      <p class="text-danger no-rol text-center" *ngIf="(empleadoList$ | async)?.length === 0">No hay empleados
+        registrados.</p>
       <nav aria-label="navigation">
         <ul class="pagination">
           <li class="page-item"><a class="page-link" (click)="prevPage()">Anterior</a></li>
@@ -124,37 +143,37 @@
           <ng-container
             *ngFor="let item of empleados | paginate: { itemsPerPage: 10, currentPage: currentPage } let i=index">
             <tr>
-                <td>{{ item.empleadoIdentificacion }}</td>
-                <td>{{ item.empleadoNombres }}</td>
-                <td>{{ item.empleadoApellidos }}</td>
-                <ng-container *ngIf="item.empleadoIdArea != 0;else sinArea">
-                  <ng-container *ngFor="let area of areaList$|async">
-                    <td *ngIf="area.areaIdNomina === item.empleadoIdArea">{{ area.areaDescp }}</td>
-                  </ng-container>
+              <td class="align-middle">{{ item.empleadoIdentificacion }}</td>
+              <td class="align-middle">{{ item.empleadoNombres }}</td>
+              <td class="align-middle">{{ item.empleadoApellidos }}</td>
+              <ng-container *ngIf="item.empleadoIdArea != 0;else sinArea">
+                <ng-container *ngFor="let area of areaList$|async">
+                  <td class="align-middle" *ngIf="area.areaIdNomina === item.empleadoIdArea">{{ area.areaDecp }}</td>
                 </ng-container>
-                <ng-template #sinArea>
-                  <td>Sin area</td>
-                </ng-template>
-                <ng-container *ngIf="item.empleadoIdDpto != 0;else sinDpto">
-                  <ng-container *ngFor="let dpto of dptoList$|async">
-                    <td *ngIf="dpto.depIdNomina === item.empleadoIdDpto">{{ dpto.depDescp }}</td>
-                  </ng-container>
-                </ng-container>              
-                <ng-template #sinDpto>
-                  <td>Sin departamento</td>
-                </ng-template>
-                <td>{{ item.empleadoCorreo ? item.empleadoCorreo : 'Sin correo' }}</td>
-                <td *ngIf="edicion" [ngSwitch]="item.empleadoEstado ">
-                  <span *ngSwitchCase="'A'">Activo</span>
-                  <span *ngSwitchCase="'I'">Inactivo</span>
-                </td>
-                <td *ngIf="edicion">
-                  <a class="text-success m-3" (click)="editarEmpleado(item.empleadoId)">
-                    <i class="bi bi-pencil-square h5"></i>
-                  </a>
-                </td>
+              </ng-container>
+              <ng-template #sinArea>
+                <td class="align-middle">Sin area</td>
+              </ng-template>
+              <ng-container *ngIf="item.empleadoIdDpto != 0;else sinDpto">
+                <ng-container *ngFor="let dpto of dptoList$|async">
+                  <td class="align-middle" *ngIf="dpto.depIdNomina === item.empleadoIdDpto">{{ dpto.depDescp }}</td>
+                </ng-container>
+              </ng-container>
+              <ng-template #sinDpto>
+                <td class="align-middle">Sin departamento</td>
+              </ng-template>
+              <td class="align-middle">{{ item.empleadoCorreo ? item.empleadoCorreo : 'Sin correo' }}</td>
+              <td class="align-middle" *ngIf="edicion" [ngSwitch]="item.empleadoEstado ">
+                <span *ngSwitchCase="'A'">Activo</span>
+                <span *ngSwitchCase="'I'">Inactivo</span>
+              </td>
+              <td class="align-middle" *ngIf="edicion">
+                <a class="text-success" (click)="editarEmpleado(item.empleadoId)">
+                  <i class="bi bi-pencil-square h6"></i>
+                </a>
+              </td>
             </tr>
-           
+
           </ng-container>
         </tbody>
       </table>

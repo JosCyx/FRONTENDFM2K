@@ -10,12 +10,20 @@
   padding-top: 5px;
 }
 
+.formulario{
+  align-items: center;
+}
+
 .listRol, .formRol{
   padding-top: 30pt;
   padding-bottom: 100px;
   margin: 0 auto;
 }
 .formedit{
+  width: 65%;
+  margin: 0 auto;
+}
+.formCreate{
   width: 65%;
   margin: 0 auto;
 }
