@@ -26,7 +26,7 @@
             <div class="form cmp-form">
                 <label class="form-label">Aplicacion:</label>
                 <select class="form-control" name="aplicacion" id="aplicacion" [(ngModel)]="idAplicacion">
-                    <option disabled selected value="">Selecciona una aplicación..</option>
+                    <option disabled selected value=0>Selecciona una aplicación...</option>
                     <option *ngFor="let app of appsList$|async" [value]="app.apCodigo">{{app.apNombre}}</option>
                 </select> 
             </div>
@@ -34,7 +34,7 @@
             <div class="form cmp-form">
                 <label class="form-label">Estado:</label>
                 <select class="form-select" name="estado" [(ngModel)]="estado">
-                    <option disabled selected value="">Selecciona un estado..</option>
+                    <option disabled selected value="">Selecciona un estado...</option>
                     <option value="A">Activo</option>
                     <option value="I">Inactivo</option>
                 </select>
@@ -127,14 +127,14 @@
             <div class="form cmp-form">
                 <label class="form-label">Aplicacion:</label>
                 <select class="form-control" name="idAplicacion" [(ngModel)]="idAplicacion">
-                   
+                    <option selected disabled value=0>Selecciona una aplicación...</option>
                     <option *ngFor="let app of appsList$|async" [value]="app.apCodigo">{{app.apNombre}}</option>
                 </select>
             </div>
             <div class="form cmp-form">
                 <label class="form-label">Estado:</label>
                 <select class="form-select" name="estado" [(ngModel)]="estado">
-                    <option disabled selected value="">Selecciona un estado..</option>
+                    <option disabled selected value="">Selecciona un estado...</option>
                     <option value="A">Activo</option>
                     <option value="I">Inactivo</option>
                 </select>

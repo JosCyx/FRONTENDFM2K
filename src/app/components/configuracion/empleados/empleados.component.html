@@ -27,7 +27,7 @@
         <div class="form cmp-form col">
           <label class="form-label">Tipo de identificación:</label>
           <select class="form-control" name="tipoid" [(ngModel)]="empTipoId">
-            <option disabled selected value="">Selecciona una opción..</option>
+            <option disabled selected value="">Selecciona una opción...</option>
             <option value="C">Cédula</option>
             <option value="R">RUC</option>
             <option value="P">Pasaporte</option>
@@ -60,7 +60,7 @@
         <div class="form cmp-form col">
           <label class="form-label">Sexo:</label>
           <select class="form-control" name="Sexo" [(ngModel)]="checkSexo" (change)="checkOtro()">
-            <option disabled selected value="">Selecciona una opción..</option>
+            <option disabled selected value="">Selecciona una opción...</option>
             <option value="M">Masculino</option>
             <option value="F">Femenino</option>
             <option value="otro">Otro</option>
@@ -81,14 +81,14 @@
         <div class="form cmp-form col">
           <label class="form-label">Area:</label>
           <select class="form-control" name="Area" [(ngModel)]="empArea">
-            <option disabled selected value=0>Selecciona un departamento..</option>
+            <option disabled selected value=0>Selecciona un departamento...</option>
             <option *ngFor="let area of areaList$|async" [value]="area.areaIdNomina">{{area.areaDecp}}</option>
           </select>
         </div>
         <div class="form cmp-form col">
           <label class="form-label">Departamento:</label>
           <select class="form-control" name="Departamento" [(ngModel)]="empDpto">
-            <option disabled selected value=0>Selecciona una area..</option>
+            <option disabled selected value=0>Selecciona una area...</option>
             <option *ngFor="let dpto of dptoList$|async" [value]="dpto.depIdNomina">{{dpto.depDescp}}</option>
           </select>
         </div>
@@ -97,7 +97,7 @@
       <div class="form cmp-form">
         <label class="form-label">Estado:</label>
         <select class="form-select" name="estado" [(ngModel)]="empEstado">
-          <option disabled selected value=''>Selecciona una opción..</option>
+          <option disabled selected value=''>Selecciona una opción...</option>
           <option value="A" selected>Activo</option>
           <option value="I">Inactivo</option>
         </select>
