@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
 
@@ -8,7 +7,7 @@ import { CommunicationApiService } from 'src/app/services/communication-api.serv
   templateUrl: './ruteo.component.html',
   styleUrls: ['./ruteo.component.css']
 })
-export class RuteoComponent {
+export class RuteoComponent implements OnInit{
   areas = ['Operaciones', 'Sistemas', 'Marketing', 'Contabilidad'];
   departamento:string='';
   tiposoli:string='';
@@ -41,7 +40,7 @@ export class RuteoComponent {
   itemsPerPage: number = 1;
   edicion: boolean = false;
 
-  changeview: string = 'consultar';  
+  changeview: string = 'consulta';  
   constructor(private servicios:CommunicationApiService) {
 
   }

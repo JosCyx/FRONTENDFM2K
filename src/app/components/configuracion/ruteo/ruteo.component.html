@@ -6,10 +6,10 @@
   <div class="">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <button class="btn btn-primary m-2" (click)="changeView('ingresar')">Ingresar</button>
-          <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar</button>
+        <div class="navbar-nav">          
+          <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
           <button class="btn btn-primary m-2" (click)="changeView('editar')">Editar</button>
+          <button class="btn btn-primary m-2" (click)="changeView('ingresar')">Crear</button>
         </div>
       </div>
     </nav>
@@ -54,7 +54,7 @@
   </div>
 </div>
 
-<div class="formRol" *ngIf="changeview === 'consultar'">
+<div class="formRol" *ngIf="changeview === 'consulta'">
   <h3 class="font-weight-bold" style="padding-top: 20pt;">Ruteo de Area</h3>
   <!--<p class="text-danger no-rol text-center" *ngIf="listaRoles.length === 0">No hay roles registrados.</p>-->
 

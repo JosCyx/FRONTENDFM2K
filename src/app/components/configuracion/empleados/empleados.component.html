@@ -7,8 +7,8 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
-          <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
           <button class="btn btn-primary m-2" (click)="editar('consulta')">Editar</button>
+          <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>          
         </div>
       </div>
     </nav>
@@ -124,12 +124,12 @@
       <h4>Buscar por:</h4>
       <div class="busqueda d-flex justify-content-between">
         <div class="input-group mb-3">
-          <select class="form-control" name="Buscar por" [(ngModel)]="buscarOpcion">
+          <select class="form-select" name="buscarOpcion" [(ngModel)]="buscarOpcion">
             <option selected value="id">Identificación</option>
             <option value="name">Nombres</option>
             <option value="lastname">Apellidos</option>
           </select>
-          <input type="text" class="form-control" placeholder="Término de busqueda" [(ngModel)]="terminoBusqueda">
+          <input type="text" class="form-control" placeholder="Término de busqueda" name="terminoBusqueda" [(ngModel)]="terminoBusqueda">
           <button class="btn btn-outline-success" type="button" (click)="buscar()">Buscar</button>
           <button class="btn btn-outline-danger" (click)="clearSearch()">Vaciar</button>
         </div>
@@ -138,16 +138,7 @@
           <button class="btn btn-outline-primary" (click)="nextPage()">Siguiente</button>
         </div>
       </div>
-
     </div>
-
-    <!-- <p class="text-danger no-rol text-center" *ngIf="(empleadoList$ | async)?.length === 0">No hay empleados registrados.</p> -->
-    <!-- <nav aria-label="navigation">
-        <div class="pagination input-group">
-          <button class="btn navg-button btn-outline-primary" (click)="prevPage()">Anterior</button>
-          <button class="btn navg-button btn-outline-primary" (click)="nextPage()">Siguiente</button>
-        </div>
-      </nav> -->
 
     <div>
       <table class="table table-bordered table-striped text-center">
