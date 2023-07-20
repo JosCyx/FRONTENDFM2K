@@ -58,7 +58,7 @@ export class EmpleadosComponent implements OnInit {
     this.areaList$ = this.service.getAreaList();
 
     //devuelve el contenido de la tabla de departamentos ordenada alfabeticamente
-    this.dptoList$ = this.service.obtenerDepartamento().pipe(
+    this.dptoList$ = this.service.getDepartamentos().pipe(
       map(departamentos => departamentos.sort((a, b) => a.depDescp.localeCompare(b.depDescp)))
     );
   }

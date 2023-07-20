@@ -118,86 +118,90 @@
 
   <div class="listRol" *ngIf="changeview === 'consulta'">
 
-    <div class="d-flex align-items-center justify-content-between">
-      <div class="d-flex flex-column">
-        <h3 class="font-weight-bold" style="padding-bottom: 5pt;">Empleados registrados</h3>
-        <div class="busqueda d-flex">
-          <div class="input-group mb-3">
-            <select class="form-control" [(ngModel)]="buscarOpcion">
-              <option selected value="id">Identificación</option>
-              <option value="name">Nombres</option>
-              <option value="lastname">Apellidos</option>
-            </select>
-            <input type="text" class="form-control" placeholder="" [(ngModel)]="terminoBusqueda">
-            <button class="btn btn-outline-success" type="button" (click)="buscar()">Buscar</button>
-          </div>
-          <div>
-            <button class="btn btn-outline-danger ml-2" (click)="clearSearch()">Vaciar</button>
-          </div>
+
+    <div class="d-flex flex-column">
+      <h3 class="font-weight-bold" style="padding-bottom: 5pt;">Empleados registrados</h3>
+      <h4>Buscar por:</h4>
+      <div class="busqueda d-flex justify-content-between">
+        <div class="input-group mb-3">
+          <select class="form-control" name="Buscar por" [(ngModel)]="buscarOpcion">
+            <option selected value="id">Identificación</option>
+            <option value="name">Nombres</option>
+            <option value="lastname">Apellidos</option>
+          </select>
+          <input type="text" class="form-control" placeholder="Término de busqueda" [(ngModel)]="terminoBusqueda">
+          <button class="btn btn-outline-success" type="button" (click)="buscar()">Buscar</button>
+          <button class="btn btn-outline-danger" (click)="clearSearch()">Vaciar</button>
+        </div>
+        <div class="align-items-center input-group mb-3 justify-content-end">
+          <button class="btn btn-outline-primary" (click)="prevPage()">Anterior</button>
+          <button class="btn btn-outline-primary" (click)="nextPage()">Siguiente</button>
         </div>
       </div>
 
-      <!-- <p class="text-danger no-rol text-center" *ngIf="(empleadoList$ | async)?.length === 0">No hay empleados registrados.</p> -->
-      <nav aria-label="navigation">
+    </div>
+
+    <!-- <p class="text-danger no-rol text-center" *ngIf="(empleadoList$ | async)?.length === 0">No hay empleados registrados.</p> -->
+    <!-- <nav aria-label="navigation">
         <div class="pagination input-group">
           <button class="btn navg-button btn-outline-primary" (click)="prevPage()">Anterior</button>
           <button class="btn navg-button btn-outline-primary" (click)="nextPage()">Siguiente</button>
         </div>
-      </nav>
-    </div>
-      <div >
-        <table class="table table-bordered table-striped text-center">
-          <thead>
-            <tr>
-              <th class="col-sm">Identificación</th>
-              <th class="col-sm">Nombres</th>
-              <th class="col-sm">Apellidos</th>
-              <th class="col-sm">Area</th>
-              <th class="col-sm">Departamento</th>
-              <th class="col-sm">Correo</th>
-              <th class="col-sm" *ngIf="edicion">Estado</th>
-              <th class="col-sm" *ngIf="edicion">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container
-              *ngFor="let item of empleados | paginate: { itemsPerPage: 10, currentPage: currentPage } let i=index">
-              <tr>
-                <td class="align-middle">{{ item.empleadoIdentificacion }}</td>
-                <td class="align-middle">{{ item.empleadoNombres }}</td>
-                <td class="align-middle">{{ item.empleadoApellidos }}</td>
-                <ng-container *ngIf="item.empleadoIdArea != 0;else sinArea">
-                  <ng-container *ngFor="let area of areaList$|async">
-                    <td class="align-middle" *ngIf="area.areaIdNomina === item.empleadoIdArea">{{ area.areaDecp }}</td>
-                  </ng-container>
-                </ng-container>
-                <ng-template #sinArea>
-                  <td class="align-middle">Sin area</td>
-                </ng-template>
-                <ng-container *ngIf="item.empleadoIdDpto != 0;else sinDpto">
-                  <ng-container *ngFor="let dpto of dptoList$|async">
-                    <td class="align-middle" *ngIf="dpto.depIdNomina === item.empleadoIdDpto">{{ dpto.depDescp }}</td>
-                  </ng-container>
-                </ng-container>
-                <ng-template #sinDpto>
-                  <td class="align-middle">Sin departamento</td>
-                </ng-template>
-                <td class="align-middle">{{ item.empleadoCorreo ? item.empleadoCorreo : 'Sin correo' }}</td>
-                <td class="align-middle" *ngIf="edicion" [ngSwitch]="item.empleadoEstado ">
-                  <span *ngSwitchCase="'A'">Activo</span>
-                  <span *ngSwitchCase="'I'">Inactivo</span>
-                </td>
-                <td class="align-middle" *ngIf="edicion">
-                  <a class="text-success" (click)="editarEmpleado(item.empleadoId)">
-                    <i class="bi bi-pencil-square h6"></i>
-                  </a>
-                </td>
-              </tr>
+      </nav> -->
 
-            </ng-container>
-          </tbody>
-        </table>
-      </div>
+    <div>
+      <table class="table table-bordered table-striped text-center">
+        <thead>
+          <tr>
+            <th class="col-sm">Identificación</th>
+            <th class="col-sm">Nombres</th>
+            <th class="col-sm">Apellidos</th>
+            <th class="col-sm">Area</th>
+            <th class="col-sm">Departamento</th>
+            <th class="col-sm">Correo</th>
+            <th class="col-sm" *ngIf="edicion">Estado</th>
+            <th class="col-sm" *ngIf="edicion">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container
+            *ngFor="let item of empleados | paginate: { itemsPerPage: 10, currentPage: currentPage } let i=index">
+            <tr>
+              <td class="align-middle">{{ item.empleadoIdentificacion }}</td>
+              <td class="align-middle">{{ item.empleadoNombres }}</td>
+              <td class="align-middle">{{ item.empleadoApellidos }}</td>
+              <ng-container *ngIf="item.empleadoIdArea != 0;else sinArea">
+                <ng-container *ngFor="let area of areaList$|async">
+                  <td class="align-middle" *ngIf="area.areaIdNomina === item.empleadoIdArea">{{ area.areaDecp }}</td>
+                </ng-container>
+              </ng-container>
+              <ng-template #sinArea>
+                <td class="align-middle">Sin area</td>
+              </ng-template>
+              <ng-container *ngIf="item.empleadoIdDpto != 0;else sinDpto">
+                <ng-container *ngFor="let dpto of dptoList$|async">
+                  <td class="align-middle" *ngIf="dpto.depIdNomina === item.empleadoIdDpto">{{ dpto.depDescp }}</td>
+                </ng-container>
+              </ng-container>
+              <ng-template #sinDpto>
+                <td class="align-middle">Sin departamento</td>
+              </ng-template>
+              <td class="align-middle">{{ item.empleadoCorreo ? item.empleadoCorreo : 'Sin correo' }}</td>
+              <td class="align-middle" *ngIf="edicion" [ngSwitch]="item.empleadoEstado ">
+                <span *ngSwitchCase="'A'">Activo</span>
+                <span *ngSwitchCase="'I'">Inactivo</span>
+              </td>
+              <td class="align-middle" *ngIf="edicion">
+                <a class="text-success" (click)="editarEmpleado(item.empleadoId)">
+                  <i class="bi bi-pencil-square h6"></i>
+                </a>
+              </td>
+            </tr>
+
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
 
   </div>
 

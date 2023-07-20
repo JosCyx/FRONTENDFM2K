@@ -46,9 +46,9 @@ export class RuteoComponent {
 
   }
   ngOnInit(){
-    this.TipoSolicitudesList$ = this.servicios.obtenerTipoSolicitud();
+    this.TipoSolicitudesList$ = this.servicios.getTipoSolicitud();
     this.SolicotiList$ = this.servicios.getRutList();
-    this.DepartamentoList$ = this.servicios.obtenerDepartamento();
+    this.DepartamentoList$ = this.servicios.getDepartamentos();
   }
   
   agregarRut(): void {
