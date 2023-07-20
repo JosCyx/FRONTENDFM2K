@@ -34,6 +34,9 @@ export class EmpleadosComponent implements OnInit {
   currentPage: number = 1 ;
   showOther: boolean = false;
   checkSexo: string = '';
+  buscarOpcion: string = 'id';
+  terminoBusqueda: string = '';
+  empleados: any[] = [];//lista para almacenar los empleados filtrados
 
   //listas que almacenan el contenido de las tablas
   empleadoList$!: Observable<any[]>;
@@ -45,6 +48,13 @@ export class EmpleadosComponent implements OnInit {
 
   ngOnInit() {
     this.empleadoList$ = this.service.getEmpleadosList();
+
+    this.empleadoList$.subscribe((data) => {
+      this.empleados = data;
+    });
+
+    
+
     this.areaList$ = this.service.getAreaList();
 
     //devuelve el contenido de la tabla de departamentos ordenada alfabeticamente
@@ -52,6 +62,34 @@ export class EmpleadosComponent implements OnInit {
       map(departamentos => departamentos.sort((a, b) => a.depDescp.localeCompare(b.depDescp)))
     );
   }
+
+  buscar() {
+    const term = this.terminoBusqueda.trim().toLowerCase();
+  
+    if (term === '') {
+      // Si el término de búsqueda está vacío, mostrar todos los empleados
+      this.empleadoList$.subscribe((data) => {
+        this.empleados = data;
+      });
+    } else {
+      // Filtrar la lista de empleados por el criterio de búsqueda seleccionado
+      this.empleadoList$.subscribe((data) => {
+        this.empleados = data.filter((empleado) => {
+          switch (this.buscarOpcion) {
+            case 'id':
+              return empleado.empleadoIdentificacion.toLowerCase().includes(term);
+            case 'name':
+              return empleado.empleadoNombres.toLowerCase().includes(term);
+            case 'lastname':
+              return empleado.empleadoApellidos.toLowerCase().includes(term);
+            default:
+              return false;
+          }
+        });
+      });
+    }
+  }
+  
 
   //incrementa el valor d la variable que controla la pagina actual que se muestra
   nextPage():void {
@@ -92,10 +130,7 @@ export class EmpleadosComponent implements OnInit {
     }
   }
 
-  si():void{
-    console.log(this.empNombres,this.empSexo);
-  }
-
+  //limpia todas las variables locales que guardan los datos del empleado
   clear():void{
     this.empNombres = '';
     this.empApellidos = '';
@@ -110,27 +145,19 @@ export class EmpleadosComponent implements OnInit {
     this.empTipoId = '';
     this.empEstado = '';
   }
+
+  //limpia la variable que guarda el temrino a buscar y ejecuta ngOnInit
+  clearSearch():void{
+    this.terminoBusqueda = '';
+    this.ngOnInit();
+  }
+
   //limpia las variables y regresa a la vista de consultar
   cancelar(): void {
     this.clear();
-
     this.changeview = 'consulta';
   }
 
-  // { arreglo para insertar datos en la base
-  //   "empleadoCompania": 1,
-  //   "empleadoIdNomina": 5555,
-  //   "empleadoIdDpto": 1,
-  //   "empleadoIdArea": 1,
-  //   "empleadoTipoId": "C",
-  //   "empleadoIdentificacion": "3216549870",
-  //   "empleadoNombres": "nombre empleado",
-  //   "empleadoApellidos": "apellido empleado",
-  //   "empleadoSexo": "no se",
-  //   "empleadoTelefono": "",
-  //   "empleadoCorreo": "",
-  //   "empleadoEstado": "A"
-  // }
   agregarEmpleado(){
     const data = {
       empleadoCompania: 1,
