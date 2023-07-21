@@ -7,9 +7,9 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
+          <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar Niveles</button>
           <button class="btn btn-primary m-2" (click)="changeView('editar')">Asignar Niveles</button>
-          <button class="btn btn-primary m-2" (click)="changeView('ingresar')">Crear</button>
+          <button class="btn btn-primary m-2" (click)="changeView('ingresar')">Crear Nivel</button>
         </div>
       </div>
     </nav>
@@ -19,14 +19,39 @@
 
   </div>
 
-  <div class="formRol" *ngIf="changeview === 'consulta'">
+  <div class="formRol" *ngIf="changeview === 'consultar'">
+    <h3 class="font-weight-bold" style="padding-top: 20pt;">Consultar niveles asignados</h3>
 
+    <form class="form-nivel d-flex row mb-5">
+      <label class="form-label">Area:</label>
+      <div class="form input-group">
+        <select class="form-select" name="Area" [(ngModel)]="busqArea">
+          <option *ngFor="let area of areaList$|async" [value]="area.areaId">{{area.areaDecp}}</option>
+        </select>
+        <button class="btn btn-outline-success" (click)="consultarRuteo()">Consultar</button>
+      </div>
+    </form>
+
+    <div class="mb-5">
+      <table class="table table-bordered table-striped text-center">
+        <thead>
+          <tr>
+            <th *ngFor="let item of TipoSol$ | async let i=index" class="col-sm align-middle">{{ item.tipoSolNombre }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="align-middle">hola</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
 
 
   <div class="formRol" *ngIf="changeview === 'editar'">
-    <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de empleados</h3>
+    <h3 class="font-weight-bold" style="padding-top: 20pt;">Asignar niveles según el tipo de solicitud</h3>
 
     <form class="form-nivel d-flex row mb-5">
       <div class="form cmp-form col">
@@ -52,14 +77,19 @@
         </thead>
         <tbody>
           <tr>
-            <td *ngFor="let i of nivelesList" class="align-middle"><input type="checkbox" [value]="i.estado"></td>
+            <td *ngFor="let nivel of nivelesList" class="align-middle">
+              <input type="checkbox" [value]="nivel.estado" (change)="changeEstado(nivel)"
+                [disabled]="!rutArea || !rutTipoSol">
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
-
+    <div>
+      <span class="text-success">{{ mensajeExito }}</span>
+    </div>
     <div class="text-end">
-      <button class="btn btn-primary">Guardar</button>
-      <button class="btn btn-danger ml-3">Cancelar</button>
+      <button class="btn btn-primary" (click)="guardarRuteo()" [disabled]="!rutArea || !rutTipoSol">Guardar</button>
+      <button class="btn btn-danger ml-3" (click)="cancelar()">Cancelar</button>
     </div>
   </div>

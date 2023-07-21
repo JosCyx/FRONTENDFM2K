@@ -64,10 +64,6 @@ export class CommunicationApiService {
     return this.http.get<any>(this.APIUrl + '/Ruteos');
   }
 
-  addRuteos(data:any) {
-    return this.http.post(this.APIUrl + '/Ruteos', data);
-  }
-
   getEmpleadosList():Observable<any[]> {
     return this.http.get<any>(this.APIUrl + '/Empleadoes');
   }
@@ -86,5 +82,17 @@ export class CommunicationApiService {
 
   getAreaList():Observable<any[]> {
     return this.http.get<any>(this.APIUrl + '/Areas');
+  }
+
+  getRuteos():Observable<any[]> {
+    return this.http.get<any>(this.APIUrl + '/RuteoAreas');
+  }
+
+  addRuteos(data:any) {
+    return this.http.post(this.APIUrl + '/RuteoAreas', data);
+  }
+
+  getRuteosByArea(rutArea:number):Observable<any> {
+    return this.http.get<any>(this.APIUrl + `/RuteoAreas/${rutArea}`);
   }
 }
