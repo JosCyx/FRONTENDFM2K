@@ -39,12 +39,12 @@ export class CommunicationApiService {
     return this.http.delete(this.APIUrl + `/Rols/${Rocodigo}`);
   }
 
-  getSolicitudes():Observable<any[]> {
+  getNivelruteo():Observable<any[]> {
     return this.http.get<any>(this.APIUrl +'/NivelesRuteos');
   }
 
   getTipoSolicitud():Observable<any[]> {
-    return this.http.get<any>(this.APIUrl +'/TipoSolicituds');
+    return this.http.get<any>(this.APIUrl +'/TipoSolics');
   }
 
   getDepartamentos():Observable<any[]> {
