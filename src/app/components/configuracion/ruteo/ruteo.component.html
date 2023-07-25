@@ -76,11 +76,11 @@
             <th class="cab-x align-middle">{{ sol.tipoSolNombre }}</th>
 
 
-            <td *ngFor="let nvrut of nivelRut$ | async">
-              <ng-container *ngFor="let i of ruteoList" class="align-middle">
+            <td class="align-middle" *ngFor="let nvrut of nivelRut$ | async">
+              <ng-container *ngFor="let i of ruteoList">
                 <ng-container *ngIf="i.rutareaTipoSol === sol.tipoSolId">
-                  <span class="mt-5" *ngIf="nvrut.nivel === i.rutareaNivel">
-                    <i class="bi bi-check-circle-fill text-success align-middle"></i>
+                  <span *ngIf="nvrut.nivel === i.rutareaNivel">
+                    <i class="bi bi-check-circle-fill text-success"></i>
                   </span>
                 </ng-container>
               </ng-container>
