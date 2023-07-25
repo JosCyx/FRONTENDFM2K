@@ -75,18 +75,17 @@
           <tr *ngFor="let sol of TipoSol$ | async">
             <th class="cab-x align-middle">{{ sol.tipoSolNombre }}</th>
 
-            <!-- mostrar checkboxes segun el tipo de solicitud -->
-            <td *ngFor="let nvrut of nivelRut$ | async" >
+
+            <td *ngFor="let nvrut of nivelRut$ | async">
               <ng-container *ngFor="let i of ruteoList" class="align-middle">
-                <span *ngIf="nvrut.nivel == i.rutareaNivel; else checkboxEmpty">
-                  <input type="checkbox" [checked]="true" disabled>
-                </span>
-                <ng-template #checkboxEmpty>
-                  <input type="checkbox" [checked]="false" disabled>
-                </ng-template>
-              </ng-container> 
+                <ng-container *ngIf="i.rutareaTipoSol === sol.tipoSolId">
+                  <span class="mt-5" *ngIf="nvrut.nivel === i.rutareaNivel">
+                    <i class="bi bi-check-circle-fill text-success align-middle"></i>
+                  </span>
+                </ng-container>
+              </ng-container>
             </td>
-            
+
 
           </tr>
         </thead>
