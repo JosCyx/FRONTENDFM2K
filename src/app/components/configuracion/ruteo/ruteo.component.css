@@ -26,6 +26,10 @@
   margin: 0 auto;
   width: 80%;
 }
+.form-rol{
+  width: 65%;
+  margin: 0 auto;
+}
 .formedit{
   width: 65%;
   margin: 0 auto;
@@ -42,9 +46,12 @@
 a:hover{
   cursor: pointer;
 }
-
-.col-sm{
-  width: 10%;
+.cab-y{
+  width: 100px;
+}
+.cab-x{
+  width: 20%;
+  height: 60px;
 }
 .busqueda{
   width: 100%;

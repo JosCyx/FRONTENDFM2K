@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Niveles } from 'src/app/models/Niveles';
-import { Ruteo } from 'src/app/models/Ruteo';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
 
 @Component({
@@ -14,16 +13,22 @@ export class RuteoComponent implements OnInit {
   rutArea: number = 0;
   rutTipoSol: number = 0;
 
+  nvNivel: string = '';
+  nvDescp: string = '';
+  nvEstado: string = '';
+
 
   /*lista para guardar los niveles seleccionados, la cantidad de elementos depende de los niveles creados en la base de datos, 
   si se añaden mas niveles hay que actualizar esta lista*/
-  nivelesList: Niveles[] = [{ nivel: 10, estado: false }, { nivel: 20, estado: false },
+  nivelesList: Niveles[] = [
+  { nivel: 10, estado: false }, { nivel: 20, estado: false },
   { nivel: 30, estado: false }, { nivel: 40, estado: false },
   { nivel: 50, estado: false }, { nivel: 60, estado: false },
   { nivel: 70, estado: false }];
 
+  nivGuardados: any[] =[];
 
-  ruteoList: Ruteo[] = [];
+  ruteoList: any[] = [];
 
   //listas observables
   areaList$!: Observable<any[]>;
@@ -36,6 +41,8 @@ export class RuteoComponent implements OnInit {
   mensajeExito: string = '';
   mensajeError: string = '';
   busqArea: number = 0;
+  nivGuardar: number = 0;
+  showmsjNivel: boolean = false;
 
   constructor(private service: CommunicationApiService) { }
 
@@ -59,12 +66,11 @@ export class RuteoComponent implements OnInit {
   clear(): void {
     this.rutArea = 0;
     this.rutTipoSol = 0;
-
+    this.nivGuardados = [];
     for (let nivel of this.nivelesList) {
-      if (nivel.estado === true) {
-        nivel.estado = false;
-      }
+      nivel.estado = false;
     }
+
   }
 
   changeEstado(nivel: Niveles) {
@@ -72,70 +78,108 @@ export class RuteoComponent implements OnInit {
   }
 
   guardarRuteo() {
-    console.log(this.nivelesList);
+    console.log("inicio de guardado");
 
     for (let nivel of this.nivelesList) {
       if (nivel.estado === true) {
-        /*añadir validacion para ruteos existentes, if ruteo existe(ya se ha asignado el nivel *** a este tipo de solicitud)
-        si no (crear el arreglo y guardar los niveles)*/
 
+        this.service.checkRuteoExistence(this.rutTipoSol, this.rutArea, nivel.nivel).subscribe(
+          (data: any) => {
+            if (data) {
+              // Si el ruteo ya existe se guardan los valores de los niveles en una lista para mostrarlos en un mensaje
+              console.log(`El ruteo para el nivel ${nivel.nivel} ya existe.`);
+              
+              this.nivGuardar = nivel.nivel;
+              
+              this.nivGuardados.push(this.nivGuardar);
 
-        //crea el arreglo de datos unicamente cuando el estado de un nivel es true y lo envia a la API
-        const data = {
-          rutareaTipoSol: this.rutTipoSol,
-          rutareaArea: this.rutArea,
-          rutareaNivel: nivel.nivel
-        }
+              this.showmsjNivel = true;
 
-        this.service.addRuteos(data).subscribe(
-          response => {
-            console.log('Ruteo agregado exitosamente');
-            this.mensajeExito = 'Niveles asignados exitosamente.';
-            setTimeout(() => {
-              this.mensajeExito = '';
-              this.clear();
-              this.changeview = 'consultar';
-            }, 1500);
+              setTimeout(() => {
+                this.showmsjNivel = false;
+                this.nivGuardados = [];
+                //this.clear();          
+              }, 1800);
+              
+            } else {
+              // Si el ruteo no existe se crea el arreglo y se envia a la API
+              const data = {
+                rutareaTipoSol: this.rutTipoSol,
+                rutareaArea: this.rutArea,
+                rutareaNivel: nivel.nivel
+              };
+
+              
+              this.service.addRuteos(data).subscribe(
+                () => {
+                  console.log('Ruteo agregado exitosamente');
+                  this.mensajeExito = 'Niveles asignados exitosamente.';
+                  setTimeout(() => {
+                    this.mensajeExito = '';
+                    this.clear();
+                    //this.changeview = 'consultar';
+                  }, 1500);
+                },
+                error => {
+                  this.mensajeError = 'Error intente de nuevo.';
+                  console.log('Error:', error);
+                }
+              );
+            }
           },
           error => {
-            this.mensajeError = 'Error intente de nuevo.';
-            console.log('NIVEL:' + nivel.nivel);
-            console.log('Error:', error);
+            // Manejo de errores en la petición para verificar la existencia del ruteo
+            this.mensajeError = 'Error al verificar la existencia del ruteo.';
+            console.log('Error al verificar la existencia del ruteo:', error);
           }
         );
+
       }
     }
   }
 
-  /*this.service.getRuteosByArea(this.busqArea).subscribe(
-  response => {
-    this.ruteoList = response.map(item => {
-      const ruteo = new Ruteo();
-      ruteo.tipoSol = item.rutareaTipoSol;
-      ruteo.area = item.rutareaArea;
-      ruteo.nivel = item.rutareaNivel;
-      return ruteo;
-    });
-  },
-  error => {
-    console.log('Error al obtener los ruteos:', error);
-  }
-);*/
-
   consultarRuteo() {
-
     this.service.getRuteosByArea(this.busqArea).subscribe(
       response => {
-        //guardar los elementos traidos en la lista de ruteos
-        /*this.ruteoList.tipoSol = response.rutareaTipoSol,
-        this.ruteoList.area = response.rutareaArea,
-        this.ruteoList.nivel = response.rutareaNivel*/
+        this.ruteoList = response;
+        console.log("Exito: ",this.ruteoList);
       },
       error => {
-
+        console.log("Error: ",this.ruteoList);
+        console.log("Error al consultar el ruteo: ", error);
       }
     );
 
+  }
+
+  //crea un arreglo con los valores necesarios y lo envía a la API para crear un nuevo nivel
+  agregarNivel(): void {
+
+    const data = {
+      nivel: this.nvNivel,
+      descRuteo: this.nvDescp,
+      estadoRuteo: this.nvEstado
+    }
+
+    this.service.addnivelRuteo(data).subscribe(
+      response => {
+        console.log("Nivel añadido correctamente.");
+        this.mensajeExito = 'Nivel registrado exitosamente.';
+        setTimeout(() => {
+          this.mensajeExito = '';
+          this.clear();
+          this.changeview = 'consultar';
+        }, 1500);
+      },
+      error => {
+        this.mensajeError = 'Error intente de nuevo.';
+        setTimeout(() => {
+          this.mensajeError = '';
+          this.clear();
+        }, 1500);
+        console.log("Error al añadir el nivel: ", error);
+      }
+    );
   }
 }
 

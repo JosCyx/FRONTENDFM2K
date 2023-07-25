@@ -39,6 +39,10 @@ export class CommunicationApiService {
     return this.http.delete(this.APIUrl + `/Rols/${Rocodigo}`);
   }
 
+  addnivelRuteo(data:any) {
+    return this.http.post(this.APIUrl + '/NivelesRuteos', data);
+  }
+
   getNivelruteo():Observable<any[]> {
     return this.http.get<any>(this.APIUrl +'/NivelesRuteos');
   }
@@ -90,6 +94,11 @@ export class CommunicationApiService {
 
   addRuteos(data:any) {
     return this.http.post(this.APIUrl + '/RuteoAreas', data);
+  }
+
+  checkRuteoExistence(rutTipoSol: number, rutArea: number, rutNivel: number): Observable<boolean> {
+    const url = `${this.APIUrl}/RuteoAreas/checkRuteoExistence?rutTipoSol=${rutTipoSol}&rutArea=${rutArea}&rutNivel=${rutNivel}`;
+    return this.http.get<boolean>(url);
   }
 
   getRuteosByArea(rutArea:number):Observable<any> {

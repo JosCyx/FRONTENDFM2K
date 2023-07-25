@@ -16,7 +16,37 @@
   </div>
 
   <div class="formRol" *ngIf="changeview === 'ingresar'">
+    <h3 class="font-weight-bold" style="padding-top: 20pt;">Registrar nuevo nivel</h3>
 
+    <form class="form-rol">
+      <div class="form cmp-form">
+        <label class="form-label">Nombre:</label>
+        <input [(ngModel)]="nvDescp" name="Nombre" type="text" class="form-control"
+          placeholder="Ingrese el nombre del nivel." />
+      </div>
+      <div class="form cmp-form">
+        <label class="form-label">Nivel:</label>
+        <input [(ngModel)]="nvNivel" name="nivel" type="text" class="form-control"
+          placeholder="Ingrese el numero del nivel." />
+      </div>
+      <div class="form cmp-form">
+        <label class="form-label">Estado:</label>
+        <select class="form-select" name="estado" [(ngModel)]="nvEstado">
+          <option disabled selected value=''>Selecciona una opción...</option>
+          <option value="A" selected>Activo</option>
+          <option value="I">Inactivo</option>
+        </select>
+      </div>
+    </form>
+    <div>
+      <span class="text-success">{{ mensajeExito }}</span>
+    </div>
+
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary m-2" [disabled]="!nvDescp || !nvNivel || !nvEstado"
+        (click)="agregarNivel()">Agregar nivel</button>
+      <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
+    </div>
   </div>
 
   <div class="formRol" *ngIf="changeview === 'consultar'">
@@ -26,24 +56,40 @@
       <label class="form-label">Area:</label>
       <div class="form input-group">
         <select class="form-select" name="Area" [(ngModel)]="busqArea">
-          <option *ngFor="let area of areaList$|async" [value]="area.areaId">{{area.areaDecp}}</option>
+          <option *ngFor="let area of areaList$|async" [value]="area.areaIdNomina">{{area.areaDecp}}</option>
         </select>
         <button class="btn btn-outline-success" (click)="consultarRuteo()">Consultar</button>
       </div>
     </form>
 
     <div class="mb-5">
+
       <table class="table table-bordered table-striped text-center">
         <thead>
           <tr>
-            <th *ngFor="let item of TipoSol$ | async let i=index" class="col-sm align-middle">{{ item.tipoSolNombre }}</th>
+            <th></th>
+            <ng-container *ngFor="let niv of nivelRut$ | async">
+              <th class="cab-y align-middle">{{ niv.descRuteo }}</th>
+            </ng-container>
+          </tr>
+          <tr *ngFor="let sol of TipoSol$ | async">
+            <th class="cab-x align-middle">{{ sol.tipoSolNombre }}</th>
+
+            <!-- mostrar checkboxes segun el tipo de solicitud -->
+            <td *ngFor="let nvrut of nivelRut$ | async" >
+              <ng-container *ngFor="let i of ruteoList" class="align-middle">
+                <span *ngIf="nvrut.nivel == i.rutareaNivel; else checkboxEmpty">
+                  <input type="checkbox" [checked]="true" disabled>
+                </span>
+                <ng-template #checkboxEmpty>
+                  <input type="checkbox" [checked]="false" disabled>
+                </ng-template>
+              </ng-container> 
+            </td>
+            
+
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td class="align-middle">hola</td>
-          </tr>
-        </tbody>
       </table>
     </div>
   </div>
@@ -85,8 +131,18 @@
         </tbody>
       </table>
     </div>
+    <div *ngIf="showmsjNivel">
+      <span class="text-danger">
+        Ya se ha asignado el nivel
+        <ng-container *ngFor="let item of nivGuardados; let last=last">
+          {{ item }}{{ !last ? ',' : '' }}
+        </ng-container>
+        a la solicitud del área seleccionada.
+      </span>
+    </div>
     <div>
-      <span class="text-success">{{ mensajeExito }}</span>
+      <span class="text-success">{{mensajeExito}}</span>
+      <span class="text-danger">{{mensajeError}}</span>
     </div>
     <div class="text-end">
       <button class="btn btn-primary" (click)="guardarRuteo()" [disabled]="!rutArea || !rutTipoSol">Guardar</button>
