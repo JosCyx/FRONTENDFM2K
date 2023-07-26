@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Niveles } from 'src/app/models/Niveles';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
@@ -21,15 +21,14 @@ export class RuteoComponent implements OnInit {
   dltTipoSol: number = 0;
   dltNivel: number = 0;
 
-  /*lista para guardar los niveles seleccionados, la cantidad de elementos depende de los niveles creados en la base de datos, 
-  si se añaden mas niveles hay que actualizar esta lista*/
+  /*modificar lista para que almacene solo los niveles de la base de datos*/
   nivelesList: Niveles[] = [
-  { nivel: 10, estado: false }, { nivel: 20, estado: false },
-  { nivel: 30, estado: false }, { nivel: 40, estado: false },
-  { nivel: 50, estado: false }, { nivel: 60, estado: false },
-  { nivel: 70, estado: false }];
+    { nivel: 10, estado: false }, { nivel: 20, estado: false },
+    { nivel: 30, estado: false }, { nivel: 40, estado: false },
+    { nivel: 50, estado: false }, { nivel: 60, estado: false },
+    { nivel: 70, estado: false }];
 
-  nivGuardados: any[] =[];
+  nivGuardados: any[] = [];
 
   ruteoList: any[] = [];
 
@@ -48,7 +47,7 @@ export class RuteoComponent implements OnInit {
   showmsjNivel: boolean = false;
   checkBusq: boolean = false;
   checkNivel: boolean = false;
-  
+
 
   constructor(private service: CommunicationApiService) { }
 
@@ -61,7 +60,7 @@ export class RuteoComponent implements OnInit {
 
   changeView(view: string): void {
     this.clear();
-    if(view == 'eliminar'){
+    if (view == 'eliminar') {
       this.dltArea = this.busqArea;
       this.changeview = view;
     }
@@ -106,9 +105,9 @@ export class RuteoComponent implements OnInit {
             if (data) {
               // Si el ruteo ya existe se guardan los valores de los niveles en una lista para mostrarlos en un mensaje
               console.log(`El ruteo para el nivel ${nivel.nivel} ya existe.`);
-              
+
               this.nivGuardar = nivel.nivel;
-              
+
               this.nivGuardados.push(this.nivGuardar);
 
               this.showmsjNivel = true;
@@ -118,7 +117,7 @@ export class RuteoComponent implements OnInit {
                 this.nivGuardados = [];
                 //this.clear();          
               }, 1800);
-              
+
             } else {
               // Si el ruteo no existe se crea el arreglo y se envia a la API
               const data = {
@@ -127,7 +126,7 @@ export class RuteoComponent implements OnInit {
                 rutareaNivel: nivel.nivel
               };
 
-              
+
               this.service.addRuteos(data).subscribe(
                 () => {
                   console.log('Ruteo agregado exitosamente');
@@ -166,7 +165,13 @@ export class RuteoComponent implements OnInit {
         //console.log("Exito: ",this.ruteoList);
       },
       error => {
-        console.log("Error: ",this.ruteoList);
+        if (error.status == 404) {
+          this.mensajeError = 'No se ha encontrado niveles asignados para esa area.';
+        } else {
+          this.mensajeError = 'Error, no se ha podido consultar los niveles.';
+
+        }
+        console.log("Error: ", this.ruteoList);
         console.log("Error al consultar el ruteo: ", error);
       }
     );
@@ -176,35 +181,52 @@ export class RuteoComponent implements OnInit {
   //crea un arreglo con los valores necesarios y lo envía a la API para crear un nuevo nivel
   agregarNivel(): void {
 
-    const data = {
+    /*const data = {
       nivel: this.nvNivel,
       descRuteo: this.nvDescp,
       estadoRuteo: this.nvEstado
+    }*/
+
+    //ciclo que recorre la lista de niveles y si el nivel ingresado es igual al nivel encontrado en la lista retorna error
+    //y si no lo encuentra manda el arreglo a la API para guardarlo
+    for (let niv of this.nivelesList) {
+      if (niv.nivel == this.nvNivel) {
+        this.mensajeError = 'El nivel ya existe, ingrese otro valor.';
+      } else {
+
+        const data = {
+          nivel: this.nvNivel,
+          descRuteo: this.nvDescp,
+          estadoRuteo: this.nvEstado
+        }
+
+        this.service.addnivelRuteo(data).subscribe(
+          response => {
+            console.log("Nivel añadido correctamente.");
+            this.mensajeExito = 'Nivel registrado exitosamente.';
+            setTimeout(() => {
+              this.mensajeExito = '';
+              this.clear();
+              this.changeview = 'consultar';
+    
+            }, 1500);
+          },
+          error => {
+            this.mensajeError = 'Error intente de nuevo.';
+            setTimeout(() => {
+              this.mensajeError = '';
+              this.clear();
+            }, 1500);
+            console.log("Error al añadir el nivel: ", error);
+          }
+        );
+      }
     }
 
-    this.service.addnivelRuteo(data).subscribe(
-      response => {
-        console.log("Nivel añadido correctamente.");
-        this.mensajeExito = 'Nivel registrado exitosamente.';
-        setTimeout(() => {
-          this.mensajeExito = '';
-          this.clear();
-          this.changeview = 'consultar';
-          
-        }, 1500);
-      },
-      error => {
-        this.mensajeError = 'Error intente de nuevo.';
-        setTimeout(() => {
-          this.mensajeError = '';
-          this.clear();
-        }, 1500);
-        console.log("Error al añadir el nivel: ", error);
-      }
-    );
+    
   }
 
-  borrarRuteo():void{
+  borrarRuteo(): void {
     this.service.deleteRuteo(this.dltTipoSol, this.dltArea, this.dltNivel).subscribe(
       response => {
         this.mensajeExito = 'Se ha eliminado el nivel seleccionado.';
@@ -214,13 +236,13 @@ export class RuteoComponent implements OnInit {
         }, 1500);
       },
       error => {
-        
-        if(error.status == 404){
+
+        if (error.status == 404) {
           this.mensajeError = 'Error, el nivel seleccionado no existe.';
-        }else{
+        } else {
           this.mensajeError = 'Error, no se ha podido eliminar el nivel, intente nuevamente.';
         }
-        
+
         console.log("Error: ", error)
         setTimeout(() => {
           this.mensajeError = '';

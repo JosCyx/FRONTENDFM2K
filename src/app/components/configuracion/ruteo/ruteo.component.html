@@ -92,6 +92,9 @@
           </tr>
         </thead>
       </table>
+      <div>
+        <span class="text-danger">{{mensajeError}}</span>
+      </div>
     </div>
     <div class="text-end">
       <button class="btn btn-primary m-2" [disabled]="!checkBusq" (click)="changeView('eliminar')">Borrar
@@ -197,7 +200,7 @@
   </div>
 
   <!-- Modal -->
-  <div class="modal fade"  #exampleModal id="deleteModal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  <div class="modal fade"  #exampleModal id="deleteModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
