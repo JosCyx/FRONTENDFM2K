@@ -1,7 +1,9 @@
 <app-menu></app-menu>
 
 <div class="container">
-  <h2 class="font-weight-bolt ruteo">RUTEO DE AREA</h2>
+  <h2 class="font-weight-bolt ruteo">RUTEO POR AREA</h2>
+
+
 
   <div class="">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -10,6 +12,7 @@
           <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar Niveles</button>
           <button class="btn btn-primary m-2" (click)="changeView('editar')">Asignar Niveles</button>
           <button class="btn btn-primary m-2" (click)="changeView('ingresar')">Crear Nivel</button>
+
         </div>
       </div>
     </nav>
@@ -32,7 +35,7 @@
       <div class="form cmp-form">
         <label class="form-label">Estado:</label>
         <select class="form-select" name="estado" [(ngModel)]="nvEstado">
-          <option disabled selected value=''>Selecciona una opción...</option>
+          <option disabled selected value=''>Seleccione una opción...</option>
           <option value="A" selected>Activo</option>
           <option value="I">Inactivo</option>
         </select>
@@ -49,6 +52,8 @@
     </div>
   </div>
 
+
+
   <div class="formRol" *ngIf="changeview === 'consultar'">
     <h3 class="font-weight-bold" style="padding-top: 20pt;">Consultar niveles asignados</h3>
 
@@ -56,6 +61,7 @@
       <label class="form-label">Area:</label>
       <div class="form input-group">
         <select class="form-select" name="Area" [(ngModel)]="busqArea">
+          <option disabled selected value=0>Seleccione una opción...</option>
           <option *ngFor="let area of areaList$|async" [value]="area.areaIdNomina">{{area.areaDecp}}</option>
         </select>
         <button class="btn btn-outline-success" (click)="consultarRuteo()">Consultar</button>
@@ -72,24 +78,24 @@
               <th class="cab-y align-middle">{{ niv.descRuteo }}</th>
             </ng-container>
           </tr>
-          <tr *ngFor="let sol of TipoSol$ | async">
+          <tr *ngFor="let sol of TipoSol$ | async"><!--lista que guarda los tipos de solicitudes-->
             <th class="cab-x align-middle">{{ sol.tipoSolNombre }}</th>
-
-
-            <td class="align-middle" *ngFor="let nvrut of nivelRut$ | async">
-              <ng-container *ngFor="let i of ruteoList">
+            <td class="align-middle" *ngFor="let nvrut of nivelRut$ | async"><!--lista que guarda los niveles 10-70-->
+              <ng-container *ngFor="let i of ruteoList"><!--lista que guarda los ruteos consultados segun su area-->
                 <ng-container *ngIf="i.rutareaTipoSol === sol.tipoSolId">
                   <span *ngIf="nvrut.nivel === i.rutareaNivel">
-                    <i class="bi bi-check-circle-fill text-success"></i>
+                    <i class="bi bi-check-circle-fill text-success h5"></i>
                   </span>
                 </ng-container>
               </ng-container>
             </td>
-
-
           </tr>
         </thead>
       </table>
+    </div>
+    <div class="text-end">
+      <button class="btn btn-primary m-2" [disabled]="!checkBusq" (click)="changeView('eliminar')">Borrar
+        Niveles</button>
     </div>
   </div>
 
@@ -99,15 +105,17 @@
     <h3 class="font-weight-bold" style="padding-top: 20pt;">Asignar niveles según el tipo de solicitud</h3>
 
     <form class="form-nivel d-flex row mb-5">
-      <div class="form cmp-form col">
+      <div class="form col-md">
         <label class="form-label">Area:</label>
         <select class="form-select" name="Area" [(ngModel)]="rutArea">
+          <option disabled selected value=0>Seleccione una opción...</option>
           <option *ngFor="let area of areaList$|async" [value]="area.areaIdNomina">{{area.areaDecp}}</option>
         </select>
       </div>
-      <div class="form cmp-form col">
-        <label class="form-label">Tipo de Solicitud</label>
+      <div class="form col-md">
+        <label class="form-label">Tipo de Solicitud:</label>
         <select class="form-select" name="Area" [(ngModel)]="rutTipoSol">
+          <option disabled selected value=0>Seleccione una opción...</option>
           <option *ngFor="let tipsol of TipoSol$|async" [value]="tipsol.tipoSolId">{{tipsol.tipoSolNombre}}</option>
         </select>
       </div>
@@ -117,7 +125,7 @@
       <table class="table table-bordered table-striped text-center">
         <thead>
           <tr>
-            <th *ngFor="let item of nivelRut$ | async let i=index" class="col-sm align-middle">{{ item.descRuteo }}</th>
+            <th *ngFor="let item of nivelRut$ | async let i=index" class="cab-y align-middle">{{ item.descRuteo }}</th>
           </tr>
         </thead>
         <tbody>
@@ -148,3 +156,62 @@
       <button class="btn btn-danger ml-3" (click)="cancelar()">Cancelar</button>
     </div>
   </div>
+
+  <div class="formRol" *ngIf="changeview === 'eliminar'">
+    <h3 class="font-weight-bold" style="padding-top: 20pt;">Eliminar nivel asignado</h3>
+
+    <form class="form-nivel d-flex  flex-column row mb-5">
+      <div class="form cmp-form col">
+        <label class="form-label">Area:</label>
+        <select disabled class="form-select" name="Area" [(ngModel)]="dltArea">
+          <option disabled selected value=0>Seleccione una opción...</option>
+          <option *ngFor="let area of areaList$|async" [value]="area.areaIdNomina">{{area.areaDecp}}</option>
+        </select>
+      </div>
+      <div class="form cmp-form col">
+        <label class="form-label">Tipo de Solicitud</label>
+        <select class="form-select" name="solicitud" [(ngModel)]="dltTipoSol">
+          <option disabled selected value=0>Seleccione una opción...</option>
+          <option *ngFor="let tipsol of TipoSol$|async" [value]="tipsol.tipoSolId">{{tipsol.tipoSolNombre}}</option>
+        </select>
+      </div>
+      <div class="form cmp-form col">
+        <label class="form-label">Nivel:</label>
+        <select class="form-select" name="nivel" [(ngModel)]="dltNivel">
+          <option disabled selected value=0>Seleccione una opción...</option>
+          <option *ngFor="let niv of nivelRut$|async" [value]="niv.nivel">{{niv.descRuteo}}</option>
+        </select>
+      </div>
+      <div>
+        <span class="text-success">{{ mensajeExito }}</span>
+        <span class="text-danger">{{ mensajeError }}</span>
+      </div>
+    </form>
+
+
+    <div class="text-end">
+      <button type="submit" class="btn btn-primary m-2" data-toggle="modal" data-target="#deleteModal" 
+      [disabled]="!dltArea || !dltNivel || !dltTipoSol" >Eliminar</button>
+      <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal fade"  #exampleModal id="deleteModal" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header justify-content-center">
+          <h3 class=" font-weight-bold" id="exampleModalLabel">Eliminar Nivel asignado</h3>
+        </div>
+        <div class="modal-body">
+          <p>¿Está seguro que desea eliminar el nivel seleccionado?<br>Esta acción no se puede deshacer.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="borrarRuteo()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

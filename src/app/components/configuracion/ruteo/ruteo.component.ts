@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { Observable } from 'rxjs';
 import { Niveles } from 'src/app/models/Niveles';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
@@ -17,6 +17,9 @@ export class RuteoComponent implements OnInit {
   nvDescp: string = '';
   nvEstado: string = '';
 
+  dltArea: number = 0;
+  dltTipoSol: number = 0;
+  dltNivel: number = 0;
 
   /*lista para guardar los niveles seleccionados, la cantidad de elementos depende de los niveles creados en la base de datos, 
   si se añaden mas niveles hay que actualizar esta lista*/
@@ -43,6 +46,9 @@ export class RuteoComponent implements OnInit {
   busqArea: number = 0;
   nivGuardar: number = 0;
   showmsjNivel: boolean = false;
+  checkBusq: boolean = false;
+  checkNivel: boolean = false;
+  
 
   constructor(private service: CommunicationApiService) { }
 
@@ -55,6 +61,10 @@ export class RuteoComponent implements OnInit {
 
   changeView(view: string): void {
     this.clear();
+    if(view == 'eliminar'){
+      this.dltArea = this.busqArea;
+      this.changeview = view;
+    }
     this.changeview = view;
   }
 
@@ -67,16 +77,24 @@ export class RuteoComponent implements OnInit {
     this.rutArea = 0;
     this.rutTipoSol = 0;
     this.nivGuardados = [];
+    this.ruteoList = [];
+    this.checkBusq = false;
+    this.showmsjNivel = false;
+    this.dltArea = 0
+    this.dltNivel = 0
+    this.dltTipoSol = 0
     for (let nivel of this.nivelesList) {
       nivel.estado = false;
     }
 
   }
 
+
   changeEstado(nivel: Niveles) {
     nivel.estado = !nivel.estado; // Cambia el estado del checkbox (true a false o false a true)
   }
 
+  //agrega un ruteo a la tabla, si el ruteo ya existe muestra un mensaje
   guardarRuteo() {
     console.log("inicio de guardado");
 
@@ -139,10 +157,13 @@ export class RuteoComponent implements OnInit {
   }
 
   consultarRuteo() {
+    this.ruteoList = [];
+
     this.service.getRuteosByArea(this.busqArea).subscribe(
       response => {
         this.ruteoList = response;
-        console.log("Exito: ",this.ruteoList);
+        this.checkBusq = true;
+        //console.log("Exito: ",this.ruteoList);
       },
       error => {
         console.log("Error: ",this.ruteoList);
@@ -169,6 +190,7 @@ export class RuteoComponent implements OnInit {
           this.mensajeExito = '';
           this.clear();
           this.changeview = 'consultar';
+          
         }, 1500);
       },
       error => {
@@ -180,6 +202,32 @@ export class RuteoComponent implements OnInit {
         console.log("Error al añadir el nivel: ", error);
       }
     );
+  }
+
+  borrarRuteo():void{
+    this.service.deleteRuteo(this.dltTipoSol, this.dltArea, this.dltNivel).subscribe(
+      response => {
+        this.mensajeExito = 'Se ha eliminado el nivel seleccionado.';
+        setTimeout(() => {
+          this.mensajeExito = '';
+          this.changeview = 'consultar';
+        }, 1500);
+      },
+      error => {
+        
+        if(error.status == 404){
+          this.mensajeError = 'Error, el nivel seleccionado no existe.';
+        }else{
+          this.mensajeError = 'Error, no se ha podido eliminar el nivel, intente nuevamente.';
+        }
+        
+        console.log("Error: ", error)
+        setTimeout(() => {
+          this.mensajeError = '';
+        }, 2500);
+      }
+    );
+    //this.modalRef.nativeElement.hide();
   }
 }
 
