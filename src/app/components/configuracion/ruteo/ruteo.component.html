@@ -43,6 +43,7 @@
     </form>
     <div>
       <span class="text-success">{{ mensajeExito }}</span>
+      <span class="text-danger">{{ mensajeError }}</span>
     </div>
 
     <div class="text-end">
@@ -68,27 +69,31 @@
       </div>
     </form>
 
-    <div class="mb-5">
+    <div *ngIf="checkBusq" class="mb-5">
 
       <table class="table table-bordered table-striped text-center">
         <thead>
           <tr>
             <th></th>
             <ng-container *ngFor="let niv of nivelRut$ | async">
-              <th class="cab-y align-middle">{{ niv.descRuteo }}</th>
+              <ng-container *ngIf="niv.estadoRuteo == 'A'">
+                <th class="cab-y align-middle">{{ niv.descRuteo }}</th>
+              </ng-container>
             </ng-container>
           </tr>
           <tr *ngFor="let sol of TipoSol$ | async"><!--lista que guarda los tipos de solicitudes-->
             <th class="cab-x align-middle">{{ sol.tipoSolNombre }}</th>
-            <td class="align-middle" *ngFor="let nvrut of nivelRut$ | async"><!--lista que guarda los niveles 10-70-->
-              <ng-container *ngFor="let i of ruteoList"><!--lista que guarda los ruteos consultados segun su area-->
-                <ng-container *ngIf="i.rutareaTipoSol === sol.tipoSolId">
-                  <span *ngIf="nvrut.nivel === i.rutareaNivel">
-                    <i class="bi bi-check-circle-fill text-success h5"></i>
-                  </span>
+
+            <td class="align-middle" *ngFor="let nvrut of nivelRut$ | async">
+              <ng-container *ngFor="let i of ruteoList">
+                  <ng-container *ngIf="i.rutareaTipoSol === sol.tipoSolId">
+                    <span *ngIf="nvrut.nivel === i.rutareaNivel">
+                      <i class="bi bi-check-circle-fill text-success h5"></i>
+                    </span>
+                  </ng-container>
                 </ng-container>
-              </ng-container>
-            </td>
+            </td> 
+
           </tr>
         </thead>
       </table>
@@ -128,15 +133,21 @@
       <table class="table table-bordered table-striped text-center">
         <thead>
           <tr>
-            <th *ngFor="let item of nivelRut$ | async let i=index" class="cab-y align-middle">{{ item.descRuteo }}</th>
+            <ng-container *ngFor="let item of nivelRut$ | async let i=index">
+              <ng-container *ngIf="item.estadoRuteo == 'A'">
+                <th class="cab-y align-middle">{{ item.descRuteo }}</th>
+              </ng-container>
+            </ng-container>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td *ngFor="let nivel of nivelesList" class="align-middle">
-              <input type="checkbox" [value]="nivel.estado" (change)="changeEstado(nivel)"
-                [disabled]="!rutArea || !rutTipoSol">
-            </td>
+            <ng-container *ngFor="let nivel of nivelesList" class="align-middle">
+              <ng-container *ngIf="nivel.status == 'A'">
+                <td><input type="checkbox" [value]="nivel.estado" (change)="changeEstado(nivel)"
+                    [disabled]="!rutArea || !rutTipoSol"></td>
+              </ng-container>
+            </ng-container>
           </tr>
         </tbody>
       </table>
@@ -193,15 +204,15 @@
 
 
     <div class="text-end">
-      <button type="submit" class="btn btn-primary m-2" data-toggle="modal" data-target="#deleteModal" 
-      [disabled]="!dltArea || !dltNivel || !dltTipoSol" >Eliminar</button>
+      <button type="submit" class="btn btn-primary m-2" data-toggle="modal" data-target="#deleteModal"
+        [disabled]="!dltArea || !dltNivel || !dltTipoSol">Eliminar</button>
       <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
     </div>
   </div>
 
   <!-- Modal -->
-  <div class="modal fade"  #exampleModal id="deleteModal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+  <div class="modal fade" #exampleModal id="deleteModal" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header justify-content-center">

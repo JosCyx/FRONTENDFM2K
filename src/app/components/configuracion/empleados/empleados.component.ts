@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
 import { Observable, map } from 'rxjs';
-import { PaginationInstance } from 'ngx-pagination';
 
 
 @Component({

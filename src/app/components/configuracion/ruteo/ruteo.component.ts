@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map  } from 'rxjs';
 import { Niveles } from 'src/app/models/Niveles';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
 
@@ -21,16 +21,14 @@ export class RuteoComponent implements OnInit {
   dltTipoSol: number = 0;
   dltNivel: number = 0;
 
-  /*modificar lista para que almacene solo los niveles de la base de datos*/
-  nivelesList: Niveles[] = [
-    { nivel: 10, estado: false }, { nivel: 20, estado: false },
-    { nivel: 30, estado: false }, { nivel: 40, estado: false },
-    { nivel: 50, estado: false }, { nivel: 60, estado: false },
-    { nivel: 70, estado: false }];
-
   nivGuardados: any[] = [];
 
   ruteoList: any[] = [];
+
+  //lista temporal que guarda los datos del observable para extraer ciertas propiedades y guardarlas en otra lista
+  nvtempList: any[] = [];
+  //lista que guarda el nivel creado y le asigna estado=false por defecto, esta lista se usa para agregar los ruteos a la base de datos
+  nivelesList: Niveles[] = [];
 
   //listas observables
   areaList$!: Observable<any[]>;
@@ -44,6 +42,7 @@ export class RuteoComponent implements OnInit {
   mensajeError: string = '';
   busqArea: number = 0;
   nivGuardar: number = 0;
+  nvRepetido: boolean = false;
   showmsjNivel: boolean = false;
   checkBusq: boolean = false;
   checkNivel: boolean = false;
@@ -55,7 +54,24 @@ export class RuteoComponent implements OnInit {
   ngOnInit() {
     this.areaList$ = this.service.getAreaList();
     this.TipoSol$ = this.service.getTipoSolicitud();
-    this.nivelRut$ = this.service.getNivelruteo();
+
+    this.nivelRut$ = this.service.getNivelruteo().pipe(
+      map(niv => niv.sort((a, b) => a.nivel - b.nivel))
+    );   
+
+    this.nivelRut$.subscribe((data) => {
+      this.nvtempList = [];
+      this.nvtempList = data;
+      this.nivelesList = [];
+      for (let i of this.nvtempList) {
+        const nivel = {
+          nivel: i.nivel,
+          status: i.estadoRuteo,
+          estado: false
+        }
+        this.nivelesList.push(nivel);
+      }
+    });
   }
 
   changeView(view: string): void {
@@ -82,6 +98,9 @@ export class RuteoComponent implements OnInit {
     this.dltArea = 0
     this.dltNivel = 0
     this.dltTipoSol = 0
+    this.nvDescp = '';
+    this.nvNivel = '';
+    this.nvEstado = '';
     for (let nivel of this.nivelesList) {
       nivel.estado = false;
     }
@@ -134,7 +153,7 @@ export class RuteoComponent implements OnInit {
                   setTimeout(() => {
                     this.mensajeExito = '';
                     this.clear();
-                    //this.changeview = 'consultar';
+                    this.changeview = 'consultar';
                   }, 1500);
                 },
                 error => {
@@ -157,6 +176,7 @@ export class RuteoComponent implements OnInit {
 
   consultarRuteo() {
     this.ruteoList = [];
+    this.mensajeError = '';
 
     this.service.getRuteosByArea(this.busqArea).subscribe(
       response => {
@@ -181,49 +201,58 @@ export class RuteoComponent implements OnInit {
   //crea un arreglo con los valores necesarios y lo envía a la API para crear un nuevo nivel
   agregarNivel(): void {
 
-    /*const data = {
-      nivel: this.nvNivel,
-      descRuteo: this.nvDescp,
-      estadoRuteo: this.nvEstado
-    }*/
-
-    //ciclo que recorre la lista de niveles y si el nivel ingresado es igual al nivel encontrado en la lista retorna error
-    //y si no lo encuentra manda el arreglo a la API para guardarlo
+    //recorre la lista de niveles y verifica si el valor del nivel ingresado ya existe en la lista
     for (let niv of this.nivelesList) {
-      if (niv.nivel == this.nvNivel) {
-        this.mensajeError = 'El nivel ya existe, ingrese otro valor.';
-      } else {
-
-        const data = {
-          nivel: this.nvNivel,
-          descRuteo: this.nvDescp,
-          estadoRuteo: this.nvEstado
-        }
-
-        this.service.addnivelRuteo(data).subscribe(
-          response => {
-            console.log("Nivel añadido correctamente.");
-            this.mensajeExito = 'Nivel registrado exitosamente.';
-            setTimeout(() => {
-              this.mensajeExito = '';
-              this.clear();
-              this.changeview = 'consultar';
-    
-            }, 1500);
-          },
-          error => {
-            this.mensajeError = 'Error intente de nuevo.';
-            setTimeout(() => {
-              this.mensajeError = '';
-              this.clear();
-            }, 1500);
-            console.log("Error al añadir el nivel: ", error);
-          }
-        );
+      if (niv.nivel === parseInt(this.nvNivel, 10)) {
+        this.nvRepetido = true;
+        break;
       }
     }
 
-    
+    //evalua si el nivel ya existe y muestra una respuesta
+    if (this.nvRepetido) {
+      console.log("condicion, nivel repetido: ", parseInt(this.nvNivel));
+      this.mensajeError = 'El nivel ya existe, ingrese otro valor.';
+      setTimeout(() => {
+        this.mensajeError = '';
+        this.nvNivel = '';
+        this.nvRepetido = false;
+      }, 1000);
+
+    } else {
+      console.log("else, nivel nuevo: ", parseInt(this.nvNivel, 10));
+
+      const data = {
+        nivel: this.nvNivel,
+        descRuteo: this.nvDescp,
+        estadoRuteo: this.nvEstado
+      }
+
+      this.service.addnivelRuteo(data).subscribe(
+        response => {
+          console.log("Nivel añadido correctamente.");
+          this.mensajeExito = 'Nivel registrado exitosamente.';
+          setTimeout(() => {
+            this.mensajeExito = '';
+            this.clear();
+            this.ngOnInit();
+            this.changeview = 'consultar';
+
+          }, 1500);
+        },
+        error => {
+          this.mensajeError = 'Error intente de nuevo.';
+          setTimeout(() => {
+            this.mensajeError = '';
+            this.clear();
+          }, 1500);
+          console.log("Error al añadir el nivel: ", error);
+        }
+      );
+    }
+
+
+
   }
 
   borrarRuteo(): void {
