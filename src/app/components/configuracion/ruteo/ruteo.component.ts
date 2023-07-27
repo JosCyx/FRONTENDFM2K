@@ -23,6 +23,7 @@ export class RuteoComponent implements OnInit {
 
   nivGuardados: any[] = [];
 
+  //lista que guarda los datos de la lista observable que trae desde la API los ruteos por ahora
   ruteoList: any[] = [];
 
   //lista temporal que guarda los datos del observable para extraer ciertas propiedades y guardarlas en otra lista
@@ -72,6 +73,7 @@ export class RuteoComponent implements OnInit {
         this.nivelesList.push(nivel);
       }
     });
+
   }
 
   changeView(view: string): void {
@@ -251,8 +253,6 @@ export class RuteoComponent implements OnInit {
       );
     }
 
-
-
   }
 
   borrarRuteo(): void {
@@ -278,7 +278,7 @@ export class RuteoComponent implements OnInit {
         }, 2500);
       }
     );
-    //this.modalRef.nativeElement.hide();
+    
   }
 }
 
