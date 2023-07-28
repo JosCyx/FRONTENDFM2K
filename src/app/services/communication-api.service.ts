@@ -47,6 +47,11 @@ export class CommunicationApiService {
     return this.http.get<any>(this.APIUrl + '/NivelesRuteos');
   }
 
+  //devuelve los niveles que tengan como estado el valor indicado en el parametro
+  getNivelbyEstado(estadoRuteo: string) {
+    return this.http.get<any[]>(`${this.APIUrl}/NivelesRuteos/GetNivelByEstado?estadoRuteo=${estadoRuteo}`);
+  }
+
   getTipoSolicitud(): Observable<any[]> {
     return this.http.get<any>(this.APIUrl + '/TipoSolics');
   }

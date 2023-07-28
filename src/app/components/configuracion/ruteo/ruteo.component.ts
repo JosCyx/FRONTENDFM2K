@@ -47,6 +47,7 @@ export class RuteoComponent implements OnInit {
   showmsjNivel: boolean = false;
   checkBusq: boolean = false;
   checkNivel: boolean = false;
+  getNivelEstado: string = 'A';//variable que controla el estado de los niveles a obtener, 'A' retorna solo estados acivos, 'I' retorna estados inactivos
 
 
   constructor(private service: CommunicationApiService) { }
@@ -55,8 +56,8 @@ export class RuteoComponent implements OnInit {
   ngOnInit() {
     this.areaList$ = this.service.getAreaList();
     this.TipoSol$ = this.service.getTipoSolicitud();
-
-    this.nivelRut$ = this.service.getNivelruteo().pipe(
+    
+    this.nivelRut$ = this.service.getNivelbyEstado(this.getNivelEstado).pipe(
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
     );   
 
