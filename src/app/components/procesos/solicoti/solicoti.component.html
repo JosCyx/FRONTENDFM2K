@@ -14,31 +14,39 @@
     </div>
 
     <div class="form-cot" *ngIf="changeview === 'crear'">
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Nueva solicitud</h3>
+        <h3 class="font-weight-bold" style="padding-top: 20pt;">Nueva solicitud de cotización</h3>
+
 
         <div class="solicitud">
 
             <div class="cabecera mb-3">
-                <div class="input-group m-1">
+                <div class="input-group mb-1">
                     <label class="input-group-text">Fecha:</label>
-                    <input type="text" class="form-control" disabled [(ngModel)]="fecha">
+                    <input type="text" class="form-control" disabled [(ngModel)]="fechaFormat">
                 </div>
-                <div class="input-group m-1">
-                    <label class="input-group-text">Solicitado por:</label>
-                    <input type="text" class="form-control" [(ngModel)]="empleado"
-                        placeholder="Ingrese el nombre del solicitante">
-                    <label class="input-group-text">Area:</label>
-                    <select class="form-select">
-                        <option disabled selected>Seleccione un area...</option>
-                        <option>Area 1</option>
-                        <option>Area 2</option>
-                        <option>Area 3</option>
-                        <option>Area 4</option>
-                    </select>
+                <div class="row mb-1">
+                    <div class="input-group col">
+                        <label class="input-group-text">Solicitado por:</label>
+                        <input type="text" class="form-control" id="busqueda" list="sugerencias" [(ngModel)]="empleado"
+                            (keydown)="searchEmpleado()">
+                        <datalist id="sugerencias">
+                            <ng-container *ngFor="let emp of empleados">
+                                <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+                            </ng-container>
+                        </datalist>
+                        <button class="btn btn-success"><i class="bi bi-check-lg"></i></button>
+                    </div>
+                    <div class="input-group col">
+                        <label class="input-group-text">Area:</label>
+                        <input type="text" class="form-control" disabled>
+                    </div>
                 </div>
-                <div class="input-group m-1">
+                <div *ngIf="showEmpExist">
+                    <p class="text-danger">No se ha encontrado al empleado.</p>
+                </div>
+                <div class="input-group mb-1">
                     <label class="input-group-text">Asunto:</label>
-                    <input type="text" class="form-control" [(ngModel)]="empleado" placeholder="Ingrese el asunto">
+                    <input type="text" class="form-control" placeholder="Ingrese el asunto">
                 </div>
             </div>
 
@@ -57,7 +65,9 @@
                     <tbody>
                         <tr>
                             <th class="align-middle">1</th>
-                            <td class="align-middle"><input type="text" class="form-control" placeholder="Descripcion">
+                            <td class="align-middle">
+                                <textarea name="descripcion" class="form-control" rows="3" cols="50"
+                                    placeholder="Descripción"></textarea>
                             </td>
                             <td class="align-middle ">
                                 <div class=" cel-prep">
@@ -65,7 +75,7 @@
                                 </div>
                                 <div class=" cel-prep">
                                     <select class="form-select">
-                                        <option disabled selected>Sector...</option>
+                                        <option disabled selected>Sector</option>
                                         <option>Sector 1</option>
                                         <option>Sector 2</option>
                                         <option>Sector 3</option>
@@ -73,11 +83,23 @@
                                     </select>
                                 </div>
                             </td>
-                            <td class="align-middle">UNIDAD</td>
+                            <td class="align-middle">
+                                <select class="form-select">
+                                    <option selected>Unidad</option>
+                                    <option>Sacos</option>
+                                    <option>Paquete</option>
+                                    <option>Avance de Obra</option>
+                                    <option>Millar</option>
+                                    <option>Metros</option>
+                                    <option>Kilos</option>
+                                    <option>Gramos</option>
+                                    <option>Caneca</option>
+                                </select>
+                            </td>
                             <td class="align-middle">6</td>
                         </tr>
                         <tr>
-                            <td colspan="5" class="align-middle text-end"><button class="btn btn-primary"><i
+                            <td colspan="5" class="align-middle text-end"><button class="btn btn-success"><i
                                         class="bi bi-plus-circle"></i></button></td>
                         </tr>
                     </tbody>
@@ -93,15 +115,15 @@
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="floatingInput"
                         placeholder="Materiales y procedimientos a seguir:">
-                    <label for="floatingInput">Oservaciones:</label>
+                    <label for="floatingInput">Observaciones:</label>
                 </div>
                 <div class="input-group">
                     <label class="input-group-text">Adjunto cotizaciones:</label>
                     <select class="form-select">
-                        <option>Sí</option>
-                        <option selected>No</option>
+                        <option value="SI">Sí</option>
+                        <option value="NO" selected>No</option>
                     </select>
-                    <label class="input-group-text">Numero de cotizaciones:</label>
+                    <label class="input-group-text">Número de cotizaciones:</label>
                     <input class="form-control" type="number" placeholder="Cantidad">
                 </div>
             </div>
