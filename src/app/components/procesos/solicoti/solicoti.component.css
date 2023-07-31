@@ -1,29 +1,25 @@
 .container{
     padding-left: 200px;
     padding-top: 25px;
-}
-.cmp-form{
-    margin: 15px;
-}
-.form-label{
-    padding-top: 5px;
+    
 }
 
-.listRol, .formRol{
-    padding-top: 30pt;
-    width: 65%;
+.form-cot{
+    padding-bottom: 100px;
+}
+
+.solicitud{  
+    margin: 0 auto;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: rgb(172, 172, 172);
+    
+}
+
+.input-group-text{
+    background-color: rgb(214, 214, 214);
+}
+.cel-prep{
+    width: 110px;
     margin: 0 auto;
 }
-.no-rol{
-    border: 1px red solid;
-    border-radius: 5px;
-    padding: 8pt;
-}
- a:hover{
-    cursor: pointer;
- }
-
- .aviso{
-    width: 40%;
-    margin: auto;
-  }

@@ -3,54 +3,109 @@
     <h2 class="font-weight-bolt ruteo">Solicitud de Cotizacion</h2>
     <div class="">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav">
-                        <button class="btn btn-primary m-2" (click)="changeView('')">Consultar</button>
-                        <button class="btn btn-primary m-2" (click)="changeView('')">Crear</button>
-                        <button class="btn btn-primary m-2" (click)="changeView('')" >Editar</button>
-                    </div>
-              </div>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
+                    <button class="btn btn-primary m-2" (click)="changeView('')">Boton</button>
+                    <button class="btn btn-primary m-2" (click)="changeView('')">Boton</button>
+                </div>
+            </div>
         </nav>
     </div>
 
-    <div class="formCoti" *ngIf="changeview === 'consulta'">
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Solicitudes de cotizacion registradas</h3>
-        <p class="text-danger no-rol text-center aviso" *ngIf="listaCoti.length === 0">No hay solicitudes de cotizacion registradas.</p>
+    <div class="form-cot" *ngIf="changeview === 'crear'">
+        <h3 class="font-weight-bold" style="padding-top: 20pt;">Nueva solicitud</h3>
 
-        <table *ngIf="listaCoti.length != 0" class="table table-bordered table-striped text-center">
-            <thead>
-                <tr>
-                    <th scope="col">N°</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Aplicacion</th>
-                    <th scope="col">Estado</th>
-                    <th scope="col">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngFor="let solicoti of listaCoti; let i=index">
-                    <tr>
-                        <th>{{i+1}}</th>
-                        <td>{{solicoti.asunto}}</td>
-                        <td [ngSwitch]="solicoti.asunto">
-                            <span *ngSwitchCase="'ADMIN'">SEGURIDAD Y ACCESO</span>
-                            <span *ngSwitchCase="'SOL'">SOLICITUDES</span>
-                        </td>
-                        <td [ngSwitch]="solicoti.sector">
-                            <span *ngSwitchCase="'A'">Activo</span>
-                            <span *ngSwitchCase="'I'">Inactivo</span>
-                        </td>
-                        <td>
-                            <a class="text-success m-3" (click)="editarSolicoti(solicoti, i)"><i
-                                    class="bi bi-pencil-square h5"></i></a>
-                            <a class="text-danger m-3" (click)="eliminarSolicoti(i)"><i
-                                    class="bi bi-trash3-fill h5"></i></a>
-                        </td>
-                    </tr>
-                </ng-container>
-            </tbody>
-        </table>
+        <div class="solicitud">
+
+            <div class="cabecera mb-3">
+                <div class="input-group m-1">
+                    <label class="input-group-text">Fecha:</label>
+                    <input type="text" class="form-control" disabled [(ngModel)]="fecha">
+                </div>
+                <div class="input-group m-1">
+                    <label class="input-group-text">Solicitado por:</label>
+                    <input type="text" class="form-control" [(ngModel)]="empleado"
+                        placeholder="Ingrese el nombre del solicitante">
+                    <label class="input-group-text">Area:</label>
+                    <select class="form-select">
+                        <option disabled selected>Seleccione un area...</option>
+                        <option>Area 1</option>
+                        <option>Area 2</option>
+                        <option>Area 3</option>
+                        <option>Area 4</option>
+                    </select>
+                </div>
+                <div class="input-group m-1">
+                    <label class="input-group-text">Asunto:</label>
+                    <input type="text" class="form-control" [(ngModel)]="empleado" placeholder="Ingrese el asunto">
+                </div>
+            </div>
+
+
+            <div class="detalle">
+                <table class="table table-striped text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">Item</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">Presupuesto</th>
+                            <th scope="col">Unidad</th>
+                            <th scope="col">Cantidad Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th class="align-middle">1</th>
+                            <td class="align-middle"><input type="text" class="form-control" placeholder="Descripcion">
+                            </td>
+                            <td class="align-middle ">
+                                <div class=" cel-prep">
+                                    <input class="form-control" type="number" placeholder="Cantidad">
+                                </div>
+                                <div class=" cel-prep">
+                                    <select class="form-select">
+                                        <option disabled selected>Sector...</option>
+                                        <option>Sector 1</option>
+                                        <option>Sector 2</option>
+                                        <option>Sector 3</option>
+                                        <option>sector 4</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td class="align-middle">UNIDAD</td>
+                            <td class="align-middle">6</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="align-middle text-end"><button class="btn btn-primary"><i
+                                        class="bi bi-plus-circle"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="foot-cabecera">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="floatingInput"
+                        placeholder="Materiales y procedimientos a seguir:">
+                    <label for="floatingInput">Materiales y procedimientos a seguir:</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="floatingInput"
+                        placeholder="Materiales y procedimientos a seguir:">
+                    <label for="floatingInput">Oservaciones:</label>
+                </div>
+                <div class="input-group">
+                    <label class="input-group-text">Adjunto cotizaciones:</label>
+                    <select class="form-select">
+                        <option>Sí</option>
+                        <option selected>No</option>
+                    </select>
+                    <label class="input-group-text">Numero de cotizaciones:</label>
+                    <input class="form-control" type="number" placeholder="Cantidad">
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
-
-    
