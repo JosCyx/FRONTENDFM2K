@@ -10,15 +10,20 @@ import { Observable, map } from 'rxjs';
 export class SolicotiComponent implements OnInit {
   empleado: string = '';
   showArea: string = '';
-
+  descripcion: string = '';
   fecha: Date = new Date;
+
+  
+
+  //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
-
   changeview: string = 'crear';
-  showEmpExist: boolean = false;
 
+  //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
   areaList$!: Observable<any[]>;
+
+  //listas locales para manejar los datos
   empleados: any[] = [];
   areas: any[] = [];
 
@@ -42,28 +47,29 @@ export class SolicotiComponent implements OnInit {
     } else {
       this.empleados = [];
     }
-
   }
 
   //guarda el nombre del area del empleado seleccionado
   selectEmpleado(): void {
-    for (let emp of this.empleados) {
-      if ((emp.empleadoNombres + ' ' + emp.empleadoApellidos) == this.empleado) {
-        for (let area of this.areas) {
-          if (area.areaIdNomina == emp.empleadoIdArea) {
-            this.showArea = area.areaDecp
+    if(!this.empleado){
+      this.showArea = '';
+    }else{
+      for (let emp of this.empleados) {
+        if ((emp.empleadoNombres + ' ' + emp.empleadoApellidos) == this.empleado) {
+          for (let area of this.areas) {
+            if (area.areaIdNomina == emp.empleadoIdArea) {
+              this.showArea = area.areaDecp
+            }
           }
         }
       }
     }
-    console.log(this.showArea);
   }
 
-
-
+  /*//controla el contenido que se muestra en la pagina
   changeView(view: string): void {
     this.changeview = view;
-  }
+  }*/
 
   //tranforma la fecha actual en un formato especifico "Lunes, 31 de julio de 2023"
   formatDateToSpanish(date: Date): string {
@@ -80,7 +86,4 @@ export class SolicotiComponent implements OnInit {
 
     return `${dayOfWeek}, ${dayOfMonth} de ${month} de ${year}`;
   }
-
-
-
 }

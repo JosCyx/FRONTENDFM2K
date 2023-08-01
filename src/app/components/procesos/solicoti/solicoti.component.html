@@ -5,16 +5,15 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
-                    <button class="btn btn-primary m-2" (click)="changeView('')">Boton</button>
-                    <button class="btn btn-primary m-2" (click)="changeView('')">Boton</button>
+                    <button class="btn btn-primary m-2">Crear</button>
+                    <span  *ngIf="changeview === 'crear'"></span>
                 </div>
             </div>
         </nav>
     </div>
 
-    <div class="form-cot" *ngIf="changeview === 'crear'">
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Nueva solicitud de cotización</h3>
+    <div class="form-cot">
+        <h3 class="font-weight-bold" style="padding-top: 20pt;">Registrar nueva solicitud de cotización</h3>
 
 
         <div class="solicitud">
@@ -27,24 +26,23 @@
                 <div class="row mb-1">
                     <div class="input-group col">
                         <label class="input-group-text">Solicitado por:</label>
-                        <input type="text" class="form-control" id="busqueda" list="sugerencias" 
-                        [(ngModel)]="empleado" (keyup)="searchEmpleado()" placeholder="Ingrese el nombre del empleado">
+                        <input type="text" class="form-control" id="busqueda" list="sugerencias" [(ngModel)]="empleado"
+                            (keyup)="searchEmpleado()" placeholder="Ingrese el nombre del empleado">
                         <datalist id="sugerencias">
                             <ng-container *ngFor="let emp of empleados">
                                 <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
                             </ng-container>
                         </datalist>
-                        <button class="btn btn-success" (click)="selectEmpleado()"><i class="bi bi-check-lg"></i></button>
+                        <button class="btn btn-success" (click)="selectEmpleado()"><i
+                                class="bi bi-check-lg"></i></button>
                     </div>
                     <div class="input-group col">
                         <label class="input-group-text">Area:</label>
-                            <input type="text" class="form-control" [value]="showArea" disabled>
-                        
+                        <input type="text" class="form-control" [value]="showArea"
+                            placeholder="Area del empleado solicitante" disabled>
+
                     </div>
                 </div>
-                <!-- <div *ngIf="showEmpExist">
-                    <p class="text-danger">No se ha encontrado al empleado.</p>
-                </div> -->
                 <div class="input-group mb-1">
                     <label class="input-group-text">Asunto:</label>
                     <input type="text" class="form-control" placeholder="Ingrese el asunto">
@@ -67,14 +65,16 @@
                         <tr>
                             <th class="align-middle">1</th>
                             <td class="align-middle">
-                                <textarea name="descripcion" class="form-control" rows="3" cols="50"
-                                    placeholder="Descripción"></textarea>
+                                <textarea name="descripcion" class="form-control" rows="2" cols="50"
+                                    placeholder="Descripción" [(ngModel)]="descripcion"></textarea>
                             </td>
                             <td class="align-middle ">
-                                <div class=" cel-prep">
+                                <button class="btn btn-outline-primary" data-toggle="modal"
+                                    data-target="#itemsector">Desglose</button>
+                                <!-- <div class=" cel-prep">
                                     <input class="form-control" type="number" placeholder="Cantidad">
                                 </div>
-                                <div class=" cel-prep">
+                                <div class="cel-prep">
                                     <select class="form-select">
                                         <option disabled selected>Sector</option>
                                         <option>Sector 1</option>
@@ -82,10 +82,10 @@
                                         <option>Sector 3</option>
                                         <option>sector 4</option>
                                     </select>
-                                </div>
+                                </div> -->
                             </td>
-                            <td class="align-middle">
-                                <select class="form-select">
+                            <td class="align-middle" style="width: 150px;">
+                                <select class="form-control">
                                     <option selected>Unidad</option>
                                     <option>Sacos</option>
                                     <option>Paquete</option>
@@ -97,7 +97,9 @@
                                     <option>Caneca</option>
                                 </select>
                             </td>
-                            <td class="align-middle">6</td>
+                            <td class="align-middle cel-prep">
+                                <input type="text" class="form-control text-center" [value]="6" disabled>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="5" class="align-middle text-end"><button class="btn btn-success"><i
@@ -129,6 +131,75 @@
                 </div>
             </div>
         </div>
+        <div class="text-end">
+            <button class="btn btn-primary m-2">Guardar</button>
+            <button class="btn btn-danger m-2">Cancelar</button>
+        </div>
 
+
+    </div>
+
+    <!-- Modal para los items por sector-->
+    <div class="modal fade" #exampleModal id="itemsector" data-backdrop="static" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header justify-content-center">
+                    <h3 class=" font-weight-bold" id="exampleModalLabel">Ingrese los items según el sector</h3>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-striped text-center justify-content-center">
+                        <thead>
+                            <tr>
+                                <th scope="col">N° Detalle</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">N° Item</th>
+                                <th scope="col">Cantidad</th>
+                                <th scope="col">Sector</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th class="align-middle">1</th>
+                                <td class="align-middle">
+                                    <input class="form-control" type="text" value='Descripción'
+                                        [(ngModel)]="descripcion" placeholder="Descripción" disabled>
+                                </td>
+                                <td class="align-middle cel-prep">
+                                    <input type="text" class="form-control text-center" [value]=1 disabled>
+                                </td>
+                                <td class="align-middle ">
+                                    <div class=" cel-prep">
+                                        <input class="form-control" type="number" placeholder="Cantidad">
+                                    </div>
+
+                                </td>
+                                <td class="align-middle" style="width: 150px;">
+                                    <div class="cel-prep">
+                                        <select class="form-select">
+                                            <option disabled selected>Sector</option>
+                                            <option>Sector 1</option>
+                                            <option>Sector 2</option>
+                                            <option>Sector 3</option>
+                                            <option>sector 4</option>
+                                        </select>
+                                    </div>
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="5" class="align-middle text-end"><button class="btn btn-success"><i
+                                            class="bi bi-plus-circle"></i></button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Confirmar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+
+                </div>
+            </div>
+        </div>
     </div>
 </div>
