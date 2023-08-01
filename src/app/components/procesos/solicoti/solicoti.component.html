@@ -27,23 +27,24 @@
                 <div class="row mb-1">
                     <div class="input-group col">
                         <label class="input-group-text">Solicitado por:</label>
-                        <input type="text" class="form-control" id="busqueda" list="sugerencias" [(ngModel)]="empleado"
-                            (keydown)="searchEmpleado()">
+                        <input type="text" class="form-control" id="busqueda" list="sugerencias" 
+                        [(ngModel)]="empleado" (keyup)="searchEmpleado()" placeholder="Ingrese el nombre del empleado">
                         <datalist id="sugerencias">
                             <ng-container *ngFor="let emp of empleados">
                                 <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
                             </ng-container>
                         </datalist>
-                        <button class="btn btn-success"><i class="bi bi-check-lg"></i></button>
+                        <button class="btn btn-success" (click)="selectEmpleado()"><i class="bi bi-check-lg"></i></button>
                     </div>
                     <div class="input-group col">
                         <label class="input-group-text">Area:</label>
-                        <input type="text" class="form-control" disabled>
+                            <input type="text" class="form-control" [value]="showArea" disabled>
+                        
                     </div>
                 </div>
-                <div *ngIf="showEmpExist">
+                <!-- <div *ngIf="showEmpExist">
                     <p class="text-danger">No se ha encontrado al empleado.</p>
-                </div>
+                </div> -->
                 <div class="input-group mb-1">
                     <label class="input-group-text">Asunto:</label>
                     <input type="text" class="form-control" placeholder="Ingrese el asunto">

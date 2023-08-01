@@ -1,0 +1,46 @@
+
+
+/* Add margin to the sub-menu items */
+.sub-menu {
+    margin-left: 10px;
+}
+
+/* Add a bit of indentation to the sub-menu items */
+.sub-menu a {
+    padding-left: 10px;
+}
+
+.header-container {
+    height: 40px;
+    /* Ajusta la altura del header según tus necesidades */
+}
+
+.sidebar{
+    height: 100%;
+    width: 200px;
+    transition: left 0.3s ease-in-out;;
+}
+.sidebar.show {
+    left: 0;
+}
+
+.main-content {
+    margin-left: 250px;
+    /* Ancho del sidebar para dejar espacio para él */
+    margin-top: 60px;
+    /* Ajusta este valor según la altura de tu header */
+}
+.btn:hover{
+    color: white;
+    background-color: #007bff;
+}
+
+#configuracionDropdown{
+    text-align: left;
+}
+
+
+.nav-item{
+    margin-bottom: 20px;
+    text-align: left;
+}

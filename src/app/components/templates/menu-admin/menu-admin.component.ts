@@ -10,9 +10,18 @@ import { Router } from '@angular/router';
 export class MenuAdminComponent {
   appSelected: boolean = false;
   isLogin: boolean = false;
+  showSB: boolean = false;
 
   constructor(private globalService: GlobalService,private router: Router) { }
 
+  isSidebarVisible = false;
+
+  toggleSidebar() {
+    this.showSB = !this.showSB;
+
+    //this.isSidebarVisible = !this.isSidebarVisible;
+  }
+  
   ngOnInit():void{
     this.appSelected  = this.globalService.appSelected;
     this.isLogin = this.globalService.isLogin;

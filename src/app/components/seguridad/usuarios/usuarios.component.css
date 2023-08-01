@@ -1,18 +1,22 @@
-.container{
-    padding-left: 200px;
+.container {
+    width: 70%;
+    margin: 0 auto;
     padding-top: 25px;
 }
-.cmp-form{
+
+.cmp-form {
     margin: 15px;
 }
-.pass-form{
+
+.pass-form {
     margin-left: 0px;
 }
-.form-label{
+
+.form-label {
     padding-top: 5px;
 }
 
-.formUser{
+.formUser {
     padding-top: 30pt;
     width: 65%;
     margin: 0 auto;
