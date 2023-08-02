@@ -17,7 +17,7 @@
     </div>
   </nav>
 </header>
-<div class="sidebar" [ngClass]="{'show': isSidebarVisible}">
+<div class="sidebar" [ngClass]="{'show': showSB, 'hide': !showSB}">
   <ul class="nav flex-column">
     <li class="nav-item dropdown">
       <a class="nav-link dropdown-toggle btn " href="#" id="configuracionDropdown" role="button"

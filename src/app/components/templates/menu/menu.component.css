@@ -1,5 +1,3 @@
-
-
 /* Add margin to the sub-menu items */
 .sub-menu {
     margin-left: 10px;
@@ -15,13 +13,26 @@
     /* Ajusta la altura del header según tus necesidades */
 }
 
-.sidebar{
+/* Estilo base del sidebar */
+.sidebar {
+    padding-top: 50px;
+    background-color: #ffffff80;
     height: 100%;
     width: 200px;
-    transition: left 0.3s ease-in-out;;
+    position: absolute;
+    transition: transform 0.3s ease-in-out;
 }
+
+/* Clase para mostrar el sidebar */
 .sidebar.show {
-    left: 0;
+    transform: translateX(0);
+    /* Mostrar el sidebar deslizándolo hacia la derecha */
+}
+
+/* Clase para ocultar el sidebar */
+.sidebar.hide {
+    transform: translateX(-100%);
+    /* Ocultar el sidebar deslizándolo hacia la izquierda */
 }
 
 .main-content {
@@ -30,17 +41,17 @@
     margin-top: 60px;
     /* Ajusta este valor según la altura de tu header */
 }
-.btn:hover{
+
+.btn:hover {
     color: white;
     background-color: #007bff;
 }
 
-#configuracionDropdown{
+#configuracionDropdown {
     text-align: left;
 }
 
-
-.nav-item{
+.nav-item {
     margin-bottom: 20px;
     text-align: left;
 }

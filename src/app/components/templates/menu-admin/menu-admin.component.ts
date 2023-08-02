@@ -18,8 +18,6 @@ export class MenuAdminComponent {
 
   toggleSidebar() {
     this.showSB = !this.showSB;
-
-    //this.isSidebarVisible = !this.isSidebarVisible;
   }
   
   ngOnInit():void{

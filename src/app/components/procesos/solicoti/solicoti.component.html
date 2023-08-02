@@ -6,7 +6,8 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <button class="btn btn-primary m-2">Crear</button>
-                    <span  *ngIf="changeview === 'crear'"></span>
+                    <button class="btn btn-primary m-2" (click)="getLastSol()">boton</button>
+                    <span *ngIf="changeview === 'crear'"></span>
                 </div>
             </div>
         </nav>
@@ -120,7 +121,7 @@
                         placeholder="Materiales y procedimientos a seguir:">
                     <label for="floatingInput">Observaciones:</label>
                 </div>
-                <div class="input-group">
+                <div class="input-group mb-3">
                     <label class="input-group-text">Adjunto cotizaciones:</label>
                     <select class="form-select">
                         <option value="SI">Sí</option>
@@ -129,10 +130,28 @@
                     <label class="input-group-text">Número de cotizaciones:</label>
                     <input class="form-control" type="number" placeholder="Cantidad">
                 </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Plazo de entrega:</label>
+                    <input class="form-control" type="date" for="plazoentrega">
+                    <label class="input-group-text">Fecha máxima de entrega:</label>
+                    <input class="form-control" type="date" for="fechamaxima">
+                </div>
+                <div class="input-group">
+                    <label class="input-group-text">Inspector:</label>
+                    <input type="text" class="form-control" id="busqueda" list="sugerencias" [(ngModel)]="inspector"
+                        (keyup)="searchInspector()" placeholder="Ingrese el nombre del empleado">
+                    <datalist id="sugerencias">
+                        <ng-container *ngFor="let emp of empleados">
+                            <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+                        </ng-container>
+                    </datalist>
+                    <label class="input-group-text">Teléfono:</label>
+                    <input class="form-control" type="text" placeholder="Ingrese el teléfono del inspector">
+                </div>
             </div>
         </div>
         <div class="text-end">
-            <button class="btn btn-primary m-2">Guardar</button>
+            <button class="btn btn-primary m-2" (click)="guardarSolicitud()">Guardar</button>
             <button class="btn btn-danger m-2">Cancelar</button>
         </div>
 

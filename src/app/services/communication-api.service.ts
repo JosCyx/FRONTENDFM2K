@@ -119,4 +119,12 @@ export class CommunicationApiService {
     const url = `${this.APIUrl}/RuteoAreas/${RutareaTipoSol},${RutareaArea},${RutareaNivel}`;
     return this.http.delete<any>(url);
   }
+
+  generateTracking(data: any) {
+    return this.http.post(this.APIUrl + '/SolTrackings', data);
+  }
+  getLastSolicitud(tipoSol: number): Observable<any> {
+    return this.http.get<any>(`${this.APIUrl}/SolTrackings/GetLastSol?tipoSol=${tipoSol}`);
+  }
+  
 }

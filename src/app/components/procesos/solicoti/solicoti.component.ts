@@ -8,12 +8,21 @@ import { Observable, map } from 'rxjs';
   styleUrls: ['./solicoti.component.css']
 })
 export class SolicotiComponent implements OnInit {
+  //variables para guardar el tracking
+  trTipoSolicitud: number = 1;//indica el tipo de solicitud co el que estamos trabajando, este valor cambia en cada tipo de solicitud
+  trLastNoSol!: number;
+  trNivelEmision: number = 10;//nivel de emision por defecto
+  trIdNomEmp!: number;
+
+
+
   empleado: string = '';
+  inspector: string = '';
   showArea: string = '';
   descripcion: string = '';
   fecha: Date = new Date;
 
-  
+
 
   //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
@@ -24,8 +33,10 @@ export class SolicotiComponent implements OnInit {
   areaList$!: Observable<any[]>;
 
   //listas locales para manejar los datos
+  empleadosOP: any[] = [];
   empleados: any[] = [];
   areas: any[] = [];
+  inspectores: any[] = [];
 
   constructor(private service: CommunicationApiService) { }
 
@@ -49,13 +60,26 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
+  searchInspector(): void {
+    if (this.inspector.length > 2) {
+      this.empleadosList$.subscribe((data) => {
+        this.empleadosOP= data;
+        
+      });
+    } else {
+      this.empleados = [];
+    }
+  }
+
   //guarda el nombre del area del empleado seleccionado
   selectEmpleado(): void {
-    if(!this.empleado){
+    if (!this.empleado) {
       this.showArea = '';
-    }else{
+    } else {
       for (let emp of this.empleados) {
         if ((emp.empleadoNombres + ' ' + emp.empleadoApellidos) == this.empleado) {
+          this.trIdNomEmp = emp.empleadoIdNomina;
+          console.log(this.trIdNomEmp);
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
               this.showArea = area.areaDecp
@@ -86,4 +110,54 @@ export class SolicotiComponent implements OnInit {
 
     return `${dayOfWeek}, ${dayOfMonth} de ${month} de ${year}`;
   }
+
+  //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
+  getLastSol(): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this.service.getLastSolicitud(this.trTipoSolicitud).subscribe(
+        (resultado) => {
+          if (resultado === 0) {
+            console.log('No se ha registrado ninguna solicitud de este tipo.');
+            resolve(1);
+          } else {
+            const lastNoSol = resultado[0].solTrNumSol + 1;
+            console.log('Último valor de solicitud:', lastNoSol);
+            resolve(lastNoSol);
+          }
+        },
+        (error) => {
+          console.error('Error al obtener el último valor de solicitud:', error);
+          reject(error);
+        }
+      );
+    });
+  }
+
+  //guarda la solicitud con estado emitido
+  async guardarSolicitud() {
+
+    this.trLastNoSol = await this.getLastSol();
+
+    const data = {
+      solTrTipoSol: this.trTipoSolicitud,//valor por defecto del tipo de solicitud
+      solTrNumSol: this.trLastNoSol,//ultimo numero de solicitud de cotizacion
+      solTrNivel: this.trNivelEmision,
+      solTrIdEmisor: this.trIdNomEmp//modificar
+    }
+    console.log(data);
+
+
+
+    /*this.service.generateTracking(data).subscribe(
+      response => {
+        console.log("Tracking guardado con exito.");
+      },
+      error => {
+        console.log("Error al guardar el tracking: ",error);
+      }
+    );*/
+  }
+
+
+
 }
