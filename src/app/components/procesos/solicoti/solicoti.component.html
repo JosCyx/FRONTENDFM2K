@@ -64,9 +64,9 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let det of detalle">
-                            <td class="align-middle">{{det.cab_id}}</td>
                             <td class="align-middle">{{det.det_id}}</td>
                             <td class="align-middle">{{det.det_descp}}</td>
+                            <td class="align-middle"></td>
                             <td class="align-middle">{{det.det_unidad}}</td>
                             <td class="align-middle">{{det.det_cantidad}}</td>
                         </tr>
@@ -134,7 +134,7 @@
                 <div class="input-group">
                     <label class="input-group-text">Inspector:</label>
                     <input type="text" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
-                        (keyup)="searchInspector()" placeholder="Ingrese el nombre del empleado">
+                        (keyup)="searchInspector()" (input)="onInputChanged()" placeholder="Ingrese el nombre del inspector">
                     <datalist id="inspectores">
                         <ng-container *ngFor="let empOP of inspectores">
                             <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>

@@ -15,6 +15,7 @@ export class SolicotiComponent implements OnInit {
   showArea: string = '';
   descripcion: string = '';
   fecha: Date = new Date;
+  private inputTimer: any;
 
 
   //variables para guardar el tracking
@@ -50,7 +51,7 @@ export class SolicotiComponent implements OnInit {
   item_sector!: number;
 
 
- 
+
 
   //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
@@ -99,7 +100,27 @@ export class SolicotiComponent implements OnInit {
     } else {
       this.inspectores = [];
     }
+
   }
+
+
+  onInputChanged(): void {
+    // Cancelamos el temporizador anterior antes de crear uno nuevo
+    clearTimeout(this.inputTimer);
+
+    // Creamos un nuevo temporizador que ejecutará el método después de 1 segundo
+    this.inputTimer = setTimeout(() => {
+      // Coloca aquí la lógica que deseas ejecutar después de que el usuario haya terminado de modificar el input
+      if (this.inspector) {
+        const empleadoSeleccionado = this.inspectores.find(emp => (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.inspector);
+        this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : null;
+        console.log(this.cab_inspector);
+      } else {
+        this.cab_inspector = 0;
+      }
+    }, 500); // Retraso de 1 segundo (ajusta el valor según tus necesidades)
+  }
+
 
   //guarda el nombre del area del empleado seleccionado
   selectEmpleado(): void {
@@ -151,7 +172,7 @@ export class SolicotiComponent implements OnInit {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    
+
     return `${year}-${month}-${day}`;
   }
 
@@ -188,11 +209,10 @@ export class SolicotiComponent implements OnInit {
       solTrNivel: this.trNivelEmision,//nivel 10 por defecto emision
       solTrIdEmisor: this.trIdNomEmp//id del emisor
     }
-    console.log(dataTRK);
 
-
-
-    /*this.service.generateTracking(data).subscribe(
+    //enviar datos de tracking a la API
+    console.log("Esto debe ser primero: ", dataTRK);
+    /*this.service.generateTracking(dataTRK).subscribe(
       response => {
         console.log("Tracking guardado con exito.");
       },
@@ -220,19 +240,47 @@ export class SolicotiComponent implements OnInit {
       cabSolCotTelefInspector: this.cab_telef_insp
     }
 
-    console.log(dataCAB);
+    //enviar datos de cabecera a la API
+    console.log("Esto debe ser segundo", dataCAB);
+    /*this.service.addSolCot(dataCAB).subscribe(
+      response => {
+        console.log("solicitud registrdada con exito");
+      },
+      error => {
+        console.log("error: ", error)
+      }
+    );*/
+
+    this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol)
+    .subscribe(
+      response => {
+        const vari = response[0].cabSolCotID;
+        console.log("Exito: ", vari);
+      },
+      error => {
+        console.log("error:", error)
+      });
+
+    console.log("Esto debe ser segundo", dataCAB);
   }
 
 
 
- 
- metodo(){
-  console.log(this.cab_fechaMax);
-  console.log(this.cab_plazo);
- }
-  
 
-  addItemSector() {
+  metodo() {
+    this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol).subscribe(
+      response => {
+        const vari = response[0].cabSolCotID;
+        console.log("Exito: ", vari);
+      },
+      error => { console.log("error:", error) });
+  }
+
+  addDetalle(): void {
+
+  }
+
+  addItemSector(): void {
 
   }
 

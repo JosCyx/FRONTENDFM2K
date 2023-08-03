@@ -116,13 +116,13 @@ export class CommunicationApiService {
 
   //elimina un ruteo segun su area, tipo de solicitud y nivel
   deleteRuteo(RutareaTipoSol: number, RutareaArea: number, RutareaNivel: number): Observable<any> {
-    const url = `${this.APIUrl}/RuteoAreas/${RutareaTipoSol},${RutareaArea},${RutareaNivel}`;
-    return this.http.delete<any>(url);
+    return this.http.delete<any>(`${this.APIUrl}/RuteoAreas/${RutareaTipoSol},${RutareaArea},${RutareaNivel}`);
   }
 
   generateTracking(data: any) {
     return this.http.post(this.APIUrl + '/SolTrackings', data);
   }
+
   getLastSolicitud(tipoSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/SolTrackings/GetLastSol?tipoSol=${tipoSol}`);
   }
@@ -131,4 +131,11 @@ export class CommunicationApiService {
     return this.http.get<any[]>(`${this.APIUrl}/Empleadoes/GetEmpleadobyArea?area=${area}`);
   }
   
+  addSolCot(data: any) {
+    return this.http.post(this.APIUrl + '/CabSolCotizacions', data);
+  }
+
+  getIDCabecera(tipoSol: number, noSol: number): Observable<any> {
+    return this.http.get<any>(`${this.APIUrl}/CabSolCotizacions/GetCabecerabyID?tipoSol=${tipoSol}&noSol=${noSol}`);
+  }
 }
