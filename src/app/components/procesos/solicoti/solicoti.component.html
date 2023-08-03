@@ -6,7 +6,7 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <button class="btn btn-primary m-2">Crear</button>
-                    <button class="btn btn-primary m-2" (click)="getLastSol()">boton</button>
+                    <button class="btn btn-primary m-2" (click)="metodo()">boton</button>
                     <span *ngIf="changeview === 'crear'"></span>
                 </div>
             </div>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="input-group mb-1">
                     <label class="input-group-text">Asunto:</label>
-                    <input type="text" class="form-control" placeholder="Ingrese el asunto">
+                    <input type="text" class="form-control" placeholder="Ingrese el asunto" [(ngModel)]="cab_asunto">
                 </div>
             </div>
 
@@ -63,6 +63,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr *ngFor="let det of detalle">
+                            <td class="align-middle">{{det.cab_id}}</td>
+                            <td class="align-middle">{{det.det_id}}</td>
+                            <td class="align-middle">{{det.det_descp}}</td>
+                            <td class="align-middle">{{det.det_unidad}}</td>
+                            <td class="align-middle">{{det.det_cantidad}}</td>
+                        </tr>
                         <tr>
                             <th class="align-middle">1</th>
                             <td class="align-middle">
@@ -72,18 +79,6 @@
                             <td class="align-middle ">
                                 <button class="btn btn-outline-primary" data-toggle="modal"
                                     data-target="#itemsector">Desglose</button>
-                                <!-- <div class=" cel-prep">
-                                    <input class="form-control" type="number" placeholder="Cantidad">
-                                </div>
-                                <div class="cel-prep">
-                                    <select class="form-select">
-                                        <option disabled selected>Sector</option>
-                                        <option>Sector 1</option>
-                                        <option>Sector 2</option>
-                                        <option>Sector 3</option>
-                                        <option>sector 4</option>
-                                    </select>
-                                </div> -->
                             </td>
                             <td class="align-middle" style="width: 150px;">
                                 <select class="form-control">
@@ -112,18 +107,18 @@
 
             <div class="foot-cabecera">
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingInput"
+                    <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cab_proc"
                         placeholder="Materiales y procedimientos a seguir:">
                     <label for="floatingInput">Materiales y procedimientos a seguir:</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingInput"
+                    <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cab_obsrv"
                         placeholder="Materiales y procedimientos a seguir:">
                     <label for="floatingInput">Observaciones:</label>
                 </div>
                 <div class="input-group mb-3">
                     <label class="input-group-text">Adjunto cotizaciones:</label>
-                    <select class="form-select">
+                    <select class="form-select" [(ngModel)]="cab_adjCot">
                         <option value="SI">Sí</option>
                         <option value="NO" selected>No</option>
                     </select>
@@ -132,21 +127,21 @@
                 </div>
                 <div class="input-group mb-3">
                     <label class="input-group-text">Plazo de entrega:</label>
-                    <input class="form-control" type="date" for="plazoentrega">
+                    <input class="form-control" type="date" for="plazoentrega" [(ngModel)]="cab_plazo">
                     <label class="input-group-text">Fecha máxima de entrega:</label>
-                    <input class="form-control" type="date" for="fechamaxima">
+                    <input class="form-control" type="date" for="fechamaxima" [(ngModel)]="cab_fechaMax">
                 </div>
                 <div class="input-group">
                     <label class="input-group-text">Inspector:</label>
-                    <input type="text" class="form-control" id="busqueda" list="sugerencias" [(ngModel)]="inspector"
+                    <input type="text" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
                         (keyup)="searchInspector()" placeholder="Ingrese el nombre del empleado">
-                    <datalist id="sugerencias">
-                        <ng-container *ngFor="let emp of empleados">
-                            <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+                    <datalist id="inspectores">
+                        <ng-container *ngFor="let empOP of inspectores">
+                            <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>
                         </ng-container>
                     </datalist>
                     <label class="input-group-text">Teléfono:</label>
-                    <input class="form-control" type="text" placeholder="Ingrese el teléfono del inspector">
+                    <input class="form-control" type="text" placeholder="Ingrese el teléfono del inspector" [(ngModel)]="cab_telef_insp">
                 </div>
             </div>
         </div>
@@ -178,24 +173,31 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <tr *ngFor="let item of itemSector ">
+                                <td class="align-middle">{{item.det_id}}</td>
+                                <td class="align-middle">{{item.det_descp}}</td>
+                                <td class="align-middle">{{item.item_id}}</td>
+                                <td class="align-middle">{{item.item_cant}}</td>
+                                <td class="align-middle">{{item.item_sector}}</td>
+                            </tr>
                             <tr>
-                                <th class="align-middle">1</th>
+                                <td class="align-middle">{{det_id}}</td>
                                 <td class="align-middle">
                                     <input class="form-control" type="text" value='Descripción'
-                                        [(ngModel)]="descripcion" placeholder="Descripción" disabled>
+                                        [(ngModel)]="det_descp" placeholder="Descripción" disabled>
                                 </td>
                                 <td class="align-middle cel-prep">
-                                    <input type="text" class="form-control text-center" [value]=1 disabled>
+                                    <input type="text" class="form-control text-center" [(ngModel)]="item_id" disabled>
                                 </td>
                                 <td class="align-middle ">
                                     <div class=" cel-prep">
-                                        <input class="form-control" type="number" placeholder="Cantidad">
+                                        <input class="form-control" [(ngModel)]="item_cant" type="number" placeholder="Cantidad">
                                     </div>
 
                                 </td>
                                 <td class="align-middle" style="width: 150px;">
                                     <div class="cel-prep">
-                                        <select class="form-select">
+                                        <select class="form-select" [(ngModel)]="item_sector">
                                             <option disabled selected>Sector</option>
                                             <option>Sector 1</option>
                                             <option>Sector 2</option>
@@ -207,8 +209,9 @@
 
                             </tr>
                             <tr>
-                                <td colspan="5" class="align-middle text-end"><button class="btn btn-success"><i
-                                            class="bi bi-plus-circle"></i></button></td>
+                                <td colspan="5" class="align-middle text-end"><button class="btn btn-success"
+                                        (click)="addItemSector()">
+                                        <i class="bi bi-plus-circle"></i></button></td>
                             </tr>
                         </tbody>
                     </table>

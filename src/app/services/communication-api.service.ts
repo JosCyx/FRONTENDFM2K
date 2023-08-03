@@ -126,5 +126,9 @@ export class CommunicationApiService {
   getLastSolicitud(tipoSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/SolTrackings/GetLastSol?tipoSol=${tipoSol}`);
   }
+
+  getEmpleadobyArea(area: number) {
+    return this.http.get<any[]>(`${this.APIUrl}/Empleadoes/GetEmpleadobyArea?area=${area}`);
+  }
   
 }
