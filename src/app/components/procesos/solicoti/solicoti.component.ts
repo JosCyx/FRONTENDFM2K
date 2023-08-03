@@ -244,24 +244,22 @@ export class SolicotiComponent implements OnInit {
     console.log("Esto debe ser segundo", dataCAB);
     /*this.service.addSolCot(dataCAB).subscribe(
       response => {
-        console.log("solicitud registrdada con exito");
+        console.log("solicitud registrada con exito");
       },
       error => {
         console.log("error: ", error)
       }
     );*/
 
-    this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol)
-    .subscribe(
+    await this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol).subscribe(
       response => {
         const vari = response[0].cabSolCotID;
         console.log("Exito: ", vari);
       },
       error => {
         console.log("error:", error)
-      });
-
-    console.log("Esto debe ser segundo", dataCAB);
+      }
+    );
   }
 
 
