@@ -138,4 +138,20 @@ export class CommunicationApiService {
   getIDCabecera(tipoSol: number, noSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/CabSolCotizacions/GetCabecerabyID?tipoSol=${tipoSol}&noSol=${noSol}`);
   }
+
+  getLastDetalleCot(idSol: number): Observable<any> {
+    return this.http.get<any>(`${this.APIUrl}/DetSolCotizacions/GetLastDetalleCot?id=${idSol}`);
+  }
+
+  getLastItem(idSol: number, idDet: number): Observable<any> {
+    return this.http.get<any>(`${this.APIUrl}/ItemSectors/GetLastItem?idSol=${idSol}&idDet=${idDet}`);
+  }
+
+  getDetalleCotizacion(): Observable<any[]> {
+    return this.http.get<any>(this.APIUrl + '/DetSolCotizacions');
+  }
+
+  getItembyDetalle(): Observable<any[]> {
+    return this.http.get<any>(this.APIUrl + '/DetSolCotizacions');
+  }
 }

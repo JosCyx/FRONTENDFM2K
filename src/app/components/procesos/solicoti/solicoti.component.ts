@@ -40,14 +40,14 @@ export class SolicotiComponent implements OnInit {
 
   //variables del detalle
   cab_id!: number;
-  det_id!: number;//se usa para el detalle y para el item por sector
+  det_id: number = 1;//se usa para el detalle y para el item por sector
   det_descp!: string;//se usa para el detalle y para el item por sector
   det_unidad!: number;
-  det_cantidad!: number;
+  det_cantidad: number = 0;
 
   //variables del item por sector
-  item_id!: number;
-  item_cant!: number;
+  item_id: number = 1;
+  item_cant: number = 1;
   item_sector!: number;
 
 
@@ -61,10 +61,12 @@ export class SolicotiComponent implements OnInit {
   empleadosList$!: Observable<any[]>;
   areaList$!: Observable<any[]>;
   inspectores$!: Observable<any[]>;
+  detallesList$!: Observable<any[]>;
+  itemxSector$!: Observable<any[]>;
 
   //listas locales para manejar los datos
-  detalle: Detalle[] = [];
-  itemSector: ItemSector[] = [];
+  detalleList: Detalle[] = [];
+  itemSectorList: ItemSector[] = [];
   empleados: any[] = [];
   areas: any[] = [];
   inspectores: any[] = [];
@@ -73,9 +75,11 @@ export class SolicotiComponent implements OnInit {
 
   ngOnInit(): void {
     this.empleadosList$ = this.service.getEmpleadosList();
-    this.inspectores$ = this.service.getEmpleadobyArea(12);
+
+    this.inspectores$ = this.service.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
 
     this.areaList$ = this.service.getAreaList();
+
     this.areaList$.subscribe((data) => {
       this.areas = data;
     });
@@ -198,28 +202,41 @@ export class SolicotiComponent implements OnInit {
     });
   }
 
+  guardarTrancking(): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        this.trLastNoSol = await this.getLastSol();
+
+        const dataTRK = {
+          solTrTipoSol: this.trTipoSolicitud,
+          solTrNumSol: this.trLastNoSol,
+          solTrNivel: this.trNivelEmision,
+          solTrIdEmisor: this.trIdNomEmp
+        };
+
+        console.log("Esto debe ser primero: ", dataTRK);
+        this.service.generateTracking(dataTRK).subscribe(
+          () => {
+            console.log("Tracking guardado con éxito.");
+            resolve();
+          },
+          (error) => {
+            console.log("Error al guardar el tracking: ", error);
+            reject(error);
+          }
+        );
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+
+
   //guarda la solicitud con estado emitido
   async guardarSolicitud() {
 
-    this.trLastNoSol = await this.getLastSol();
-
-    const dataTRK = {
-      solTrTipoSol: this.trTipoSolicitud,//valor por defecto del tipo de solicitud
-      solTrNumSol: this.trLastNoSol,//ultimo numero de solicitud de cotizacion
-      solTrNivel: this.trNivelEmision,//nivel 10 por defecto emision
-      solTrIdEmisor: this.trIdNomEmp//id del emisor
-    }
-
-    //enviar datos de tracking a la API
-    console.log("Esto debe ser primero: ", dataTRK);
-    /*this.service.generateTracking(dataTRK).subscribe(
-      response => {
-        console.log("Tracking guardado con exito.");
-      },
-      error => {
-        console.log("Error al guardar el tracking: ",error);
-      }
-    );*/
+    await this.guardarTrancking();
 
     const dataCAB = {
       cabSolCotTipoSolicitud: this.trTipoSolicitud,
@@ -240,46 +257,168 @@ export class SolicotiComponent implements OnInit {
       cabSolCotTelefInspector: this.cab_telef_insp
     }
 
+
     //enviar datos de cabecera a la API
     console.log("Esto debe ser segundo", dataCAB);
-    /*this.service.addSolCot(dataCAB).subscribe(
+    await this.service.addSolCot(dataCAB).subscribe(
       response => {
-        console.log("solicitud registrada con exito");
+        console.log("Agregando cuerpo de la cabecera...");
+        this.addBodySol();
+        console.log("Cuerpo agregado.");
       },
       error => {
-        console.log("error: ", error)
-      }
-    );*/
-
-    await this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol).subscribe(
-      response => {
-        const vari = response[0].cabSolCotID;
-        console.log("Exito: ", vari);
-      },
-      error => {
-        console.log("error:", error)
+        console.log("error al guardar la cabecera: ", error)
       }
     );
+
+  }
+
+  //permite crear el detalle y el item por sector y los envia a la API
+  async addBodySol() {
+
+    this.cab_id = await this.getIdCabecera();
+    this.det_id = await this.getLastDetalleCot();
+    this.item_id = await this.getLastItem();
+
+   
+
+    //enviar la lista detalle a la api
+    console.log(this.detalleList);
+
+    
+
+    //enviar la lista itemsector a la api
+    console.log(this.itemSectorList);
   }
 
 
 
-
-  metodo() {
+  /*dgetIdCabecera(): void {
     this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol).subscribe(
       response => {
-        const vari = response[0].cabSolCotID;
-        console.log("Exito: ", vari);
+        if (response.length == 0) {
+          console.log("Esto debe ir al final, no existe una solicitud con el numero");
+        } else {
+          this.cab_id = response[0].cabSolCotID;//guarda el ID de la cabecera registrada 
+          console.log("Exito, id de la cabecera: ", this.cab_id);
+        }
       },
-      error => { console.log("error:", error) });
+      error => { console.log("error al obtener el id de la cabecera:", error) });
+  }*/
+
+  getIdCabecera(): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol).subscribe(
+        (resultado) => {
+          if (resultado.length == 0) {
+            console.log("No se ha encontrado ninguna cabecera");
+          } else {
+            const cabID = resultado[0].cabSolCotID;
+            console.log('Id de la cabecera:', cabID);
+            resolve(cabID);
+          }
+        },
+        (error) => {
+          console.error('Error al obtener el id de la cabecera:', error);
+          reject(error);
+        }
+      );
+    });
   }
 
-  addDetalle(): void {
+
+  getLastDetalleCot(): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this.service.getLastItem(this.cab_id,this.det_id).subscribe(
+        (resultado) => {
+          if (resultado === 0) {
+            console.log('No se ha registrado ningun detalle para esta solicitud.');
+            resolve(1);
+          } else {
+            const lastDetCot = resultado[0].solCotIdDetalle + 1;
+            //console.log('Último id detalle:', lastDetCot);
+            resolve(lastDetCot);
+          }
+        },
+        (error) => {
+          console.error('Error al obtener el último id de detalle:', error);
+          reject(error);
+        }
+      );
+    });
+  }
+
+  getLastItem(): Promise<number> {
+    return new Promise<number>((resolve, reject) => {
+      this.service.getLastItem(this.cab_id, this.det_id).subscribe(
+        (resultado) => {
+          if (resultado === 0) {
+            console.log('No se ha encontrado ningun item registrado.');
+            resolve(1);
+          } else {
+            const lastItem = resultado[0].itmIdDetalle + 1;
+            //console.log('Último id del itemsector:', lastItem);
+            resolve(lastItem);
+          }
+        },
+        (error) => {
+          console.error('Error al obtener el último id de detalle:', error);
+          reject(error);
+        }
+      );
+    });
+  }
+
+
+  //agrega los detalles a la lista detalles
+  addDetalle() {
+
+    const detalle = {
+      cab_id: this.cab_id,
+      det_id: this.det_id,
+      det_descp: this.det_descp,
+      det_unidad: this.det_unidad,
+      det_cantidad: this.det_cantidad
+    }
+
+    this.detalleList.push(detalle);
+    //console.log(this.detalleList);
+
+    //aumenta el valor del id de detalle
+    for(let det of this.detalleList){
+      this.det_id = det.det_id+1;
+    }
+
+    this.det_descp = '';
+    this.det_unidad = 0;
+    this.det_cantidad = 0;
 
   }
 
+  //agregar los items a la lista de itemSector
   addItemSector(): void {
 
+    const itemSector = {
+      det_id: this.det_id,
+      det_descp: this.det_descp,
+      item_id: this.item_id,
+      item_cant: this.item_cant,
+      item_sector: this.item_sector
+    }
+
+    this.itemSectorList.push(itemSector);
+    
+    this.det_cantidad += this.item_cant;
+
+    //aumenta el valor del id de los items
+    for(let itm of this.itemSectorList){
+      this.item_id = itm.item_id+1;
+    }
+
+    this.item_cant = 1;
+    this.item_sector = 0;
+    
+    
   }
 
 }

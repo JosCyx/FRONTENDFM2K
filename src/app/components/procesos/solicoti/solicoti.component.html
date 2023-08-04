@@ -6,7 +6,7 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <button class="btn btn-primary m-2">Crear</button>
-                    <button class="btn btn-primary m-2" (click)="metodo()">boton</button>
+                    <button class="btn btn-primary m-2" (click)="addDetalle()">boton</button>
                     <span *ngIf="changeview === 'crear'"></span>
                 </div>
             </div>
@@ -63,7 +63,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let det of detalle">
+                        <tr *ngFor="let det of detalleList">
                             <td class="align-middle">{{det.det_id}}</td>
                             <td class="align-middle">{{det.det_descp}}</td>
                             <td class="align-middle"></td>
@@ -71,35 +71,35 @@
                             <td class="align-middle">{{det.det_cantidad}}</td>
                         </tr>
                         <tr>
-                            <th class="align-middle">1</th>
+                            <th class="align-middle">{{det_id}}</th>
                             <td class="align-middle">
                                 <textarea name="descripcion" class="form-control" rows="2" cols="50"
-                                    placeholder="Descripción" [(ngModel)]="descripcion"></textarea>
+                                    placeholder="Descripción" [(ngModel)]="det_descp"></textarea>
                             </td>
                             <td class="align-middle ">
                                 <button class="btn btn-outline-primary" data-toggle="modal"
                                     data-target="#itemsector">Desglose</button>
                             </td>
                             <td class="align-middle" style="width: 150px;">
-                                <select class="form-control">
-                                    <option selected>Unidad</option>
-                                    <option>Sacos</option>
-                                    <option>Paquete</option>
-                                    <option>Avance de Obra</option>
-                                    <option>Millar</option>
-                                    <option>Metros</option>
-                                    <option>Kilos</option>
-                                    <option>Gramos</option>
-                                    <option>Caneca</option>
+                                <select class="form-control" [(ngModel)]="det_unidad">
+                                    <option value="Unidad" selected>Unidad</option>
+                                    <option value="Sacos">Sacos</option>
+                                    <option value="Paquete">Paquete</option>
+                                    <option value="Avance de Obra">Avance de Obra</option>
+                                    <option value="Millar">Millar</option>
+                                    <option value="Metros">Metros</option>
+                                    <option value="Kilos">Kilos</option>
+                                    <option value="Gramos">Gramos</option>
+                                    <option value="Caneca">Caneca</option>
                                 </select>
                             </td>
                             <td class="align-middle cel-prep">
-                                <input type="text" class="form-control text-center" [value]="6" disabled>
+                                <input type="text" class="form-control text-center" [(ngModel)]="det_cantidad" disabled>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="5" class="align-middle text-end"><button class="btn btn-success"><i
-                                        class="bi bi-plus-circle"></i></button></td>
+                                        (click)="addDetalle()" class="bi bi-plus-circle"></i></button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -173,7 +173,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let item of itemSector ">
+                            <tr *ngFor="let item of itemSectorList">
                                 <td class="align-middle">{{item.det_id}}</td>
                                 <td class="align-middle">{{item.det_descp}}</td>
                                 <td class="align-middle">{{item.item_id}}</td>
@@ -191,14 +191,14 @@
                                 </td>
                                 <td class="align-middle ">
                                     <div class=" cel-prep">
-                                        <input class="form-control" [(ngModel)]="item_cant" type="number" placeholder="Cantidad">
+                                        <input class="form-control" [(ngModel)]="item_cant" min="1" type="number" placeholder="Cantidad">
                                     </div>
 
                                 </td>
                                 <td class="align-middle" style="width: 150px;">
                                     <div class="cel-prep">
                                         <select class="form-select" [(ngModel)]="item_sector">
-                                            <option disabled selected>Sector</option>
+                                            <option value="0" disabled selected>Sector</option>
                                             <option>Sector 1</option>
                                             <option>Sector 2</option>
                                             <option>Sector 3</option>
