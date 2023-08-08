@@ -13,9 +13,11 @@ export class SolicotiComponent implements OnInit {
   empleado: string = '';
   inspector: string = '';
   showArea: string = '';
-  descripcion: string = '';
+  areaNmco!: string;
   fecha: Date = new Date;
   private inputTimer: any;
+  solNumerico!: string;
+  noSolFormat!: string;
 
 
   //variables para guardar el tracking
@@ -42,20 +44,19 @@ export class SolicotiComponent implements OnInit {
   cab_id!: number;
   det_id: number = 1;//se usa para el detalle y para el item por sector
   det_descp!: string;//se usa para el detalle y para el item por sector
-  det_unidad!: number;
+  det_unidad: string = 'Unidad';
   det_cantidad: number = 0;
 
   //variables del item por sector
   item_id: number = 1;
   item_cant: number = 1;
-  item_sector!: number;
-
-
-
+  item_sector: number = 0;
 
   //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
   changeview: string = 'crear';
+  msjExito!: string;
+  msjError!: string;
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -67,6 +68,7 @@ export class SolicotiComponent implements OnInit {
   //listas locales para manejar los datos
   detalleList: Detalle[] = [];
   itemSectorList: ItemSector[] = [];
+  tmpItemSect: ItemSector[] = [];
   empleados: any[] = [];
   areas: any[] = [];
   inspectores: any[] = [];
@@ -118,7 +120,7 @@ export class SolicotiComponent implements OnInit {
       if (this.inspector) {
         const empleadoSeleccionado = this.inspectores.find(emp => (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.inspector);
         this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : null;
-        console.log(this.cab_inspector);
+        console.log("Inspector ID",this.cab_inspector);
       } else {
         this.cab_inspector = 0;
       }
@@ -135,12 +137,13 @@ export class SolicotiComponent implements OnInit {
       for (let emp of this.empleados) {
         if ((emp.empleadoNombres + ' ' + emp.empleadoApellidos) == this.empleado) {
           this.trIdNomEmp = emp.empleadoIdNomina;
-          console.log(this.trIdNomEmp);
+          console.log("Empleado ID:",this.trIdNomEmp);
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
               this.cab_area = area.areaIdNomina;
               this.showArea = area.areaDecp;
-              console.log(this.cab_area);
+              this.areaNmco = area.areaNemonico;
+              console.log("Empleado area ID:",this.cab_area);
             } else if (emp.empleadoIdArea === 0) {
               this.showArea = 'El empleado no posee un area asignada.'
             }
@@ -180,6 +183,20 @@ export class SolicotiComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
+  getSolName(noSol: number) {
+    const noSolString = noSol.toString();
+    if(noSolString.length == 1){
+      this.solNumerico = "N° " + this.areaNmco + " " + this.trTipoSolicitud + "-000" + noSolString;
+    } else if (noSolString.length == 2){
+      this.solNumerico = "N° " + this.areaNmco + " " + this.trTipoSolicitud + "-00" + noSolString;
+    } else if (noSolString.length == 3){
+      this.solNumerico = "N° " + this.areaNmco + " " + this.trTipoSolicitud + "-0" + noSolString;
+    } else if (noSolString.length == 4){
+      this.solNumerico = "N° " + this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
+    }
+    
+  }
+
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
   getLastSol(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
@@ -214,7 +231,7 @@ export class SolicotiComponent implements OnInit {
           solTrIdEmisor: this.trIdNomEmp
         };
 
-        console.log("Esto debe ser primero: ", dataTRK);
+        console.log("1. guardando tracking: ", dataTRK);
         this.service.generateTracking(dataTRK).subscribe(
           () => {
             console.log("Tracking guardado con éxito.");
@@ -234,7 +251,7 @@ export class SolicotiComponent implements OnInit {
 
 
   //guarda la solicitud con estado emitido
-  async guardarSolicitud() {
+  async generarSolicitud() {
 
     await this.guardarTrancking();
 
@@ -259,9 +276,10 @@ export class SolicotiComponent implements OnInit {
 
 
     //enviar datos de cabecera a la API
-    console.log("Esto debe ser segundo", dataCAB);
+    console.log("2. guardando solicitud...", dataCAB);
     await this.service.addSolCot(dataCAB).subscribe(
       response => {
+        console.log("Cabecera agregada.");
         console.log("Agregando cuerpo de la cabecera...");
         this.addBodySol();
         console.log("Cuerpo agregado.");
@@ -276,37 +294,82 @@ export class SolicotiComponent implements OnInit {
   //permite crear el detalle y el item por sector y los envia a la API
   async addBodySol() {
 
-    this.cab_id = await this.getIdCabecera();
-    this.det_id = await this.getLastDetalleCot();
-    this.item_id = await this.getLastItem();
+    this.det_id = await this.getLastDetalleCot();//numero del detalle que se va a guardar
 
-   
 
-    //enviar la lista detalle a la api
-    console.log(this.detalleList);
+    try {
+      //enviar la lista detalle a la api para registrarla
+      for (let detalle of this.detalleList) {//recorre la lista de detalles
+
+        //crea el arreglo con las propiedades de detalle
+        const data = {
+          solCotTipoSol: this.trTipoSolicitud,
+          solCotNoSol: this.trLastNoSol,
+          solCotIdDetalle: detalle.det_id,
+          solCotDescripcion: detalle.det_descp,
+          solCotUnidad: detalle.det_unidad,
+          solCotCantidadTotal: detalle.det_cantidad
+        }
+
+        //envia a la api el arreglo data por medio del metodo post
+        this.service.addDetalleCotizacion(data).subscribe(
+          response => {
+            console.log("3. Detalle añadido exitosamente.");
+          },
+          error => {
+            console.log("No se ha podido registrar el detalle, error: ", error);
+          }
+        );
+
+      }
+      console.log(this.detalleList);
+
+      //enviar la lista itemsector a la api
+      for (let item of this.itemSectorList) {
+
+        const data = {
+          itmTipoSol: this.trTipoSolicitud,
+          itmNumSol: this.trLastNoSol,
+          itmIdDetalle: item.det_id,
+          itmIdItem: item.item_id,
+          itmCantidad: item.item_cant,
+          itmSector: item.item_sector
+        }
+
+        this.service.addItemSector(data).subscribe(
+          response => {
+            console.log("4. Item guardado exitosamente.");
+          },
+          error => {
+            console.log("No se pudo guardar el item no:" + item.item_id + ", error: ", error);
+          }
+        );
+
+      }
+      console.log(this.itemSectorList);
+
+      this.getSolName(this.trLastNoSol);
+
+      this.msjExito = "Solicitud " + this.solNumerico + " generada exitosamente.";
+
+      setTimeout(() => {
+        this.msjExito = "";
+        this.clear();
+      }, 2500);
+    }
+    catch (error) {
+      this.msjError = "No se ha podido generar la solicitud.";
+
+      setTimeout(() => {
+        this.msjError = "";
+      }, 2500);
+    }
 
     
 
-    //enviar la lista itemsector a la api
-    console.log(this.itemSectorList);
   }
 
-
-
-  /*dgetIdCabecera(): void {
-    this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol).subscribe(
-      response => {
-        if (response.length == 0) {
-          console.log("Esto debe ir al final, no existe una solicitud con el numero");
-        } else {
-          this.cab_id = response[0].cabSolCotID;//guarda el ID de la cabecera registrada 
-          console.log("Exito, id de la cabecera: ", this.cab_id);
-        }
-      },
-      error => { console.log("error al obtener el id de la cabecera:", error) });
-  }*/
-
-  getIdCabecera(): Promise<number> {
+  /*getIdCabecera(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol).subscribe(
         (resultado) => {
@@ -324,19 +387,19 @@ export class SolicotiComponent implements OnInit {
         }
       );
     });
-  }
+  }*/
 
 
   getLastDetalleCot(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
-      this.service.getLastItem(this.cab_id,this.det_id).subscribe(
+      this.service.getLastDetalleCot(this.trTipoSolicitud, this.trLastNoSol).subscribe(
         (resultado) => {
           if (resultado === 0) {
-            console.log('No se ha registrado ningun detalle para esta solicitud.');
+            console.log('No se ha registrado ningun detalle para esta solicitud. Se asigna 0.');
             resolve(1);
           } else {
-            const lastDetCot = resultado[0].solCotIdDetalle + 1;
-            //console.log('Último id detalle:', lastDetCot);
+            const lastDetCot = resultado[0].solCotID + 1;
+            console.log('Nuevo detalle: ', lastDetCot);
             resolve(lastDetCot);
           }
         },
@@ -348,33 +411,10 @@ export class SolicotiComponent implements OnInit {
     });
   }
 
-  getLastItem(): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
-      this.service.getLastItem(this.cab_id, this.det_id).subscribe(
-        (resultado) => {
-          if (resultado === 0) {
-            console.log('No se ha encontrado ningun item registrado.');
-            resolve(1);
-          } else {
-            const lastItem = resultado[0].itmIdDetalle + 1;
-            //console.log('Último id del itemsector:', lastItem);
-            resolve(lastItem);
-          }
-        },
-        (error) => {
-          console.error('Error al obtener el último id de detalle:', error);
-          reject(error);
-        }
-      );
-    });
-  }
-
-
   //agrega los detalles a la lista detalles
   addDetalle() {
 
     const detalle = {
-      cab_id: this.cab_id,
       det_id: this.det_id,
       det_descp: this.det_descp,
       det_unidad: this.det_unidad,
@@ -385,20 +425,21 @@ export class SolicotiComponent implements OnInit {
     //console.log(this.detalleList);
 
     //aumenta el valor del id de detalle
-    for(let det of this.detalleList){
-      this.det_id = det.det_id+1;
+    for (let det of this.detalleList) {
+      this.det_id = det.det_id + 1;
     }
 
     this.det_descp = '';
-    this.det_unidad = 0;
+    this.det_unidad = 'Unidad';
     this.det_cantidad = 0;
 
   }
 
-  //agregar los items a la lista de itemSector
+  //agregar los items a una lista temporal 
+  //se usa una lista temporal ya que hay que limpiarla cada vez que se vaya a agregar items que pertenezcan a un detalle nuevo
   addItemSector(): void {
 
-    const itemSector = {
+    const tmpItemSector = {
       det_id: this.det_id,
       det_descp: this.det_descp,
       item_id: this.item_id,
@@ -406,19 +447,41 @@ export class SolicotiComponent implements OnInit {
       item_sector: this.item_sector
     }
 
-    this.itemSectorList.push(itemSector);
-    
+    this.tmpItemSect.push(tmpItemSector);
+
     this.det_cantidad += this.item_cant;
 
     //aumenta el valor del id de los items
-    for(let itm of this.itemSectorList){
-      this.item_id = itm.item_id+1;
+    for (let itm of this.tmpItemSect) {
+      this.item_id = itm.item_id + 1;
     }
 
     this.item_cant = 1;
     this.item_sector = 0;
-    
-    
+  }
+
+  //agregar los items de la lista temporal a la lista definitiva
+  saveItemSect(): void {
+
+    for (let tmpitm of this.tmpItemSect) {
+      const itemSector = {
+        det_id: tmpitm.det_id,
+        det_descp: tmpitm.det_descp,
+        item_id: tmpitm.item_id,
+        item_cant: tmpitm.item_cant,
+        item_sector: tmpitm.item_sector
+      }
+
+      this.itemSectorList.push(itemSector);
+
+    }
+    this.item_id = 1;
+    this.tmpItemSect = [];
+    //console.log(this.itemSectorList);
+  }
+
+  clear(): void {
+
   }
 
 }

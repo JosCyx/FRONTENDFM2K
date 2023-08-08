@@ -139,19 +139,23 @@ export class CommunicationApiService {
     return this.http.get<any>(`${this.APIUrl}/CabSolCotizacions/GetCabecerabyID?tipoSol=${tipoSol}&noSol=${noSol}`);
   }
 
-  getLastDetalleCot(idSol: number): Observable<any> {
-    return this.http.get<any>(`${this.APIUrl}/DetSolCotizacions/GetLastDetalleCot?id=${idSol}`);
+  getLastDetalleCot(tipoSol: number, noSol: number): Observable<any> {
+    return this.http.get<any>(`${this.APIUrl}/DetSolCotizacions/GetLastDetalleCot?tipoSol=${tipoSol}&noSol=${noSol}`);
   }
 
-  getLastItem(idSol: number, idDet: number): Observable<any> {
+  /*getLastItem(idSol: number, idDet: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/ItemSectors/GetLastItem?idSol=${idSol}&idDet=${idDet}`);
+  }*/
+
+  //agregar un nuevo detalle a una nueva cabecera
+  addDetalleCotizacion(data: any) {
+    return this.http.post(this.APIUrl + '/DetSolCotizacions', data);
   }
 
-  getDetalleCotizacion(): Observable<any[]> {
-    return this.http.get<any>(this.APIUrl + '/DetSolCotizacions');
+  //agregar un nuevo item a un detalle
+  addItemSector(data: any) {
+    return this.http.post(this.APIUrl + '/ItemSectors', data);
   }
 
-  getItembyDetalle(): Observable<any[]> {
-    return this.http.get<any>(this.APIUrl + '/DetSolCotizacions');
-  }
+  
 }

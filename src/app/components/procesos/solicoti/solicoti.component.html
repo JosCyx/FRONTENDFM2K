@@ -6,14 +6,14 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <button class="btn btn-primary m-2">Crear</button>
-                    <button class="btn btn-primary m-2" (click)="addDetalle()">boton</button>
+                    <button class="btn btn-primary m-2">Boton</button>
                     <span *ngIf="changeview === 'crear'"></span>
                 </div>
             </div>
         </nav>
     </div>
 
-    <div class="form-cot">
+    <div class="form-cot"> <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Registrar nueva solicitud de cotización</h3>
 
 
@@ -66,7 +66,7 @@
                         <tr *ngFor="let det of detalleList">
                             <td class="align-middle">{{det.det_id}}</td>
                             <td class="align-middle">{{det.det_descp}}</td>
-                            <td class="align-middle"></td>
+                            <td class="align-middle">Asignado</td>
                             <td class="align-middle">{{det.det_unidad}}</td>
                             <td class="align-middle">{{det.det_cantidad}}</td>
                         </tr>
@@ -99,10 +99,15 @@
                         </tr>
                         <tr>
                             <td colspan="5" class="align-middle text-end"><button class="btn btn-success"><i
-                                        (click)="addDetalle()" class="bi bi-plus-circle"></i></button></td>
+                                        (click)="addDetalle()" class="bi bi-list-check"></i></button></td>
                         </tr>
                     </tbody>
+                    
+                    
                 </table>
+                <div class="text-end" style="padding-bottom: 5pt;">
+                    <span class="text-dark">*Presione el botón para agregar el detalle.</span>
+                </div>
             </div>
 
             <div class="foot-cabecera">
@@ -134,19 +139,25 @@
                 <div class="input-group">
                     <label class="input-group-text">Inspector:</label>
                     <input type="text" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
-                        (keyup)="searchInspector()" (input)="onInputChanged()" placeholder="Ingrese el nombre del inspector">
+                        (keyup)="searchInspector()" (input)="onInputChanged()"
+                        placeholder="Ingrese el nombre del inspector">
                     <datalist id="inspectores">
                         <ng-container *ngFor="let empOP of inspectores">
                             <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>
                         </ng-container>
                     </datalist>
                     <label class="input-group-text">Teléfono:</label>
-                    <input class="form-control" type="text" placeholder="Ingrese el teléfono del inspector" [(ngModel)]="cab_telef_insp">
+                    <input class="form-control" type="text" placeholder="Ingrese el teléfono del inspector"
+                        [(ngModel)]="cab_telef_insp">
                 </div>
             </div>
         </div>
+        <div>
+            <span class="text-success">{{ msjExito }}</span>
+            <span class="text-danger">{{ msjError }}</span>
+        </div>
         <div class="text-end">
-            <button class="btn btn-primary m-2" (click)="guardarSolicitud()">Guardar</button>
+            <button class="btn btn-primary m-2" (click)="generarSolicitud()">Guardar</button>
             <button class="btn btn-danger m-2">Cancelar</button>
         </div>
 
@@ -173,7 +184,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let item of itemSectorList">
+                            <tr *ngFor="let item of tmpItemSect">
                                 <td class="align-middle">{{item.det_id}}</td>
                                 <td class="align-middle">{{item.det_descp}}</td>
                                 <td class="align-middle">{{item.item_id}}</td>
@@ -183,26 +194,27 @@
                             <tr>
                                 <td class="align-middle">{{det_id}}</td>
                                 <td class="align-middle">
-                                    <input class="form-control" type="text" value='Descripción'
-                                        [(ngModel)]="det_descp" placeholder="Descripción" disabled>
+                                    <input class="form-control" type="text" value='Descripción' [(ngModel)]="det_descp"
+                                        placeholder="Descripción" disabled>
                                 </td>
                                 <td class="align-middle cel-prep">
                                     <input type="text" class="form-control text-center" [(ngModel)]="item_id" disabled>
                                 </td>
                                 <td class="align-middle ">
                                     <div class=" cel-prep">
-                                        <input class="form-control" [(ngModel)]="item_cant" min="1" type="number" placeholder="Cantidad">
+                                        <input class="form-control" [(ngModel)]="item_cant" min="1" type="number"
+                                            placeholder="Cantidad">
                                     </div>
 
                                 </td>
                                 <td class="align-middle" style="width: 150px;">
                                     <div class="cel-prep">
                                         <select class="form-select" [(ngModel)]="item_sector">
-                                            <option value="0" disabled selected>Sector</option>
-                                            <option>Sector 1</option>
-                                            <option>Sector 2</option>
-                                            <option>Sector 3</option>
-                                            <option>sector 4</option>
+                                            <option value="0" disabled selected>Seleccione</option>
+                                            <option value="1">Sector 1</option>
+                                            <option value="2">Sector 2</option>
+                                            <option value="3">Sector 3</option>
+                                            <option value="4">sector 4</option>
                                         </select>
                                     </div>
                                 </td>
@@ -211,14 +223,15 @@
                             <tr>
                                 <td colspan="5" class="align-middle text-end"><button class="btn btn-success"
                                         (click)="addItemSector()">
-                                        <i class="bi bi-plus-circle"></i></button></td>
+                                        <i class="bi bi-list-check"></i></button></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Confirmar</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        (click)="saveItemSect()">Confirmar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
 
                 </div>
             </div>
