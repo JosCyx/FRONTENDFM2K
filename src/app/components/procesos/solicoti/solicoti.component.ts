@@ -214,13 +214,13 @@ export class SolicotiComponent implements OnInit {
   getSolName(noSol: number) {
     const noSolString = noSol.toString();
     if(noSolString.length == 1){
-      this.solNumerico = "N° " + this.areaNmco + " " + this.trTipoSolicitud + "-000" + noSolString;
+      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-000" + noSolString;
     } else if (noSolString.length == 2){
-      this.solNumerico = "N° " + this.areaNmco + " " + this.trTipoSolicitud + "-00" + noSolString;
+      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-00" + noSolString;
     } else if (noSolString.length == 3){
-      this.solNumerico = "N° " + this.areaNmco + " " + this.trTipoSolicitud + "-0" + noSolString;
+      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-0" + noSolString;
     } else if (noSolString.length == 4){
-      this.solNumerico = "N° " + this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
+      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
     }
   }
 
@@ -380,7 +380,7 @@ export class SolicotiComponent implements OnInit {
 
       this.getSolName(this.trLastNoSol);
       this.showmsj = true;
-      this.msjExito = "Solicitud " + this.solNumerico + " generada exitosamente.";
+      this.msjExito = "Solicitud N°" + this.solNumerico + " generada exitosamente.";
       
 
       setTimeout(() => {

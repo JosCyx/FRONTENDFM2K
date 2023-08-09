@@ -18,31 +18,54 @@
         <form class="form-tiposol d-flex row mb-5">
           <label class="form-label">Tipo de solicitud</label>
           <div class="form input-group">
-            <select class="form-select" name="" >
+            <select class="form-select" name="tipoSol" [(ngModel)]="bsqTipoSol">
               <option disabled selected value=0>Seleccione una opción...</option>
-              <option>Solicitud de cotización</option>
-              <option>Solicitud de orden de compra</option>
-              <option>Solicitud de pago</option>
+              <option *ngFor="let tpsol of tipoSol$ | async" [value]="tpsol.tipoSolId">{{tpsol.tipoSolNombre}}</option>
             </select>
-            <button class="btn btn-outline-success">Consultar</button>
+            <button class="btn btn-outline-success" (click)="consultarSol()">Consultar</button>
           </div>
         </form>
-    
+
         <div class="mb-5">
     
           <table class="table table-bordered table-striped text-center">
             <thead>
               <tr>
+                <th>Código</th>
+                <th>Area solicitante</th>
                 <th>N° Solicitud</th>
+                <th>Empleado solicitante</th>
+                <th>Asunto</th>
                 <th>Fecha</th>
-                <th>Descripcion</th>
-              </tr>
-              <tr>
-                <td>00001</td>
-                <td>hoy</td>
-                <td>descripcion de solicitud</td>
+                <th>Estado</th>
+                <th>Tracking</th>
               </tr>
             </thead>
+            <tbody>
+              <tr>
+                <td>OB 1-0001</td>
+                <td>Obras</td>
+                <td>0001</td>
+                <td>Moreno Bravo Jose</td>
+                <td>Asunto de prueba</td>
+                <td>2023-08-09</td>
+                <td>Activo</td>
+                <td>Emisión</td>
+              </tr>
+              <tr *ngFor="let sol of allSol$ | async">
+                <td>{{sol.cabSolCotNumerico}}</td>
+                <td>{{sol.cabSolCotArea}}</td>
+                <td>{{sol.cabSolCotNoSolicitud}}</td>
+                <ng-container *ngFor="let emp of empleadoList$|async">
+                  <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolCotSolicitante">
+                    {{ emp.empleadoNombres + " " + emp.empleadoApellidos }}</td>
+                </ng-container>
+                <td>{{sol.cabSolCotAsunto}}</td>
+                <td>{{sol.cabSolCotFecha | date:'yyyy-MM-dd'}}</td>
+                <td>{{sol.cabSolCotEstado}}</td>
+                <td>{{sol.cabSolCotEstadoTracking}}</td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>

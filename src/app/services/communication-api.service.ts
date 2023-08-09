@@ -139,6 +139,14 @@ export class CommunicationApiService {
     return this.http.get<any>(`${this.APIUrl}/CabSolCotizacions/GetCabecerabyID?tipoSol=${tipoSol}&noSol=${noSol}`);
   }
 
+  getAllSolicitud(): Observable<any[]> {
+    return this.http.get<any>(this.APIUrl + '/CabSolCotizacions');
+  }
+
+  getCabbyTipoSol(tipoSol: number): Observable<any> {
+    return this.http.get<any>(`${this.APIUrl}/CabSolCotizacions/${tipoSol}`);
+  }
+
   getLastDetalleCot(tipoSol: number, noSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/DetSolCotizacions/GetLastDetalleCot?tipoSol=${tipoSol}&noSol=${noSol}`);
   }
