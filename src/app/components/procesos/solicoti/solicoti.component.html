@@ -26,7 +26,7 @@
                 </div>
                 <div class="row mb-1">
                     <div class="input-group col">
-                        <label class="input-group-text">Solicitado por:</label>
+                        <label class="input-group-text">Solicitado por*:</label>
                         <input type="text" class="form-control" id="busqueda" list="sugerencias" [(ngModel)]="empleado"
                             (keyup)="searchEmpleado()" placeholder="Ingrese el nombre del empleado">
                         <datalist id="sugerencias">
@@ -45,7 +45,7 @@
                     </div>
                 </div>
                 <div class="input-group mb-1">
-                    <label class="input-group-text">Asunto:</label>
+                    <label class="input-group-text">Asunto*:</label>
                     <input type="text" class="form-control" placeholder="Ingrese el asunto" [(ngModel)]="cab_asunto">
                 </div>
             </div>
@@ -56,8 +56,8 @@
                     <thead>
                         <tr>
                             <th scope="col">Item</th>
-                            <th scope="col">Descripción</th>
-                            <th scope="col">Presupuesto</th>
+                            <th scope="col">Descripción*</th>
+                            <th scope="col">Presupuesto*</th>
                             <th scope="col">Unidad</th>
                             <th scope="col">Cantidad Total</th>
                         </tr>
@@ -98,16 +98,14 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="5" class="align-middle text-end"><button class="btn btn-success"><i
-                                        (click)="addDetalle()" class="bi bi-list-check"></i></button></td>
+                            <td colspan="5" class="align-middle text-end"><button class="btn btn-success"
+                                    [disabled]="!det_descp || tmpItemSect.length === 0" (click)="addDetalle()"><i
+                                        class="bi bi-list-check"></i></button></td>
                         </tr>
                     </tbody>
-                    
-                    
+
+
                 </table>
-                <div class="text-end" style="padding-bottom: 5pt;">
-                    <span class="text-dark">*Presione el botón para agregar el detalle.</span>
-                </div>
             </div>
 
             <div class="foot-cabecera">
@@ -128,12 +126,12 @@
                         <option value="NO" selected>No</option>
                     </select>
                     <label class="input-group-text">Número de cotizaciones:</label>
-                    <input class="form-control" type="number" placeholder="Cantidad">
+                    <input class="form-control" type="number" placeholder="Cantidad" [(ngModel)]="cab_ncot">
                 </div>
                 <div class="input-group mb-3">
-                    <label class="input-group-text">Plazo de entrega:</label>
+                    <label class="input-group-text">Plazo de entrega*:</label>
                     <input class="form-control" type="date" for="plazoentrega" [(ngModel)]="cab_plazo">
-                    <label class="input-group-text">Fecha máxima de entrega:</label>
+                    <label class="input-group-text">Fecha máxima de entrega*:</label>
                     <input class="form-control" type="date" for="fechamaxima" [(ngModel)]="cab_fechaMax">
                 </div>
                 <div class="input-group">
@@ -150,16 +148,29 @@
                     <input class="form-control" type="text" placeholder="Ingrese el teléfono del inspector"
                         [(ngModel)]="cab_telef_insp">
                 </div>
+                <div class="text-end">
+                    <p class="tip">*Campos obligatorios</p>
+                </div>
             </div>
         </div>
-        <div>
-            <span class="text-success">{{ msjExito }}</span>
-            <span class="text-danger">{{ msjError }}</span>
+        <div class="d-flex row">
+            <div class="col">
+                <div *ngIf="showmsj" class="alert alert-success" role="alert">
+                    <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
+                </div>
+                <div *ngIf="showmsj" class="alert alert-danger" role="alert">
+                    <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
+                </div>
+            </div>
+
+            <div class=" col text-end">
+                <button class="btn btn-primary m-2" (click)="generarSolicitud()"
+                    [disabled]="!empleado || !cab_asunto || detalleList.length === 0 || itemSectorList.length === 0">Guardar</button>
+                <button class="btn btn-danger m-2" (click)="cancelarAll()">Cancelar</button>
+            </div>
         </div>
-        <div class="text-end">
-            <button class="btn btn-primary m-2" (click)="generarSolicitud()">Guardar</button>
-            <button class="btn btn-danger m-2">Cancelar</button>
-        </div>
+
+
 
 
     </div>
@@ -179,8 +190,8 @@
                                 <th scope="col">N° Detalle</th>
                                 <th scope="col">Descripción</th>
                                 <th scope="col">N° Item</th>
-                                <th scope="col">Cantidad</th>
-                                <th scope="col">Sector</th>
+                                <th scope="col">Cantidad*</th>
+                                <th scope="col">Sector*</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -207,6 +218,7 @@
                                     </div>
 
                                 </td>
+                                <!-- modificar el select para mostrar los sectores de la base de datos -->
                                 <td class="align-middle" style="width: 150px;">
                                     <div class="cel-prep">
                                         <select class="form-select" [(ngModel)]="item_sector">
@@ -222,7 +234,7 @@
                             </tr>
                             <tr>
                                 <td colspan="5" class="align-middle text-end"><button class="btn btn-success"
-                                        (click)="addItemSector()">
+                                        [disabled]="!item_sector" (click)="addItemSector()">
                                         <i class="bi bi-list-check"></i></button></td>
                             </tr>
                         </tbody>
@@ -230,8 +242,9 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-dismiss="modal"
-                        (click)="saveItemSect()">Confirmar</button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                        (click)="saveItemSect()" [disabled]="tmpItemSect.length === 0">Confirmar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"
+                        (click)="cancelarItem()">Cancelar</button>
 
                 </div>
             </div>

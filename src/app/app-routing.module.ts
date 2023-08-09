@@ -15,6 +15,7 @@ import { SolipagoComponent } from './components/procesos/solipago/solipago.compo
 import { MainConfiguracionComponent } from './components/configuracion/main-configuracion.component';
 import { MainSeguridadComponent } from './components/seguridad/main-seguridad.component';
 import { EmpleadosComponent } from './components/configuracion/empleados/empleados.component';
+import { AllrequestComponent } from './components/procesos/allrequest/allrequest.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -32,7 +33,8 @@ const routes: Routes = [
   {path: 'solipago', component: SolipagoComponent},
   {path: 'mainconfig', component: MainConfiguracionComponent},
   {path: 'mainsec', component: MainSeguridadComponent},
-  {path: 'empleados', component: EmpleadosComponent}
+  {path: 'empleados', component: EmpleadosComponent},
+  {path: 'allrequest', component: AllrequestComponent}
 
 ];
 

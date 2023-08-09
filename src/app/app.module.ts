@@ -25,7 +25,7 @@ import { MainConfiguracionComponent } from './components/configuracion/main-conf
 import { MenuComponent } from './components/templates/menu/menu.component';
 import { CommunicationApiService } from './services/communication-api.service';
 import { MenuAdminComponent } from './components/templates/menu-admin/menu-admin.component';
-
+import { AllrequestComponent } from './components/procesos/allrequest/allrequest.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +46,8 @@ import { MenuAdminComponent } from './components/templates/menu-admin/menu-admin
     MainSeguridadComponent,
     MainConfiguracionComponent,
     MenuComponent,
-    MenuAdminComponent
+    MenuAdminComponent,
+    AllrequestComponent
   ],
   imports: [
     BrowserModule,

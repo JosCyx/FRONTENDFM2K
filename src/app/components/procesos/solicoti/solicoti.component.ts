@@ -41,7 +41,6 @@ export class SolicotiComponent implements OnInit {
   cab_telef_insp!: string;
 
   //variables del detalle
-  cab_id!: number;
   det_id: number = 1;//se usa para el detalle y para el item por sector
   det_descp!: string;//se usa para el detalle y para el item por sector
   det_unidad: string = 'Unidad';
@@ -57,6 +56,7 @@ export class SolicotiComponent implements OnInit {
   changeview: string = 'crear';
   msjExito!: string;
   msjError!: string;
+  showmsj: boolean = false;
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -109,7 +109,6 @@ export class SolicotiComponent implements OnInit {
 
   }
 
-
   onInputChanged(): void {
     // Cancelamos el temporizador anterior antes de crear uno nuevo
     clearTimeout(this.inputTimer);
@@ -126,7 +125,6 @@ export class SolicotiComponent implements OnInit {
       }
     }, 500); // Retraso de 1 segundo (ajusta el valor según tus necesidades)
   }
-
 
   //guarda el nombre del area del empleado seleccionado
   selectEmpleado(): void {
@@ -183,6 +181,35 @@ export class SolicotiComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
+  cancelarAll():void{
+    this.clear();
+    this.ngOnInit();
+  }
+
+  cancelarItem():void{
+    this.det_cantidad = 0;
+    this.item_id = 1;
+    this.tmpItemSect = [];
+  }
+
+  clear(): void {
+    this.empleado = '';
+    this.showArea = '';
+    this.cab_asunto = '';
+    this.det_descp = '';
+    this.cab_proc = '';
+    this.cab_obsrv = '';
+    this.cab_adjCot = '';
+    this.cab_ncot = 0;
+    this.cab_plazo = new Date;
+    this.cab_fechaMax = new Date;
+    this.inspector = '';
+    this.cab_telef_insp = '';
+    this.detalleList = [];
+    this.itemSectorList = [];
+    this.tmpItemSect = [];
+  }
+
   getSolName(noSol: number) {
     const noSolString = noSol.toString();
     if(noSolString.length == 1){
@@ -194,7 +221,10 @@ export class SolicotiComponent implements OnInit {
     } else if (noSolString.length == 4){
       this.solNumerico = "N° " + this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
     }
-    
+  }
+
+  saveNumericoSol():void{
+
   }
 
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
@@ -346,9 +376,10 @@ export class SolicotiComponent implements OnInit {
         );
 
       }
-      console.log(this.itemSectorList);
+      //console.log(this.itemSectorList);
 
       this.getSolName(this.trLastNoSol);
+      this.saveNumericoSol();
 
       this.msjExito = "Solicitud " + this.solNumerico + " generada exitosamente.";
 
@@ -432,6 +463,7 @@ export class SolicotiComponent implements OnInit {
     this.det_descp = '';
     this.det_unidad = 'Unidad';
     this.det_cantidad = 0;
+    this.tmpItemSect = [];
 
   }
 
@@ -476,12 +508,10 @@ export class SolicotiComponent implements OnInit {
 
     }
     this.item_id = 1;
-    this.tmpItemSect = [];
+    
     //console.log(this.itemSectorList);
   }
 
-  clear(): void {
-
-  }
+  
 
 }

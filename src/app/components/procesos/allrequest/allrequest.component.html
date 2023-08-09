@@ -1,0 +1,49 @@
+<app-menu></app-menu>
+<div class="container">
+    <h2 class="font-weight-bolt ruteo">Todas las solicitudes</h2>
+    <div class="">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar</button>
+                    <button class="btn btn-primary m-2" (click)="changeView('editar')">Editar</button>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="formRol" *ngIf="changeview === 'consultar'">
+        <h3 class="font-weight-bold" style="padding-top: 20pt;">Consultar todas las solicitudes registradas</h3>
+    
+        <form class="form-tiposol d-flex row mb-5">
+          <label class="form-label">Tipo de solicitud</label>
+          <div class="form input-group">
+            <select class="form-select" name="" >
+              <option disabled selected value=0>Seleccione una opción...</option>
+              <option>Solicitud de cotización</option>
+              <option>Solicitud de orden de compra</option>
+              <option>Solicitud de pago</option>
+            </select>
+            <button class="btn btn-outline-success">Consultar</button>
+          </div>
+        </form>
+    
+        <div class="mb-5">
+    
+          <table class="table table-bordered table-striped text-center">
+            <thead>
+              <tr>
+                <th>N° Solicitud</th>
+                <th>Fecha</th>
+                <th>Descripcion</th>
+              </tr>
+              <tr>
+                <td>00001</td>
+                <td>hoy</td>
+                <td>descripcion de solicitud</td>
+              </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+</div>
