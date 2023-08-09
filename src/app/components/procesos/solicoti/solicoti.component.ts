@@ -57,6 +57,7 @@ export class SolicotiComponent implements OnInit {
   msjExito!: string;
   msjError!: string;
   showmsj: boolean = false;
+  showmsjerror: boolean = false;
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -223,10 +224,6 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
-  saveNumericoSol():void{
-
-  }
-
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
   getLastSol(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
@@ -284,6 +281,7 @@ export class SolicotiComponent implements OnInit {
   async generarSolicitud() {
 
     await this.guardarTrancking();
+    this.getSolName(this.trLastNoSol);
 
     const dataCAB = {
       cabSolCotTipoSolicitud: this.trTipoSolicitud,
@@ -301,7 +299,8 @@ export class SolicotiComponent implements OnInit {
       cabSolCotPlazoEntrega: this.cab_plazo,
       cabSolCotFechaMaxentrega: this.cab_fechaMax,
       cabSolCotInspector: this.cab_inspector,
-      cabSolCotTelefInspector: this.cab_telef_insp
+      cabSolCotTelefInspector: this.cab_telef_insp,
+      cabSolCotNumerico: this.solNumerico
     }
 
 
@@ -310,6 +309,7 @@ export class SolicotiComponent implements OnInit {
     await this.service.addSolCot(dataCAB).subscribe(
       response => {
         console.log("Cabecera agregada.");
+        console.log("Solicitud",this.solNumerico);
         console.log("Agregando cuerpo de la cabecera...");
         this.addBodySol();
         console.log("Cuerpo agregado.");
@@ -379,19 +379,22 @@ export class SolicotiComponent implements OnInit {
       //console.log(this.itemSectorList);
 
       this.getSolName(this.trLastNoSol);
-      this.saveNumericoSol();
-
+      this.showmsj = true;
       this.msjExito = "Solicitud " + this.solNumerico + " generada exitosamente.";
+      
 
       setTimeout(() => {
         this.msjExito = "";
+        this.showmsj = false;
         this.clear();
-      }, 2500);
+      }, 4000);
     }
     catch (error) {
-      this.msjError = "No se ha podido generar la solicitud.";
+      this.showmsjerror = true;
+      this.msjError = "No se ha podido generar la solicitud, intente nuevamente.";
 
       setTimeout(() => {
+        this.showmsjerror = false;
         this.msjError = "";
       }, 2500);
     }
