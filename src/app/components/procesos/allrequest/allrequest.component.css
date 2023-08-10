@@ -4,8 +4,46 @@
     padding-top: 25px;
 }
 
-.form-tiposol{
+.form-tiposol {
     width: 65%;
-    margin: 0 auto ;
+    margin: 0 auto;
     padding-top: 15px;
+}
+
+.cab-x {
+    width: 150px;
+}
+
+.cab-z {
+    width: 250px;
+}
+
+.table-hover tbody tr:hover {
+    cursor: pointer;
+}
+
+.form-cot {
+    padding-bottom: 100px;
+}
+
+.solicitud {
+    margin: 0 auto;
+    padding-top: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 10px;
+    background-color: rgb(172, 172, 172);
+}
+
+.input-group-text {
+    background-color: rgb(214, 214, 214);
+}
+
+.cel-prep {
+    width: 110px;
+    margin: 0 auto;
+}
+
+.tip {
+    font-size: 9pt;
 }

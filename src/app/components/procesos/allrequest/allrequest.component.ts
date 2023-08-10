@@ -12,7 +12,15 @@ export class AllrequestComponent implements OnInit{
   tipoSol$!: Observable<any[]>;
   allSol$!: Observable<any[]>;
   empleadoList$!: Observable<any[]>;
+  areaList$!: Observable<any[]>;
+  trckList$!: Observable<any[]>;
+  solicitud$!: Observable<any[]>;
+
+  solicitudes: any[] = [];
+
   bsqTipoSol!: number;
+
+  variable!: number;
 
   changeview: string = 'consultar';
 
@@ -21,6 +29,8 @@ export class AllrequestComponent implements OnInit{
   ngOnInit(): void {
     this.tipoSol$ = this.service.getTipoSolicitud();
     this.empleadoList$ = this.service.getEmpleadosList();
+    this.areaList$ = this.service.getAreaList();
+    this.trckList$ = this.service.getNivelruteo();
     
   }
 
@@ -31,4 +41,19 @@ export class AllrequestComponent implements OnInit{
   changeView(view: string): void {
     this.changeview = view;
   }
+  editSolSelected(id: number):void{
+    this.changeview = 'editar';
+    this.variable = id;
+
+
+    this.solicitud$ = this.service.getSolicitudbyId(id);
+    
+    this.solicitud$.subscribe((data) => {
+      this.solicitudes = data;
+    });
+
+    console.log(this.solicitudes);
+  }
+
+  
 }

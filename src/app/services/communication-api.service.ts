@@ -165,5 +165,8 @@ export class CommunicationApiService {
     return this.http.post(this.APIUrl + '/ItemSectors', data);
   }
 
+  getSolicitudbyId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.APIUrl}/CabSolCotizacions/GetSolicitudByID?ID=${id}`);
+  }
   
 }

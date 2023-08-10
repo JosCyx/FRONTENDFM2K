@@ -1,72 +1,206 @@
 <app-menu></app-menu>
 <div class="container">
-    <h2 class="font-weight-bolt ruteo">Todas las solicitudes</h2>
-    <div class="">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar</button>
-                    <button class="btn btn-primary m-2" (click)="changeView('editar')">Editar</button>
-                </div>
-            </div>
-        </nav>
-    </div>
-
-    <div class="formRol" *ngIf="changeview === 'consultar'">
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Consultar todas las solicitudes registradas</h3>
-    
-        <form class="form-tiposol d-flex row mb-5">
-          <label class="form-label">Tipo de solicitud</label>
-          <div class="form input-group">
-            <select class="form-select" name="tipoSol" [(ngModel)]="bsqTipoSol">
-              <option disabled selected value=0>Seleccione una opción...</option>
-              <option *ngFor="let tpsol of tipoSol$ | async" [value]="tpsol.tipoSolId">{{tpsol.tipoSolNombre}}</option>
-            </select>
-            <button class="btn btn-outline-success" (click)="consultarSol()">Consultar</button>
-          </div>
-        </form>
-
-        <div class="mb-5">
-    
-          <table class="table table-bordered table-striped text-center">
-            <thead>
-              <tr>
-                <th>Código</th>
-                <th>Area solicitante</th>
-                <th>N° Solicitud</th>
-                <th>Empleado solicitante</th>
-                <th>Asunto</th>
-                <th>Fecha</th>
-                <th>Estado</th>
-                <th>Tracking</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>OB 1-0001</td>
-                <td>Obras</td>
-                <td>0001</td>
-                <td>Moreno Bravo Jose</td>
-                <td>Asunto de prueba</td>
-                <td>2023-08-09</td>
-                <td>Activo</td>
-                <td>Emisión</td>
-              </tr>
-              <tr *ngFor="let sol of allSol$ | async">
-                <td>{{sol.cabSolCotNumerico}}</td>
-                <td>{{sol.cabSolCotArea}}</td>
-                <td>{{sol.cabSolCotNoSolicitud}}</td>
-                <ng-container *ngFor="let emp of empleadoList$|async">
-                  <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolCotSolicitante">
-                    {{ emp.empleadoNombres + " " + emp.empleadoApellidos }}</td>
-                </ng-container>
-                <td>{{sol.cabSolCotAsunto}}</td>
-                <td>{{sol.cabSolCotFecha | date:'yyyy-MM-dd'}}</td>
-                <td>{{sol.cabSolCotEstado}}</td>
-                <td>{{sol.cabSolCotEstadoTracking}}</td>
-              </tr>
-            </tbody>
-          </table>
+  <h2 class="font-weight-bolt ruteo">Todas las solicitudes</h2>
+  <div class="">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar</button>
+          <button class="btn btn-primary m-2" (click)="changeView('editar')">Editar</button>
         </div>
       </div>
+    </nav>
+  </div>
+
+  <div class="formRol" *ngIf="changeview === 'consultar'">
+    <h3 class="font-weight-bold" style="padding-top: 20pt;">Consultar todas las solicitudes registradas</h3>
+
+    <form class="form-tiposol d-flex row mb-5">
+      <label class="form-label">Tipo de solicitud</label>
+      <div class="form input-group">
+        <select class="form-select" name="tipoSol" [(ngModel)]="bsqTipoSol">
+          <option disabled selected value=0>Seleccione una opción...</option>
+          <option *ngFor="let tpsol of tipoSol$ | async" [value]="tpsol.tipoSolId">{{tpsol.tipoSolNombre}}</option>
+        </select>
+        <button class="btn btn-outline-success" (click)="consultarSol()">Consultar</button>
+      </div>
+    </form>
+
+    <div class="mb-5">
+
+      <table class="table table-bordered text-center table-hover">
+        <thead>
+          <tr>
+            <th class="align-middle cab-x">Código</th>
+            <th class="align-middle cab-z">Area solicitante</th>
+            <th class="align-middle cab-x">N° Solicitud</th>
+            <th class="align-middle cab-z">Empleado solicitante</th>
+            <th class="align-middle cab-z">Asunto</th>
+            <th class="align-middle cab-x">Fecha</th>
+            <th class="align-middle ">Estado</th>
+            <th class="align-middle ">Tracking</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- sol.cabSolCotID -->
+          <tr *ngFor="let sol of allSol$ | async" (click)="editSolSelected(sol.cabSolCotID)">
+            <td class="align-middle">{{sol.cabSolCotNumerico}}</td>
+            <ng-container *ngFor="let area of areaList$|async">
+              <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolCotArea">
+                {{ area.areaDecp }}</td>
+            </ng-container>
+            <td class="align-middle">{{sol.cabSolCotNoSolicitud}}</td>
+            <ng-container *ngFor="let emp of empleadoList$|async">
+              <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolCotSolicitante">
+                {{ emp.empleadoNombres }}<br>{{ emp.empleadoApellidos }}</td>
+            </ng-container>
+            <td class="align-middle">{{sol.cabSolCotAsunto}}</td>
+            <td class="align-middle">{{sol.cabSolCotFecha | date:'yyyy-MM-dd'}}</td>
+            <td class="align-middle" [ngSwitch]="sol.cabSolCotEstado">
+              <span *ngSwitchCase="'A'">Activo</span>
+              <span *ngSwitchCase="'F'">Finalizado</span>
+              <span *ngSwitchCase="'C'">Cancelado</span>
+            </td>
+            <ng-container *ngFor="let trck of trckList$|async">
+              <td class="align-middle" *ngIf="trck.nivel === sol.cabSolCotEstadoTracking">
+                {{ trck.descRuteo }}</td>
+            </ng-container>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <div class="formRol" *ngIf="changeview === 'editar'">
+    <h2>editar</h2>
+    <p>{{ variable }}</p>
+    <h3 class="font-weight-bold" style="padding-top: 20pt;">Registrar nueva solicitud de cotización</h3>
+
+
+    <div class="solicitud">
+
+      <div class="cabecera mb-3">
+        <div class="row mb-1">
+          <div class="input-group col">
+            <label class="input-group-text">Código:</label>
+            <input type="text" class="form-control" disabled>
+          </div>
+          <div class="input-group col">
+            <label class="input-group-text">Fecha:</label>
+            <input type="text" class="form-control" disabled>
+          </div>
+        </div>
+        
+        <div class="row mb-1">
+          <div class="input-group col">
+            <label class="input-group-text">Solicitado por*:</label>
+            <input type="text" class="form-control" id="busqueda" list="sugerencias"
+              placeholder="Ingrese el nombre del empleado">
+            <button class="btn btn-success"><i class="bi bi-check-lg"></i></button>
+          </div>
+          <div class="input-group col">
+            <label class="input-group-text">Area:</label>
+            <input type="text" class="form-control" placeholder="Area del empleado solicitante" disabled>
+
+          </div>
+        </div>
+        <div class="input-group mb-1">
+          <label class="input-group-text">Asunto*:</label>
+          <input type="text" class="form-control" placeholder="Ingrese el asunto">
+        </div>
+      </div>
+
+      <div class="detalle">
+        <table class="table table-striped text-center">
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col">Descripción*</th>
+              <th scope="col">Presupuesto*</th>
+              <th scope="col">Unidad</th>
+              <th scope="col">Cantidad Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th class="align-middle">2</th>
+              <td class="align-middle">
+                descripcion
+              </td>
+              <td class="align-middle ">
+                <button class="btn btn-outline-primary" data-toggle="modal" data-target="#itemsector">Desglose</button>
+              </td>
+              <td class="align-middle" style="width: 150px;">
+                unidad
+              </td>
+              <td class="align-middle cel-prep">
+                <input type="text" class="form-control text-center" disabled>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5" class="align-middle text-end"><button class="btn btn-success"><i
+                    class="bi bi-list-check"></i></button></td>
+            </tr>
+          </tbody>
+
+
+        </table>
+      </div>
+
+      <div class="foot-cabecera">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="floatingInput"
+            placeholder="Materiales y procedimientos a seguir:">
+          <label for="floatingInput">Materiales y procedimientos a seguir:</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="floatingInput"
+            placeholder="Materiales y procedimientos a seguir:">
+          <label for="floatingInput">Observaciones:</label>
+        </div>
+        <div class="input-group mb-3">
+          <label class="input-group-text">Adjunto cotizaciones:</label>
+          <select class="form-select">
+            <option value="SI">Sí</option>
+            <option value="NO" selected>No</option>
+          </select>
+          <label class="input-group-text">Número de cotizaciones:</label>
+          <input class="form-control" type="number" placeholder="Cantidad">
+        </div>
+        <div class="input-group mb-3">
+          <label class="input-group-text">Plazo de entrega*:</label>
+          <input class="form-control" type="date" for="plazoentrega">
+          <label class="input-group-text">Fecha máxima de entrega*:</label>
+          <input class="form-control" type="date" for="fechamaxima">
+        </div>
+        <div class="input-group">
+          <label class="input-group-text">Inspector:</label>
+          <input type="text" class="form-control" id="busqueda" list="inspectores"
+            placeholder="Ingrese el nombre del inspector">
+          <label class="input-group-text">Teléfono:</label>
+          <input class="form-control" type="text" placeholder="Ingrese el teléfono del inspector">
+        </div>
+        <div class="text-end">
+          <p class="tip">*Campos obligatorios</p>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex row">
+      <!-- <div class="col">
+                <div *ngIf="showmsj" class="alert alert-success" role="alert">
+                    <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
+                </div>
+                <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+                    <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
+                </div>
+            </div> -->
+
+      <div class=" col text-end">
+        <button class="btn btn-primary m-2">Guardar</button>
+        <button class="btn btn-danger m-2">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </div>
