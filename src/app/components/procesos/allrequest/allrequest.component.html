@@ -43,7 +43,7 @@
         </thead>
         <tbody>
           <!-- sol.cabSolCotID -->
-          <tr *ngFor="let sol of allSol$ | async" (click)="editSolSelected(sol.cabSolCotID)">
+          <tr *ngFor="let sol of allSol$ | async" (click)="selectSol(sol.cabSolCotID)">
             <td class="align-middle">{{sol.cabSolCotNumerico}}</td>
             <ng-container *ngFor="let area of areaList$|async">
               <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolCotArea">
@@ -74,9 +74,7 @@
 
 
   <div class="formRol" *ngIf="changeview === 'editar'">
-    <h2>editar</h2>
-    <p>{{ variable }}</p>
-    <h3 class="font-weight-bold" style="padding-top: 20pt;">Registrar nueva solicitud de cotización</h3>
+    <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar solicitud</h3>
 
 
     <div class="solicitud">
@@ -85,30 +83,29 @@
         <div class="row mb-1">
           <div class="input-group col">
             <label class="input-group-text">Código:</label>
-            <input type="text" class="form-control" disabled>
+            <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotNumerico" disabled>
           </div>
           <div class="input-group col">
             <label class="input-group-text">Fecha:</label>
-            <input type="text" class="form-control" disabled>
+            <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotFecha" disabled>
           </div>
         </div>
         
         <div class="row mb-1">
           <div class="input-group col">
-            <label class="input-group-text">Solicitado por*:</label>
-            <input type="text" class="form-control" id="busqueda" list="sugerencias"
-              placeholder="Ingrese el nombre del empleado">
+            <label class="input-group-text">Solicitado por:</label>
+            <input type="text" class="form-control" id="busqueda" list="sugerencias" [(ngModel)]="cabecera.cabSolCotSolicitante">
             <button class="btn btn-success"><i class="bi bi-check-lg"></i></button>
           </div>
           <div class="input-group col">
             <label class="input-group-text">Area:</label>
-            <input type="text" class="form-control" placeholder="Area del empleado solicitante" disabled>
+            <input type="text" class="form-control"  [(ngModel)]="cabecera.cabSolCotArea" disabled>
 
           </div>
         </div>
         <div class="input-group mb-1">
-          <label class="input-group-text">Asunto*:</label>
-          <input type="text" class="form-control" placeholder="Ingrese el asunto">
+          <label class="input-group-text">Asunto:</label>
+          <input type="text" class="form-control"  [(ngModel)]="cabecera.cabSolCotAsunto">
         </div>
       </div>
 
@@ -117,31 +114,19 @@
           <thead>
             <tr>
               <th scope="col">Item</th>
-              <th scope="col">Descripción*</th>
-              <th scope="col">Presupuesto*</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">Sector</th>
               <th scope="col">Unidad</th>
-              <th scope="col">Cantidad Total</th>
+              <th scope="col">Cantidad</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <th class="align-middle">2</th>
-              <td class="align-middle">
-                descripcion
-              </td>
-              <td class="align-middle ">
-                <button class="btn btn-outline-primary" data-toggle="modal" data-target="#itemsector">Desglose</button>
-              </td>
-              <td class="align-middle" style="width: 150px;">
-                unidad
-              </td>
-              <td class="align-middle cel-prep">
-                <input type="text" class="form-control text-center" disabled>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="5" class="align-middle text-end"><button class="btn btn-success"><i
-                    class="bi bi-list-check"></i></button></td>
+              <th class="align-middle">1</th>
+              <td class="align-middle">descripcion</td>
+              <td class="align-middle">Sector 1</td>
+              <td class="align-middle">Unidad</td>
+              <td class="align-middle">2</td>
             </tr>
           </tbody>
 
@@ -152,35 +137,35 @@
       <div class="foot-cabecera">
         <div class="form-floating mb-3">
           <input type="text" class="form-control" id="floatingInput"
-            placeholder="Materiales y procedimientos a seguir:">
+          [(ngModel)]="cabecera.cabSolCotProcedimiento">
           <label for="floatingInput">Materiales y procedimientos a seguir:</label>
         </div>
         <div class="form-floating mb-3">
           <input type="text" class="form-control" id="floatingInput"
-            placeholder="Materiales y procedimientos a seguir:">
+          [(ngModel)]="cabecera.cabSolCotObervaciones">
           <label for="floatingInput">Observaciones:</label>
         </div>
         <div class="input-group mb-3">
           <label class="input-group-text">Adjunto cotizaciones:</label>
-          <select class="form-select">
+          <select class="form-select" [(ngModel)]="cabecera.cabSolCotAdjCot">
             <option value="SI">Sí</option>
             <option value="NO" selected>No</option>
           </select>
           <label class="input-group-text">Número de cotizaciones:</label>
-          <input class="form-control" type="number" placeholder="Cantidad">
+          <input class="form-control" type="number" [(ngModel)]="cabecera.cabSolCotNumCotizacion">
         </div>
         <div class="input-group mb-3">
           <label class="input-group-text">Plazo de entrega*:</label>
-          <input class="form-control" type="date" for="plazoentrega">
+          <input class="form-control" type="date" for="plazoentrega" [(ngModel)]="cabecera.cabSolCotPlazoEntrega">
           <label class="input-group-text">Fecha máxima de entrega*:</label>
-          <input class="form-control" type="date" for="fechamaxima">
+          <input class="form-control" type="date" for="fechamaxima" [(ngModel)]="cabecera.cabSolCotFechaMaxentrega">
         </div>
         <div class="input-group">
           <label class="input-group-text">Inspector:</label>
           <input type="text" class="form-control" id="busqueda" list="inspectores"
-            placeholder="Ingrese el nombre del inspector">
+          [(ngModel)]="cabecera.cabSolCotInspector">
           <label class="input-group-text">Teléfono:</label>
-          <input class="form-control" type="text" placeholder="Ingrese el teléfono del inspector">
+          <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolCotTelefInspector">
         </div>
         <div class="text-end">
           <p class="tip">*Campos obligatorios</p>
@@ -199,7 +184,7 @@
 
       <div class=" col text-end">
         <button class="btn btn-primary m-2">Guardar</button>
-        <button class="btn btn-danger m-2">Cancelar</button>
+        <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
       </div>
     </div>
   </div>
