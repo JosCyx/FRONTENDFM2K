@@ -65,6 +65,7 @@ export class SolicotiComponent implements OnInit {
   inspectores$!: Observable<any[]>;
   detallesList$!: Observable<any[]>;
   itemxSector$!: Observable<any[]>;
+  sectores$!: Observable<any[]>;
 
   //listas locales para manejar los datos
   detalleList: Detalle[] = [];
@@ -72,6 +73,7 @@ export class SolicotiComponent implements OnInit {
   tmpItemSect: ItemSector[] = [];
   empleados: any[] = [];
   areas: any[] = [];
+  //sectores: any[] = [];
   inspectores: any[] = [];
 
   constructor(private service: CommunicationApiService) { }
@@ -81,11 +83,16 @@ export class SolicotiComponent implements OnInit {
 
     this.inspectores$ = this.service.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
 
+    this.sectores$ = this.service.getSectoresList().pipe(
+      map(sectores => sectores.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre)))
+    );
+
     this.areaList$ = this.service.getAreaList();
 
     this.areaList$.subscribe((data) => {
       this.areas = data;
     });
+
   }
 
   //guarda los datos de los empleados en una lista local dependiendo del tamaño de la variable de busqueda, esto se controla con un keyup

@@ -5,7 +5,7 @@ export class CabeceraCotizacion {
   public cabSolCotID: number;
   public cabSolCotNoSolicitud: number;
   public cabSolCotSolicitante: number;
-  public cabSolCotFecha: Date;
+  public cabSolCotFecha: string;
   public cabSolCotAsunto: string;
   public cabSolCotProcedimiento: string;
   public cabSolCotObervaciones: string;
@@ -13,8 +13,8 @@ export class CabeceraCotizacion {
   public cabSolCotNumCotizacion: number | null;
   public cabSolCotEstado: string;
   public cabSolCotEstadoTracking: number;
-  public cabSolCotPlazoEntrega: Date;
-  public cabSolCotFechaMaxentrega: Date;
+  public cabSolCotPlazoEntrega: string;
+  public cabSolCotFechaMaxentrega: string;
   public cabSolCotInspector: number | null;
   public cabSolCotTelefInspector: string;
 
@@ -25,7 +25,7 @@ export class CabeceraCotizacion {
       this.cabSolCotID = data.cabSolCotID;
       this.cabSolCotNoSolicitud = data.cabSolCotNoSolicitud;
       this.cabSolCotSolicitante = data.cabSolCotSolicitante;
-      this.cabSolCotFecha = new Date(data.cabSolCotFecha);
+      this.cabSolCotFecha = data.cabSolCotFecha;
       this.cabSolCotAsunto = data.cabSolCotAsunto;
       this.cabSolCotProcedimiento = data.cabSolCotProcedimiento;
       this.cabSolCotObervaciones = data.cabSolCotObervaciones;
@@ -33,8 +33,8 @@ export class CabeceraCotizacion {
       this.cabSolCotNumCotizacion = data.cabSolCotNumCotizacion;
       this.cabSolCotEstado = data.cabSolCotEstado;
       this.cabSolCotEstadoTracking = data.cabSolCotEstadoTracking;
-      this.cabSolCotPlazoEntrega = new Date(data.cabSolCotPlazoEntrega);
-      this.cabSolCotFechaMaxentrega = new Date(data.cabSolCotFechaMaxentrega);
+      this.cabSolCotPlazoEntrega = data.cabSolCotPlazoEntrega;
+      this.cabSolCotFechaMaxentrega = data.cabSolCotFechaMaxentrega;
       this.cabSolCotInspector = data.cabSolCotInspector;
       this.cabSolCotTelefInspector = data.cabSolCotTelefInspector;
   }

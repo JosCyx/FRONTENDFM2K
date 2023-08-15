@@ -93,6 +93,10 @@ export class CommunicationApiService {
     return this.http.get<any>(this.APIUrl + '/Areas');
   }
 
+  getSectoresList(): Observable<any[]> {
+    return this.http.get<any>(this.APIUrl + '/Sectors');
+  }
+
   getRuteos(): Observable<any[]> {
     return this.http.get<any>(this.APIUrl + '/RuteoAreas');
   }

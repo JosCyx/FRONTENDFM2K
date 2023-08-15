@@ -16,4 +16,4 @@ export class DetalleCotizacion {
       this.solCotUnidad = data.solCotUnidad;
       this.solCotCantidadTotal = data.solCotCantidadTotal;
   }
-}
+} 

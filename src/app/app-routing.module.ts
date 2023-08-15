@@ -20,21 +20,21 @@ import { AllrequestComponent } from './components/procesos/allrequest/allrequest
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
   {path:'login', component: LoginComponent},
-  {path:'main', component: MainComponent},
-  {path:'documentos', component: DocumentosComponent},
-  {path: 'apps', component: AplicacionesComponent},
-  {path: 'functions', component: FuncionesComponent},
-  {path: 'transact', component: TransaccionesComponent},
-  {path: 'users', component: UsuariosComponent},
-  {path: 'rol', component: RolesComponent},
-  {path: 'ruteo', component: RuteoComponent},
-  {path: 'solicoti', component: SolicotiComponent},
-  {path: 'solioc', component: SoliocComponent},
-  {path: 'solipago', component: SolipagoComponent},
-  {path: 'mainconfig', component: MainConfiguracionComponent},
-  {path: 'mainsec', component: MainSeguridadComponent},
-  {path: 'empleados', component: EmpleadosComponent},
-  {path: 'allrequest', component: AllrequestComponent}
+  {path:'main', component: MainComponent , data: { breadcrumb: 'Home' } },
+  {path:'documentos', component: DocumentosComponent, data: { breadcrumb: 'Documentos' } },
+  {path: 'apps', component: AplicacionesComponent, data: { breadcrumb: 'Aplicaciones' } },
+  {path: 'functions', component: FuncionesComponent, data: { breadcrumb: 'Funciones' } },
+  {path: 'transact', component: TransaccionesComponent, data: { breadcrumb: 'Transacciones' } },
+  {path: 'users', component: UsuariosComponent, data: { breadcrumb: 'Usuarios' } },
+  {path: 'rol', component: RolesComponent, data: { breadcrumb: 'Roles' } },
+  {path: 'ruteo', component: RuteoComponent, data: { breadcrumb: 'Ruteo' } },
+  {path: 'solicoti', component: SolicotiComponent, data: { breadcrumb: 'Cotizacion' } },
+  {path: 'solioc', component: SoliocComponent, data: { breadcrumb: 'Orden de compra' } },
+  {path: 'solipago', component: SolipagoComponent, data: { breadcrumb: 'Pago' } },
+  {path: 'mainconfig', component: MainConfiguracionComponent, data: { breadcrumb: 'Solicitudes' } },
+  {path: 'mainsec', component: MainSeguridadComponent, data: { breadcrumb: 'Seguridad' } },
+  {path: 'empleados', component: EmpleadosComponent, data: { breadcrumb: 'Empleados' } },
+  {path: 'allrequest', component: AllrequestComponent, data: { breadcrumb: 'Todas las solicitudes' } }
 
 ];
 

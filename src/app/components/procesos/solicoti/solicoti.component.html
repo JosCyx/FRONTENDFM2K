@@ -76,7 +76,7 @@
                                 <textarea name="descripcion" class="form-control" rows="2" cols="50"
                                     placeholder="Descripción" [(ngModel)]="det_descp"></textarea>
                             </td>
-                            <td class="align-middle ">
+                            <td class="align-middle">
                                 <button class="btn btn-outline-primary" data-toggle="modal"
                                     data-target="#itemsector">Desglose</button>
                             </td>
@@ -221,12 +221,9 @@
                                 <!-- modificar el select para mostrar los sectores de la base de datos -->
                                 <td class="align-middle" style="width: 150px;">
                                     <div class="cel-prep">
-                                        <select class="form-select" [(ngModel)]="item_sector">
-                                            <option value="0" disabled selected>Seleccione</option>
-                                            <option value="1">Sector 1</option>
-                                            <option value="2">Sector 2</option>
-                                            <option value="3">Sector 3</option>
-                                            <option value="4">sector 4</option>
+                                        <select class="form-select" name="item_sector" [(ngModel)]="item_sector"  >
+                                            <option selected disabled value=0>Selecciona una aplicación...</option>
+                                            <option *ngFor="let sect of sectores$|async" [value]="sect.sectIdNomina">{{sect.sectNombre}}</option>
                                         </select>
                                     </div>
                                 </td>
