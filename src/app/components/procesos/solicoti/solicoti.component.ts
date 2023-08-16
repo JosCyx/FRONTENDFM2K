@@ -143,13 +143,15 @@ export class SolicotiComponent implements OnInit {
       for (let emp of this.empleados) {
         if ((emp.empleadoNombres + ' ' + emp.empleadoApellidos) == this.empleado) {
           this.trIdNomEmp = emp.empleadoIdNomina;
-          console.log("Empleado ID:",this.trIdNomEmp);
+          //console.log("Empleado ID:",this.trIdNomEmp);
+
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
               this.cab_area = area.areaIdNomina;
               this.showArea = area.areaDecp;
+
               this.areaNmco = area.areaNemonico;
-              console.log("Empleado area ID:",this.cab_area);
+              //console.log("Empleado area ID:",this.cab_area);
             } else if (emp.empleadoIdArea === 0) {
               this.showArea = 'El empleado no posee un area asignada.'
             }
@@ -265,14 +267,14 @@ export class SolicotiComponent implements OnInit {
           solTrIdEmisor: this.trIdNomEmp
         };
 
-        console.log("1. guardando tracking: ", dataTRK);
+        //console.log("1. guardando tracking: ", dataTRK);
         this.service.generateTracking(dataTRK).subscribe(
           () => {
-            console.log("Tracking guardado con éxito.");
+            //console.log("Tracking guardado con éxito.");
             resolve();
           },
           (error) => {
-            console.log("Error al guardar el tracking: ", error);
+            //console.log("Error al guardar el tracking: ", error);
             reject(error);
           }
         );
