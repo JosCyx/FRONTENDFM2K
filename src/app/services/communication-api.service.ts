@@ -154,6 +154,9 @@ export class CommunicationApiService {
   getCabbyTipoSol(tipoSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/CabSolCotizacions/${tipoSol}`);
   }
+  getOrdenOC(tipoSol: number): Observable<any> {
+    return this.http.get<any>(`${this.APIUrl}/CabSolOrdenCompras/${tipoSol}`);
+  }
 
   getLastDetalleCot(tipoSol: number, noSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/DetSolCotizacions/GetLastDetalleCot?tipoSol=${tipoSol}&noSol=${noSol}`);

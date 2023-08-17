@@ -82,7 +82,10 @@
                             <td class="align-middle">{{det.det_descp}}</td>
                             <td class="align-middle">Asignado</td>
                             <td class="align-middle">{{det.det_unidad}}</td>
-                            <td class="align-middle">{{det.det_cantidad}}</td>
+                            <td class="align-middle">{{det.det_cantidad}}
+                                <button class="btn text-danger" (click)="deleteDetalle(det.det_id)">
+                                    <i class="bi bi-x-circle"></i></button>
+                            </td>
                         </tr>
                         <tr>
                             <th class="align-middle">{{det_id}}</th>
@@ -178,7 +181,7 @@
             </div>
 
             <div class=" col text-end">
-                <button class="btn btn-primary m-2" (click)="generarSolicitud()"
+                <button class="btn btn-primary m-2" (click)="check()"
                     [disabled]="!empleado || !cab_asunto || detalleList.length === 0 || itemSectorList.length === 0">Guardar</button>
                 <button class="btn btn-danger m-2" (click)="cancelarAll()">Cancelar</button>
             </div>

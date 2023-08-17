@@ -62,6 +62,8 @@ export class SoliocComponent implements OnInit {
   msjError!: string;
   showmsj: boolean = false;
   showmsjerror: boolean = false;
+  checkDet: boolean = false;
+  idToIndexMap: Map<number, number> = new Map();
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -460,6 +462,33 @@ export class SoliocComponent implements OnInit {
     });
   }
 
+  check() {
+    for (let idDet of this.itemSectorList) {
+      for (let det of this.detalleList) {
+        if (idDet.det_id == det.det_id) {
+          //console.log("El detalle para este item si existe.");
+          this.checkDet = true;
+        } else {
+          //console.log("Error, el detalle no se ha agregado");
+          this.checkDet = false;
+        }
+      }
+    }
+
+    if (this.checkDet == true) {
+      //console.log("Añadiendo detalle...");
+      this.generarSolicitud();
+    } else {
+      this.showmsjerror = true;
+      this.msjError = "Error, asegúrese de ingresar todos los detalles antes de registrar la solicitud.";
+
+      setTimeout(() => {
+        this.showmsjerror = false;
+        this.msjError = "";
+      }, 2500);
+    }
+  }
+
   //agrega los detalles a la lista detalles
   addDetalle() {
 
@@ -474,14 +503,44 @@ export class SoliocComponent implements OnInit {
     //console.log(this.detalleList);
 
     //aumenta el valor del id de detalle
-    for (let det of this.detalleList) {
-      this.det_id = det.det_id + 1;
-    }
-
+    this.incrementDetID();
     this.det_descp = '';
     this.det_unidad = 'Unidad';
     this.det_cantidad = 0;
     this.tmpItemSect = [];
+
+  }
+  incrementDetID() {
+    //aumenta el valor del id de detalle
+    if (this.detalleList.length == 0) {
+      this.det_id = 1;
+    } else {
+      for (let det of this.detalleList) {
+        this.det_id = det.det_id + 1;
+      }
+    }
+  }
+  async deleteDetalle(id: number) {
+    const index = this.detalleList.findIndex(detalle => detalle.det_id === id);
+
+    console.log(index)
+    if (index !== -1) {
+      console.log("detalle eliminado")
+      this.detalleList.splice(index, 1);
+      this.idToIndexMap.delete(index);
+    }
+
+    for (let i = 0; i < this.detalleList.length; i++) {
+      this.detalleList[i].det_id = i + 1;
+      this.idToIndexMap.set(this.detalleList[i].det_id, i);
+    }
+    this.incrementDetID();
+
+    
+    setTimeout(() => {
+      
+    }, 500);
+
 
   }
 
