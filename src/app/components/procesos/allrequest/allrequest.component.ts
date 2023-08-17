@@ -26,6 +26,7 @@ export class AllrequestComponent implements OnInit {
   cabecera!: CabeceraCotizacion;
   detalle: DetalleCotizacion[] = [];
   item: ItemCotizacion[] = [];
+  
   empleados: any[] = [];
   areas: any[] = [];
 

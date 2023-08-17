@@ -58,6 +58,8 @@ export class SolicotiComponent implements OnInit {
   msjError!: string;
   showmsj: boolean = false;
   showmsjerror: boolean = false;
+  checkDet: boolean = false;
+  idToIndexMap: Map<number, number> = new Map();
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -127,7 +129,7 @@ export class SolicotiComponent implements OnInit {
       if (this.inspector) {
         const empleadoSeleccionado = this.inspectores.find(emp => (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.inspector);
         this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : null;
-        console.log("Inspector ID",this.cab_inspector);
+        console.log("Inspector ID", this.cab_inspector);
       } else {
         this.cab_inspector = 0;
       }
@@ -191,12 +193,12 @@ export class SolicotiComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-  cancelarAll():void{
+  cancelarAll(): void {
     this.clear();
     this.ngOnInit();
   }
 
-  cancelarItem():void{
+  cancelarItem(): void {
     this.det_cantidad = 0;
     this.item_id = 1;
     this.tmpItemSect = [];
@@ -222,13 +224,13 @@ export class SolicotiComponent implements OnInit {
 
   getSolName(noSol: number) {
     const noSolString = noSol.toString();
-    if(noSolString.length == 1){
+    if (noSolString.length == 1) {
       this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-000" + noSolString;
-    } else if (noSolString.length == 2){
+    } else if (noSolString.length == 2) {
       this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-00" + noSolString;
-    } else if (noSolString.length == 3){
+    } else if (noSolString.length == 3) {
       this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-0" + noSolString;
-    } else if (noSolString.length == 4){
+    } else if (noSolString.length == 4) {
       this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
     }
   }
@@ -318,7 +320,7 @@ export class SolicotiComponent implements OnInit {
     await this.service.addSolCot(dataCAB).subscribe(
       response => {
         console.log("Cabecera agregada.");
-        console.log("Solicitud",this.solNumerico);
+        console.log("Solicitud", this.solNumerico);
         console.log("Agregando cuerpo de la cabecera...");
         this.addBodySol();
         console.log("Cuerpo agregado.");
@@ -390,7 +392,7 @@ export class SolicotiComponent implements OnInit {
       this.getSolName(this.trLastNoSol);
       this.showmsj = true;
       this.msjExito = "Solicitud N°" + this.solNumerico + " generada exitosamente.";
-      
+
 
       setTimeout(() => {
         this.msjExito = "";
@@ -408,7 +410,7 @@ export class SolicotiComponent implements OnInit {
       }, 2500);
     }
 
-    
+
 
   }
 
@@ -454,6 +456,34 @@ export class SolicotiComponent implements OnInit {
     });
   }
 
+  check() {
+    for (let idDet of this.itemSectorList) {
+      for (let det of this.detalleList) {
+        if (idDet.det_id == det.det_id) {
+          //console.log("El detalle para este item si existe.");
+          this.checkDet = true;
+        } else {
+          //console.log("Error, el detalle no se ha agregado");
+          this.checkDet = false;
+        }
+      }
+    }
+
+    if (this.checkDet == true) {
+      //console.log("Añadiendo detalle...");
+      this.generarSolicitud();
+    } else {
+      this.showmsjerror = true;
+      this.msjError = "Error, asegúrese de ingresar todos los detalles antes de registrar la solicitud.";
+
+      setTimeout(() => {
+        this.showmsjerror = false;
+        this.msjError = "";
+      }, 2500);
+    }
+  }
+
+
   //agrega los detalles a la lista detalles
   addDetalle() {
 
@@ -461,21 +491,61 @@ export class SolicotiComponent implements OnInit {
       det_id: this.det_id,
       det_descp: this.det_descp,
       det_unidad: this.det_unidad,
-      det_cantidad: this.det_cantidad
+      det_cantidad: this.det_cantidad,
+      det_asignado: true,
     }
 
     this.detalleList.push(detalle);
-    //console.log(this.detalleList);
+    console.log("Detalles:", this.detalleList);
 
     //aumenta el valor del id de detalle
-    for (let det of this.detalleList) {
-      this.det_id = det.det_id + 1;
-    }
+    this.incrementDetID();
 
+
+    this.item_id = 1;
     this.det_descp = '';
     this.det_unidad = 'Unidad';
     this.det_cantidad = 0;
     this.tmpItemSect = [];
+
+  }
+
+  /*deleteDetalle(id: number){
+    this.detalleList.splice(id-1,1);
+  }*/
+
+  incrementDetID() {
+    //aumenta el valor del id de detalle
+    if (this.detalleList.length == 0) {
+      this.det_id = 1;
+    } else {
+      for (let det of this.detalleList) {
+        this.det_id = det.det_id + 1;
+      }
+    }
+  }
+
+  async deleteDetalle(id: number) {
+    const index = this.detalleList.findIndex(detalle => detalle.det_id === id);
+
+    console.log(index)
+    if (index !== -1) {
+      console.log("detalle eliminado")
+      this.detalleList.splice(index, 1);
+      this.idToIndexMap.delete(index);
+    }
+
+    for (let i = 0; i < this.detalleList.length; i++) {
+      this.detalleList[i].det_id = i + 1;
+      this.idToIndexMap.set(this.detalleList[i].det_id, i);
+    }
+    this.incrementDetID();
+
+    
+    setTimeout(() => {
+      
+    }, 500);
+
 
   }
 
@@ -504,6 +574,10 @@ export class SolicotiComponent implements OnInit {
     this.item_sector = 0;
   }
 
+  deleteItem() {
+
+  }
+
   //agregar los items de la lista temporal a la lista definitiva
   saveItemSect(): void {
 
@@ -519,11 +593,11 @@ export class SolicotiComponent implements OnInit {
       this.itemSectorList.push(itemSector);
 
     }
-    this.item_id = 1;
-    
-    //console.log(this.itemSectorList);
+
+
+    console.log("Items:", this.itemSectorList);
   }
 
-  
+
 
 }
