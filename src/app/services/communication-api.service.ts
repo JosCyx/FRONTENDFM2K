@@ -134,9 +134,13 @@ export class CommunicationApiService {
   getEmpleadobyArea(area: number) {
     return this.http.get<any[]>(`${this.APIUrl}/Empleadoes/GetEmpleadobyArea?area=${area}`);
   }
-  
+  //METODO  SOLICITUD DE COTIZACION
   addSolCot(data: any) {
     return this.http.post(this.APIUrl + '/CabSolCotizacions', data);
+  }
+  //METODO ORDEN COMPRA
+  addSolOC(data: any) {
+    return this.http.post(this.APIUrl + '/CabSolOrdenCompras', data);
   }
 
   getIDCabecera(tipoSol: number, noSol: number): Observable<any> {
