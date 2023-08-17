@@ -84,7 +84,6 @@
   <div class="formRol" *ngIf="changeview === 'editar'">
     <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar solicitud</h3>
 
-
     <div class="solicitud">
 
       <div class="cabecera mb-3">
@@ -158,6 +157,7 @@
               </ng-container>
             </tr>
             <tr>
+              
               <th class="align-middle">1</th>
               <td class="align-middle">
                 <textarea name="descripcion" class="form-control" rows="2" cols="50"
@@ -266,7 +266,7 @@
   </div>
 </div>
 
-<!-- Modal para los items por sector-->
+<!-- Modal para agregar items a la solicitud hecha-->
 <div class="modal fade" #exampleModal id="itemsector" data-backdrop="static" tabindex="-1" role="dialog"
   aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -305,9 +305,7 @@
                 <div class=" cel-prep">
                   <input class="form-control" min="1" type="number" placeholder="Cantidad">
                 </div>
-
               </td>
-              <!-- modificar el select para mostrar los sectores de la base de datos -->
               <td class="align-middle" style="width: 150px;">
                 <div class="cel-prep">
                   <select class="form-select" name="item_sector">
