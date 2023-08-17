@@ -10,6 +10,7 @@ export class Detalle{
         this.det_descp = det_descp;
         this.det_unidad = det_unidad;
         this.det_cantidad = det_cantidad;
+        
     }
 
 }
