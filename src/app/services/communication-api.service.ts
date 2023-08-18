@@ -190,4 +190,7 @@ export class CommunicationApiService {
     return this.http.get<any>(`${this.APIUrl}/CabSolOrdenCompras/GetSolicitudByID?ID=${id}`);
   }
   
+  deleteItemSector(tipoSol: number, noSol: number, noDet: number, noItm: number): Observable<any> {
+    return this.http.delete(`${this.APIUrl}/ItemSectors/${tipoSol}/${noSol}/${noDet}/${noItm}`);
+  }
 }

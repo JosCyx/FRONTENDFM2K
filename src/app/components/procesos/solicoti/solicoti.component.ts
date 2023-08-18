@@ -94,12 +94,15 @@ export class SolicotiComponent implements OnInit {
   itemSectorList: ItemSector[] = [];
   tmpItemSect: ItemSector[] = [];
   empleados: any[] = [];
+  empleadosEdit: any[] = [];
   areas: any[] = [];
   //sectores: any[] = [];
   inspectores: any[] = [];
 
   //edicion de solicitud de cotizacion
   solID: number = this.serviceGlobal.solID;
+  idDetDlt!: number;
+  idItmDlt!: number;
 
 
 
@@ -107,6 +110,9 @@ export class SolicotiComponent implements OnInit {
 
   ngOnInit(): void {
     this.empleadosList$ = this.service.getEmpleadosList();
+    this.empleadosList$.subscribe((data) => {
+      this.empleadosEdit = data;
+    });
 
     this.inspectores$ = this.service.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
 
@@ -121,7 +127,7 @@ export class SolicotiComponent implements OnInit {
     });
 
     if(this.changeview == 'editar'){
-      this.metodo();
+      this.editSolicitud();
     }
     
   }
@@ -254,13 +260,13 @@ export class SolicotiComponent implements OnInit {
   getSolName(noSol: number) {
     const noSolString = noSol.toString();
     if (noSolString.length == 1) {
-      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-000" + noSolString;
+      this.solNumerico = "COT" + this.areaNmco + " " + this.trTipoSolicitud + "-000" + noSolString;
     } else if (noSolString.length == 2) {
-      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-00" + noSolString;
+      this.solNumerico = "COT" + this.areaNmco + " " + this.trTipoSolicitud + "-00" + noSolString;
     } else if (noSolString.length == 3) {
-      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-0" + noSolString;
+      this.solNumerico = "COT" + this.areaNmco + " " + this.trTipoSolicitud + "-0" + noSolString;
     } else if (noSolString.length == 4) {
-      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
+      this.solNumerico = "COT" + this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
     }
   }
 
@@ -515,13 +521,13 @@ export class SolicotiComponent implements OnInit {
 
   //agrega los detalles a la lista detalles
   addDetalle() {
-
+    this.saveItemSect();
+    
     const detalle = {
       det_id: this.det_id,
       det_descp: this.det_descp,
       det_unidad: this.det_unidad,
-      det_cantidad: this.det_cantidad,
-      det_asignado: true,
+      det_cantidad: this.det_cantidad
     }
 
     this.detalleList.push(detalle);
@@ -570,12 +576,6 @@ export class SolicotiComponent implements OnInit {
     }
     this.incrementDetID();
 
-
-    setTimeout(() => {
-      
-    }, 500);
-
-
   }
 
   //agregar los items a una lista temporal 
@@ -605,8 +605,41 @@ export class SolicotiComponent implements OnInit {
 
 
   //agregar la opcion para eliminar los items de los detalles, lista ItemSectorList
-  deleteItem() {
 
+  //Icrementa el valor Item 
+  incrementItemID(){
+    //aumemta eL valor de los ITEM
+    if (this.tmpItemSect.length == 0) {
+      this.item_id = 1;
+    } else {
+      for (let itm of this.tmpItemSect) {
+        this.item_id = itm.item_id + 1;
+      }
+    }
+  }
+  //Eliminar  Item 
+  deleteItem(id:number){
+    const index = this.tmpItemSect.findIndex(item => item.item_id === id);
+
+    console.log(index)
+    if (index !== -1) {
+      console.log("item eliminado")
+      this.tmpItemSect.splice(index, 1);
+      this.idToIndexMap.delete(index);
+    }
+
+    for (let i = 0; i < this.tmpItemSect.length; i++) {
+      this.tmpItemSect[i].item_id = i + 1;
+      this.idToIndexMap.set(this.tmpItemSect[i].item_id, i);
+    }
+    this.incrementItemID();
+
+    
+    setTimeout(() => {
+      
+    }, 500);
+
+ 
   }
 
   
@@ -630,17 +663,14 @@ export class SolicotiComponent implements OnInit {
     console.log("Items:", this.itemSectorList);
   }
 
-
-
-
-  
-  async metodo(){
+  //editar solicitudes
+  async editSolicitud(){
     await this.getSolicitud();
     await this.saveData();
     //await this.changeView('editar');
   }
 
-  //editar solicitudes
+
   async getSolicitud() {
     try {
       const data = await this.service.getCotizacionbyId(this.solID).toPromise();
@@ -704,4 +734,14 @@ export class SolicotiComponent implements OnInit {
     this.changeView('consultar');
   }
 
+  
+  confDeleteItm(idDetalle:number, idItem:number){
+    this.idDetDlt = idDetalle;
+    this.idItmDlt = idItem;
+  }
+
+  deleteItemSaved(){
+    console.log("Item:",this.trTipoSolicitud,this.cabecera.cabSolCotNoSolicitud,this.idDetDlt,this.idItmDlt," eliminado con exito.");
+    //this.service.deleteItemSector(this.trTipoSolicitud,this.trLastNoSol,this.idDetDlt,this.idItmDlt);
+  }
 }
