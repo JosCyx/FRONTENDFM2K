@@ -541,7 +541,7 @@ export class SolicotiComponent implements OnInit {
     }
     this.incrementDetID();
 
-    
+
     setTimeout(() => {
       
     }, 500);
@@ -574,10 +574,13 @@ export class SolicotiComponent implements OnInit {
     this.item_sector = 0;
   }
 
+
+  //agregar la opcion para eliminar los items de los detalles, lista ItemSectorList
   deleteItem() {
 
   }
 
+  
   //agregar los items de la lista temporal a la lista definitiva
   saveItemSect(): void {
 
