@@ -558,12 +558,12 @@ export class SoliocComponent implements OnInit {
 
     this.tmpItemSect.push(tmpItemSector);
 
+    this.incrementItemID();
+
     this.det_cantidad += this.item_cant;
 
     //aumenta el valor del id de los items
-    for (let itm of this.tmpItemSect) {
-      this.item_id = itm.item_id + 1;
-    }
+    
 
     this.item_cant = 1;
     this.item_sector = 0;
@@ -588,7 +588,40 @@ export class SoliocComponent implements OnInit {
 
     //console.log(this.itemSectorList);
   }
+  //Icrementa el valor Item 
+  incrementItemID(){
+    //aumemta eL valor de los ITEM
+    if (this.tmpItemSect.length == 0) {
+      this.item_id = 1;
+    } else {
+      for (let itm of this.tmpItemSect) {
+        this.item_id = itm.item_id + 1;
+      }
+    }
+  }
+  //Eliminar  Item 
+  deleteItem(id:number){
+    const index = this.tmpItemSect.findIndex(item => item.item_id === id);
 
+    console.log(index)
+    if (index !== -1) {
+      console.log("item eliminado")
+      this.tmpItemSect.splice(index, 1);
+      this.idToIndexMap.delete(index);
+    }
 
+    for (let i = 0; i < this.tmpItemSect.length; i++) {
+      this.tmpItemSect[i].item_id = i + 1;
+      this.idToIndexMap.set(this.tmpItemSect[i].item_id, i);
+    }
+    this.incrementItemID();
 
+    
+    setTimeout(() => {
+      
+    }, 500);
+
+ 
+  }
+  //
 }

@@ -217,7 +217,10 @@
                                 <td class="align-middle">{{item.det_descp}}</td>
                                 <td class="align-middle">{{item.item_id}}</td>
                                 <td class="align-middle">{{item.item_cant}}</td>
-                                <td class="align-middle">{{item.item_sector}}</td>
+                                <td class="align-middle">{{item.item_sector}}
+                                    <button class="btn text-danger" (click)="deleteItem(item.det_id)">
+                                        <i class="bi bi-x-circle"></i></button>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="align-middle">{{det_id}}</td>
