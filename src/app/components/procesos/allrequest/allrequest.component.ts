@@ -41,6 +41,7 @@ export class AllrequestComponent implements OnInit {
 
 
   bsqTipoSol: number = 0;
+  btp!: number;
   idBusq!: number;
   isSolicitud: boolean = true;
   isConsulta: boolean = false;
@@ -68,9 +69,16 @@ export class AllrequestComponent implements OnInit {
   }
 
   consultarSol(): void {
-    this.allSol$ = this.service.getCabbyTipoSol(this.bsqTipoSol);
-
+    this.btp = this.bsqTipoSol;
     this.isConsulta = true;
+    if(this.bsqTipoSol == 1){
+      this.allSol$ = this.service.getAllCotizaciones();
+    } else if (this.bsqTipoSol == 2){
+      this.allSol$ = this.service.getAllOrdenCmp();
+    } else if (this.bsqTipoSol == 3){
+      this.allSol$ = this.service.getAllOrdenCmp();
+    }
+
   }
 
   async changeView(view: string) {
