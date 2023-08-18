@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { format, parseISO } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, oc } from 'date-fns/locale';
 import { CabeceraCotizacion } from 'src/app/models/procesos/solcotizacion/CabeceraCotizacion';
 import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/DetalleCotizacion';
 import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotizacion';
@@ -26,7 +26,7 @@ export class AllrequestComponent implements OnInit {
   cabecera!: CabeceraCotizacion;
   detalle: DetalleCotizacion[] = [];
   item: ItemCotizacion[] = [];
-  
+
   empleados: any[] = [];
   areas: any[] = [];
 
@@ -71,11 +71,11 @@ export class AllrequestComponent implements OnInit {
   consultarSol(): void {
     this.btp = this.bsqTipoSol;
     this.isConsulta = true;
-    if(this.bsqTipoSol == 1){
+    if (this.bsqTipoSol == 1) {
       this.allSol$ = this.service.getAllCotizaciones();
-    } else if (this.bsqTipoSol == 2){
+    } else if (this.bsqTipoSol == 2) {
       this.allSol$ = this.service.getAllOrdenCmp();
-    } else if (this.bsqTipoSol == 3){
+    } else if (this.bsqTipoSol == 3) {
       this.allSol$ = this.service.getAllOrdenCmp();
     }
 
@@ -84,7 +84,7 @@ export class AllrequestComponent implements OnInit {
   async changeView(view: string) {
     this.changeview = view;
   }
-  
+
   get estadoTexto(): string {
     switch (this.cabecera.cabSolCotEstado) {
       case 'A':
@@ -109,8 +109,9 @@ export class AllrequestComponent implements OnInit {
   //realiza la llamada a la API para extraer la solicitud con el id seleccionado
   async getSolicitud() {
     try {
-      const data = await this.service.getSolicitudbyId(this.idBusq).toPromise();
-      this.solicitudEdit = data;
+      const dataOC = await this.service.getOrdenComprabyId(this.idBusq).toPromise();
+      this.solicitudEdit = dataOC;
+
     } catch (error) {
       console.error('Error al obtener la solicitud:', error);
     }

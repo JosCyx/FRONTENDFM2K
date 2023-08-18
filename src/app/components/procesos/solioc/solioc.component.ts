@@ -3,6 +3,14 @@ import { CommunicationApiService } from 'src/app/services/communication-api.serv
 import { Observable, map } from 'rxjs';
 import { Detalle } from 'src/app/models/procesos/Detalle';
 import { ItemSector } from 'src/app/models/procesos/ItemSector';
+import { Router } from '@angular/router';
+import { format, parseISO } from 'date-fns';
+import { es, oc } from 'date-fns/locale';
+import { CabeceraCotizacion } from 'src/app/models/procesos/solcotizacion/CabeceraCotizacion';
+import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/DetalleCotizacion';
+import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotizacion';
+import { GlobalService } from 'src/app/services/global.service';
+
 
 @Component({
   selector: 'app-solioc',
@@ -55,6 +63,7 @@ export class SoliocComponent implements OnInit {
   item_cant: number = 1;
   item_sector: number = 0;
 
+
   //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
   changeview: string = 'crear';
@@ -64,6 +73,7 @@ export class SoliocComponent implements OnInit {
   showmsjerror: boolean = false;
   checkDet: boolean = false;
   idToIndexMap: Map<number, number> = new Map();
+  // SolID:number=this.serviceGlobalL
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -82,7 +92,7 @@ export class SoliocComponent implements OnInit {
   //sectores: any[] = [];
   inspectores: any[] = [];
 
-  constructor(private service: CommunicationApiService) { }
+  constructor(private service: CommunicationApiService , private router:Router, private serviceGlobal:GlobalService) { }
 
   ngOnInit(): void {
     this.empleadosList$ = this.service.getEmpleadosList();
