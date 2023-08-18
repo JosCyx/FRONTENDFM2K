@@ -1,18 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { format, parseISO } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { CabeceraCotizacion } from 'src/app/models/procesos/solcotizacion/CabeceraCotizacion';
-import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/DetalleCotizacion';
-import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotizacion';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
+import { GlobalService } from 'src/app/services/global.service';
 
-interface SolicitudData {
-  cabecera: any;
-  detalles: any[];
-  items: any[];
-}
+
 
 @Component({
   selector: 'app-allrequest',
@@ -21,12 +14,8 @@ interface SolicitudData {
 })
 
 export class AllrequestComponent implements OnInit {
-  solicitudEdit!: SolicitudData;
-
-  cabecera!: CabeceraCotizacion;
-  detalle: DetalleCotizacion[] = [];
-  item: ItemCotizacion[] = [];
   
+  cabecera!: CabeceraCotizacion;
   empleados: any[] = [];
   areas: any[] = [];
 
@@ -48,7 +37,7 @@ export class AllrequestComponent implements OnInit {
 
   changeview: string = 'consultar';
 
-  constructor(private router: Router, private service: CommunicationApiService) { }
+  constructor(private router: Router, private service: CommunicationApiService, private serviceGlobal: GlobalService) { }
 
   ngOnInit(): void {
     this.tipoSol$ = this.service.getTipoSolicitud();
@@ -100,52 +89,12 @@ export class AllrequestComponent implements OnInit {
 
   //guardar el valor del id en una variable y ejecuta los metodos para traer la solicitud y para guardar los datos en los objetos respectivos
   async selectSol(id: number) {
-    this.idBusq = id;
-    await this.getSolicitud();
-    await this.saveData();
-    await this.changeView('editar');
+    
+    this.serviceGlobal.solView = 'editar';
+    this.serviceGlobal.solID = id;
+    this.router.navigate(['solicoti']);
   }
-
-  //realiza la llamada a la API para extraer la solicitud con el id seleccionado
-  async getSolicitud() {
-    try {
-      const data = await this.service.getSolicitudbyId(this.idBusq).toPromise();
-      this.solicitudEdit = data;
-    } catch (error) {
-      console.error('Error al obtener la solicitud:', error);
-    }
-  }
-
-  async saveData() {
-    //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
-    this.cabecera = this.solicitudEdit.cabecera;
-
-    for (let det of this.solicitudEdit.detalles) {
-      this.detalle.push(det as DetalleCotizacion);
-    }
-
-    for (let itm of this.solicitudEdit.items) {
-      this.item.push(itm as ItemCotizacion);
-    }
-
-    //formatear la fecha de la solicitud para mostrar dia de semana y fecha
-    this.cabecera.cabSolCotFecha = format(parseISO(this.cabecera.cabSolCotFecha),
-      'eeee, d \'de\' MMMM \'de\' yyyy', { locale: es });
-    this.cabecera.cabSolCotFecha = this.cabecera.cabSolCotFecha.charAt(0)
-      .toUpperCase() + this.cabecera.cabSolCotFecha.slice(1);
-
-    // Formatear la fecha máxima de entrega en formato 'yyyy-MM-dd'
-    this.cabecera.cabSolCotFechaMaxentrega = format(parseISO(this.cabecera.cabSolCotFechaMaxentrega),
-      'yyyy-MM-dd');
-
-    // Formatear el plazo de entrega en formato 'yyyy-MM-dd'
-    this.cabecera.cabSolCotPlazoEntrega = format(parseISO(this.cabecera.cabSolCotPlazoEntrega),
-      'yyyy-MM-dd');
-
-    //ordena los items de la lista segun el id del detalle de menor a mayor
-    this.item.sort((a, b) => a.itmIdDetalle - b.itmIdDetalle);
-
-  }
+  
 
   cancelar(): void {
     this.clear();
@@ -153,10 +102,14 @@ export class AllrequestComponent implements OnInit {
   }
 
   clear(): void {
-    this.solicitudEdit = { cabecera: {}, detalles: [], items: [] };
     this.cabecera = new CabeceraCotizacion(0);
-    this.detalle = [];
-    this.item = [];
   }
+
+  // clear(): void {
+  //   this.solicitudEdit = { cabecera: {}, detalles: [], items: [] };
+  //   this.cabecera = new CabeceraCotizacion(0);
+  //   this.detalle = [];
+  //   this.item = [];
+  // }
 
 }
