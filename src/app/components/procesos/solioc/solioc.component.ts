@@ -10,8 +10,13 @@ import { CabeceraCotizacion } from 'src/app/models/procesos/solcotizacion/Cabece
 import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/DetalleCotizacion';
 import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotizacion';
 import { GlobalService } from 'src/app/services/global.service';
+import { CabeceraOrdenCompra } from 'src/app/models/procesos/solcotizacion/CabeceraOrdenCompra';
 
-
+interface SolicitudData {
+  cabecera: any;
+  detalles: any[];
+  items: any[];
+}
 @Component({
   selector: 'app-solioc',
   templateUrl: './solioc.component.html',
@@ -28,7 +33,12 @@ export class SoliocComponent implements OnInit {
   solNumerico!: string;
   noSolFormat!: string;
   proveedor!: string;
+  //
+  cabecera!: CabeceraOrdenCompra;
+  detalle: DetalleCotizacion[] = [];
+  item: ItemCotizacion[] = [];
 
+  solicitudEdit!: SolicitudData;
 
   //variables para guardar el tracking
   trTipoSolicitud: number = 2;//indica el tipo de solicitud co el que estamos trabajando, este valor cambia en cada tipo de solicitud
@@ -66,14 +76,14 @@ export class SoliocComponent implements OnInit {
 
   //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
-  changeview: string = 'crear';
+  changeview: string = this.serviceGlobal.solView;
   msjExito!: string;
   msjError!: string;
   showmsj: boolean = false;
   showmsjerror: boolean = false;
   checkDet: boolean = false;
   idToIndexMap: Map<number, number> = new Map();
-  // SolID:number=this.serviceGlobalL
+  SolID:number=this.serviceGlobal.solID;
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -88,6 +98,7 @@ export class SoliocComponent implements OnInit {
   itemSectorList: ItemSector[] = [];
   tmpItemSect: ItemSector[] = [];
   empleados: any[] = [];
+  empleadoedit:any[]=[];
   areas: any[] = [];
   //sectores: any[] = [];
   inspectores: any[] = [];
@@ -96,6 +107,9 @@ export class SoliocComponent implements OnInit {
 
   ngOnInit(): void {
     this.empleadosList$ = this.service.getEmpleadosList();
+    this.empleadosList$.subscribe((data) => {
+      this.empleadoedit = data;
+    });
 
     this.inspectores$ = this.service.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
 
@@ -108,7 +122,9 @@ export class SoliocComponent implements OnInit {
     this.areaList$.subscribe((data) => {
       this.areas = data;
     });
-
+    if(this.changeview=="editar"){
+      this.metodo();
+    }
   }
 
   //guarda los datos de los empleados en una lista local dependiendo del tamaño de la variable de busqueda, esto se controla con un keyup
@@ -634,4 +650,75 @@ export class SoliocComponent implements OnInit {
  
   }
   //
+
+  async metodo(){
+    await this.getSolicitud();
+    await this.saveData();
+    //await this.changeView('editar');
+  }
+
+  //editar solicitudes
+  async getSolicitud() {
+    try {
+      const data = await this.service.getOrdenComprabyId(this.SolID).toPromise();
+      this.solicitudEdit = data;
+    } catch (error) {
+      console.error('Error al obtener la solicitud:', error);
+    }
+  }
+
+  async saveData() {
+    //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
+    this.cabecera = this.solicitudEdit.cabecera;
+
+    for (let det of this.solicitudEdit.detalles) {
+      this.detalle.push(det as DetalleCotizacion);
+    }
+
+    for (let itm of this.solicitudEdit.items) {
+      this.item.push(itm as ItemCotizacion);
+    }
+
+    //formatear la fecha de la solicitud para mostrar dia de semana y fecha
+    this.cabecera.cabSolOCFecha = format(parseISO(this.cabecera.cabSolOCFecha),
+      'eeee, d \'de\' MMMM \'de\' yyyy', { locale: es });
+    this.cabecera.cabSolOCFecha = this.cabecera.cabSolOCFecha.charAt(0)
+      .toUpperCase() + this.cabecera.cabSolOCFecha.slice(1);
+
+    // Formatear la fecha máxima de entrega en formato 'yyyy-MM-dd'
+    this.cabecera.cabSolOCFechaMaxentrega = format(parseISO(this.cabecera.cabSolOCFechaMaxentrega),
+      'yyyy-MM-dd');
+
+    // Formatear el plazo de entrega en formato 'yyyy-MM-dd'
+    this.cabecera.cabSolOCPlazoEntrega = format(parseISO(this.cabecera.cabSolOCPlazoEntrega),
+      'yyyy-MM-dd');
+
+    //ordena los items de la lista segun el id del detalle de menor a mayor
+    this.item.sort((a, b) => a.itmIdDetalle - b.itmIdDetalle);
+
+  }
+
+  get estadoTexto(): string {
+    switch (this.cabecera.cabSolOCEstado) {
+      case 'A':
+        return 'Activo';
+      case 'F':
+        return 'Finalizado';
+      case 'C':
+        return 'Cancelado';
+      default:
+        return ''; // Manejo por defecto si el valor no es A, F o C
+    }
+  }
+
+  async changeView(view: string) {
+    this.changeview = view;
+  }
+
+  cancelar(): void {
+    this.router.navigate(['allrequest']);
+    this.clear();
+    this.changeView('consultar');
+  }
+
 }

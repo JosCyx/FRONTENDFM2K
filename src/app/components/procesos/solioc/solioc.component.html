@@ -13,7 +13,7 @@
         </nav>
     </div>
 
-    <div class="form-cot"> <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
+    <div class="form-cot" *ngIf="changeview == 'crear'" > <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Registrar nueva Orden de Compra</h3>
 
 
@@ -191,36 +191,36 @@
 
 
     </div>
-    <!-- editar
+     <!-- Esto es para editar Solicitud de Orden de compra -->
     <div class="formRol" *ngIf="changeview === 'editar'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar solicitud</h3>
     
-        <div class="solicitud">
+        <div class="solicitudEditar">
     
           <div class="cabecera mb-3">
             <div class="row mb-1">
               <div class="input-group col">
                 <label class="input-group-text">Código:</label>
-                <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotNumerico" disabled>
+                <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolOCNumerico" disabled>
               </div>
               <div class="input-group col">
                 <label class="input-group-text">Fecha:</label>
-                <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotFecha" disabled>
+                <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolOCFecha" disabled>
               </div>
             </div>
     
             <div class="row mb-1">
               <div class="input-group col">
                 <label class="input-group-text">Solicitado por:</label>
-                <ng-container *ngFor="let emp of empleados">
-                  <input *ngIf="emp.empleadoIdNomina == cabecera.cabSolCotSolicitante" type="text" class="form-control"
+                <ng-container *ngFor="let emp of empleadoedit">
+                  <input *ngIf="emp.empleadoIdNomina == cabecera.cabSolOCSolicitante" type="text" class="form-control"
                     id="busqueda" list="sugerencias" [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled>
                 </ng-container>
               </div>
               <div class="input-group col">
                 <label class="input-group-text">Area:</label>
                 <ng-container *ngFor="let are of areas">
-                  <input *ngIf="are.areaIdNomina == cabecera.cabSolCotArea" type="text" class="form-control" id="busqueda"
+                  <input *ngIf="are.areaIdNomina == cabecera.cabSolOCArea" type="text" class="form-control" id="busqueda"
                     list="sugerencias" [value]="are.areaDecp" disabled>
                 </ng-container>
               </div>
@@ -228,11 +228,11 @@
             <div class="row mb-1">
               <div class="input-group col">
                 <label class="input-group-text">Asunto:</label>
-                <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotAsunto" disabled>
+                <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolOCAsunto" >
               </div>
               <div class="input-group col">
                 <label class="input-group-text">Estado:</label>
-                <input type="text" class="form-control" [value]="estadoTexto" disabled>
+                <input type="text" class="form-control" [value]="estadoTexto" disabled >
               </div>
             </div>
     
@@ -304,38 +304,38 @@
     
           <div class="foot-cabecera">
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cabecera.cabSolCotProcedimiento"
-                disabled>
+              <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cabecera.cabSolOCProcedimiento"
+                >
               <label for="floatingInput">Materiales y procedimientos a seguir:</label>
             </div>
             <div class="form-floating mb-3">
-              <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cabecera.cabSolCotObervaciones"
-                disabled>
+              <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cabecera.cabSolOCObervaciones"
+                >
               <label for="floatingInput">Observaciones:</label>
             </div>
             <div class="input-group mb-3">
               <label class="input-group-text">Adjunto cotizaciones:</label>
-              <select class="form-control" [(ngModel)]="cabecera.cabSolCotAdjCot" disabled>
+              <select class="form-control" [(ngModel)]="cabecera.cabSolOCAdjCot" >
                 <option value="SI">Sí</option>
                 <option value="NO" selected>No</option>
               </select>
               <label class="input-group-text">Número de cotizaciones:</label>
-              <input class="form-control" type="number" [(ngModel)]="cabecera.cabSolCotNumCotizacion" disabled>
+              <input class="form-control" type="number" [(ngModel)]="cabecera.cabSolOCNumCotizacion" >
             </div>
             <div class="input-group mb-3">
               <label class="input-group-text">Plazo de entrega:</label>
-              <input class="form-control" type="text" for="plazoentrega" [(ngModel)]="cabecera.cabSolCotPlazoEntrega"
-                disabled>
+              <input class="form-control" type="text" for="plazoentrega" [(ngModel)]="cabecera.cabSolOCPlazoEntrega"
+                >
               <label class="input-group-text">Fecha máxima de entrega:</label>
-              <input class="form-control" type="text" for="fechamaxima" [(ngModel)]="cabecera.cabSolCotFechaMaxentrega"
-                disabled>
+              <input class="form-control" type="text" for="fechamaxima" [(ngModel)]="cabecera.cabSolOCFechaMaxentrega"
+                >
             </div>
             <div class="input-group mb-3">
               <label class="input-group-text">Inspector:</label>
               <input type="text" class="form-control" id="busqueda" list="inspectores"
-                [(ngModel)]="cabecera.cabSolCotInspector" disabled>
+                [(ngModel)]="cabecera.cabSolOCInspector" >
               <label class="input-group-text">Teléfono:</label>
-              <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolCotTelefInspector" disabled>
+              <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolOCTelefInspector" >
             </div>
           </div>
         </div>
@@ -348,7 +348,7 @@
             <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
           </div>
         </div>
-      </div> -->
+      </div> 
     <!-- Modal para los items por sector-->
     <div class="modal fade" #exampleModal id="itemsector" data-backdrop="static" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -424,4 +424,89 @@
             </div>
         </div>
     </div>
+</div>
+<!-- Modal para verificar el envío-->
+<div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered " role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class=" font-weight-bold" id="exampleModalLabel">¿Está seguro que desea enviar la Solicitud?</h3>
+      </div>
+      <div class="modal-body">
+        <p>Al enviar la solicitud no podrá volver a editarla y pasará al estado de revisión.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Confirmar</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para agregar items a la solicitud hecha-->
+<div class="modal fade" #exampleModal id="editItemSector" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class=" font-weight-bold" id="exampleModalLabel">Ingrese los items según el sector</h3>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped text-center justify-content-center">
+          <thead>
+            <tr>
+              <th scope="col">N° Detalle</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">N° Item</th>
+              <th scope="col">Cantidad*</th>
+              <th scope="col">Sector*</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="align-middle">1</td>
+              <td class="align-middle">descripcion</td>
+              <td class="align-middle">1</td>
+              <td class="align-middle">8</td>
+              <td class="align-middle">Sector 2</td>
+            </tr>
+            <tr>
+              <td class="align-middle">1</td>
+              <td class="align-middle">
+                <input class="form-control" type="text" value='Descripción' placeholder="Descripción" disabled>
+              </td>
+              <td class="align-middle cel-prep">
+                <input type="text" class="form-control text-center" disabled>
+              </td>
+              <td class="align-middle ">
+                <div class=" cel-prep">
+                  <input class="form-control" min="1" type="number" placeholder="Cantidad">
+                </div>
+              </td>
+              <td class="align-middle" style="width: 150px;">
+                <div class="cel-prep">
+                  <select class="form-select" name="item_sector">
+                    <option selected disabled value=0>Selecciona una aplicación...</option>
+                    <option *ngFor="let sect of sectores$|async" [value]="sect.sectIdNomina">{{sect.sectNombre}}
+                    </option>
+                  </select>
+                </div>
+              </td>
+
+            </tr>
+            <tr>
+              <td colspan="5" class="align-middle text-end"><button class="btn btn-success">
+                  <i class="bi bi-list-check"></i></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Confirmar</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+
+      </div>
+    </div>
+  </div>
 </div>

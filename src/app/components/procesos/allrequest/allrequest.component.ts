@@ -14,7 +14,7 @@ import { GlobalService } from 'src/app/services/global.service';
 })
 
 export class AllrequestComponent implements OnInit {
-  
+
   cabecera!: CabeceraCotizacion;
   empleados: any[] = [];
   areas: any[] = [];
@@ -89,12 +89,16 @@ export class AllrequestComponent implements OnInit {
 
   //guardar el valor del id en una variable y ejecuta los metodos para traer la solicitud y para guardar los datos en los objetos respectivos
   async selectSol(id: number) {
-    
     this.serviceGlobal.solView = 'editar';
     this.serviceGlobal.solID = id;
-    this.router.navigate(['solicoti']);
+    if (this.bsqTipoSol == 1) {
+      this.router.navigate(['solicoti']);
+    } else if (this.bsqTipoSol == 2) {
+      this.router.navigate(['solioc']);
+    }
+
   }
-  
+
 
   cancelar(): void {
     this.clear();
