@@ -160,6 +160,11 @@ export class CommunicationApiService {
     return this.http.get<any>(`${this.APIUrl}/CabSolOrdenCompras/${tipoSol}`);
   }
 
+  //retorna todas las solicitudes de pago
+  getAllPago(): Observable<any[]> {
+    return this.http.get<any>(this.APIUrl + '/MODIFICAR');
+  }
+
   getLastDetalleCot(tipoSol: number, noSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/DetSolCotizacions/GetLastDetalleCot?tipoSol=${tipoSol}&noSol=${noSol}`);
   }
