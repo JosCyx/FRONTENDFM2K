@@ -174,16 +174,13 @@
             </div>
         </div>
 
-
-
-
     </div>
 
 
     <div class="formRol" *ngIf="changeview === 'editar'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar solicitud</h3>
 
-        <div class="solicitud">
+        <div class="solicitudEdit">
 
             <div class="cabecera mb-3">
                 <div class="row mb-1">
@@ -200,7 +197,7 @@
                 <div class="row mb-1">
                     <div class="input-group col">
                         <label class="input-group-text">Solicitado por:</label>
-                        <ng-container *ngFor="let emp of empleados">
+                        <ng-container *ngFor="let emp of empleadosEdit">
                             <input *ngIf="emp.empleadoIdNomina == cabecera.cabSolCotSolicitante" type="text"
                                 class="form-control" id="busqueda" list="sugerencias"
                                 [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled>
@@ -236,11 +233,12 @@
                             <th scope="col">Cantidad</th>
                             <th scope="col">Unidad</th>
                             <th scope="col">Sector</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngIf="item.length == 0">
-                            <td class="text-danger" colspan="5">No se han registrado items para esta solicitud</td>
+                            <td class="text-danger" colspan="6">No se han registrado items para esta solicitud</td>
                         </tr>
                         <tr *ngFor="let itm of item let i = index">
                             <th class="align-middle">{{i+1}}</th>
@@ -255,9 +253,11 @@
                                     {{detu.solCotUnidad}}</td>
                             </ng-container>
                             <ng-container *ngFor="let sect of sectores$  | async">
-                                <td *ngIf="sect.sectIdNomina == itm.itmSector" class="align-middle">{{sect.sectNombre}}
+                                <td *ngIf="sect.sectIdNomina == itm.itmSector" class="align-middle">{{sect.sectNombre}} 
                                 </td>
                             </ng-container>
+                            <td><button class="btn text-danger" data-toggle="modal" data-target="#dltItemSaved" 
+                                (click)="confDeleteItm(itm.itmIdDetalle,itm.itmIdItem)"><i class="bi bi-x-circle"></i></button></td>
                         </tr>
 
                         <tr>
@@ -286,9 +286,10 @@
                             <td class="align-middle cel-prep">
                                 <input type="text" class="form-control text-center" disabled>
                             </td>
+                            <td></td>
                         </tr>
                         <tr>
-                            <td colspan="5" class="align-middle text-end"><button class="btn btn-success"><i
+                            <td colspan="6" class="align-middle text-end"><button class="btn btn-success"><i
                                         class="bi bi-list-check"></i></button></td>
                         </tr>
                     </tbody>
@@ -323,7 +324,7 @@
                     <input class="form-control" type="text" for="fechamaxima"
                         [(ngModel)]="cabecera.cabSolCotFechaMaxentrega" disabled>
                 </div>
-                <div class="input-group mb-3">
+                <div class="input-group mb-1">
                     <label class="input-group-text">Inspector:</label>
                     <input type="text" class="form-control" id="busqueda" list="inspectores"
                         [(ngModel)]="cabecera.cabSolCotInspector" disabled>
@@ -367,7 +368,8 @@
                             <td class="align-middle">{{item.det_descp}}</td>
                             <td class="align-middle">{{item.item_id}}</td>
                             <td class="align-middle">{{item.item_cant}}</td>
-                            <td class="align-middle">{{item.item_sector}}</td>
+                            <td class="align-middle">{{item.item_sector}}<button class="btn text-danger" (click)="deleteItem(item.det_id)">
+                                <i class="bi bi-x-circle"></i></button></td>
                         </tr>
                         <tr>
                             <td class="align-middle">{{det_id}}</td>
@@ -406,7 +408,7 @@
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveItemSect()"
+                <button type="button" class="btn btn-primary" data-dismiss="modal" 
                     [disabled]="tmpItemSect.length === 0">Confirmar</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal"
                     (click)="cancelarItem()">Cancelar</button>
@@ -430,6 +432,25 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Confirmar</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para confirmar eliminacion de item-->
+<div class="modal fade" #exampleModal id="dltItemSaved" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered " role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class=" font-weight-bold" id="exampleModalLabel">¿Está seguro que desea eliminar este item?</h3>
+      </div>
+      <div class="modal-body">
+        <p>Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteItemSaved()">Confirmar</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
       </div>
     </div>
