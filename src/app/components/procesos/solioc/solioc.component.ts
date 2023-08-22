@@ -720,5 +720,22 @@ export class SoliocComponent implements OnInit {
     this.clear();
     this.changeView('consultar');
   }
+   nombre!:number;
+  confDeleteItm(id:number){
+    this.nombre=id;
+  }
+  deleteItemSaved(){
+    const index = this.item.findIndex(itm => itm.itmID === this.nombre);
+    if (index !== -1) {
+      this.item.splice(index, 1); // Elimina 1 elemento en la posición 'index'
+      console.log("SE ELIMINÓ UN ITEM");
+    }
+    console.log(this.item);
+    //this.service.deleteItemSector(this.trTipoSolicitud,this.trLastNoSol,this.idDetDlt,this.idItmDlt);
+  }
+  compraclick(){
+    console.log("eliminacion ");
+  }
+
 
 }
