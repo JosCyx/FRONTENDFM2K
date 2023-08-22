@@ -6,7 +6,7 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <button class="btn btn-primary m-2">Crear</button>
-          <button class="btn btn-primary m-2">Boton</button>
+          <button class="btn btn-primary m-2" (click)="editarCabecer()" >Boton</button>
           <span *ngIf="changeview === 'crear'"></span>
         </div>
       </div>
@@ -189,7 +189,7 @@
 
 
   </div>
-  <!-- Esto es para editar Solicitud de Orden de compra -->
+  <!-- *Esto es para editar Solicitud de Orden de compra -->
   <div class="formRol" *ngIf="changeview === 'editar'">
     <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar solicitud</h3>
 
@@ -306,7 +306,7 @@
       </div>
 
       <div class="foot-cabecera">
-        <div class="form-floating mb-3">
+        <div class="form-floating mb-3">       
           <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cabecera.cabSolOCProcedimiento">
           <label for="floatingInput">Materiales y procedimientos a seguir:</label>
         </div>
@@ -348,6 +348,7 @@
       </div>
     </div>
   </div>
+  <!-- * -->
   <!-- Modal para los items por sector-->
   <div class="modal fade" #exampleModal id="itemsector" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">

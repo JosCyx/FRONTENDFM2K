@@ -84,6 +84,7 @@ export class SoliocComponent implements OnInit {
   checkDet: boolean = false;
   idToIndexMap: Map<number, number> = new Map();
   SolID:number=this.serviceGlobal.solID;
+  fechaSinFormato:Date = new Date;
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -678,7 +679,7 @@ export class SoliocComponent implements OnInit {
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
     }
-
+    this.fechaSinFormato=this.convertirStringAFecha(this.cabecera.cabSolOCFecha);
     //formatear la fecha de la solicitud para mostrar dia de semana y fecha
     this.cabecera.cabSolOCFecha = format(parseISO(this.cabecera.cabSolOCFecha),
       'eeee, d \'de\' MMMM \'de\' yyyy', { locale: es });
@@ -724,6 +725,7 @@ export class SoliocComponent implements OnInit {
   confDeleteItm(id:number){
     this.nombre=id;
   }
+  //** Eliminar desde la tabla orden comprar  */
   deleteItemSaved(){
     const index = this.item.findIndex(itm => itm.itmID === this.nombre);
     if (index !== -1) {
@@ -733,9 +735,58 @@ export class SoliocComponent implements OnInit {
     console.log(this.item);
     //this.service.deleteItemSector(this.trTipoSolicitud,this.trLastNoSol,this.idDetDlt,this.idItmDlt);
   }
+  //** */
+  //TODO:TENEMOS QUE HACER
   compraclick(){
     console.log("eliminacion ");
   }
+  //* convertir de tipo String a  new DATE 
+  convertirStringAFecha(fechaStr: string): Date {
+    const fechaConvertida = new Date(fechaStr);
+    return fechaConvertida;
+  }
+  //* Editar orden compra
+  editarCabecer(){
+    const dataCAB = {
+      cabSolOCID:this.cabecera.cabSolOCID,
+      cabSolOCTipoSolicitud: this.cabecera.cabSolOCTipoSolicitud,
+      cabSolOCArea: this.cabecera.cabSolOCArea,
+      cabSolOCNoSolicitud: this.cabecera.cabSolOCNoSolicitud,
+      cabSolOCSolicitante: this.cabecera.cabSolOCSolicitante,
+      cabSolOCFecha: this.fechaSinFormato,
+      cabSolOCAsunto: this.cabecera.cabSolOCAsunto,
+      cabSolOCProcedimiento: this.cabecera.cabSolOCProcedimiento,
+      cabSolOCObervaciones: this.cabecera.cabSolOCObervaciones,
+      cabSolOCAdjCot: this.cabecera.cabSolOCAdjCot,
+      cabSolOCNumCotizacion: this.cabecera.cabSolOCNumCotizacion,
+      cabSolOCEstado: this.cabecera.cabSolOCEstado,
+      cabSolOCEstadoTracking: this.cabecera.cabSolOCEstadoTracking,
+      cabSolOCPlazoEntrega: this.cabecera.cabSolOCPlazoEntrega,
+      cabSolOCFechaMaxentrega: this.cabecera.cabSolOCFechaMaxentrega,
+      cabSolOCInspector: this.cabecera.cabSolOCInspector,
+      cabSolOCTelefInspector: this.cabecera.cabSolOCTelefInspector,
+      cabSolOCNumerico: this.cabecera.cabSolOCNumerico,
+      cabSolOCProveedor: this.cabecera.cabSolOCProveedor,
+      cabSolOCRUCProveedor: this.cabecera.cabSolOCRUCProveedor
+    }
+    //* Enviar datos para actualizar en tabla cab_sol_orden_compra
+    console.log("2. guardando solicitud...", dataCAB);
+     this.service.updateOrdencompra(this.cabecera.cabSolOCID,dataCAB).subscribe(
+      response => {
+        console.log("Actualizar ");
+      },
+      error => {
+        console.log("error : ", error)
+      }
+    );
+  }
+
+  // CREACION METODO
+  cambio(item:number,cabecera:number,detalle:number){
+    
+  }
+
+  //** */
 
 
 }

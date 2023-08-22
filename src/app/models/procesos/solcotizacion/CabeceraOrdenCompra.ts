@@ -17,6 +17,8 @@ export class CabeceraOrdenCompra {
   public cabSolOCFechaMaxentrega: string;
   public cabSolOCInspector: number | null;
   public cabSolOCTelefInspector: string;
+  public cabSolOCProveedor:number;
+  public cabSolOCRUCProveedor:string;
 
   constructor(data: any) {
     this.cabSolOCTipoSolicitud = data.cabSolOCTipoSolicitud;
@@ -37,5 +39,7 @@ export class CabeceraOrdenCompra {
     this.cabSolOCFechaMaxentrega = data.cabSolOCFechaMaxentrega;
     this.cabSolOCInspector = data.cabSolOCInspector;
     this.cabSolOCTelefInspector = data.cabSolOCTelefInspector;
+    this.cabSolOCProveedor=data.cabSolOCProveedor;
+    this.cabSolOCRUCProveedor=data.cabSolOCRUCProveedor;
   }
 }

@@ -193,4 +193,9 @@ export class CommunicationApiService {
   deleteItemSector(tipoSol: number, noSol: number, noDet: number, noItm: number): Observable<any> {
     return this.http.delete(`${this.APIUrl}/ItemSectors/${tipoSol}/${noSol}/${noDet}/${noItm}`);
   }
+  //put
+  updateOrdencompra( id:number,data:any){
+    return this.http.put(this.APIUrl + `/CabSolOrdenCompras/${id}`,data);
+  }
+  
 }
