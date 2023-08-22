@@ -101,12 +101,14 @@ export class SolicotiComponent implements OnInit {
 
   //edicion de solicitud de cotizacion
   solID: number = this.serviceGlobal.solID;
-  idDetDlt!: number;
+  idDlt!: number;
+  idNSolDlt!: number;
   idItmDlt!: number;
+  idDetDlt!: number;
 
 
 
-  constructor(private router:Router,private service: CommunicationApiService, private serviceGlobal: GlobalService) { }
+  constructor(private router: Router, private service: CommunicationApiService, private serviceGlobal: GlobalService) { }
 
   ngOnInit(): void {
     this.empleadosList$ = this.service.getEmpleadosList();
@@ -126,10 +128,10 @@ export class SolicotiComponent implements OnInit {
       this.areas = data;
     });
 
-    if(this.changeview == 'editar'){
+    if (this.changeview == 'editar') {
       this.editSolicitud();
     }
-    
+
   }
 
   //guarda los datos de los empleados en una lista local dependiendo del tamaño de la variable de busqueda, esto se controla con un keyup
@@ -260,13 +262,13 @@ export class SolicotiComponent implements OnInit {
   getSolName(noSol: number) {
     const noSolString = noSol.toString();
     if (noSolString.length == 1) {
-      this.solNumerico = "COT" + this.areaNmco + " " + this.trTipoSolicitud + "-000" + noSolString;
+      this.solNumerico = "COT " + this.areaNmco + " " + this.trTipoSolicitud + "-000" + noSolString;
     } else if (noSolString.length == 2) {
-      this.solNumerico = "COT" + this.areaNmco + " " + this.trTipoSolicitud + "-00" + noSolString;
+      this.solNumerico = "COT " + this.areaNmco + " " + this.trTipoSolicitud + "-00" + noSolString;
     } else if (noSolString.length == 3) {
-      this.solNumerico = "COT" + this.areaNmco + " " + this.trTipoSolicitud + "-0" + noSolString;
+      this.solNumerico = "COT " + this.areaNmco + " " + this.trTipoSolicitud + "-0" + noSolString;
     } else if (noSolString.length == 4) {
-      this.solNumerico = "COT" + this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
+      this.solNumerico = "COT " + this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
     }
   }
 
@@ -522,7 +524,7 @@ export class SolicotiComponent implements OnInit {
   //agrega los detalles a la lista detalles
   addDetalle() {
     this.saveItemSect();
-    
+
     const detalle = {
       det_id: this.det_id,
       det_descp: this.det_descp,
@@ -607,7 +609,7 @@ export class SolicotiComponent implements OnInit {
   //agregar la opcion para eliminar los items de los detalles, lista ItemSectorList
 
   //Icrementa el valor Item 
-  incrementItemID(){
+  incrementItemID() {
     //aumemta eL valor de los ITEM
     if (this.tmpItemSect.length == 0) {
       this.item_id = 1;
@@ -618,7 +620,7 @@ export class SolicotiComponent implements OnInit {
     }
   }
   //Eliminar  Item 
-  deleteItem(id:number){
+  deleteItem(id: number) {
     const index = this.tmpItemSect.findIndex(item => item.item_id === id);
 
     console.log(index)
@@ -634,15 +636,15 @@ export class SolicotiComponent implements OnInit {
     }
     this.incrementItemID();
 
-    
+
     setTimeout(() => {
-      
+
     }, 500);
 
- 
+
   }
 
-  
+
   //agregar los items de la lista temporal a la lista definitiva
   saveItemSect(): void {
 
@@ -664,7 +666,7 @@ export class SolicotiComponent implements OnInit {
   }
 
   //editar solicitudes
-  async editSolicitud(){
+  async editSolicitud() {
     await this.getSolicitud();
     await this.saveData();
     //await this.changeView('editar');
@@ -734,14 +736,114 @@ export class SolicotiComponent implements OnInit {
     this.changeView('consultar');
   }
 
-  
-  confDeleteItm(idDetalle:number, idItem:number){
-    this.idDetDlt = idDetalle;
+  //ediar items y detalles de la solicitud cargada
+
+  confDeleteItm(idList:number,idItem: number, idDet: number, idNSol: number) {
+    this.idDlt = idList;
     this.idItmDlt = idItem;
+    this.idDetDlt = idDet;
+    this.idNSolDlt = idNSol;
+    console.log(this.idDlt, this.idItmDlt);
   }
 
-  deleteItemSaved(){
-    console.log("Item:",this.trTipoSolicitud,this.cabecera.cabSolCotNoSolicitud,this.idDetDlt,this.idItmDlt," eliminado con exito.");
-    //this.service.deleteItemSector(this.trTipoSolicitud,this.trLastNoSol,this.idDetDlt,this.idItmDlt);
+  deleteItemSaved() {
+    const index = this.item.findIndex(itm => itm.itmID === this.idDlt);
+
+    if (index !== -1) {
+      this.item.splice(index, 1);
+      this.saveItemDB();
+    }
+  }
+
+
+
+  async saveItemDB() {
+    try {
+      await this.deleteAllItems();
+      await this.reorderAndSaveItems();
+      await this.checkAndDeleteDetails();
+  
+      console.log("Proceso completado exitosamente.");
+    } catch (error) {
+      console.error("Error durante el proceso:", error);
+    }
+    
+  }
+
+  async deleteAllItems() {
+    try {
+      await this.service.deleteAllItemBySol(this.trTipoSolicitud,this.idNSolDlt).subscribe(
+        response=>{
+          console.log("todos los detalles eliminados");
+        },
+        error => {
+          console.log("Error: ",error);
+        }
+      );
+    } catch (error) {
+      console.error("Error durante la eliminación:", error);
+    }
+  }
+  
+  async reorderAndSaveItems() {
+    const detailItemMap: { [key: number]: number } = {};
+  
+    for (const item of this.item) {
+      const detalle = item.itmIdDetalle;
+  
+      if (!detailItemMap[detalle]) {
+        detailItemMap[detalle] = 1;
+      }
+  
+      item.itmIdItem = detailItemMap[detalle];
+      detailItemMap[detalle]++;
+  
+      const data = {
+        itmTipoSol: item.itmTipoSol,
+        itmNumSol: item.itmNumSol,
+        itmIdDetalle: item.itmIdDetalle,
+        itmIdItem: item.itmIdItem,
+        itmCantidad: item.itmCantidad,
+        itmSector: item.itmSector
+      };
+  
+      this.service.addItemSector(data).subscribe(
+        response => {
+          console.log("Item guardado exitosamente.");
+        },
+        error => {
+          console.log("No se pudo guardar el item, error: ", error);
+        }
+      );
+    }
+  }
+  
+  async checkAndDeleteDetails() {
+    //verificar si algun detalle no tiene items y eliminarlo
+    for(let det of this.detalle){
+      console.log(this.trTipoSolicitud,this.idNSolDlt,det.solCotIdDetalle);
+      
+      this.service.getItemsbyDet(this.trTipoSolicitud,this.idNSolDlt,det.solCotIdDetalle).subscribe(
+        response => {
+          if(response == 0){
+            console.log("NO existen items para el detalle: ",det.solCotIdDetalle);
+            //eliminar el detalle
+            this.service.deleteDetallebyId(det.solCotID).subscribe(
+              response => {
+                console.log("Se ha eliminado el detalle.");
+              },
+              error => {
+                console.log("No se pudo eliminar el detalle, error: ", error);
+              }
+            );
+          }else {
+            console.log("SI existen items para el detalle: ",det.solCotIdDetalle);
+          }
+        },
+        error => {
+          console.log("Error: ",error);
+        }
+      );
+    }
   }
 }

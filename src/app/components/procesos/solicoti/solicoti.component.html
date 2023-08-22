@@ -176,7 +176,7 @@
 
     </div>
 
-
+    <!-- Editar solicitud de cotizacion -->
     <div class="formRol" *ngIf="changeview === 'editar'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar solicitud</h3>
 
@@ -257,7 +257,7 @@
                                 </td>
                             </ng-container>
                             <td><button class="btn text-danger" data-toggle="modal" data-target="#dltItemSaved" 
-                                (click)="confDeleteItm(itm.itmIdDetalle,itm.itmIdItem)"><i class="bi bi-x-circle"></i></button></td>
+                                (click)="confDeleteItm(itm.itmID,itm.itmIdItem,itm.itmIdDetalle,itm.itmNumSol)"><i class="bi bi-x-circle"></i></button></td>
                         </tr>
 
                         <tr>

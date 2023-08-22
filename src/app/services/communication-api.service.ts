@@ -198,4 +198,16 @@ export class CommunicationApiService {
     return this.http.put(this.APIUrl + `/CabSolOrdenCompras/${id}`,data);
   }
   
+
+  deleteAllItemBySol(tipoSol: number, noSol: number){
+    return this.http.delete(`${this.APIUrl}/ItemSectors/DeleteAllItems?tipoSol=${tipoSol}&noSol=${noSol}`);
+  }
+
+  deleteDetallebyId(id:number){
+    return this.http.delete(this.APIUrl + `/DetSolCotizacions/${id}`);
+  }
+
+  getItemsbyDet(tipoSol: number, noSol: number, noDet: number): Observable<any>{
+    return this.http.get<any>(`${this.APIUrl}/ItemSectors/${tipoSol}/${noSol}/${noDet}`);
+  }
 }
