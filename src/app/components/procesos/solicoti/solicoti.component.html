@@ -1,469 +1,797 @@
 <app-menu></app-menu>
 <div class="container">
-    <h2 class="font-weight-bolt ruteo">Solicitud de Cotizacion</h2>
-    <div class="">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
-                    <button class="btn btn-primary m-2">Boton</button>
-                    <span *ngIf="changeview === 'crear'"></span>
-                </div>
-            </div>
-        </nav>
+  <h2 class="font-weight-bolt ruteo">Solicitud de Cotizacion</h2>
+  <div class="">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <button class="btn btn-primary m-2" (click)="changeView('crear')">
+            Crear
+          </button>
+          <button class="btn btn-primary m-2">Boton</button>
+          <span *ngIf="changeview === 'crear'"></span>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <div class="form-cot" *ngIf="changeview === 'crear'">
+    <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
+    <h3 class="font-weight-bold" style="padding-top: 20pt">
+      Registrar nueva solicitud de cotización
+    </h3>
+
+    <div class="solicitud">
+      <div class="cabecera mb-3">
+        <div class="input-group mb-1">
+          <label class="input-group-text">Fecha:</label>
+          <input
+            type="text"
+            class="form-control"
+            disabled
+            [(ngModel)]="fechaFormat"
+          />
+        </div>
+        <div class="row mb-1">
+          <div class="input-group col">
+            <label class="input-group-text">Solicitado por*:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="busqueda"
+              list="sugerencias"
+              [(ngModel)]="empleado"
+              (keyup)="searchEmpleado()"
+              placeholder="Ingrese el nombre del empleado"
+            />
+            <datalist id="sugerencias">
+              <ng-container *ngFor="let emp of empleados">
+                <option
+                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+                ></option>
+              </ng-container>
+            </datalist>
+            <button class="btn btn-success" (click)="selectEmpleado()">
+              <i class="bi bi-check-lg"></i>
+            </button>
+          </div>
+          <div class="input-group col">
+            <label class="input-group-text">Area:</label>
+            <input
+              type="text"
+              class="form-control"
+              [value]="showArea"
+              placeholder="Area del empleado solicitante"
+              disabled
+            />
+          </div>
+        </div>
+        <div class="input-group mb-1">
+          <label class="input-group-text">Asunto*:</label>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Ingrese el asunto"
+            [(ngModel)]="cab_asunto"
+          />
+        </div>
+      </div>
+
+      <div class="detalle">
+        <table class="table table-striped text-center">
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col">Descripción*</th>
+              <th scope="col">Presupuesto*</th>
+              <th scope="col">Unidad</th>
+              <th scope="col">Cantidad Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let det of detalleList">
+              <td class="align-middle">{{ det.det_id }}</td>
+              <td class="align-middle">{{ det.det_descp }}</td>
+              <td class="align-middle">Asignado</td>
+              <td class="align-middle">{{ det.det_unidad }}</td>
+              <td class="align-middle">
+                {{ det.det_cantidad }}
+                <button
+                  class="btn text-danger"
+                  (click)="deleteDetalle(det.det_id)"
+                >
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <th class="align-middle">{{ det_id }}</th>
+              <td class="align-middle">
+                <textarea
+                  name="descripcion"
+                  class="form-control"
+                  rows="2"
+                  cols="50"
+                  placeholder="Descripción"
+                  [(ngModel)]="det_descp"
+                ></textarea>
+              </td>
+              <td class="align-middle">
+                <button
+                  class="btn btn-outline-primary"
+                  data-toggle="modal"
+                  data-target="#itemsector"
+                >
+                  Desglose
+                </button>
+              </td>
+              <td class="align-middle" style="width: 150px">
+                <select class="form-control" [(ngModel)]="det_unidad">
+                  <option value="Unidad" selected>Unidad</option>
+                  <option value="Sacos">Sacos</option>
+                  <option value="Paquete">Paquete</option>
+                  <option value="Avance de Obra">Avance de Obra</option>
+                  <option value="Millar">Millar</option>
+                  <option value="Metros">Metros</option>
+                  <option value="Kilos">Kilos</option>
+                  <option value="Gramos">Gramos</option>
+                  <option value="Caneca">Caneca</option>
+                </select>
+              </td>
+              <td class="align-middle cel-prep">
+                <input
+                  type="text"
+                  class="form-control text-center"
+                  [(ngModel)]="det_cantidad"
+                  disabled
+                />
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5" class="align-middle text-end">
+                <button
+                  class="btn btn-success"
+                  [disabled]="!det_descp || tmpItemSect.length === 0"
+                  (click)="addDetalle()"
+                >
+                  <i class="bi bi-list-check"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="foot-cabecera">
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="floatingInput"
+            [(ngModel)]="cab_proc"
+            placeholder="Materiales y procedimientos a seguir:"
+          />
+          <label for="floatingInput"
+            >Materiales y procedimientos a seguir:</label
+          >
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="floatingInput"
+            [(ngModel)]="cab_obsrv"
+            placeholder="Materiales y procedimientos a seguir:"
+          />
+          <label for="floatingInput">Observaciones:</label>
+        </div>
+        <div class="input-group mb-3">
+          <label class="input-group-text">Adjunto cotizaciones:</label>
+          <select class="form-select" [(ngModel)]="cab_adjCot">
+            <option value="SI">Sí</option>
+            <option value="NO" selected>No</option>
+          </select>
+          <label class="input-group-text">Número de cotizaciones:</label>
+          <input
+            class="form-control"
+            type="number"
+            placeholder="Cantidad"
+            [(ngModel)]="cab_ncot"
+          />
+        </div>
+        <div class="input-group mb-3">
+          <label class="input-group-text">Plazo de entrega*:</label>
+          <input
+            class="form-control"
+            type="date"
+            for="plazoentrega"
+            [(ngModel)]="cab_plazo"
+          />
+          <label class="input-group-text">Fecha máxima de entrega*:</label>
+          <input
+            class="form-control"
+            type="date"
+            for="fechamaxima"
+            [(ngModel)]="cab_fechaMax"
+          />
+        </div>
+        <div class="input-group">
+          <label class="input-group-text">Inspector:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="busqueda"
+            list="inspectores"
+            [(ngModel)]="inspector"
+            (keyup)="searchInspector()"
+            (input)="onInputChanged()"
+            placeholder="Ingrese el nombre del inspector"
+          />
+          <datalist id="inspectores">
+            <ng-container *ngFor="let empOP of inspectores">
+              <option
+                [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"
+              ></option>
+            </ng-container>
+          </datalist>
+          <label class="input-group-text">Teléfono:</label>
+          <input
+            class="form-control"
+            type="text"
+            placeholder="Ingrese el teléfono del inspector"
+            [(ngModel)]="cab_telef_insp"
+          />
+        </div>
+        <div class="text-end">
+          <p class="tip">*Campos obligatorios</p>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex row">
+      <div class="col">
+        <div *ngIf="showmsj" class="alert alert-success" role="alert">
+          <span
+            ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
+          >
+        </div>
+        <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+          <span
+            ><i class="bi bi-exclamation-triangle-fill">
+              {{ msjError }}</i
+            ></span
+          >
+        </div>
+      </div>
+
+      <div class="col text-end">
+        <button
+          class="btn btn-primary m-2"
+          (click)="check()"
+          [disabled]="
+            !empleado ||
+            !cab_asunto ||
+            detalleList.length === 0 ||
+            itemSectorList.length === 0
+          "
+        >
+          Guardar
+        </button>
+        <button class="btn btn-danger m-2" (click)="cancelarAll()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Editar solicitud de cotizacion -->
+  <div class="formRol" *ngIf="changeview === 'editar'">
+    <h3 class="font-weight-bold" style="padding-top: 20pt">Editar solicitud</h3>
+
+    <div class="solicitudEdit">
+      <div class="cabecera mb-3">
+        <div class="row mb-1">
+          <div class="input-group col">
+            <label class="input-group-text">Código:</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="cabecera.cabSolCotNumerico"
+              disabled
+            />
+          </div>
+          <div class="input-group col">
+            <label class="input-group-text">Fecha:</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="cabecera.cabSolCotFecha"
+              disabled
+            />
+          </div>
+        </div>
+
+        <div class="row mb-1">
+          <div class="input-group col">
+            <label class="input-group-text">Solicitado por:</label>
+            <ng-container *ngFor="let emp of empleadosEdit">
+              <input
+                *ngIf="emp.empleadoIdNomina == cabecera.cabSolCotSolicitante"
+                type="text"
+                class="form-control"
+                id="busqueda"
+                list="sugerencias"
+                [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+                disabled
+              />
+            </ng-container>
+          </div>
+          <div class="input-group col">
+            <label class="input-group-text">Area:</label>
+            <ng-container *ngFor="let are of areas">
+              <input
+                *ngIf="are.areaIdNomina == cabecera.cabSolCotArea"
+                type="text"
+                class="form-control"
+                id="busqueda"
+                list="sugerencias"
+                [value]="are.areaDecp"
+                disabled
+              />
+            </ng-container>
+          </div>
+        </div>
+        <div class="row mb-1">
+          <div class="input-group col">
+            <label class="input-group-text">Asunto:</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="cabecera.cabSolCotAsunto"
+              disabled
+            />
+          </div>
+          <div class="input-group col">
+            <label class="input-group-text">Estado:</label>
+            <input
+              type="text"
+              class="form-control"
+              [value]="estadoTexto"
+              disabled
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="detalle">
+        <table class="table table-striped text-center">
+          <thead>
+            <tr>
+              <th scope="col">Item</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Unidad</th>
+              <th scope="col">Sector</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="item.length == 0">
+              <td class="text-danger" colspan="6">
+                No se han registrado items para esta solicitud
+              </td>
+            </tr>
+            <tr *ngFor="let itm of item; let i = index">
+              <th class="align-middle">{{ i + 1 }}</th>
+              <ng-container *ngFor="let detd of detalle; let d = index">
+                <td
+                  *ngIf="detd.solCotIdDetalle == itm.itmIdDetalle"
+                  class="align-middle"
+                >
+                  {{ detd.solCotDescripcion }}
+                </td>
+              </ng-container>
+              <td class="align-middle">{{ itm.itmCantidad }}</td>
+              <ng-container *ngFor="let detu of detalle; let d = index">
+                <td
+                  *ngIf="detu.solCotIdDetalle == itm.itmIdDetalle"
+                  class="align-middle"
+                >
+                  {{ detu.solCotUnidad }}
+                </td>
+              </ng-container>
+              <ng-container *ngFor="let sect of sectores$ | async">
+                <td
+                  *ngIf="sect.sectIdNomina == itm.itmSector"
+                  class="align-middle"
+                >
+                  {{ sect.sectNombre }}
+                </td>
+              </ng-container>
+              <td>
+                <button
+                  class="btn text-danger"
+                  data-toggle="modal"
+                  data-target="#dltItemSaved"
+                  (click)="
+                    confDeleteItm(
+                      itm.itmID,
+                      itm.itmIdItem,
+                      itm.itmIdDetalle,
+                      itm.itmNumSol
+                    )
+                  "
+                >
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <th class="align-middle">1</th>
+              <td class="align-middle">
+                <textarea
+                  name="descripcion"
+                  class="form-control"
+                  rows="2"
+                  cols="50"
+                  placeholder="Descripción"
+                ></textarea>
+              </td>
+              <td class="align-middle">
+                <button
+                  class="btn btn-outline-primary"
+                  data-toggle="modal"
+                  data-target="#editItemSector"
+                >
+                  Desglose
+                </button>
+              </td>
+              <td class="align-middle" style="width: 150px">
+                <select class="form-control">
+                  <option value="Unidad" selected>Unidad</option>
+                  <option value="Sacos">Sacos</option>
+                  <option value="Paquete">Paquete</option>
+                  <option value="Avance de Obra">Avance de Obra</option>
+                  <option value="Millar">Millar</option>
+                  <option value="Metros">Metros</option>
+                  <option value="Kilos">Kilos</option>
+                  <option value="Gramos">Gramos</option>
+                  <option value="Caneca">Caneca</option>
+                </select>
+              </td>
+              <td class="align-middle cel-prep">
+                <input type="text" class="form-control text-center" disabled />
+              </td>
+              <td></td>
+            </tr>
+            <tr>
+              <td colspan="6" class="align-middle text-end">
+                <button class="btn btn-success">
+                  <i class="bi bi-list-check"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="foot-cabecera">
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="floatingInput"
+            [(ngModel)]="cabecera.cabSolCotProcedimiento"
+            disabled
+          />
+          <label for="floatingInput"
+            >Materiales y procedimientos a seguir:</label
+          >
+        </div>
+        <div class="form-floating mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="floatingInput"
+            [(ngModel)]="cabecera.cabSolCotObervaciones"
+            disabled
+          />
+          <label for="floatingInput">Observaciones:</label>
+        </div>
+        <div class="input-group mb-3">
+          <label class="input-group-text">Adjunto cotizaciones:</label>
+          <select
+            class="form-control"
+            [(ngModel)]="cabecera.cabSolCotAdjCot"
+            disabled
+          >
+            <option value="SI">Sí</option>
+            <option value="NO" selected>No</option>
+          </select>
+          <label class="input-group-text">Número de cotizaciones:</label>
+          <input
+            class="form-control"
+            type="number"
+            [(ngModel)]="cabecera.cabSolCotNumCotizacion"
+            disabled
+          />
+        </div>
+        <div class="input-group mb-3">
+          <label class="input-group-text">Plazo de entrega:</label>
+          <input
+            class="form-control"
+            type="text"
+            for="plazoentrega"
+            [(ngModel)]="cabecera.cabSolCotPlazoEntrega"
+            disabled
+          />
+          <label class="input-group-text">Fecha máxima de entrega:</label>
+          <input
+            class="form-control"
+            type="text"
+            for="fechamaxima"
+            [(ngModel)]="cabecera.cabSolCotFechaMaxentrega"
+            disabled
+          />
+        </div>
+        <div class="input-group mb-1">
+          <label class="input-group-text">Inspector:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="busqueda"
+            list="inspectores"
+            [(ngModel)]="cabecera.cabSolCotInspector"
+            disabled
+          />
+          <label class="input-group-text">Teléfono:</label>
+          <input
+            class="form-control"
+            type="text"
+            [(ngModel)]="cabecera.cabSolCotTelefInspector"
+            disabled
+          />
+        </div>
+      </div>
     </div>
 
-    <div class="form-cot" *ngIf="changeview === 'crear'">
-        <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Registrar nueva solicitud de cotización</h3>
-
-
-        <div class="solicitud">
-
-            <div class="cabecera mb-3">
-                <div class="input-group mb-1">
-                    <label class="input-group-text">Fecha:</label>
-                    <input type="text" class="form-control" disabled [(ngModel)]="fechaFormat">
-                </div>
-                <div class="row mb-1">
-                    <div class="input-group col">
-                        <label class="input-group-text">Solicitado por*:</label>
-                        <input type="text" class="form-control" id="busqueda" list="sugerencias" [(ngModel)]="empleado"
-                            (keyup)="searchEmpleado()" placeholder="Ingrese el nombre del empleado">
-                        <datalist id="sugerencias">
-                            <ng-container *ngFor="let emp of empleados">
-                                <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
-                            </ng-container>
-                        </datalist>
-                        <button class="btn btn-success" (click)="selectEmpleado()"><i
-                                class="bi bi-check-lg"></i></button>
-                    </div>
-                    <div class="input-group col">
-                        <label class="input-group-text">Area:</label>
-                        <input type="text" class="form-control" [value]="showArea"
-                            placeholder="Area del empleado solicitante" disabled>
-
-                    </div>
-                </div>
-                <div class="input-group mb-1">
-                    <label class="input-group-text">Asunto*:</label>
-                    <input type="text" class="form-control" placeholder="Ingrese el asunto" [(ngModel)]="cab_asunto">
-                </div>
-            </div>
-
-
-            <div class="detalle">
-                <table class="table table-striped text-center">
-                    <thead>
-                        <tr>
-                            <th scope="col">Item</th>
-                            <th scope="col">Descripción*</th>
-                            <th scope="col">Presupuesto*</th>
-                            <th scope="col">Unidad</th>
-                            <th scope="col">Cantidad Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let det of detalleList">
-                            <td class="align-middle">{{det.det_id}}</td>
-                            <td class="align-middle">{{det.det_descp}}</td>
-                            <td class="align-middle">Asignado</td>
-                            <td class="align-middle">{{det.det_unidad}}</td>
-                            <td class="align-middle">{{det.det_cantidad}}
-                                <button class="btn text-danger" (click)="deleteDetalle(det.det_id)">
-                                    <i class="bi bi-x-circle"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="align-middle">{{det_id}}</th>
-                            <td class="align-middle">
-                                <textarea name="descripcion" class="form-control" rows="2" cols="50"
-                                    placeholder="Descripción" [(ngModel)]="det_descp"></textarea>
-                            </td>
-                            <td class="align-middle">
-                                <button class="btn btn-outline-primary" data-toggle="modal"
-                                    data-target="#itemsector">Desglose</button>
-                            </td>
-                            <td class="align-middle" style="width: 150px;">
-                                <select class="form-control" [(ngModel)]="det_unidad">
-                                    <option value="Unidad" selected>Unidad</option>
-                                    <option value="Sacos">Sacos</option>
-                                    <option value="Paquete">Paquete</option>
-                                    <option value="Avance de Obra">Avance de Obra</option>
-                                    <option value="Millar">Millar</option>
-                                    <option value="Metros">Metros</option>
-                                    <option value="Kilos">Kilos</option>
-                                    <option value="Gramos">Gramos</option>
-                                    <option value="Caneca">Caneca</option>
-                                </select>
-                            </td>
-                            <td class="align-middle cel-prep">
-                                <input type="text" class="form-control text-center" [(ngModel)]="det_cantidad" disabled>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="5" class="align-middle text-end"><button class="btn btn-success"
-                                    [disabled]="!det_descp || tmpItemSect.length === 0" (click)="addDetalle()"><i
-                                        class="bi bi-list-check"></i></button></td>
-                        </tr>
-                    </tbody>
-
-
-                </table>
-            </div>
-
-            <div class="foot-cabecera">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cab_proc"
-                        placeholder="Materiales y procedimientos a seguir:">
-                    <label for="floatingInput">Materiales y procedimientos a seguir:</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cab_obsrv"
-                        placeholder="Materiales y procedimientos a seguir:">
-                    <label for="floatingInput">Observaciones:</label>
-                </div>
-                <div class="input-group mb-3">
-                    <label class="input-group-text">Adjunto cotizaciones:</label>
-                    <select class="form-select" [(ngModel)]="cab_adjCot">
-                        <option value="SI">Sí</option>
-                        <option value="NO" selected>No</option>
-                    </select>
-                    <label class="input-group-text">Número de cotizaciones:</label>
-                    <input class="form-control" type="number" placeholder="Cantidad" [(ngModel)]="cab_ncot">
-                </div>
-                <div class="input-group mb-3">
-                    <label class="input-group-text">Plazo de entrega*:</label>
-                    <input class="form-control" type="date" for="plazoentrega" [(ngModel)]="cab_plazo">
-                    <label class="input-group-text">Fecha máxima de entrega*:</label>
-                    <input class="form-control" type="date" for="fechamaxima" [(ngModel)]="cab_fechaMax">
-                </div>
-                <div class="input-group">
-                    <label class="input-group-text">Inspector:</label>
-                    <input type="text" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
-                        (keyup)="searchInspector()" (input)="onInputChanged()"
-                        placeholder="Ingrese el nombre del inspector">
-                    <datalist id="inspectores">
-                        <ng-container *ngFor="let empOP of inspectores">
-                            <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>
-                        </ng-container>
-                    </datalist>
-                    <label class="input-group-text">Teléfono:</label>
-                    <input class="form-control" type="text" placeholder="Ingrese el teléfono del inspector"
-                        [(ngModel)]="cab_telef_insp">
-                </div>
-                <div class="text-end">
-                    <p class="tip">*Campos obligatorios</p>
-                </div>
-            </div>
-        </div>
-        <div class="d-flex row">
-            <div class="col">
-                <div *ngIf="showmsj" class="alert alert-success" role="alert">
-                    <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
-                </div>
-                <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
-                    <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
-                </div>
-            </div>
-
-            <div class=" col text-end">
-                <button class="btn btn-primary m-2" (click)="check()"
-                    [disabled]="!empleado || !cab_asunto || detalleList.length === 0 || itemSectorList.length === 0">Guardar</button>
-                <button class="btn btn-danger m-2" (click)="cancelarAll()">Cancelar</button>
-            </div>
-        </div>
-
+    <div class="col text-end">
+      <button class="btn btn-primary m-2" disabled>Guardar</button>
+      <button
+        class="btn btn-success m-2"
+        data-toggle="modal"
+        data-target="#enviarSolicitud"
+      >
+        Enviar
+      </button>
+      <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
     </div>
-
-    <!-- Editar solicitud de cotizacion -->
-    <div class="formRol" *ngIf="changeview === 'editar'">
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar solicitud</h3>
-
-        <div class="solicitudEdit">
-
-            <div class="cabecera mb-3">
-                <div class="row mb-1">
-                    <div class="input-group col">
-                        <label class="input-group-text">Código:</label>
-                        <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotNumerico" disabled>
-                    </div>
-                    <div class="input-group col">
-                        <label class="input-group-text">Fecha:</label>
-                        <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotFecha" disabled>
-                    </div>
-                </div>
-
-                <div class="row mb-1">
-                    <div class="input-group col">
-                        <label class="input-group-text">Solicitado por:</label>
-                        <ng-container *ngFor="let emp of empleadosEdit">
-                            <input *ngIf="emp.empleadoIdNomina == cabecera.cabSolCotSolicitante" type="text"
-                                class="form-control" id="busqueda" list="sugerencias"
-                                [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled>
-                        </ng-container>
-                    </div>
-                    <div class="input-group col">
-                        <label class="input-group-text">Area:</label>
-                        <ng-container *ngFor="let are of areas">
-                            <input *ngIf="are.areaIdNomina == cabecera.cabSolCotArea" type="text" class="form-control"
-                                id="busqueda" list="sugerencias" [value]="are.areaDecp" disabled>
-                        </ng-container>
-                    </div>
-                </div>
-                <div class="row mb-1">
-                    <div class="input-group col">
-                        <label class="input-group-text">Asunto:</label>
-                        <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotAsunto" disabled>
-                    </div>
-                    <div class="input-group col">
-                        <label class="input-group-text">Estado:</label>
-                        <input type="text" class="form-control" [value]="estadoTexto" disabled>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="detalle">
-                <table class="table table-striped text-center">
-                    <thead>
-                        <tr>
-                            <th scope="col">Item</th>
-                            <th scope="col">Descripción</th>
-                            <th scope="col">Cantidad</th>
-                            <th scope="col">Unidad</th>
-                            <th scope="col">Sector</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngIf="item.length == 0">
-                            <td class="text-danger" colspan="6">No se han registrado items para esta solicitud</td>
-                        </tr>
-                        <tr *ngFor="let itm of item let i = index">
-                            <th class="align-middle">{{i+1}}</th>
-                            <ng-container *ngFor="let detd of detalle let d = index">
-                                <td *ngIf="detd.solCotIdDetalle == itm.itmIdDetalle" class="align-middle">
-                                    {{detd.solCotDescripcion}}
-                                </td>
-                            </ng-container>
-                            <td class="align-middle">{{itm.itmCantidad}}</td>
-                            <ng-container *ngFor="let detu of detalle let d = index">
-                                <td *ngIf="detu.solCotIdDetalle == itm.itmIdDetalle" class="align-middle">
-                                    {{detu.solCotUnidad}}</td>
-                            </ng-container>
-                            <ng-container *ngFor="let sect of sectores$  | async">
-                                <td *ngIf="sect.sectIdNomina == itm.itmSector" class="align-middle">{{sect.sectNombre}} 
-                                </td>
-                            </ng-container>
-                            <td><button class="btn text-danger" data-toggle="modal" data-target="#dltItemSaved" 
-                                (click)="confDeleteItm(itm.itmID,itm.itmIdItem,itm.itmIdDetalle,itm.itmNumSol)"><i class="bi bi-x-circle"></i></button></td>
-                        </tr>
-
-                        <tr>
-                            <th class="align-middle">1</th>
-                            <td class="align-middle">
-                                <textarea name="descripcion" class="form-control" rows="2" cols="50"
-                                    placeholder="Descripción"></textarea>
-                            </td>
-                            <td class="align-middle">
-                                <button class="btn btn-outline-primary" data-toggle="modal"
-                                    data-target="#editItemSector">Desglose</button>
-                            </td>
-                            <td class="align-middle" style="width: 150px;">
-                                <select class="form-control">
-                                    <option value="Unidad" selected>Unidad</option>
-                                    <option value="Sacos">Sacos</option>
-                                    <option value="Paquete">Paquete</option>
-                                    <option value="Avance de Obra">Avance de Obra</option>
-                                    <option value="Millar">Millar</option>
-                                    <option value="Metros">Metros</option>
-                                    <option value="Kilos">Kilos</option>
-                                    <option value="Gramos">Gramos</option>
-                                    <option value="Caneca">Caneca</option>
-                                </select>
-                            </td>
-                            <td class="align-middle cel-prep">
-                                <input type="text" class="form-control text-center" disabled>
-                            </td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td colspan="6" class="align-middle text-end"><button class="btn btn-success"><i
-                                        class="bi bi-list-check"></i></button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="foot-cabecera">
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingInput"
-                        [(ngModel)]="cabecera.cabSolCotProcedimiento" disabled>
-                    <label for="floatingInput">Materiales y procedimientos a seguir:</label>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="floatingInput"
-                        [(ngModel)]="cabecera.cabSolCotObervaciones" disabled>
-                    <label for="floatingInput">Observaciones:</label>
-                </div>
-                <div class="input-group mb-3">
-                    <label class="input-group-text">Adjunto cotizaciones:</label>
-                    <select class="form-control" [(ngModel)]="cabecera.cabSolCotAdjCot" disabled>
-                        <option value="SI">Sí</option>
-                        <option value="NO" selected>No</option>
-                    </select>
-                    <label class="input-group-text">Número de cotizaciones:</label>
-                    <input class="form-control" type="number" [(ngModel)]="cabecera.cabSolCotNumCotizacion" disabled>
-                </div>
-                <div class="input-group mb-3">
-                    <label class="input-group-text">Plazo de entrega:</label>
-                    <input class="form-control" type="text" for="plazoentrega"
-                        [(ngModel)]="cabecera.cabSolCotPlazoEntrega" disabled>
-                    <label class="input-group-text">Fecha máxima de entrega:</label>
-                    <input class="form-control" type="text" for="fechamaxima"
-                        [(ngModel)]="cabecera.cabSolCotFechaMaxentrega" disabled>
-                </div>
-                <div class="input-group mb-1">
-                    <label class="input-group-text">Inspector:</label>
-                    <input type="text" class="form-control" id="busqueda" list="inspectores"
-                        [(ngModel)]="cabecera.cabSolCotInspector" disabled>
-                    <label class="input-group-text">Teléfono:</label>
-                    <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolCotTelefInspector" disabled>
-                </div>
-            </div>
-        </div>
-
-        <div class=" col text-end">
-            <button class="btn btn-primary m-2" disabled>Guardar</button>
-            <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud">Enviar</button>
-            <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
-        </div>
-    </div>
+  </div>
 </div>
-
 
 <!-- Modal para los items por sector-->
-<div class="modal fade" #exampleModal id="itemsector" data-backdrop="static" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header justify-content-center">
-                <h3 class=" font-weight-bold" id="exampleModalLabel">Ingrese los items según el sector</h3>
-            </div>
-            <div class="modal-body">
-                <table class="table table-striped text-center justify-content-center">
-                    <thead>
-                        <tr>
-                            <th scope="col">N° Detalle</th>
-                            <th scope="col">Descripción</th>
-                            <th scope="col">N° Item</th>
-                            <th scope="col">Cantidad*</th>
-                            <th scope="col">Sector*</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let item of tmpItemSect">
-                            <td class="align-middle">{{item.det_id}}</td>
-                            <td class="align-middle">{{item.det_descp}}</td>
-                            <td class="align-middle">{{item.item_id}}</td>
-                            <td class="align-middle">{{item.item_cant}}</td>
-                            <td class="align-middle">{{item.item_sector}}<button class="btn text-danger" (click)="deleteItem(item.det_id)">
-                                <i class="bi bi-x-circle"></i></button></td>
-                        </tr>
-                        <tr>
-                            <td class="align-middle">{{det_id}}</td>
-                            <td class="align-middle">
-                                <input class="form-control" type="text" value='Descripción' [(ngModel)]="det_descp"
-                                    placeholder="Descripción" disabled>
-                            </td>
-                            <td class="align-middle cel-prep">
-                                <input type="text" class="form-control text-center" [(ngModel)]="item_id" disabled>
-                            </td>
-                            <td class="align-middle ">
-                                <div class=" cel-prep">
-                                    <input class="form-control" [(ngModel)]="item_cant" min="1" type="number"
-                                        placeholder="Cantidad">
-                                </div>
-
-                            </td>
-                            <!-- modificar el select para mostrar los sectores de la base de datos -->
-                            <td class="align-middle" style="width: 150px;">
-                                <div class="cel-prep">
-                                    <select class="form-select" name="item_sector" [(ngModel)]="item_sector">
-                                        <option selected disabled value=0>Selecciona una aplicación...</option>
-                                        <option *ngFor="let sect of sectores$|async" [value]="sect.sectIdNomina">
-                                            {{sect.sectNombre}}</option>
-                                    </select>
-                                </div>
-                            </td>
-
-                        </tr>
-                        <tr>
-                            <td colspan="5" class="align-middle text-end"><button class="btn btn-success"
-                                    [disabled]="!item_sector" (click)="addItemSector()">
-                                    <i class="bi bi-list-check"></i></button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" 
-                    [disabled]="tmpItemSect.length === 0">Confirmar</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal"
-                    (click)="cancelarItem()">Cancelar</button>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<!-- Modal para verificar el envío-->
-<div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
-  aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered " role="document">
+<div
+  class="modal fade"
+  #exampleModal
+  id="itemsector"
+  data-backdrop="static"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header justify-content-center">
-        <h3 class=" font-weight-bold" id="exampleModalLabel">¿Está seguro que desea enviar la Solicitud?</h3>
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          Ingrese los items según el sector
+        </h3>
       </div>
       <div class="modal-body">
-        <p>Al enviar la solicitud no podrá volver a editarla y pasará al estado de revisión.</p>
+        <table class="table table-striped text-center justify-content-center">
+          <thead>
+            <tr>
+              <th scope="col">N° Detalle</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">N° Item</th>
+              <th scope="col">Cantidad*</th>
+              <th scope="col">Sector*</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of tmpItemSect">
+              <td class="align-middle">{{ item.det_id }}</td>
+              <td class="align-middle">{{ item.det_descp }}</td>
+              <td class="align-middle">{{ item.item_id }}</td>
+              <td class="align-middle">{{ item.item_cant }}</td>
+              <td class="align-middle">
+                {{ item.item_sector
+                }}<button
+                  class="btn text-danger"
+                  (click)="deleteItem(item.det_id)"
+                >
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td class="align-middle">{{ det_id }}</td>
+              <td class="align-middle">
+                <input
+                  class="form-control"
+                  type="text"
+                  value="Descripción"
+                  [(ngModel)]="det_descp"
+                  placeholder="Descripción"
+                  disabled
+                />
+              </td>
+              <td class="align-middle cel-prep">
+                <input
+                  type="text"
+                  class="form-control text-center"
+                  [(ngModel)]="item_id"
+                  disabled
+                />
+              </td>
+              <td class="align-middle">
+                <div class="cel-prep">
+                  <input
+                    class="form-control"
+                    [(ngModel)]="item_cant"
+                    min="1"
+                    type="number"
+                    placeholder="Cantidad"
+                  />
+                </div>
+              </td>
+              <!-- modificar el select para mostrar los sectores de la base de datos -->
+              <td class="align-middle" style="width: 150px">
+                <div class="cel-prep">
+                  <select
+                    class="form-select"
+                    name="item_sector"
+                    [(ngModel)]="item_sector"
+                  >
+                    <option selected disabled value="0">
+                      Selecciona una aplicación...
+                    </option>
+                    <option
+                      *ngFor="let sect of sectores$ | async"
+                      [value]="sect.sectIdNomina"
+                    >
+                      {{ sect.sectNombre }}
+                    </option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="5" class="align-middle text-end">
+                <button
+                  class="btn btn-success"
+                  [disabled]="!item_sector"
+                  (click)="addItemSector()"
+                >
+                  <i class="bi bi-list-check"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Confirmar</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-dismiss="modal"
+          [disabled]="tmpItemSect.length === 0"
+        >
+          Confirmar
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-dismiss="modal"
+          (click)="cancelarItem()"
+        >
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para verificar el envío-->
+<div
+  class="modal fade"
+  #exampleModal
+  id="enviarSolicitud"
+  data-backdrop="static"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea enviar la Solicitud?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>
+          Al enviar la solicitud no podrá volver a editarla y pasará al estado
+          de revisión.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Modal para confirmar eliminacion de item-->
-<div class="modal fade" #exampleModal id="dltItemSaved" data-backdrop="static" tabindex="-1" role="dialog"
-  aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered " role="document">
+<div
+  class="modal fade"
+  #exampleModal
+  id="dltItemSaved"
+  data-backdrop="static"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header justify-content-center">
-        <h3 class=" font-weight-bold" id="exampleModalLabel">¿Está seguro que desea eliminar este item?</h3>
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea eliminar este item?
+        </h3>
       </div>
       <div class="modal-body">
         <p>Esta acción no se puede deshacer.</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteItemSaved()">Confirmar</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-dismiss="modal"
+          (click)="deleteItemSaved()"
+        >
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Modal para agregar items a la solicitud hecha-->
-<div class="modal fade" #exampleModal id="editItemSector" data-backdrop="static" tabindex="-1" role="dialog"
-  aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  #exampleModal
+  id="editItemSector"
+  data-backdrop="static"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header justify-content-center">
-        <h3 class=" font-weight-bold" id="exampleModalLabel">Ingrese los items según el sector</h3>
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          Ingrese los items según el sector
+        </h3>
       </div>
       <div class="modal-body">
         <table class="table table-striped text-center justify-content-center">
@@ -487,38 +815,60 @@
             <tr>
               <td class="align-middle">1</td>
               <td class="align-middle">
-                <input class="form-control" type="text" value='Descripción' placeholder="Descripción" disabled>
+                <input
+                  class="form-control"
+                  type="text"
+                  value="Descripción"
+                  placeholder="Descripción"
+                  disabled
+                />
               </td>
               <td class="align-middle cel-prep">
-                <input type="text" class="form-control text-center" disabled>
+                <input type="text" class="form-control text-center" disabled />
               </td>
-              <td class="align-middle ">
-                <div class=" cel-prep">
-                  <input class="form-control" min="1" type="number" placeholder="Cantidad">
+              <td class="align-middle">
+                <div class="cel-prep">
+                  <input
+                    class="form-control"
+                    min="1"
+                    type="number"
+                    placeholder="Cantidad"
+                  />
                 </div>
               </td>
-              <td class="align-middle" style="width: 150px;">
+              <td class="align-middle" style="width: 150px">
                 <div class="cel-prep">
                   <select class="form-select" name="item_sector">
-                    <option selected disabled value=0>Selecciona una aplicación...</option>
-                    <option *ngFor="let sect of sectores$|async" [value]="sect.sectIdNomina">{{sect.sectNombre}}
+                    <option selected disabled value="0">
+                      Selecciona una aplicación...
+                    </option>
+                    <option
+                      *ngFor="let sect of sectores$ | async"
+                      [value]="sect.sectIdNomina"
+                    >
+                      {{ sect.sectNombre }}
                     </option>
                   </select>
                 </div>
               </td>
-
             </tr>
             <tr>
-              <td colspan="5" class="align-middle text-end"><button class="btn btn-success">
-                  <i class="bi bi-list-check"></i></button></td>
+              <td colspan="5" class="align-middle text-end">
+                <button class="btn btn-success">
+                  <i class="bi bi-list-check"></i>
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Confirmar</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancelar</button>
-
+        <button type="button" class="btn btn-primary" data-dismiss="modal">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
