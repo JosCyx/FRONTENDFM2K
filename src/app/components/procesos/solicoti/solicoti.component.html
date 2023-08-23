@@ -5,7 +5,7 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <button class="btn btn-primary m-2">Crear</button>
+                    <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
                     <button class="btn btn-primary m-2">Boton</button>
                     <span *ngIf="changeview === 'crear'"></span>
                 </div>

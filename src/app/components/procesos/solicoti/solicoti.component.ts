@@ -74,6 +74,7 @@ export class SolicotiComponent implements OnInit {
   //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
   changeview: string = this.serviceGlobal.solView;
+  //changeview: string = 'crear';
   msjExito!: string;
   msjError!: string;
   showmsj: boolean = false;
@@ -636,12 +637,6 @@ export class SolicotiComponent implements OnInit {
     }
     this.incrementItemID();
 
-
-    setTimeout(() => {
-
-    }, 500);
-
-
   }
 
 
@@ -738,7 +733,7 @@ export class SolicotiComponent implements OnInit {
 
   //ediar items y detalles de la solicitud cargada
 
-  confDeleteItm(idList:number,idItem: number, idDet: number, idNSol: number) {
+  confDeleteItm(idList: number, idItem: number, idDet: number, idNSol: number) {
     this.idDlt = idList;
     this.idItmDlt = idItem;
     this.idDetDlt = idDet;
@@ -760,44 +755,47 @@ export class SolicotiComponent implements OnInit {
   async saveItemDB() {
     try {
       await this.deleteAllItems();
-      await this.reorderAndSaveItems();
-      await this.checkAndDeleteDetails();
-  
+      setTimeout(() => {
+        this.reorderAndSaveItems();
+        this.checkAndDeleteDetails();
+      }, 200);
+
+
       console.log("Proceso completado exitosamente.");
     } catch (error) {
       console.error("Error durante el proceso:", error);
     }
-    
+
   }
 
   async deleteAllItems() {
     try {
-      await this.service.deleteAllItemBySol(this.trTipoSolicitud,this.idNSolDlt).subscribe(
-        response=>{
+      await this.service.deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt).subscribe(
+        response => {
           console.log("todos los detalles eliminados");
         },
         error => {
-          console.log("Error: ",error);
+          console.log("Error: ", error);
         }
       );
     } catch (error) {
       console.error("Error durante la eliminación:", error);
     }
   }
-  
+
   async reorderAndSaveItems() {
     const detailItemMap: { [key: number]: number } = {};
-  
+
     for (const item of this.item) {
       const detalle = item.itmIdDetalle;
-  
+
       if (!detailItemMap[detalle]) {
         detailItemMap[detalle] = 1;
       }
-  
+
       item.itmIdItem = detailItemMap[detalle];
       detailItemMap[detalle]++;
-  
+
       const data = {
         itmTipoSol: item.itmTipoSol,
         itmNumSol: item.itmNumSol,
@@ -806,7 +804,7 @@ export class SolicotiComponent implements OnInit {
         itmCantidad: item.itmCantidad,
         itmSector: item.itmSector
       };
-  
+
       this.service.addItemSector(data).subscribe(
         response => {
           console.log("Item guardado exitosamente.");
@@ -817,16 +815,16 @@ export class SolicotiComponent implements OnInit {
       );
     }
   }
-  
+
   async checkAndDeleteDetails() {
     //verificar si algun detalle no tiene items y eliminarlo
-    for(let det of this.detalle){
-      console.log(this.trTipoSolicitud,this.idNSolDlt,det.solCotIdDetalle);
-      
-      this.service.getItemsbyDet(this.trTipoSolicitud,this.idNSolDlt,det.solCotIdDetalle).subscribe(
+    for (let det of this.detalle) {
+      console.log(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle);
+
+      this.service.getItemsbyDet(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle).subscribe(
         response => {
-          if(response == 0){
-            console.log("NO existen items para el detalle: ",det.solCotIdDetalle);
+          if (response == 0) {
+            console.log("NO existen items para el detalle: ", det.solCotIdDetalle);
             //eliminar el detalle
             this.service.deleteDetallebyId(det.solCotID).subscribe(
               response => {
@@ -836,14 +834,16 @@ export class SolicotiComponent implements OnInit {
                 console.log("No se pudo eliminar el detalle, error: ", error);
               }
             );
-          }else {
-            console.log("SI existen items para el detalle: ",det.solCotIdDetalle);
+          } else {
+            console.log("SI existen items para el detalle: ", det.solCotIdDetalle);
           }
         },
         error => {
-          console.log("Error: ",error);
+          console.log("Error: ", error);
         }
       );
     }
   }
+
+
 }
