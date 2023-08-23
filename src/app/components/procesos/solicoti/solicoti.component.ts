@@ -81,6 +81,7 @@ export class SolicotiComponent implements OnInit {
   showmsjerror: boolean = false;
   checkDet: boolean = false;
   idToIndexMap: Map<number, number> = new Map();
+  detType: boolean = false;
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -105,7 +106,6 @@ export class SolicotiComponent implements OnInit {
   idDlt!: number;
   idNSolDlt!: number;
   idItmDlt!: number;
-  idDetDlt!: number;
 
 
 
@@ -377,55 +377,7 @@ export class SolicotiComponent implements OnInit {
 
 
     try {
-      //enviar la lista detalle a la api para registrarla
-      for (let detalle of this.detalleList) {//recorre la lista de detalles
-
-        //crea el arreglo con las propiedades de detalle
-        const data = {
-          solCotTipoSol: this.trTipoSolicitud,
-          solCotNoSol: this.trLastNoSol,
-          solCotIdDetalle: detalle.det_id,
-          solCotDescripcion: detalle.det_descp,
-          solCotUnidad: detalle.det_unidad,
-          solCotCantidadTotal: detalle.det_cantidad
-        }
-
-        //envia a la api el arreglo data por medio del metodo post
-        this.service.addDetalleCotizacion(data).subscribe(
-          response => {
-            console.log("3. Detalle añadido exitosamente.");
-          },
-          error => {
-            console.log("No se ha podido registrar el detalle, error: ", error);
-          }
-        );
-
-      }
-      console.log(this.detalleList);
-
-      //enviar la lista itemsector a la api
-      for (let item of this.itemSectorList) {
-
-        const data = {
-          itmTipoSol: this.trTipoSolicitud,
-          itmNumSol: this.trLastNoSol,
-          itmIdDetalle: item.det_id,
-          itmIdItem: item.item_id,
-          itmCantidad: item.item_cant,
-          itmSector: item.item_sector
-        }
-
-        this.service.addItemSector(data).subscribe(
-          response => {
-            console.log("4. Item guardado exitosamente.");
-          },
-          error => {
-            console.log("No se pudo guardar el item no:" + item.item_id + ", error: ", error);
-          }
-        );
-
-      }
-      //console.log(this.itemSectorList);
+      this.saveDetItem();
 
       this.getSolName(this.trLastNoSol);
       this.showmsj = true;
@@ -452,6 +404,57 @@ export class SolicotiComponent implements OnInit {
 
   }
 
+  saveDetItem() {
+    //enviar la lista detalle a la api para registrarla
+    for (let detalle of this.detalleList) {//recorre la lista de detalles
+
+      //crea el arreglo con las propiedades de detalle
+      const data = {
+        solCotTipoSol: this.trTipoSolicitud,
+        solCotNoSol: this.trLastNoSol,
+        solCotIdDetalle: detalle.det_id,
+        solCotDescripcion: detalle.det_descp,
+        solCotUnidad: detalle.det_unidad,
+        solCotCantidadTotal: detalle.det_cantidad
+      }
+
+      //envia a la api el arreglo data por medio del metodo post
+      this.service.addDetalleCotizacion(data).subscribe(
+        response => {
+          console.log("3. Detalle añadido exitosamente.");
+        },
+        error => {
+          console.log("No se ha podido registrar el detalle, error: ", error);
+        }
+      );
+
+    }
+    //console.log(this.detalleList);
+
+    //enviar la lista itemsector a la api
+    for (let item of this.itemSectorList) {
+
+      const data = {
+        itmTipoSol: this.trTipoSolicitud,
+        itmNumSol: this.trLastNoSol,
+        itmIdDetalle: item.det_id,
+        itmIdItem: item.item_id,
+        itmCantidad: item.item_cant,
+        itmSector: item.item_sector
+      }
+
+      this.service.addItemSector(data).subscribe(
+        response => {
+          console.log("4. Item guardado exitosamente.");
+        },
+        error => {
+          console.log("No se pudo guardar el item no:" + item.item_id + ", error: ", error);
+        }
+      );
+
+    }
+    //console.log(this.itemSectorList);
+  }
   /*getIdCabecera(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol).subscribe(
@@ -526,6 +529,7 @@ export class SolicotiComponent implements OnInit {
   addDetalle() {
     this.saveItemSect();
 
+
     const detalle = {
       det_id: this.det_id,
       det_descp: this.det_descp,
@@ -540,11 +544,17 @@ export class SolicotiComponent implements OnInit {
     this.incrementDetID();
 
 
-    this.item_id = 1;
+    //verificacion para asignar el id del item
+    if (!this.detType) {
+      this.item_id = 1
+    }
+
     this.det_descp = '';
     this.det_unidad = 'Unidad';
     this.det_cantidad = 0;
     this.tmpItemSect = [];
+
+
 
   }
 
@@ -721,8 +731,11 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
+  //////////////////////////////////EDICION DE SOLICITUD DE COTIZACION//////////////////////////////////
+
   async changeView(view: string) {
     this.changeview = view;
+    this.clear();
   }
 
   cancelar(): void {
@@ -733,15 +746,16 @@ export class SolicotiComponent implements OnInit {
 
   //ediar items y detalles de la solicitud cargada
 
-  confDeleteItm(idList: number, idItem: number, idDet: number, idNSol: number) {
+
+
+  confDeleteItm(idList: number, idItem: number, idNSol: number) {//abre el modal y guarda los datos del item en variables locales
     this.idDlt = idList;
     this.idItmDlt = idItem;
-    this.idDetDlt = idDet;
     this.idNSolDlt = idNSol;
     console.log(this.idDlt, this.idItmDlt);
   }
 
-  deleteItemSaved() {
+  deleteItemSaved() {//elimina el item de la lista local y llama al metodo que ejecuta los cambios en la base
     const index = this.item.findIndex(itm => itm.itmID === this.idDlt);
 
     if (index !== -1) {
@@ -750,7 +764,7 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
-
+  //actualizar todos los detalles y verificar detalles sin items
 
   async saveItemDB() {
     try {
@@ -772,7 +786,7 @@ export class SolicotiComponent implements OnInit {
     try {
       await this.service.deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt).subscribe(
         response => {
-          console.log("todos los detalles eliminados");
+          console.log("todos los items eliminados");
         },
         error => {
           console.log("Error: ", error);
@@ -823,7 +837,7 @@ export class SolicotiComponent implements OnInit {
 
       this.service.getItemsbyDet(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle).subscribe(
         response => {
-          if (response == 0) {
+          if (response === 0) {
             console.log("NO existen items para el detalle: ", det.solCotIdDetalle);
             //eliminar el detalle
             this.service.deleteDetallebyId(det.solCotID).subscribe(
@@ -845,5 +859,107 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
+  //añadir nuevos items a la solicitud cargada
+  addNewItems() {
+
+    this.addDetalle();
+
+
+    setTimeout(() => {
+      this.saveDetItemEdit();
+      //this.editSolicitud();
+    }, 200)
+
+  }
+
+  changeDet() {
+    this.detType = !this.detType;
+    this.det_descp = '';
+    this.itemSectorList = [];
+    ////MODIFICAR PARA QUE MUESTRE ID 1 CUANDO SE CREE UN NUEVO DETALLE
+    if(!this.detType){
+      for (let det of this.detalle) {
+        this.det_id = det.solCotIdDetalle+1;
+      }
+    }
+  }
+
+  setDetId() {
+    const selectedDetalle = this.detalle.find(det => det.solCotDescripcion === this.det_descp);
+
+    if (selectedDetalle) {
+      this.det_id = selectedDetalle.solCotIdDetalle;
+    }
+
+    if (this.detType) {
+      for (let itm of this.item) {
+        if (itm.itmIdDetalle === this.det_id) {
+          this.item_id = itm.itmIdItem + 1;
+        }
+      }
+    } else {
+      this.item_id = 1;
+    }
+
+  }
+
+  saveDetItemEdit() {
+    //enviar la lista detalle a la api para registrarla
+    for (let detalle of this.detalleList) {
+      // Verificar si el detalle no existe en la lista actual de detalles
+      const exists = this.detalle.some(det => det.solCotIdDetalle === detalle.det_id);
+    
+      if (exists) {
+        console.log("El detalle ya existe");
+      } else {
+        console.log("Guardando detalle nuevo:", detalle.det_id);
+    
+        const data = {
+          solCotTipoSol: this.cabecera.cabSolCotTipoSolicitud,
+          solCotNoSol: this.cabecera.cabSolCotNoSolicitud,
+          solCotIdDetalle: detalle.det_id,
+          solCotDescripcion: detalle.det_descp,
+          solCotUnidad: detalle.det_unidad,
+          solCotCantidadTotal: detalle.det_cantidad
+        }
+        console.log("Nuevo detalle: ",data);
+        //envia a la api el arreglo data por medio del metodo post
+        /*this.service.addDetalleCotizacion(data).subscribe(
+          response => {
+            console.log("3. Detalle añadido exitosamente.");
+          },
+          error => {
+            console.log("No se ha podido registrar el detalle, error: ", error);
+          }
+        );*/
+      }
+    }
+    
+    //console.log(this.detalleList);
+
+    //enviar la lista itemsector a la api
+    for (let item of this.itemSectorList) {
+
+      const data = {
+        itmTipoSol: this.cabecera.cabSolCotTipoSolicitud,
+        itmNumSol: this.cabecera.cabSolCotNoSolicitud,
+        itmIdDetalle: item.det_id,
+        itmIdItem: item.item_id,
+        itmCantidad: item.item_cant,
+        itmSector: item.item_sector
+      }
+
+      /*this.service.addItemSector(data).subscribe(
+        response => {
+          console.log("4. Item guardado exitosamente.");
+        },
+        error => {
+          console.log("No se pudo guardar el item no:" + item.item_id + ", error: ", error);
+        }
+      );*/
+
+    }
+    console.log(this.itemSectorList);
+  }
 
 }
