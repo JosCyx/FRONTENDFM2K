@@ -266,7 +266,7 @@
                 <td *ngIf="sect.sectIdNomina == itm.itmSector" class="align-middle">{{sect.sectNombre}}</td>
               </ng-container>
               <td><button class="btn text-danger" data-toggle="modal" data-target="#dltItemSaved"
-                  (click)="confDeleteItm(itm.itmID)"><i class="bi bi-x-circle"></i></button></td>
+                  (click)="confDeleteItm(itm.itmID,itm.itmIdItem,itm.itmIdDetalle,itm.itmNumSol)"><i class="bi bi-x-circle"></i></button></td>
             </tr>
 
             <tr>
