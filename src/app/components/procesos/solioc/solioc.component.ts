@@ -20,15 +20,14 @@ interface SolicitudData {
 @Component({
   selector: 'app-solioc',
   templateUrl: './solioc.component.html',
-  styleUrls: ['./solioc.component.css']
+  styleUrls: ['./solioc.component.css'],
 })
-
 export class SoliocComponent implements OnInit {
   empleado: string = '';
   inspector: string = '';
   showArea: string = '';
   areaNmco!: string;
-  fecha: Date = new Date;
+  fecha: Date = new Date();
   private inputTimer: any;
   solNumerico!: string;
   noSolFormat!: string;
@@ -41,9 +40,9 @@ export class SoliocComponent implements OnInit {
   solicitudEdit!: SolicitudData;
 
   //variables para guardar el tracking
-  trTipoSolicitud: number = 2;//indica el tipo de solicitud co el que estamos trabajando, este valor cambia en cada tipo de solicitud
+  trTipoSolicitud: number = 2; //indica el tipo de solicitud co el que estamos trabajando, este valor cambia en cada tipo de solicitud
   trLastNoSol!: number;
-  trNivelEmision: number = 10;//nivel de emision por defecto
+  trNivelEmision: number = 10; //nivel de emision por defecto
   trIdNomEmp!: number;
 
   //variables de la cabecera
@@ -54,7 +53,7 @@ export class SoliocComponent implements OnInit {
   cab_obsrv!: string;
   cab_adjCot: string = 'NO';
   cab_ncot: number = 0;
-  cab_estado: string = 'A';//estado inicial Activo
+  cab_estado: string = 'A'; //estado inicial Activo
   cab_plazo!: Date;
   cab_fechaMax!: Date;
   cab_inspector!: number;
@@ -63,8 +62,8 @@ export class SoliocComponent implements OnInit {
   cab_proveedor!: number;
 
   //variables del detalle
-  det_id: number = 1;//se usa para el detalle y para el item por sector
-  det_descp!: string;//se usa para el detalle y para el item por sector
+  det_id: number = 1; //se usa para el detalle y para el item por sector
+  det_descp!: string; //se usa para el detalle y para el item por sector
   det_unidad: string = 'Unidad';
   det_cantidad: number = 0;
 
@@ -72,7 +71,6 @@ export class SoliocComponent implements OnInit {
   item_id: number = 1;
   item_cant: number = 1;
   item_sector: number = 0;
-
 
   //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
@@ -83,8 +81,8 @@ export class SoliocComponent implements OnInit {
   showmsjerror: boolean = false;
   checkDet: boolean = false;
   idToIndexMap: Map<number, number> = new Map();
-  SolID:number=this.serviceGlobal.solID;
-  fechaSinFormato:Date = new Date;
+  SolID: number = this.serviceGlobal.solID;
+  fechaSinFormato: Date = new Date();
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -99,19 +97,23 @@ export class SoliocComponent implements OnInit {
   itemSectorList: ItemSector[] = [];
   tmpItemSect: ItemSector[] = [];
   empleados: any[] = [];
-  empleadoedit:any[]=[];
+  empleadoedit: any[] = [];
   areas: any[] = [];
   //sectores: any[] = [];
   inspectores: any[] = [];
 
-  //variable editar 
+  //variable editar
   solID: number = this.serviceGlobal.solID;
   idDlt!: number;
   idNSolDlt!: number;
   idItmDlt!: number;
   //idDetDlt!: number;
 
-  constructor(private service: CommunicationApiService , private router:Router, private serviceGlobal:GlobalService) { }
+  constructor(
+    private service: CommunicationApiService,
+    private router: Router,
+    private serviceGlobal: GlobalService
+  ) {}
 
   ngOnInit(): void {
     this.empleadosList$ = this.service.getEmpleadosList();
@@ -119,19 +121,23 @@ export class SoliocComponent implements OnInit {
       this.empleadoedit = data;
     });
 
-    this.inspectores$ = this.service.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
+    this.inspectores$ = this.service.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
 
-    this.sectores$ = this.service.getSectoresList().pipe(
-      map(sectores => sectores.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre)))
-    );
+    this.sectores$ = this.service
+      .getSectoresList()
+      .pipe(
+        map((sectores) =>
+          sectores.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre))
+        )
+      );
 
     this.areaList$ = this.service.getAreaList();
 
     this.areaList$.subscribe((data) => {
       this.areas = data;
     });
-    if(this.changeview=="editar"){
-      this.metodo();
+    if (this.changeview == 'editar') {
+      this.editSolicitud();
     }
   }
 
@@ -154,7 +160,6 @@ export class SoliocComponent implements OnInit {
     } else {
       this.inspectores = [];
     }
-
   }
 
   onInputChanged(): void {
@@ -165,9 +170,14 @@ export class SoliocComponent implements OnInit {
     this.inputTimer = setTimeout(() => {
       // Coloca aquí la lógica que deseas ejecutar después de que el usuario haya terminado de modificar el input
       if (this.inspector) {
-        const empleadoSeleccionado = this.inspectores.find(emp => (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.inspector);
-        this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : null;
-        console.log("Inspector ID", this.cab_inspector);
+        const empleadoSeleccionado = this.inspectores.find(
+          (emp) =>
+            emp.empleadoNombres + ' ' + emp.empleadoApellidos === this.inspector
+        );
+        this.cab_inspector = empleadoSeleccionado
+          ? empleadoSeleccionado.empleadoIdNomina
+          : null;
+        console.log('Inspector ID', this.cab_inspector);
       } else {
         this.cab_inspector = 0;
       }
@@ -181,10 +191,12 @@ export class SoliocComponent implements OnInit {
       this.showArea = '';
     } else {
       for (let emp of this.empleados) {
-        if ((emp.empleadoNombres + ' ' + emp.empleadoApellidos) == this.empleado) {
+        if (
+          emp.empleadoNombres + ' ' + emp.empleadoApellidos ==
+          this.empleado
+        ) {
           this.trIdNomEmp = emp.empleadoIdNomina;
           //console.log("Empleado ID:",this.trIdNomEmp);
-
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
               this.cab_area = area.areaIdNomina;
@@ -193,14 +205,13 @@ export class SoliocComponent implements OnInit {
               this.areaNmco = area.areaNemonico;
               //console.log("Empleado area ID:",this.cab_area);
             } else if (emp.empleadoIdArea === 0) {
-              this.showArea = 'El empleado no posee un area asignada.'
+              this.showArea = 'El empleado no posee un area asignada.';
             }
           }
         }
       }
     }
   }
-
   /*//controla el contenido que se muestra en la pagina
   changeView(view: string): void {
     this.changeview = view;
@@ -208,10 +219,28 @@ export class SoliocComponent implements OnInit {
 
   //tranforma la fecha actual en un formato especifico "Lunes, 31 de julio de 2023"
   formatDateToSpanish(date: Date): string {
-    const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+    const daysOfWeek = [
+      'Domingo',
+      'Lunes',
+      'Martes',
+      'Miércoles',
+      'Jueves',
+      'Viernes',
+      'Sábado',
+    ];
     const months = [
-      "enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
-      "agosto", "septiembre", "octubre", "noviembre", "diciembre"
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre',
     ];
 
     const dayOfWeek = daysOfWeek[date.getDay()];
@@ -251,8 +280,8 @@ export class SoliocComponent implements OnInit {
     this.cab_obsrv = '';
     this.cab_adjCot = '';
     this.cab_ncot = 0;
-    this.cab_plazo = new Date;
-    this.cab_fechaMax = new Date;
+    this.cab_plazo = new Date();
+    this.cab_fechaMax = new Date();
     this.inspector = '';
     this.cab_telef_insp = '';
     this.detalleList = [];
@@ -263,13 +292,17 @@ export class SoliocComponent implements OnInit {
   getSolName(noSol: number) {
     const noSolString = noSol.toString();
     if (noSolString.length == 1) {
-      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-000" + noSolString;
+      this.solNumerico =
+        this.areaNmco + ' ' + this.trTipoSolicitud + '-000' + noSolString;
     } else if (noSolString.length == 2) {
-      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-00" + noSolString;
+      this.solNumerico =
+        this.areaNmco + ' ' + this.trTipoSolicitud + '-00' + noSolString;
     } else if (noSolString.length == 3) {
-      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-0" + noSolString;
+      this.solNumerico =
+        this.areaNmco + ' ' + this.trTipoSolicitud + '-0' + noSolString;
     } else if (noSolString.length == 4) {
-      this.solNumerico = this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
+      this.solNumerico =
+        this.areaNmco + ' ' + this.trTipoSolicitud + '-' + noSolString;
     }
   }
 
@@ -288,7 +321,10 @@ export class SoliocComponent implements OnInit {
           }
         },
         (error) => {
-          console.error('Error al obtener el último valor de solicitud:', error);
+          console.error(
+            'Error al obtener el último valor de solicitud:',
+            error
+          );
           reject(error);
         }
       );
@@ -304,17 +340,17 @@ export class SoliocComponent implements OnInit {
           solTrTipoSol: this.trTipoSolicitud,
           solTrNumSol: this.trLastNoSol,
           solTrNivel: this.trNivelEmision,
-          solTrIdEmisor: this.trIdNomEmp
+          solTrIdEmisor: this.trIdNomEmp,
         };
 
-        console.log("1. guardando tracking: ", dataTRK);
+        console.log('1. guardando tracking: ', dataTRK);
         this.service.generateTracking(dataTRK).subscribe(
           () => {
-            console.log("Tracking guardado con éxito.");
+            console.log('Tracking guardado con éxito.');
             resolve();
           },
           (error) => {
-            console.log("Error al guardar el tracking: ", error);
+            console.log('Error al guardar el tracking: ', error);
             reject(error);
           }
         );
@@ -324,11 +360,8 @@ export class SoliocComponent implements OnInit {
     });
   }
 
-
-
   //guarda la solicitud con estado emitido
   async generarSolicitud() {
-
     await this.guardarTrancking();
     this.getSolName(this.trLastNoSol);
 
@@ -351,109 +384,100 @@ export class SoliocComponent implements OnInit {
       cabSolOCTelefInspector: this.cab_telef_insp,
       cabSolOCNumerico: this.solNumerico,
       cabSolOCProveedor: this.proveedor,
-      cabSolOCRUCProveedor: this.cab_ruc_prov
-    }
-
+      cabSolOCRUCProveedor: this.cab_ruc_prov,
+    };
 
     //enviar datos de cabecera a la API
-    console.log("2. guardando solicitud...", dataCAB);
+    console.log('2. guardando solicitud...', dataCAB);
     await this.service.addSolOC(dataCAB).subscribe(
-      response => {
-        console.log("Cabecera agregada.");
-        console.log("Solicitud", this.solNumerico);
-        console.log("Agregando cuerpo de la cabecera...");
+      (response) => {
+        console.log('Cabecera agregada.');
+        console.log('Solicitud', this.solNumerico);
+        console.log('Agregando cuerpo de la cabecera...');
         this.addBodySol();
-        console.log("Cuerpo agregado.");
+        console.log('Cuerpo agregado.');
       },
-      error => {
-        console.log("error al guardar la cabecera: ", error)
+      (error) => {
+        console.log('error al guardar la cabecera: ', error);
       }
     );
-
   }
-
   //permite crear el detalle y el item por sector y los envia a la API
   async addBodySol() {
-
-    this.det_id = await this.getLastDetalleCot();//numero del detalle que se va a guardar
-
-
+    this.det_id = await this.getLastDetalleCot(); //numero del detalle que se va a guardar
     try {
       //enviar la lista detalle a la api para registrarla
-      for (let detalle of this.detalleList) {//recorre la lista de detalles
-
-        //crea el arreglo con las propiedades de detalle
-        const data = {
-          solCotTipoSol: this.trTipoSolicitud,
-          solCotNoSol: this.trLastNoSol,
-          solCotIdDetalle: detalle.det_id,
-          solCotDescripcion: detalle.det_descp,
-          solCotUnidad: detalle.det_unidad,
-          solCotCantidadTotal: detalle.det_cantidad
-        }
-
-        //envia a la api el arreglo data por medio del metodo post
-        this.service.addDetalleCotizacion(data).subscribe(
-          response => {
-            console.log("3. Detalle añadido exitosamente.");
-          },
-          error => {
-            console.log("No se ha podido registrar el detalle, error: ", error);
-          }
-        );
-
-      }
-      console.log(this.detalleList);
-
-      //enviar la lista itemsector a la api
-      for (let item of this.itemSectorList) {
-
-        const data = {
-          itmTipoSol: this.trTipoSolicitud,
-          itmNumSol: this.trLastNoSol,
-          itmIdDetalle: item.det_id,
-          itmIdItem: item.item_id,
-          itmCantidad: item.item_cant,
-          itmSector: item.item_sector
-        }
-
-        this.service.addItemSector(data).subscribe(
-          response => {
-            console.log("4. Item guardado exitosamente.");
-          },
-          error => {
-            console.log("No se pudo guardar el item no:" + item.item_id + ", error: ", error);
-          }
-        );
-
-      }
-      //console.log(this.itemSectorList);
-
+      this.saveItemDet();
       this.getSolName(this.trLastNoSol);
       this.showmsj = true;
-      this.msjExito = "Solicitud N°" + this.solNumerico + " generada exitosamente.";
-
+      this.msjExito =
+        'Solicitud N°' + this.solNumerico + ' generada exitosamente.';
 
       setTimeout(() => {
-        this.msjExito = "";
+        this.msjExito = '';
         this.showmsj = false;
         this.clear();
       }, 4000);
-    }
-    catch (error) {
+    } catch (error) {
       this.showmsjerror = true;
-      this.msjError = "No se ha podido generar la solicitud, intente nuevamente.";
+      this.msjError =
+        'No se ha podido generar la solicitud, intente nuevamente.';
 
       setTimeout(() => {
         this.showmsjerror = false;
-        this.msjError = "";
+        this.msjError = '';
       }, 2500);
     }
-
-
-
   }
+  //
+  saveItemDet() {
+    for (let detalle of this.detalleList) {
+      //recorre la lista de detalles
+      //crea el arreglo con las propiedades de detalle
+      const data = {
+        solCotTipoSol: this.trTipoSolicitud,
+        solCotNoSol: this.trLastNoSol,
+        solCotIdDetalle: detalle.det_id,
+        solCotDescripcion: detalle.det_descp,
+        solCotUnidad: detalle.det_unidad,
+        solCotCantidadTotal: detalle.det_cantidad,
+      };
+      //envia a la api el arreglo data por medio del metodo post
+      this.service.addDetalleCotizacion(data).subscribe(
+        (response) => {
+          console.log('3. Detalle añadido exitosamente.');
+        },
+        (error) => {
+          console.log('No se ha podido registrar el detalle, error: ', error);
+        }
+      );
+    }
+    // console.log(this.detalleList);
+    //enviar la lista itemsector a la api
+    for (let item of this.itemSectorList) {
+      const data = {
+        itmTipoSol: this.trTipoSolicitud,
+        itmNumSol: this.trLastNoSol,
+        itmIdDetalle: item.det_id,
+        itmIdItem: item.item_id,
+        itmCantidad: item.item_cant,
+        itmSector: item.item_sector,
+      };
 
+      this.service.addItemSector(data).subscribe(
+        (response) => {
+          console.log('4. Item guardado exitosamente.');
+        },
+        (error) => {
+          console.log(
+            'No se pudo guardar el item no:' + item.item_id + ', error: ',
+            error
+          );
+        }
+      );
+    }
+    //console.log(this.itemSectorList);
+  }
   /*getIdCabecera(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol).subscribe(
@@ -473,29 +497,30 @@ export class SoliocComponent implements OnInit {
       );
     });
   }*/
-
-
   getLastDetalleCot(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
-      this.service.getLastDetalleCot(this.trTipoSolicitud, this.trLastNoSol).subscribe(
-        (resultado) => {
-          if (resultado === 0) {
-            console.log('No se ha registrado ningun detalle para esta solicitud. Se asigna 0.');
-            resolve(1);
-          } else {
-            const lastDetCot = resultado[0].solCotID + 1;
-            console.log('Nuevo detalle: ', lastDetCot);
-            resolve(lastDetCot);
+      this.service
+        .getLastDetalleCot(this.trTipoSolicitud, this.trLastNoSol)
+        .subscribe(
+          (resultado) => {
+            if (resultado === 0) {
+              console.log(
+                'No se ha registrado ningun detalle para esta solicitud. Se asigna 0.'
+              );
+              resolve(1);
+            } else {
+              const lastDetCot = resultado[0].solCotID + 1;
+              console.log('Nuevo detalle: ', lastDetCot);
+              resolve(lastDetCot);
+            }
+          },
+          (error) => {
+            console.error('Error al obtener el último id de detalle:', error);
+            reject(error);
           }
-        },
-        (error) => {
-          console.error('Error al obtener el último id de detalle:', error);
-          reject(error);
-        }
-      );
+        );
     });
   }
-
   check() {
     for (let idDet of this.itemSectorList) {
       for (let det of this.detalleList) {
@@ -508,30 +533,28 @@ export class SoliocComponent implements OnInit {
         }
       }
     }
-
     if (this.checkDet == true) {
       //console.log("Añadiendo detalle...");
       this.generarSolicitud();
     } else {
       this.showmsjerror = true;
-      this.msjError = "Error, asegúrese de ingresar todos los detalles antes de registrar la solicitud.";
+      this.msjError =
+        'Error, asegúrese de ingresar todos los detalles antes de registrar la solicitud.';
 
       setTimeout(() => {
         this.showmsjerror = false;
-        this.msjError = "";
+        this.msjError = '';
       }, 2500);
     }
   }
-
   //agrega los detalles a la lista detalles
   addDetalle() {
-
     const detalle = {
       det_id: this.det_id,
       det_descp: this.det_descp,
       det_unidad: this.det_unidad,
-      det_cantidad: this.det_cantidad
-    }
+      det_cantidad: this.det_cantidad,
+    };
 
     this.detalleList.push(detalle);
     //console.log(this.detalleList);
@@ -542,7 +565,6 @@ export class SoliocComponent implements OnInit {
     this.det_unidad = 'Unidad';
     this.det_cantidad = 0;
     this.tmpItemSect = [];
-
   }
   incrementDetID() {
     //aumenta el valor del id de detalle
@@ -555,11 +577,13 @@ export class SoliocComponent implements OnInit {
     }
   }
   async deleteDetalle(id: number) {
-    const index = this.detalleList.findIndex(detalle => detalle.det_id === id);
+    const index = this.detalleList.findIndex(
+      (detalle) => detalle.det_id === id
+    );
 
-    console.log(index)
+    console.log(index);
     if (index !== -1) {
-      console.log("detalle eliminado")
+      console.log('detalle eliminado');
       this.detalleList.splice(index, 1);
       this.idToIndexMap.delete(index);
     }
@@ -570,25 +594,19 @@ export class SoliocComponent implements OnInit {
     }
     this.incrementDetID();
 
-    
-    setTimeout(() => {
-      
-    }, 500);
-
-
+    setTimeout(() => {}, 500);
   }
 
-  //agregar los items a una lista temporal 
+  //agregar los items a una lista temporal
   //se usa una lista temporal ya que hay que limpiarla cada vez que se vaya a agregar items que pertenezcan a un detalle nuevo
   addItemSector(): void {
-
     const tmpItemSector = {
       det_id: this.det_id,
       det_descp: this.det_descp,
       item_id: this.item_id,
       item_cant: this.item_cant,
-      item_sector: this.item_sector
-    }
+      item_sector: this.item_sector,
+    };
 
     this.tmpItemSect.push(tmpItemSector);
 
@@ -597,7 +615,6 @@ export class SoliocComponent implements OnInit {
     this.det_cantidad += this.item_cant;
 
     //aumenta el valor del id de los items
-    
 
     this.item_cant = 1;
     this.item_sector = 0;
@@ -605,25 +622,23 @@ export class SoliocComponent implements OnInit {
 
   //agregar los items de la lista temporal a la lista definitiva
   saveItemSect(): void {
-
     for (let tmpitm of this.tmpItemSect) {
       const itemSector = {
         det_id: tmpitm.det_id,
         det_descp: tmpitm.det_descp,
         item_id: tmpitm.item_id,
         item_cant: tmpitm.item_cant,
-        item_sector: tmpitm.item_sector
-      }
+        item_sector: tmpitm.item_sector,
+      };
 
       this.itemSectorList.push(itemSector);
-
     }
     this.item_id = 1;
 
     //console.log(this.itemSectorList);
   }
-  //Icrementa el valor Item 
-  incrementItemID(){
+  //Icrementa el valor Item
+  incrementItemID() {
     //aumemta eL valor de los ITEM
     if (this.tmpItemSect.length == 0) {
       this.item_id = 1;
@@ -633,13 +648,13 @@ export class SoliocComponent implements OnInit {
       }
     }
   }
-  //Eliminar  Item 
-  deleteItem(id:number){
-    const index = this.tmpItemSect.findIndex(item => item.item_id === id);
+  //Eliminar  Item
+  deleteItem(id: number) {
+    const index = this.tmpItemSect.findIndex((item) => item.item_id === id);
 
-    console.log(index)
+    console.log(index);
     if (index !== -1) {
-      console.log("item eliminado")
+      console.log('item eliminado');
       this.tmpItemSect.splice(index, 1);
       this.idToIndexMap.delete(index);
     }
@@ -650,16 +665,11 @@ export class SoliocComponent implements OnInit {
     }
     this.incrementItemID();
 
-    
-    setTimeout(() => {
-      
-    }, 500);
-
- 
+    setTimeout(() => {}, 500);
   }
   //
 
-  async metodo(){
+  async editSolicitud() {
     await this.getSolicitud();
     await this.saveData();
     //await this.changeView('editar');
@@ -668,7 +678,9 @@ export class SoliocComponent implements OnInit {
   //editar solicitudes
   async getSolicitud() {
     try {
-      const data = await this.service.getOrdenComprabyId(this.SolID).toPromise();
+      const data = await this.service
+        .getOrdenComprabyId(this.SolID)
+        .toPromise();
       this.solicitudEdit = data;
     } catch (error) {
       console.error('Error al obtener la solicitud:', error);
@@ -686,24 +698,33 @@ export class SoliocComponent implements OnInit {
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
     }
-    this.fechaSinFormato=this.convertirStringAFecha(this.cabecera.cabSolOCFecha);
+    this.fechaSinFormato = this.convertirStringAFecha(
+      this.cabecera.cabSolOCFecha
+    );
     //formatear la fecha de la solicitud para mostrar dia de semana y fecha
-    this.cabecera.cabSolOCFecha = format(parseISO(this.cabecera.cabSolOCFecha),
-      'eeee, d \'de\' MMMM \'de\' yyyy', { locale: es });
-    this.cabecera.cabSolOCFecha = this.cabecera.cabSolOCFecha.charAt(0)
-      .toUpperCase() + this.cabecera.cabSolOCFecha.slice(1);
+    this.cabecera.cabSolOCFecha = format(
+      parseISO(this.cabecera.cabSolOCFecha),
+      "eeee, d 'de' MMMM 'de' yyyy",
+      { locale: es }
+    );
+    this.cabecera.cabSolOCFecha =
+      this.cabecera.cabSolOCFecha.charAt(0).toUpperCase() +
+      this.cabecera.cabSolOCFecha.slice(1);
 
     // Formatear la fecha máxima de entrega en formato 'yyyy-MM-dd'
-    this.cabecera.cabSolOCFechaMaxentrega = format(parseISO(this.cabecera.cabSolOCFechaMaxentrega),
-      'yyyy-MM-dd');
+    this.cabecera.cabSolOCFechaMaxentrega = format(
+      parseISO(this.cabecera.cabSolOCFechaMaxentrega),
+      'yyyy-MM-dd'
+    );
 
     // Formatear el plazo de entrega en formato 'yyyy-MM-dd'
-    this.cabecera.cabSolOCPlazoEntrega = format(parseISO(this.cabecera.cabSolOCPlazoEntrega),
-      'yyyy-MM-dd');
+    this.cabecera.cabSolOCPlazoEntrega = format(
+      parseISO(this.cabecera.cabSolOCPlazoEntrega),
+      'yyyy-MM-dd'
+    );
 
     //ordena los items de la lista segun el id del detalle de menor a mayor
     this.item.sort((a, b) => a.itmIdDetalle - b.itmIdDetalle);
-
   }
 
   get estadoTexto(): string {
@@ -728,7 +749,7 @@ export class SoliocComponent implements OnInit {
     this.clear();
     this.changeView('consultar');
   }
-   
+
   confDeleteItm(idList: number, idItem: number, idDet: number, idNSol: number) {
     this.idDlt = idList;
     this.idItmDlt = idItem;
@@ -737,7 +758,7 @@ export class SoliocComponent implements OnInit {
     console.log(this.idDlt, this.idItmDlt, this.idNSolDlt);
   }
   deleteItemSaved() {
-    const index = this.item.findIndex(itm => itm.itmID === this.idDlt);
+    const index = this.item.findIndex((itm) => itm.itmID === this.idDlt);
 
     if (index !== -1) {
       this.item.splice(index, 1);
@@ -752,28 +773,27 @@ export class SoliocComponent implements OnInit {
         this.reorderAndSaveItems();
         this.checkAndDeleteDetails();
       }, 200);
-      console.log("Proceso completado exitosamente.");
+      console.log('Proceso completado exitosamente.');
     } catch (error) {
-      console.error("Error durante el proceso:", error);
+      console.error('Error durante el proceso:', error);
     }
-
   }
-
   async deleteAllItems() {
     try {
-      await this.service.deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt).subscribe(
-        response => {
-          console.log("todos los Item eliminados");
-        },
-        error => {
-          console.log("Error: ", error);
-        }
-      );
+      await this.service
+        .deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt)
+        .subscribe(
+          (response) => {
+            console.log('todos los Item eliminados');
+          },
+          (error) => {
+            console.log('Error: ', error);
+          }
+        );
     } catch (error) {
-      console.error("Error durante la eliminación:", error);
+      console.error('Error durante la eliminación:', error);
     }
   }
-
   async reorderAndSaveItems() {
     const detailItemMap: { [key: number]: number } = {};
 
@@ -793,61 +813,72 @@ export class SoliocComponent implements OnInit {
         itmIdDetalle: item.itmIdDetalle,
         itmIdItem: item.itmIdItem,
         itmCantidad: item.itmCantidad,
-        itmSector: item.itmSector
+        itmSector: item.itmSector,
       };
 
       this.service.addItemSector(data).subscribe(
-        response => {
-          console.log("Item guardado exitosamente.");
+        (response) => {
+          console.log('Item guardado exitosamente.');
         },
-        error => {
-          console.log("No se pudo guardar el item, error: ", error);
+        (error) => {
+          console.log('No se pudo guardar el item, error: ', error);
         }
       );
     }
   }
-
   async checkAndDeleteDetails() {
     //verificar si algun detalle no tiene items y eliminarlo
     for (let det of this.detalle) {
       console.log(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle);
 
-      this.service.getItemsbyDet(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle).subscribe(
-        response => {
-          if (response === 0) {
-            console.log("NO existen items para el detalle: ", det.solCotIdDetalle);
-            //eliminar el detalle
-            this.service.deleteDetallebyId(det.solCotID).subscribe(
-              response => {
-                console.log("Se ha eliminado el detalle.");
-              },
-              error => {
-                console.log("No se pudo eliminar el detalle, error: ", error);
-              }
-            );
-          } else {
-            console.log("SI existen items para el detalle: ", det.solCotIdDetalle);
+      this.service
+        .getItemsbyDet(
+          this.trTipoSolicitud,
+          this.idNSolDlt,
+          det.solCotIdDetalle
+        )
+        .subscribe(
+          (response) => {
+            if (response === 0) {
+              console.log(
+                'NO existen items para el detalle: ',
+                det.solCotIdDetalle
+              );
+              //eliminar el detalle
+              this.service.deleteDetallebyId(det.solCotID).subscribe(
+                (response) => {
+                  console.log('Se ha eliminado el detalle.');
+                },
+                (error) => {
+                  console.log('No se pudo eliminar el detalle, error: ', error);
+                }
+              );
+            } else {
+              console.log(
+                'SI existen items para el detalle: ',
+                det.solCotIdDetalle
+              );
+            }
+          },
+          (error) => {
+            console.log('Error: ', error);
           }
-        },
-        error => {
-          console.log("Error: ", error);
-        }
-      );
+        );
     }
   }
   //TODO:TENEMOS QUE HACER
-  compraclick(){
-    console.log("eliminacion ");
+  compraclick() {
+    console.log('eliminacion');
   }
-  //* convertir de tipo String a  new DATE 
+  //* convertir de tipo String a  new DATE
   convertirStringAFecha(fechaStr: string): Date {
     const fechaConvertida = new Date(fechaStr);
     return fechaConvertida;
   }
-  //* Editar orden compra
-  editarCabecer(){
+  //* Editar orden compra en el Enviar
+  editarCabecer() {
     const dataCAB = {
-      cabSolOCID:this.cabecera.cabSolOCID,
+      cabSolOCID: this.cabecera.cabSolOCID,
       cabSolOCTipoSolicitud: this.cabecera.cabSolOCTipoSolicitud,
       cabSolOCArea: this.cabecera.cabSolOCArea,
       cabSolOCNoSolicitud: this.cabecera.cabSolOCNoSolicitud,
@@ -866,21 +897,77 @@ export class SoliocComponent implements OnInit {
       cabSolOCTelefInspector: this.cabecera.cabSolOCTelefInspector,
       cabSolOCNumerico: this.cabecera.cabSolOCNumerico,
       cabSolOCProveedor: this.cabecera.cabSolOCProveedor,
-      cabSolOCRUCProveedor: this.cabecera.cabSolOCRUCProveedor
-    }
+      cabSolOCRUCProveedor: this.cabecera.cabSolOCRUCProveedor,
+    };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
-    console.log("2. guardando solicitud...", dataCAB);
-     this.service.updateOrdencompra(this.cabecera.cabSolOCID,dataCAB).subscribe(
-      response => {
-        console.log("Actualizar ");
+    console.log('2. guardando solicitud...', dataCAB);
+    this.service.updateOrdencompra(this.cabecera.cabSolOCID, dataCAB).subscribe(
+      (response) => {
+        console.log('Actualizar ');
       },
-      error => {
-        console.log("error : ", error)
+      (error) => {
+        console.log('error : ', error);
       }
     );
   }
   //** */
   // CREACION METODO
-  cambio(item:number,cabecera:number,detalle:number){
+  cambio(item: number, cabecera: number, detalle: number) {}
+  //
+  addNewItem() {
+    this.addDetalle();
+    setTimeout(() => {
+      this.saveItemDetEdit();
+      this.editSolicitud();
+    }, 200);
+  }
+  //
+  saveItemDetEdit() {
+    for (let detalle of this.detalleList) {
+      //recorre la lista de detalles
+      //crea el arreglo con las propiedades de detalle
+      const data = {
+        solCotTipoSol: this.trTipoSolicitud,
+        solCotNoSol: this.trLastNoSol,
+        solCotIdDetalle: detalle.det_id,
+        solCotDescripcion: detalle.det_descp,
+        solCotUnidad: detalle.det_unidad,
+        solCotCantidadTotal: detalle.det_cantidad,
+      };
+      //envia a la api el arreglo data por medio del metodo post
+      this.service.addDetalleCotizacion(data).subscribe(
+        (response) => {
+          console.log('3. Detalle añadido exitosamente.');
+        },
+        (error) => {
+          console.log('No se ha podido registrar el detalle, error: ', error);
+        }
+      );
+    }
+    // console.log(this.detalleList);
+    //enviar la lista itemsector a la api
+    for (let item of this.itemSectorList) {
+      const data = {
+        itmTipoSol: this.trTipoSolicitud,
+        itmNumSol: this.trLastNoSol,
+        itmIdDetalle: item.det_id,
+        itmIdItem: item.item_id,
+        itmCantidad: item.item_cant,
+        itmSector: item.item_sector,
+      };
+
+      this.service.addItemSector(data).subscribe(
+        (response) => {
+          console.log('4. Item guardado exitosamente.');
+        },
+        (error) => {
+          console.log(
+            'No se pudo guardar el item no:' + item.item_id + ', error: ',
+            error
+          );
+        }
+      );
+    }
+    //console.log(this.itemSectorList);
   }
 }
