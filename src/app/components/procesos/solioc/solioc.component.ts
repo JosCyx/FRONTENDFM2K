@@ -109,7 +109,7 @@ export class SoliocComponent implements OnInit {
   idDlt!: number;
   idNSolDlt!: number;
   idItmDlt!: number;
-  idDetDlt!: number;
+  //idDetDlt!: number;
 
   constructor(private service: CommunicationApiService , private router:Router, private serviceGlobal:GlobalService) { }
 
@@ -729,64 +729,64 @@ export class SoliocComponent implements OnInit {
     this.changeView('consultar');
   }
    
-  confDeleteItm(idList:number,idItem: number, idDet: number, idNSol: number){
+  confDeleteItm(idList: number, idItem: number, idDet: number, idNSol: number) {
     this.idDlt = idList;
     this.idItmDlt = idItem;
-    this.idDetDlt = idDet;
+    //this.//idDetDlt = idDet;
     this.idNSolDlt = idNSol;
-    console.log(this.idDlt, this.idItmDlt);
+    console.log(this.idDlt, this.idItmDlt, this.idNSolDlt);
   }
-  //** Eliminar desde la tabla orden comprar  */
-  deleteItemSaved(){
+  deleteItemSaved() {
     const index = this.item.findIndex(itm => itm.itmID === this.idDlt);
+
     if (index !== -1) {
       this.item.splice(index, 1);
       this.saveItemDB();
-       // Elimina 1 elemento en la posición 'index'
-      console.log("SE ELIMINÓ UN ITEM");
     }
   }
+  //
   async saveItemDB() {
     try {
       await this.deleteAllItems();
-      setTimeout(()=>{
-         this.reorderAndSaveItems();
-         this.checkAndDeleteDetails();
-      },200)
-  
+      setTimeout(() => {
+        this.reorderAndSaveItems();
+        this.checkAndDeleteDetails();
+      }, 200);
       console.log("Proceso completado exitosamente.");
     } catch (error) {
       console.error("Error durante el proceso:", error);
     }
-    
+
   }
+
   async deleteAllItems() {
     try {
-      await this.service.deleteAllItemBySol(this.trTipoSolicitud,this.idNSolDlt).subscribe(
-        response=>{
-          console.log("todos los detalles eliminados");
+      await this.service.deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt).subscribe(
+        response => {
+          console.log("todos los Item eliminados");
         },
         error => {
-          console.log("Error: ",error);
+          console.log("Error: ", error);
         }
       );
     } catch (error) {
       console.error("Error durante la eliminación:", error);
     }
   }
+
   async reorderAndSaveItems() {
     const detailItemMap: { [key: number]: number } = {};
-  
+
     for (const item of this.item) {
       const detalle = item.itmIdDetalle;
-  
+
       if (!detailItemMap[detalle]) {
         detailItemMap[detalle] = 1;
       }
-  
+
       item.itmIdItem = detailItemMap[detalle];
       detailItemMap[detalle]++;
-  
+
       const data = {
         itmTipoSol: item.itmTipoSol,
         itmNumSol: item.itmNumSol,
@@ -795,7 +795,7 @@ export class SoliocComponent implements OnInit {
         itmCantidad: item.itmCantidad,
         itmSector: item.itmSector
       };
-  
+
       this.service.addItemSector(data).subscribe(
         response => {
           console.log("Item guardado exitosamente.");
@@ -806,16 +806,16 @@ export class SoliocComponent implements OnInit {
       );
     }
   }
-  //* Check if the item
+
   async checkAndDeleteDetails() {
     //verificar si algun detalle no tiene items y eliminarlo
-    for(let det of this.detalle){
-      console.log(this.trTipoSolicitud,this.idNSolDlt,det.solCotIdDetalle);
-      
-      this.service.getItemsbyDet(this.trTipoSolicitud,this.idNSolDlt,det.solCotIdDetalle).subscribe(
+    for (let det of this.detalle) {
+      console.log(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle);
+
+      this.service.getItemsbyDet(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle).subscribe(
         response => {
-          if(response == 0){
-            console.log("NO existen items para el detalle: ",det.solCotIdDetalle);
+          if (response === 0) {
+            console.log("NO existen items para el detalle: ", det.solCotIdDetalle);
             //eliminar el detalle
             this.service.deleteDetallebyId(det.solCotID).subscribe(
               response => {
@@ -825,12 +825,12 @@ export class SoliocComponent implements OnInit {
                 console.log("No se pudo eliminar el detalle, error: ", error);
               }
             );
-          }else {
-            console.log("SI existen items para el detalle: ",det.solCotIdDetalle);
+          } else {
+            console.log("SI existen items para el detalle: ", det.solCotIdDetalle);
           }
         },
         error => {
-          console.log("Error: ",error);
+          console.log("Error: ", error);
         }
       );
     }
@@ -879,13 +879,8 @@ export class SoliocComponent implements OnInit {
       }
     );
   }
-
+  //** */
   // CREACION METODO
   cambio(item:number,cabecera:number,detalle:number){
-
   }
-
-  //** */
-
-
 }
