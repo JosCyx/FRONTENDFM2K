@@ -366,23 +366,22 @@
               [(ngModel)]="cabecera.cabSolOCAsunto"
             />
           </div>
-          <div class="input-group col">
-            <label class="input-group-text">Estado:</label>
-            <input
-              type="text"
-              class="form-control"
-              [value]="estadoTexto"
-              disabled
-            />
-          </div>
-          <div class="input-group col">
-            <label class="input-group-text">Estado:</label>
-            <input
-              type="text"
-              class="form-control"
-              [value]="estadoTexto"
-              disabled
-            />
+          <div class="row col">
+            <div class="input-group col std">
+              <label class="input-group-text">Estado:</label>
+              <input
+                type="text"
+                class="form-control"
+                [value]="estadoTexto"
+                disabled
+              />
+            </div>
+            <div class="input-group col std">
+              <label class="input-group-text">Tracking:</label>
+              <ng-container  *ngFor="let nvTRK of nivelRut$ |async">
+                <input *ngIf="nvTRK.nivel === cabecera.cabSolOCEstadoTracking"  type="text" class="form-control" [value]="nvTRK.descRuteo" disabled />
+              </ng-container>
+            </div>
           </div>
         </div>
       </div>
