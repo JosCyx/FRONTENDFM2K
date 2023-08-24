@@ -938,6 +938,14 @@ export class SoliocComponent implements OnInit {
       },
       (error) => {
         console.log('error : ', error);
+        this.showmsjerror = true;
+        this.msjError =
+          'No se ha podido guardar la solicitud, intente nuevamente.';
+
+        setTimeout(() => {
+          this.showmsjerror = false;
+          this.msjError = '';
+        }, 2500);
       }
     );
   }
