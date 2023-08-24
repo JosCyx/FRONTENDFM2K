@@ -139,6 +139,7 @@
                   class="btn btn-outline-primary"
                   data-toggle="modal"
                   data-target="#itemsector"
+                  [disabled]="!det_descp"
                 >
                   Desglose
                 </button>
@@ -303,7 +304,6 @@
   <!-- *Esto es para editar Solicitud de Orden de compra -->
   <div class="formRol" *ngIf="changeview === 'editar'">
     <h3 class="font-weight-bold" style="padding-top: 20pt">Editar solicitud</h3>
-
     <div class="solicitudEditar">
       <div class="cabecera mb-3">
         <div class="row mb-1">
@@ -429,12 +429,7 @@
                   data-toggle="modal"
                   data-target="#dltItemSaved"
                   (click)="
-                    confDeleteItm(
-                      itm.itmID,
-                      itm.itmIdItem,
-                      itm.itmIdDetalle,
-                      itm.itmNumSol
-                    )
+                    confDeleteItm(itm.itmID, itm.itmIdItem, itm.itmNumSol)
                   "
                 >
                   <i class="bi bi-x-circle"></i>
@@ -450,7 +445,7 @@
             </tr>
 
             <tr>
-              <th class="align-middle">1</th>
+              <th class="align-middle">{{ det_id }}</th>
               <td class="align-middle" colspan="2">
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="flex-grow-1">
@@ -492,12 +487,13 @@
                   class="btn btn-outline-primary"
                   data-toggle="modal"
                   data-target="#itemsector"
+                  [disabled]="!det_descp"
                 >
                   Desglose
                 </button>
               </td>
               <td class="align-middle" style="width: 150px">
-                <select class="form-control">
+                <select class="form-control" [(ngModel)]="det_unidad">
                   <option value="Unidad" selected>Unidad</option>
                   <option value="Sacos">Sacos</option>
                   <option value="Paquete">Paquete</option>
@@ -510,12 +506,21 @@
                 </select>
               </td>
               <td class="align-middle cel-prep">
-                <input type="text" class="form-control text-center" disabled />
+                <input
+                  type="text"
+                  class="form-control text-center"
+                  [(ngModel)]="det_cantidad"
+                  disabled
+                />
               </td>
             </tr>
             <tr>
               <td colspan="6" class="align-middle text-end">
-                <button class="btn btn-success">
+                <button
+                  class="btn btn-success"
+                  [disabled]="!det_descp || tmpItemSect.length === 0"
+                  (click)="addNewItem()"
+                >
                   <i class="bi bi-list-check"></i>
                 </button>
               </td>
@@ -593,8 +598,28 @@
       </div>
     </div>
     <div class="d-flex row">
+      <div class="col">
+        <div *ngIf="showmsj" class="alert alert-success" role="alert">
+          <span
+            ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
+          >
+        </div>
+        <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+          <span
+            ><i class="bi bi-exclamation-triangle-fill">
+              {{ msjError }}</i
+            ></span
+          >
+        </div>
+      </div>
       <div class="col text-end">
-        <button class="btn btn-primary m-2" disabled>Guardar</button>
+        <button
+          class="btn btn-primary m-2"
+          data-toggle="modal"
+          data-target="#GuardarEdicion"
+        >
+          Guardar
+        </button>
         <button
           class="btn btn-success m-2"
           data-toggle="modal"
@@ -768,11 +793,43 @@
         </p>
       </div>
       <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Guardar la edicion de Orden Compra  -->
+<div
+  class="modal fade"
+  #exampleModal
+  id="GuardarEdicion"
+  data-backdrop="static"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea Guardar los Cambios Realizados?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Texto</p>
+      </div>
+      <div class="modal-footer">
         <button
           type="button"
           class="btn btn-primary"
           data-dismiss="modal"
-          (click)="editarCabecer()"
+          (click)="guardaredicionCabece()"
         >
           Confirmar
         </button>
