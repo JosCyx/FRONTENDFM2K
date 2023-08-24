@@ -81,7 +81,7 @@ export class SolicotiComponent implements OnInit {
   showmsjerror: boolean = false;
   checkDet: boolean = false;
   idToIndexMap: Map<number, number> = new Map();
-  detType: boolean = false;
+  detType: boolean = true;
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -238,7 +238,9 @@ export class SolicotiComponent implements OnInit {
 
   cancelarItem(): void {
     this.det_cantidad = 0;
-    this.item_id = 1;
+    if (!this.detType) {
+      this.item_id = 1;
+    }
     this.tmpItemSect = [];
   }
 
@@ -247,6 +249,7 @@ export class SolicotiComponent implements OnInit {
     this.showArea = '';
     this.cab_asunto = '';
     this.det_descp = '';
+    this.det_id = 1;
     this.cab_proc = '';
     this.cab_obsrv = '';
     this.cab_adjCot = '';
@@ -672,9 +675,17 @@ export class SolicotiComponent implements OnInit {
 
   //editar solicitudes
   async editSolicitud() {
+    this.clearSolGuardada();
     await this.getSolicitud();
     await this.saveData();
     //await this.changeView('editar');
+  }
+
+  clearSolGuardada(): void {
+    this.solicitudEdit = { cabecera: {}, detalles: [], items: [] };
+    this.cabecera = new CabeceraCotizacion(0);
+    this.detalle = [];
+    this.item = [];
   }
 
 
@@ -863,11 +874,10 @@ export class SolicotiComponent implements OnInit {
   addNewItems() {
 
     this.addDetalle();
-
-
     setTimeout(() => {
       this.saveDetItemEdit();
-      //this.editSolicitud();
+      this.editSolicitud();
+      this.clearList();
     }, 200)
 
   }
@@ -876,13 +886,15 @@ export class SolicotiComponent implements OnInit {
     this.detType = !this.detType;
     this.det_descp = '';
     this.itemSectorList = [];
-    ////MODIFICAR PARA QUE MUESTRE ID 1 CUANDO SE CREE UN NUEVO DETALLE
-    if(!this.detType){
+
+    if (!this.detType) {
       for (let det of this.detalle) {
-        this.det_id = det.solCotIdDetalle+1;
+        this.det_id = det.solCotIdDetalle + 2;
+        this.item_id = 1;
       }
     }
   }
+
 
   setDetId() {
     const selectedDetalle = this.detalle.find(det => det.solCotDescripcion === this.det_descp);
@@ -908,12 +920,12 @@ export class SolicotiComponent implements OnInit {
     for (let detalle of this.detalleList) {
       // Verificar si el detalle no existe en la lista actual de detalles
       const exists = this.detalle.some(det => det.solCotIdDetalle === detalle.det_id);
-    
+
       if (exists) {
-        console.log("El detalle ya existe");
+        console.log("El detalle ya existe, no se ha guardado");
       } else {
         console.log("Guardando detalle nuevo:", detalle.det_id);
-    
+
         const data = {
           solCotTipoSol: this.cabecera.cabSolCotTipoSolicitud,
           solCotNoSol: this.cabecera.cabSolCotNoSolicitud,
@@ -922,19 +934,18 @@ export class SolicotiComponent implements OnInit {
           solCotUnidad: detalle.det_unidad,
           solCotCantidadTotal: detalle.det_cantidad
         }
-        console.log("Nuevo detalle: ",data);
-        //envia a la api el arreglo data por medio del metodo post
-        /*this.service.addDetalleCotizacion(data).subscribe(
+        //console.log("Nuevo detalle: ",data);
+        this.service.addDetalleCotizacion(data).subscribe(
           response => {
-            console.log("3. Detalle añadido exitosamente.");
+            console.log("Nuevo detalle", detalle.det_id, " guardado en la base");
           },
           error => {
             console.log("No se ha podido registrar el detalle, error: ", error);
           }
-        );*/
+        );
       }
     }
-    
+
     //console.log(this.detalleList);
 
     //enviar la lista itemsector a la api
@@ -948,18 +959,23 @@ export class SolicotiComponent implements OnInit {
         itmCantidad: item.item_cant,
         itmSector: item.item_sector
       }
-
-      /*this.service.addItemSector(data).subscribe(
+      //console.log("Nuevo item: ",data);
+      this.service.addItemSector(data).subscribe(
         response => {
-          console.log("4. Item guardado exitosamente.");
+          console.log("Nuevo item guardado en la base, item:", item.item_id, ", detalle:", item.det_id);
         },
         error => {
           console.log("No se pudo guardar el item no:" + item.item_id + ", error: ", error);
         }
-      );*/
+      );
 
     }
-    console.log(this.itemSectorList);
+    //console.log(this.itemSectorList);
+  }
+
+  clearList() {
+    this.itemSectorList = [];
+    this.detalleList = [];
   }
 
 }
