@@ -92,6 +92,7 @@ export class SoliocComponent implements OnInit {
   detallesList$!: Observable<any[]>;
   itemxSector$!: Observable<any[]>;
   sectores$!: Observable<any[]>;
+  nivelRut$!: Observable<any[]>;
 
   //listas locales para manejar los datos
   detalleList: Detalle[] = [];
@@ -122,7 +123,9 @@ export class SoliocComponent implements OnInit {
     });
 
     this.inspectores$ = this.service.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
-
+    this.nivelRut$ = this.service
+      .getNivelbyEstado('A')
+      .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
     this.sectores$ = this.service
       .getSectoresList()
       .pipe(
