@@ -28,6 +28,10 @@
     background-color: rgb(214, 214, 214);
 }
 
+.std{
+    padding-left: 0px;
+}
+  
 .cel-prep {
     width: 110px;
     margin: 0 auto;
