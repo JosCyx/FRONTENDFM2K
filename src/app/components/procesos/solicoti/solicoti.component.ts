@@ -73,8 +73,8 @@ export class SolicotiComponent implements OnInit {
 
   //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
-  //changeview: string = this.serviceGlobal.solView;
-  changeview: string = 'editar';
+  changeview: string = this.serviceGlobal.solView;
+  //changeview: string = 'editar';
   msjExito!: string;
   msjError!: string;
   showmsj: boolean = false;
