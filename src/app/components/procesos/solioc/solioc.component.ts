@@ -83,6 +83,7 @@ export class SoliocComponent implements OnInit {
   idToIndexMap: Map<number, number> = new Map();
   SolID: number = this.serviceGlobal.solID;
   fechaSinFormato: Date = new Date();
+  detType: boolean = false;
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -561,6 +562,11 @@ export class SoliocComponent implements OnInit {
 
     //aumenta el valor del id de detalle
     this.incrementDetID();
+
+    if (!this.detType) {
+      this.item_id = 1;
+    }
+
     this.det_descp = '';
     this.det_unidad = 'Unidad';
     this.det_cantidad = 0;
@@ -742,6 +748,7 @@ export class SoliocComponent implements OnInit {
 
   async changeView(view: string) {
     this.changeview = view;
+    this.clear();
   }
 
   cancelar(): void {
@@ -920,6 +927,38 @@ export class SoliocComponent implements OnInit {
       this.saveItemDetEdit();
       this.editSolicitud();
     }, 200);
+  }
+  //*
+  changeDet() {
+    this.detType = !this.detType;
+    this.det_descp = '';
+    this.itemSectorList = [];
+    ////MODIFICAR PARA QUE MUESTRE ID 1 CUANDO SE CREE UN NUEVO DETALLE
+    if (!this.detType) {
+      for (let det of this.detalle) {
+        this.det_id = det.solCotIdDetalle + 1;
+      }
+    }
+  }
+
+  setDetId() {
+    const selectedDetalle = this.detalle.find(
+      (det) => det.solCotDescripcion === this.det_descp
+    );
+
+    if (selectedDetalle) {
+      this.det_id = selectedDetalle.solCotIdDetalle;
+    }
+
+    if (this.detType) {
+      for (let itm of this.item) {
+        if (itm.itmIdDetalle === this.det_id) {
+          this.item_id = itm.itmIdItem + 1;
+        }
+      }
+    } else {
+      this.item_id = 1;
+    }
   }
   //
   saveItemDetEdit() {

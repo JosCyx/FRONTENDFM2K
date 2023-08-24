@@ -5,7 +5,9 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <button class="btn btn-primary m-2">Crear</button>
+          <button class="btn btn-primary m-2" (click)="changeView('crear')">
+            Crear
+          </button>
           <button class="btn btn-primary m-2">Boton</button>
           <span *ngIf="changeview === 'crear'"></span>
         </div>
@@ -441,22 +443,49 @@
             </tr>
             <tr>
               <th scope="col">Item</th>
-              <th scope="col">Descripción*</th>
+              <th scope="col" colspan="2">Descripción*</th>
               <th scope="col">Presupuesto*</th>
               <th scope="col">Unidad</th>
               <th scope="col">Cantidad Total</th>
-              <th></th>
             </tr>
+
             <tr>
               <th class="align-middle">1</th>
-              <td class="align-middle">
-                <textarea
-                  name="descripcion"
-                  class="form-control"
-                  rows="2"
-                  cols="50"
-                  placeholder="Descripción"
-                ></textarea>
+              <td class="align-middle" colspan="2">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="flex-grow-1">
+                    <textarea
+                      *ngIf="!detType"
+                      name="descripcion"
+                      class="form-control"
+                      rows="2"
+                      cols="10"
+                      placeholder="Descripción"
+                      [(ngModel)]="det_descp"
+                    ></textarea>
+                    <select
+                      *ngIf="detType"
+                      class="form-select"
+                      [(ngModel)]="det_descp"
+                      (change)="setDetId()"
+                    >
+                      <option
+                        *ngFor="let det of detalle"
+                        [value]="det.solCotDescripcion"
+                      >
+                        {{ det.solCotDescripcion }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-auto">
+                    <button
+                      class="btn btn-outline-primary"
+                      (click)="changeDet()"
+                    >
+                      <i class="bi bi-repeat"></i>
+                    </button>
+                  </div>
+                </div>
               </td>
               <td class="align-middle">
                 <button
@@ -483,7 +512,6 @@
               <td class="align-middle cel-prep">
                 <input type="text" class="form-control text-center" disabled />
               </td>
-              <td></td>
             </tr>
             <tr>
               <td colspan="6" class="align-middle text-end">
