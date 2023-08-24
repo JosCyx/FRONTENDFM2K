@@ -73,14 +73,15 @@ export class SolicotiComponent implements OnInit {
 
   //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
-  changeview: string = this.serviceGlobal.solView;
-  //changeview: string = 'crear';
+  //changeview: string = this.serviceGlobal.solView;
+  changeview: string = 'editar';
   msjExito!: string;
   msjError!: string;
   showmsj: boolean = false;
   showmsjerror: boolean = false;
   checkDet: boolean = false;
   idToIndexMap: Map<number, number> = new Map();
+  fechaSinFormato: Date = new Date();
   detType: boolean = true;
 
   //listas con datos de la DB
@@ -90,6 +91,7 @@ export class SolicotiComponent implements OnInit {
   detallesList$!: Observable<any[]>;
   itemxSector$!: Observable<any[]>;
   sectores$!: Observable<any[]>;
+  nivelRut$!: Observable<any[]>;
 
   //listas locales para manejar los datos
   detalleList: Detalle[] = [];
@@ -128,6 +130,10 @@ export class SolicotiComponent implements OnInit {
     this.areaList$.subscribe((data) => {
       this.areas = data;
     });
+
+    this.nivelRut$ = this.service.getNivelbyEstado('A').pipe(
+      map(niv => niv.sort((a, b) => a.nivel - b.nivel))
+    ); 
 
     if (this.changeview == 'editar') {
       this.editSolicitud();
@@ -709,6 +715,7 @@ export class SolicotiComponent implements OnInit {
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
     }
+    this.fechaSinFormato = this.convertirStringAFecha(this.cabecera.cabSolCotFecha);
 
     //formatear la fecha de la solicitud para mostrar dia de semana y fecha
     this.cabecera.cabSolCotFecha = format(parseISO(this.cabecera.cabSolCotFecha),
@@ -978,4 +985,58 @@ export class SolicotiComponent implements OnInit {
     this.detalleList = [];
   }
 
+  convertirStringAFecha(fechaStr: string): Date {
+    const fechaConvertida = new Date(fechaStr);
+    return fechaConvertida;
+  }
+  //* Editar orden compra en el Enviar
+  saveEditCabecera() {
+    const dataCAB = {
+      cabSolOCID: this.cabecera.cabSolCotID,
+      cabSolOCTipoSolicitud: this.cabecera.cabSolCotTipoSolicitud,
+      cabSolOCArea: this.cabecera.cabSolCotArea,
+      cabSolOCNoSolicitud: this.cabecera.cabSolCotNoSolicitud,
+      cabSolOCSolicitante: this.cabecera.cabSolCotSolicitante,
+      cabSolOCFecha: this.fechaSinFormato,
+      cabSolOCAsunto: this.cabecera.cabSolCotAsunto,
+      cabSolOCProcedimiento: this.cabecera.cabSolCotProcedimiento,
+      cabSolOCObervaciones: this.cabecera.cabSolCotObervaciones,
+      cabSolOCAdjCot: this.cabecera.cabSolCotAdjCot,
+      cabSolOCNumCotizacion: this.cabecera.cabSolCotNumCotizacion,
+      cabSolOCEstado: this.cabecera.cabSolCotEstado,
+      cabSolOCEstadoTracking: this.cabecera.cabSolCotEstadoTracking,
+      cabSolOCPlazoEntrega: this.cabecera.cabSolCotPlazoEntrega,
+      cabSolOCFechaMaxentrega: this.cabecera.cabSolCotFechaMaxentrega,
+      cabSolOCInspector: this.cabecera.cabSolCotInspector,
+      cabSolOCTelefInspector: this.cabecera.cabSolCotTelefInspector,
+      cabSolOCNumerico: this.cabecera.cabSolCotNumerico
+    };
+    //* Enviar datos para actualizar en tabla cab_sol_orden_compra
+    console.log('2. guardando solicitud...', dataCAB);
+    this.service.updateOrdencompra(this.cabecera.cabSolCotID, dataCAB).subscribe(
+      (response) => {
+        console.log('Actualizada ');
+        this.showmsj = true;
+        this.msjExito = 'Solicitud N°' + this.cabecera.cabSolCotNumerico + ' editada exitosamente.';
+        
+        setTimeout(() => {
+          this.msjExito = '';
+          this.showmsj = false;
+          //this.router.navigate(['allrequest']);
+          this.clear();
+        }, 4000);
+      },
+      (error) => {
+        console.log('error : ', error);
+        this.showmsjerror = true;
+        this.msjError = "No se ha podido guardar la solicitud, intente nuevamente.";
+
+        setTimeout(() => {
+          this.showmsjerror = false;
+          this.msjError = "";
+        }, 2500);
+      }
+    );
+
+  }
 }
