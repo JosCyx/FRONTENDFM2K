@@ -6,7 +6,6 @@ import { ItemSector } from 'src/app/models/procesos/ItemSector';
 import { Router } from '@angular/router';
 import { format, parseISO } from 'date-fns';
 import { es, oc } from 'date-fns/locale';
-import { CabeceraCotizacion } from 'src/app/models/procesos/solcotizacion/CabeceraCotizacion';
 import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/DetalleCotizacion';
 import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotizacion';
 import { GlobalService } from 'src/app/services/global.service';
@@ -44,6 +43,8 @@ export class SoliocComponent implements OnInit {
   trLastNoSol!: number;
   trNivelEmision: number = 10; //nivel de emision por defecto
   trIdNomEmp!: number;
+
+
 
   //variables de la cabecera
   cab_area!: number;
@@ -113,7 +114,7 @@ export class SoliocComponent implements OnInit {
   constructor(
     private service: CommunicationApiService,
     private router: Router,
-    private serviceGlobal: GlobalService
+    private serviceGlobal: GlobalService,
   ) {}
 
   ngOnInit(): void {
