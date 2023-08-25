@@ -238,24 +238,32 @@
                         <div class="input-group col std">
                             <label class="input-group-text">Tracking:</label>
                             <ng-container *ngFor="let nvTRk of nivelRut$ | async">
-                                <input *ngIf="nvTRk.nivel === cabecera.cabSolCotEstadoTracking" type="text" class="form-control" [value]="nvTRk.descRuteo" disabled />
+                                <input *ngIf="nvTRk.nivel === cabecera.cabSolCotEstadoTracking" type="text"
+                                    class="form-control" [value]="nvTRk.descRuteo" disabled />
                             </ng-container>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
 
             <div class="detalle">
                 <table class="table table-striped text-center">
                     <thead>
-                        <tr>
+                        <!-- <tr>
                             <th scope="col">Item</th>
                             <th scope="col">Descripción</th>
                             <th scope="col">Cantidad</th>
                             <th scope="col">Unidad</th>
                             <th scope="col">Sector</th>
                             <th></th>
+                        </tr> -->
+                        <tr>
+                            <th scope="col">Item</th>
+                            <th scope="col">Descripción*</th>
+                            <th scope="col">Presupuesto*</th>
+                            <th scope="col">Unidad</th>
+                            <th scope="col">Cantidad Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -264,7 +272,7 @@
                                 No se han registrado items para esta solicitud
                             </td>
                         </tr>
-                        <tr *ngFor="let itm of item; let i = index">
+                        <!-- <tr *ngFor="let itm of item; let i = index">
                             <th class="align-middle">{{ i + 1 }}</th>
                             <ng-container *ngFor="let detd of detalle; let d = index">
                                 <td *ngIf="detd.solCotIdDetalle == itm.itmIdDetalle" class="align-middle">
@@ -287,19 +295,27 @@
                                 (click)="confDeleteItm(itm.itmID, itm.itmIdItem, itm.itmNumSol)">
                                     <i class="bi bi-x-circle"></i></button>
                             </td>
-                        </tr>
-                        <tr>
-                            <th scope="col">Item</th>
-                            <th scope="col" colspan="2">Descripción*</th>
-                            <th scope="col">Presupuesto*</th>
-                            <th scope="col">Unidad</th>
-                            <th scope="col">Cantidad Total</th>
+                        </tr> -->
+                        <tr *ngFor="let det of detalle; let i = index">
+                            <td class="align-middle">{{ i+1 }}</td>
+                            <td class="align-middle">{{ det.solCotDescripcion }}</td>
+                            <td class="align-middle"><button class="btn btn-outline-primary" (click)="selectDet(det)"
+                                data-toggle="modal" data-target="#itemsectorEdit">Editar</button></td>
+                            <td class="align-middle">{{ det.solCotUnidad }}</td>
+                            <td class="align-middle">
+                                {{ det.solCotCantidadTotal }}
+                                <button class="btn text-danger">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </td>
                         </tr>
 
                         <tr>
                             <th class="align-middle">{{ det_id }}</th>
-                            <td class="align-middle" colspan="2">
-                                <div class="d-flex justify-content-between align-items-center">
+                            <td class="align-middle">
+                                <textarea name="descripcion" class="form-control" rows="2" cols="10"
+                                    placeholder="Descripción" [(ngModel)]="det_descp"></textarea>
+                                <!-- <div class="d-flex justify-content-between align-items-center">
                                     <div class="flex-grow-1">
                                         <textarea *ngIf="!detType" name="descripcion" class="form-control" rows="2"
                                             cols="10" placeholder="Descripción" [(ngModel)]="det_descp"></textarea>
@@ -315,7 +331,7 @@
                                             <i class="bi bi-repeat"></i>
                                         </button>
                                     </div>
-                                </div>
+                                </div> -->
                             </td>
 
                             <td class="align-middle">
@@ -343,9 +359,9 @@
                             </td>
                         </tr>
                         <tr>
-                            <td colspan="6" class="align-middle text-end">
+                            <td colspan="5" class="align-middle text-end">
                                 <button class="btn btn-success" [disabled]="!det_descp || tmpItemSect.length === 0"
-                                    (click)="addNewItems()">
+                                    (click)="addDetalle()">
                                     <i class="bi bi-list-check"></i>
                                 </button>
                             </td>
@@ -357,37 +373,37 @@
             <div class="foot-cabecera">
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="floatingInput"
-                        [(ngModel)]="cabecera.cabSolCotProcedimiento"  />
+                        [(ngModel)]="cabecera.cabSolCotProcedimiento" />
                     <label for="floatingInput">Materiales y procedimientos a seguir:</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="floatingInput"
-                        [(ngModel)]="cabecera.cabSolCotObervaciones"  />
+                        [(ngModel)]="cabecera.cabSolCotObervaciones" />
                     <label for="floatingInput">Observaciones:</label>
                 </div>
                 <div class="input-group mb-3">
                     <label class="input-group-text">Adjunto cotizaciones:</label>
-                    <select class="form-control" [(ngModel)]="cabecera.cabSolCotAdjCot" >
+                    <select class="form-control" [(ngModel)]="cabecera.cabSolCotAdjCot">
                         <option value="SI">Sí</option>
                         <option value="NO" selected>No</option>
                     </select>
                     <label class="input-group-text">Número de cotizaciones:</label>
-                    <input class="form-control" type="number" [(ngModel)]="cabecera.cabSolCotNumCotizacion"  />
+                    <input class="form-control" type="number" [(ngModel)]="cabecera.cabSolCotNumCotizacion" />
                 </div>
                 <div class="input-group mb-3">
                     <label class="input-group-text">Plazo de entrega:</label>
                     <input class="form-control" type="text" for="plazoentrega"
-                        [(ngModel)]="cabecera.cabSolCotPlazoEntrega"  />
+                        [(ngModel)]="cabecera.cabSolCotPlazoEntrega" />
                     <label class="input-group-text">Fecha máxima de entrega:</label>
                     <input class="form-control" type="text" for="fechamaxima"
-                        [(ngModel)]="cabecera.cabSolCotFechaMaxentrega"  />
+                        [(ngModel)]="cabecera.cabSolCotFechaMaxentrega" />
                 </div>
                 <div class="input-group mb-1">
                     <label class="input-group-text">Inspector:</label>
                     <input type="text" class="form-control" id="busqueda" list="inspectores"
-                        [(ngModel)]="cabecera.cabSolCotInspector"  />
+                        [(ngModel)]="cabecera.cabSolCotInspector" />
                     <label class="input-group-text">Teléfono:</label>
-                    <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolCotTelefInspector"  />
+                    <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolCotTelefInspector" />
                 </div>
             </div>
         </div>
@@ -412,6 +428,9 @@
 
     </div>
 </div>
+
+
+
 
 <!-- Modal para los items por sector-->
 <div class="modal fade" #exampleModal id="itemsector" data-backdrop="static" tabindex="-1" role="dialog"
@@ -442,7 +461,7 @@
                             <td class="align-middle">{{ item.item_cant }}</td>
                             <td class="align-middle">
                                 {{ item.item_sector
-                                }}<button class="btn text-danger" (click)="deleteItem(item.det_id)">
+                                }}<button class="btn text-danger" (click)="deleteItem(item.item_id)">
                                     <i class="bi bi-x-circle"></i>
                                 </button>
                             </td>
@@ -462,7 +481,6 @@
                                         placeholder="Cantidad" />
                                 </div>
                             </td>
-                            <!-- modificar el select para mostrar los sectores de la base de datos -->
                             <td class="align-middle" style="width: 150px">
                                 <div class="cel-prep">
                                     <select class="form-select" name="item_sector" [(ngModel)]="item_sector">
@@ -498,7 +516,102 @@
         </div>
     </div>
 </div>
-<!--Guardar la edicion de Orden Compra  -->
+
+
+<!-- Modal para editar los items-->
+<div class="modal fade" #exampleModal id="itemsectorEdit" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    Editar items segun el sector
+                </h3>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped text-center justify-content-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">N° Detalle</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">N° Item</th>
+                            <th scope="col">Cantidad*</th>
+                            <th scope="col" colspan="2">Sector*</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let itm of item; let i = index">
+                            <ng-container *ngIf="idDetEdit == itm.itmIdDetalle">
+                                <th class="align-middle">{{ itm.itmIdDetalle }}</th>
+                                <ng-container *ngFor="let detd of detalle; let d = index">
+                                    <td *ngIf="detd.solCotIdDetalle == itm.itmIdDetalle" class="align-middle">
+                                        {{ detd.solCotDescripcion }}
+                                    </td>
+                                </ng-container>
+                                <td class="align-middle">{{ itm.itmIdItem }}</td>
+                                <td class="align-middle">{{ itm.itmCantidad }}</td>
+                                <!-- <ng-container *ngFor="let detu of detalle; let d = index">
+                                    <td *ngIf="detu.solCotIdDetalle == itm.itmIdDetalle" class="align-middle">
+                                        {{ detu.solCotUnidad }}
+                                    </td>
+                                </ng-container> -->
+                                <ng-container *ngFor="let sect of sectores$ | async">
+                                    <td *ngIf="sect.sectIdNomina == itm.itmSector" class="align-middle">
+                                        {{ sect.sectNombre }}
+                                    </td>
+                                </ng-container>
+                                <td>
+                                    <button class="btn text-danger" data-toggle="modal" data-target="#dltItemSaved"
+                                        (click)="confDeleteItm(itm.itmID, itm.itmIdItem, itm.itmNumSol)">
+                                        <i class="bi bi-x-circle"></i></button>
+                                </td>
+                            </ng-container>
+
+                        </tr>
+                        <tr>
+                            <td class="align-middle">{{ det_id_edit }}</td>
+                            <td class="align-middle">
+                                <input class="form-control" type="text" value="Descripción" [(ngModel)]="det_descp_edit"
+                                    placeholder="Descripción" disabled />
+                            </td>
+                            <td class="align-middle cel-prep">
+                                <input type="text" class="form-control text-center" [(ngModel)]="item_id" disabled />
+                            </td>
+                            <td class="align-middle">
+                                <div class="cel-prep">
+                                    <input class="form-control" [(ngModel)]="item_cant" min="1" type="number"
+                                        placeholder="Cantidad" />
+                                </div>
+                            </td>
+                            <td class="align-middle" style="width: 150px" colspan="2">
+                                <div class="cel-prep">
+                                    <select class="form-select" name="item_sector" [(ngModel)]="item_sector">
+                                        <option *ngFor="let sect of sectores$ | async" [value]="sect.sectIdNomina">
+                                            {{ sect.sectNombre }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="align-middle text-end">
+                                <button class="btn btn-success" (click)="addNewItem()">
+                                    <i class="bi bi-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal" (click)="cancelarItem()">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Guardar edicion de solicitud  -->
 <div class="modal fade" #exampleModal id="guardarEdicion" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">

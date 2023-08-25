@@ -108,6 +108,11 @@ export class SolicotiComponent implements OnInit {
   idDlt!: number;
   idNSolDlt!: number;
   idItmDlt!: number;
+  idDetEdit!: number;
+  det_id_edit!: number;
+  det_descp_edit!: string;
+  lastIDItem!: number;
+  lastIDDet!: number;
 
 
 
@@ -133,7 +138,24 @@ export class SolicotiComponent implements OnInit {
 
     this.nivelRut$ = this.service.getNivelbyEstado('A').pipe(
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
-    ); 
+    );
+    this.service.getLastItemID().subscribe(
+      response => {
+        this.lastIDItem = response[0].itmID + 1;
+      },
+      error => {
+        console.log("Error, no se ha podido recuperar el ultimo id: ", error)
+      }
+    );
+
+    this.service.getLastDetalleID().subscribe(
+      response => {
+        this.lastIDDet = response[0].solCotID + 1;
+      },
+      error => {
+        console.log("Error, no se ha podido recuperar el ultimo detalle: ", error)
+      }
+    );
 
     if (this.changeview == 'editar') {
       this.editSolicitud();
@@ -242,13 +264,6 @@ export class SolicotiComponent implements OnInit {
     this.ngOnInit();
   }
 
-  cancelarItem(): void {
-    this.det_cantidad = 0;
-    if (!this.detType) {
-      this.item_id = 1;
-    }
-    this.tmpItemSect = [];
-  }
 
   clear(): void {
     this.empleado = '';
@@ -386,6 +401,7 @@ export class SolicotiComponent implements OnInit {
 
 
     try {
+      //recorre las listas de items y detalles y los envia a la api
       this.saveDetItem();
 
       this.getSolName(this.trLastNoSol);
@@ -558,6 +574,11 @@ export class SolicotiComponent implements OnInit {
       this.item_id = 1
     }
 
+    //si esta en la vista de editar, enviar los datos a las listas de la respuesta
+    if (this.changeview == "editar") {
+      this.saveLocaltoResponse();
+    }
+
     this.det_descp = '';
     this.det_unidad = 'Unidad';
     this.det_cantidad = 0;
@@ -614,7 +635,8 @@ export class SolicotiComponent implements OnInit {
 
     this.tmpItemSect.push(tmpItemSector);
 
-    this.det_cantidad += this.item_cant;
+    //this.det_cantidad += this.item_cant;
+    this.calcularSumaItems();
 
     //aumenta el valor del id de los items
     for (let itm of this.tmpItemSect) {
@@ -623,6 +645,15 @@ export class SolicotiComponent implements OnInit {
 
     this.item_cant = 1;
     this.item_sector = 0;
+  }
+
+  calcularSumaItems() {
+    this.det_cantidad = 0;
+    for (let itm of this.tmpItemSect) {
+      if (itm.det_id === this.det_id) {
+        this.det_cantidad += itm.item_cant;
+      }
+    }
   }
 
 
@@ -644,17 +675,20 @@ export class SolicotiComponent implements OnInit {
     const index = this.tmpItemSect.findIndex(item => item.item_id === id);
 
     console.log(index)
+    console.log(id)
     if (index !== -1) {
       console.log("item eliminado")
       this.tmpItemSect.splice(index, 1);
       this.idToIndexMap.delete(index);
     }
-
+    this.calcularSumaItems();
+    
     for (let i = 0; i < this.tmpItemSect.length; i++) {
       this.tmpItemSect[i].item_id = i + 1;
       this.idToIndexMap.set(this.tmpItemSect[i].item_id, i);
     }
     this.incrementItemID();
+
 
   }
 
@@ -675,8 +709,48 @@ export class SolicotiComponent implements OnInit {
 
     }
 
-
     console.log("Items:", this.itemSectorList);
+
+  }
+
+  saveLocaltoResponse() {
+    for (let itm of this.itemSectorList) {
+
+      const data = {
+        itmID: this.lastIDItem,//modificar
+        itmTipoSol: this.cabecera.cabSolCotTipoSolicitud,
+        itmNumSol: this.cabecera.cabSolCotNoSolicitud,
+        itmIdDetalle: itm.det_id,
+        itmIdItem: itm.item_id,
+        itmCantidad: itm.item_cant,
+        itmSector: itm.item_sector
+      }
+
+      this.item.push(data);
+
+      this.lastIDItem++;
+      console.log("proximo id de item:", this.lastIDItem);
+    }
+
+    for (let det of this.detalleList) {
+
+      const data = {
+        solCotID: this.lastIDDet,
+        solCotTipoSol: this.cabecera.cabSolCotTipoSolicitud,
+        solCotNoSol: this.cabecera.cabSolCotNoSolicitud,
+        solCotIdDetalle: det.det_id,
+        solCotDescripcion: det.det_descp,
+        solCotUnidad: det.det_unidad,
+        solCotCantidadTotal: det.det_cantidad
+      }
+
+      this.detalle.push(data);
+
+      this.lastIDDet++;
+
+      console.log("proximo id de detalle: ", this.lastIDDet);
+    }
+
   }
 
   //editar solicitudes
@@ -710,7 +784,9 @@ export class SolicotiComponent implements OnInit {
 
     for (let det of this.solicitudEdit.detalles) {
       this.detalle.push(det as DetalleCotizacion);
+      this.det_id = det.solCotIdDetalle + 2;
     }
+    this.detalle.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
 
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
@@ -762,9 +838,14 @@ export class SolicotiComponent implements OnInit {
     this.changeView('consultar');
   }
 
-  //ediar items y detalles de la solicitud cargada
 
 
+
+
+
+
+
+  //ELIMINAR ITEMS Y REORNDENAR LOS IDS
 
   confDeleteItm(idList: number, idItem: number, idNSol: number) {//abre el modal y guarda los datos del item en variables locales
     this.idDlt = idList;
@@ -778,40 +859,10 @@ export class SolicotiComponent implements OnInit {
 
     if (index !== -1) {
       this.item.splice(index, 1);
-      this.saveItemDB();
-    }
-  }
-
-  //actualizar todos los detalles y verificar detalles sin items
-
-  async saveItemDB() {
-    try {
-      await this.deleteAllItems();
-      setTimeout(() => {
-        this.reorderAndSaveItems();
-        this.checkAndDeleteDetails();
-      }, 200);
-
-
-      console.log("Proceso completado exitosamente.");
-    } catch (error) {
-      console.error("Error durante el proceso:", error);
-    }
-
-  }
-
-  async deleteAllItems() {
-    try {
-      await this.service.deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt).subscribe(
-        response => {
-          console.log("todos los items eliminados");
-        },
-        error => {
-          console.log("Error: ", error);
-        }
-      );
-    } catch (error) {
-      console.error("Error durante la eliminación:", error);
+      this.reorderAndSaveItems();
+      this.calcularCantDetalle();
+      this.calcularIdItem();
+      //this.saveItemDB();
     }
   }
 
@@ -827,28 +878,49 @@ export class SolicotiComponent implements OnInit {
 
       item.itmIdItem = detailItemMap[detalle];
       detailItemMap[detalle]++;
-
-      const data = {
-        itmTipoSol: item.itmTipoSol,
-        itmNumSol: item.itmNumSol,
-        itmIdDetalle: item.itmIdDetalle,
-        itmIdItem: item.itmIdItem,
-        itmCantidad: item.itmCantidad,
-        itmSector: item.itmSector
-      };
-
-      this.service.addItemSector(data).subscribe(
-        response => {
-          console.log("Item guardado exitosamente.");
-        },
-        error => {
-          console.log("No se pudo guardar el item, error: ", error);
-        }
-      );
     }
+    console.log(this.item);
   }
 
-  async checkAndDeleteDetails() {
+  //actualizar todos los detalles y verificar detalles sin items
+
+  /*async saveItemDB() {
+    try {
+      await this.deleteAllItems();
+      setTimeout(() => {
+        this.reorderAndSaveItems();
+        this.checkAndDeleteDetails();
+      }, 200);
+
+
+      console.log("Proceso completado exitosamente.");
+    } catch (error) {
+      console.error("Error durante el proceso:", error);
+    }
+
+  }*/
+
+  /* async deleteAllItems() {
+     try {
+       await this.service.deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt).subscribe(
+         response => {
+           console.log("todos los items eliminados");
+         },
+         error => {
+           console.log("Error: ", error);
+         }
+       );
+     } catch (error) {
+       console.error("Error durante la eliminación:", error);
+     }
+   }*/
+
+
+
+
+
+
+  /*async checkAndDeleteDetails() {
     //verificar si algun detalle no tiene items y eliminarlo
     for (let det of this.detalle) {
       console.log(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle);
@@ -875,10 +947,10 @@ export class SolicotiComponent implements OnInit {
         }
       );
     }
-  }
+  }*/
 
   //añadir nuevos items a la solicitud cargada
-  addNewItems() {
+  /*addNewItemsss() {
 
     this.addDetalle();
     setTimeout(() => {
@@ -887,9 +959,70 @@ export class SolicotiComponent implements OnInit {
       this.clearList();
     }, 200)
 
+  }*/
+
+  //AGREGAR NUEVO ITEM A UN DETALLE SELECCIONADO
+  addNewItem() {
+    const data = {
+      itmID: this.lastIDItem,//obtener el ultimo id de los items y sumar +1
+      itmTipoSol: this.cabecera.cabSolCotTipoSolicitud,
+      itmNumSol: this.cabecera.cabSolCotNoSolicitud,
+      itmIdDetalle: this.idDetEdit,
+      itmIdItem: this.item_id,
+      itmCantidad: this.item_cant,
+      itmSector: this.item_sector
+    }
+
+    this.item.push(data);
+    this.lastIDItem++;
+    console.log(this.item);
+    console.log("Ultimo id disponible:", this.lastIDItem);
+
+
+    this.calcularIdItem();
+    this.calcularCantDetalle();
+    this.item_cant = 1;
+    this.item_sector = 0;
   }
 
-  changeDet() {
+  selectDet(det: DetalleCotizacion) {
+    this.idDetEdit = det.solCotIdDetalle;
+    this.det_descp_edit = det.solCotDescripcion;
+    this.det_id_edit = det.solCotIdDetalle;
+    this.calcularIdItem();
+  }
+
+  cancelarItem(): void {
+    this.calcularCantDetalle();
+    this.det_cantidad = 0;
+    this.det_descp_edit = '';
+    this.item_id = 1;
+    this.tmpItemSect = [];
+  }
+
+  calcularCantDetalle() {
+    for (let det of this.detalle) {
+      if (det.solCotIdDetalle === this.idDetEdit) {
+        det.solCotCantidadTotal = 0; // Reiniciar la cantidad total del detalle
+        for (let itm of this.item) {
+          if (itm.itmIdDetalle === det.solCotIdDetalle) {
+            det.solCotCantidadTotal += itm.itmCantidad;
+          }
+        }
+      }
+    }
+    //this.det_cantidad += this.item_cant;
+  }
+
+  calcularIdItem() {
+    for (let itm of this.item) {
+      if (itm.itmIdDetalle === this.idDetEdit) {
+        this.item_id = itm.itmIdItem + 1;
+      }
+    }
+  }
+
+  /*changeDet() {
     this.detType = !this.detType;
     this.det_descp = '';
     this.itemSectorList = [];
@@ -900,10 +1033,10 @@ export class SolicotiComponent implements OnInit {
         this.item_id = 1;
       }
     }
-  }
+  }*/
 
 
-  setDetId() {
+  /*setDetId() {
     const selectedDetalle = this.detalle.find(det => det.solCotDescripcion === this.det_descp);
 
     if (selectedDetalle) {
@@ -920,9 +1053,11 @@ export class SolicotiComponent implements OnInit {
       this.item_id = 1;
     }
 
-  }
+  }*/
 
-  saveDetItemEdit() {
+
+  //envia a la api los items y los detalles
+  /*saveDetItemEdit() {
     //enviar la lista detalle a la api para registrarla
     for (let detalle of this.detalleList) {
       // Verificar si el detalle no existe en la lista actual de detalles
@@ -978,18 +1113,20 @@ export class SolicotiComponent implements OnInit {
 
     }
     //console.log(this.itemSectorList);
-  }
+  }*/
 
   clearList() {
     this.itemSectorList = [];
     this.detalleList = [];
   }
 
+
+  ///GUARDAR EDICION DE LA CABECERA
   convertirStringAFecha(fechaStr: string): Date {
     const fechaConvertida = new Date(fechaStr);
     return fechaConvertida;
   }
-  //* Editar orden compra en el Enviar
+
   saveEditCabecera() {
     const dataCAB = {
       cabSolOCID: this.cabecera.cabSolCotID,
@@ -1018,7 +1155,7 @@ export class SolicotiComponent implements OnInit {
         console.log('Actualizada ');
         this.showmsj = true;
         this.msjExito = 'Solicitud N°' + this.cabecera.cabSolCotNumerico + ' editada exitosamente.';
-        
+
         setTimeout(() => {
           this.msjExito = '';
           this.showmsj = false;
@@ -1039,4 +1176,6 @@ export class SolicotiComponent implements OnInit {
     );
 
   }
+
+
 }
