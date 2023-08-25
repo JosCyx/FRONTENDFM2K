@@ -44,8 +44,6 @@ export class SoliocComponent implements OnInit {
   trNivelEmision: number = 10; //nivel de emision por defecto
   trIdNomEmp!: number;
 
-
-
   //variables de la cabecera
   cab_area!: number;
   cab_fecha: string = this.formatDateToYYYYMMDD(this.fecha);
@@ -114,7 +112,7 @@ export class SoliocComponent implements OnInit {
   constructor(
     private service: CommunicationApiService,
     private router: Router,
-    private serviceGlobal: GlobalService,
+    private serviceGlobal: GlobalService
   ) {}
 
   ngOnInit(): void {
