@@ -210,4 +210,13 @@ export class CommunicationApiService {
   getItemsbyDet(tipoSol: number, noSol: number, noDet: number): Observable<any>{
     return this.http.get<any>(`${this.APIUrl}/ItemSectors/${tipoSol}/${noSol}/${noDet}`);
   }
+
+  getLastItemID():Observable<any>{
+    return this.http.get<any>(this.APIUrl + '/ItemSectors/GetLastItemID');
+  }
+
+  getLastDetalleID():Observable<any>{
+    return this.http.get<any>(this.APIUrl + '/DetSolCotizacions/GetLastDetalleID');
+  }
+
 }
