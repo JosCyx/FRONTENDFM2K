@@ -8,7 +8,7 @@
                     <button class="btn btn-primary m-2" (click)="changeView('crear')">
                         Crear
                     </button>
-                    <button class="btn btn-primary m-2">Boton</button>
+                    <button class="btn btn-primary m-2" (click)="metodo()">Boton</button>
                     <span *ngIf="changeview === 'crear'"></span>
                 </div>
             </div>
@@ -111,7 +111,7 @@
                             <td colspan="5" class="align-middle text-end">
                                 <button class="btn btn-success" [disabled]="!det_descp || tmpItemSect.length === 0"
                                     (click)="addDetalle()">
-                                    <i class="bi bi-list-check"></i>
+                                    <i class="bi bi-check"></i>
                                 </button>
                             </td>
                         </tr>
@@ -298,13 +298,27 @@
                         </tr> -->
                         <tr *ngFor="let det of detalle; let i = index">
                             <td class="align-middle">{{ i+1 }}</td>
-                            <td class="align-middle">{{ det.solCotDescripcion }}</td>
+                            <td class="align-middle">
+                                <input type="text" class="form-control" [(ngModel)]="det.solCotDescripcion"></td>
                             <td class="align-middle"><button class="btn btn-outline-primary" (click)="selectDet(det)"
                                 data-toggle="modal" data-target="#itemsectorEdit">Editar</button></td>
-                            <td class="align-middle">{{ det.solCotUnidad }}</td>
+                            <td class="align-middle">
+                                <select class="form-control" [(ngModel)]="det.solCotUnidad">
+                                    <option value="Unidad">Unidad</option>
+                                    <option value="Sacos">Sacos</option>
+                                    <option value="Paquete">Paquete</option>
+                                    <option value="Avance de Obra">Avance de Obra</option>
+                                    <option value="Millar">Millar</option>
+                                    <option value="Metros">Metros</option>
+                                    <option value="Kilos">Kilos</option>
+                                    <option value="Gramos">Gramos</option>
+                                    <option value="Caneca">Caneca</option>
+                                </select>
+                            </td>
                             <td class="align-middle">
                                 {{ det.solCotCantidadTotal }}
-                                <button class="btn text-danger">
+                                <button class="btn text-danger" (click)="confDeleteDet(det.solCotID, det.solCotIdDetalle)" 
+                                data-toggle="modal" data-target="#dltDetSaved">
                                     <i class="bi bi-x-circle"></i>
                                 </button>
                             </td>
@@ -336,7 +350,7 @@
 
                             <td class="align-middle">
                                 <button class="btn btn-outline-primary" data-toggle="modal" data-target="#itemsector"
-                                    [disabled]="!det_descp">
+                                    [disabled]="!det_descp" (click)="openModalItem()">
                                     Desglose
                                 </button>
                             </td>
@@ -362,7 +376,7 @@
                             <td colspan="5" class="align-middle text-end">
                                 <button class="btn btn-success" [disabled]="!det_descp || tmpItemSect.length === 0"
                                     (click)="addDetalle()">
-                                    <i class="bi bi-list-check"></i>
+                                    <i class="bi bi-check"></i>
                                 </button>
                             </td>
                         </tr>
@@ -485,7 +499,7 @@
                                 <div class="cel-prep">
                                     <select class="form-select" name="item_sector" [(ngModel)]="item_sector">
                                         <option selected disabled value="0">
-                                            Selecciona una aplicación...
+                                            Selecciona un sector...
                                         </option>
                                         <option *ngFor="let sect of sectores$ | async" [value]="sect.sectIdNomina">
                                             {{ sect.sectNombre }}
@@ -497,7 +511,7 @@
                         <tr>
                             <td colspan="5" class="align-middle text-end">
                                 <button class="btn btn-success" [disabled]="!item_sector" (click)="addItemSector()">
-                                    <i class="bi bi-list-check"></i>
+                                    <i class="bi bi-check"></i>
                                 </button>
                             </td>
                         </tr>
@@ -545,7 +559,7 @@
                                 <th class="align-middle">{{ itm.itmIdDetalle }}</th>
                                 <ng-container *ngFor="let detd of detalle; let d = index">
                                     <td *ngIf="detd.solCotIdDetalle == itm.itmIdDetalle" class="align-middle">
-                                        {{ detd.solCotDescripcion }}
+                                        <input type="text" class="form-control" [value]="detd.solCotDescripcion" disabled>
                                     </td>
                                 </ng-container>
                                 <td class="align-middle">{{ itm.itmIdItem }}</td>
@@ -596,8 +610,7 @@
                         <tr>
                             <td colspan="6" class="align-middle text-end">
                                 <button class="btn btn-success" (click)="addNewItem()">
-                                    <i class="bi bi-check"></i>
-                                </button>
+                                    <i class="bi bi-check"></i></button>
                             </td>
                         </tr>
                     </tbody>
@@ -611,7 +624,8 @@
         </div>
     </div>
 </div>
-<!--Guardar edicion de solicitud  -->
+
+<!--Modal para guardar edicion de solicitud  -->
 <div class="modal fade" #exampleModal id="guardarEdicion" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -625,7 +639,7 @@
                 <p>Texto</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveEditCabecera()">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveEdit()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -678,6 +692,31 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteItemSaved()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para confirmar eliminacion de detalle-->
+<div class="modal fade" #exampleModal id="dltDetSaved" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea eliminar este detalle?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteDetSaved()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
