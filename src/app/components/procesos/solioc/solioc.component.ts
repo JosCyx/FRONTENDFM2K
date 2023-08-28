@@ -103,11 +103,18 @@ export class SoliocComponent implements OnInit {
   //sectores: any[] = [];
   inspectores: any[] = [];
 
-  //variable editar
+  //variable editar orden compra
   solID: number = this.serviceGlobal.solID;
   idDlt!: number;
   idNSolDlt!: number;
   idItmDlt!: number;
+  //
+  idDetEdit!: number;
+  det_id_edit!: number;
+  det_descp_edit!: string;
+  //
+  lastIDItem!: number;
+  lastIDDet!: number;
 
   constructor(
     private service: CommunicationApiService,
@@ -268,10 +275,10 @@ export class SoliocComponent implements OnInit {
   }
 
   cancelarItem(): void {
+    this.calcularCantDetalle();
     this.det_cantidad = 0;
-    if (!this.detType) {
-      this.item_id = 1;
-    }
+    this.det_descp_edit = '';
+    this.item_id = 1;
     this.tmpItemSect = [];
   }
 
@@ -564,6 +571,7 @@ export class SoliocComponent implements OnInit {
   }
   //agrega los detalles a la lista detalles
   addDetalle() {
+    this.saveItemSect();
     const detalle = {
       det_id: this.det_id,
       det_descp: this.det_descp,
@@ -572,13 +580,14 @@ export class SoliocComponent implements OnInit {
     };
 
     this.detalleList.push(detalle);
-    //console.log(this.detalleList);
-
-    //aumenta el valor del id de detalle
     this.incrementDetID();
 
     if (!this.detType) {
       this.item_id = 1;
+    }
+    //
+    if (this.changeview == 'editar') {
+      this.saveLocaltoResponse();
     }
 
     this.det_descp = '';
@@ -630,14 +639,21 @@ export class SoliocComponent implements OnInit {
 
     this.tmpItemSect.push(tmpItemSector);
 
-    this.incrementItemID();
-
-    this.det_cantidad += this.item_cant;
+    //this.det_cantidad += this.item_cant;
+    this.calcularSumaItems();
 
     //aumenta el valor del id de los items
 
     this.item_cant = 1;
     this.item_sector = 0;
+  }
+  calcularSumaItems() {
+    this.det_cantidad = 0;
+    for (let itm of this.tmpItemSect) {
+      if (itm.det_id === this.det_id) {
+        this.det_cantidad += itm.item_cant;
+      }
+    }
   }
 
   //agregar los items de la lista temporal a la lista definitiva
@@ -678,14 +694,14 @@ export class SoliocComponent implements OnInit {
       this.tmpItemSect.splice(index, 1);
       this.idToIndexMap.delete(index);
     }
-
+    this.calcularSumaItems();
     for (let i = 0; i < this.tmpItemSect.length; i++) {
       this.tmpItemSect[i].item_id = i + 1;
       this.idToIndexMap.set(this.tmpItemSect[i].item_id, i);
     }
     this.incrementItemID();
 
-    setTimeout(() => {}, 500);
+    //setTimeout(() => {}, 500);
   }
   //
   async editSolicitud() {
@@ -785,41 +801,43 @@ export class SoliocComponent implements OnInit {
   }
   deleteItemSaved() {
     const index = this.item.findIndex((itm) => itm.itmID === this.idDlt);
-
     if (index !== -1) {
       this.item.splice(index, 1);
-      this.saveItemDB();
+      // this.saveItemDB();
+      this.reorderAndSaveItems();
+      this.calcularCantDetalle();
+      this.calcularIdItem();
     }
   }
   //
-  async saveItemDB() {
-    try {
-      await this.deleteAllItems();
-      setTimeout(() => {
-        this.reorderAndSaveItems();
-        this.checkAndDeleteDetails();
-      }, 200);
-      console.log('Proceso completado exitosamente.');
-    } catch (error) {
-      console.error('Error durante el proceso:', error);
-    }
-  }
-  async deleteAllItems() {
-    try {
-      await this.service
-        .deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt)
-        .subscribe(
-          (response) => {
-            console.log('todos los Item eliminados');
-          },
-          (error) => {
-            console.log('Error: ', error);
-          }
-        );
-    } catch (error) {
-      console.error('Error durante la eliminación:', error);
-    }
-  }
+  // async saveItemDB() {
+  //   try {
+  //     await this.deleteAllItems();
+  //     setTimeout(() => {
+  //       this.reorderAndSaveItems();
+  //       this.checkAndDeleteDetails();
+  //     }, 200);
+  //     console.log('Proceso completado exitosamente.');
+  //   } catch (error) {
+  //     console.error('Error durante el proceso:', error);
+  //   }
+  // }
+  // async deleteAllItems() {
+  //   try {
+  //     await this.service
+  //       .deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt)
+  //       .subscribe(
+  //         (response) => {
+  //           console.log('todos los Item eliminados');
+  //         },
+  //         (error) => {
+  //           console.log('Error: ', error);
+  //         }
+  //       );
+  //   } catch (error) {
+  //     console.error('Error durante la eliminación:', error);
+  //   }
+  // }
   async reorderAndSaveItems() {
     const detailItemMap: { [key: number]: number } = {};
 
@@ -852,46 +870,46 @@ export class SoliocComponent implements OnInit {
       );
     }
   }
-  async checkAndDeleteDetails() {
-    //verificar si algun detalle no tiene items y eliminarlo
-    for (let det of this.detalle) {
-      console.log(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle);
+  // async checkAndDeleteDetails() {
+  //   //verificar si algun detalle no tiene items y eliminarlo
+  //   for (let det of this.detalle) {
+  //     console.log(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle);
 
-      this.service
-        .getItemsbyDet(
-          this.trTipoSolicitud,
-          this.idNSolDlt,
-          det.solCotIdDetalle
-        )
-        .subscribe(
-          (response) => {
-            if (response === 0) {
-              console.log(
-                'NO existen items para el detalle: ',
-                det.solCotIdDetalle
-              );
-              //eliminar el detalle
-              this.service.deleteDetallebyId(det.solCotID).subscribe(
-                (response) => {
-                  console.log('Se ha eliminado el detalle.');
-                },
-                (error) => {
-                  console.log('No se pudo eliminar el detalle, error: ', error);
-                }
-              );
-            } else {
-              console.log(
-                'SI existen items para el detalle: ',
-                det.solCotIdDetalle
-              );
-            }
-          },
-          (error) => {
-            console.log('Error: ', error);
-          }
-        );
-    }
-  }
+  //     this.service
+  //       .getItemsbyDet(
+  //         this.trTipoSolicitud,
+  //         this.idNSolDlt,
+  //         det.solCotIdDetalle
+  //       )
+  //       .subscribe(
+  //         (response) => {
+  //           if (response === 0) {
+  //             console.log(
+  //               'NO existen items para el detalle: ',
+  //               det.solCotIdDetalle
+  //             );
+  //             //eliminar el detalle
+  //             this.service.deleteDetallebyId(det.solCotID).subscribe(
+  //               (response) => {
+  //                 console.log('Se ha eliminado el detalle.');
+  //               },
+  //               (error) => {
+  //                 console.log('No se pudo eliminar el detalle, error: ', error);
+  //               }
+  //             );
+  //           } else {
+  //             console.log(
+  //               'SI existen items para el detalle: ',
+  //               det.solCotIdDetalle
+  //             );
+  //           }
+  //         },
+  //         (error) => {
+  //           console.log('Error: ', error);
+  //         }
+  //       );
+  //   }
+  // }
   //* convertir de tipo String a  new DATE
   convertirStringAFecha(fechaStr: string): Date {
     const fechaConvertida = new Date(fechaStr);
@@ -952,14 +970,14 @@ export class SoliocComponent implements OnInit {
     );
   }
   //** */
-  addNewItem() {
-    this.addDetalle();
-    setTimeout(() => {
-      this.saveItemDetEdit();
-      this.editSolicitud();
-      this.clearList();
-    }, 200);
-  }
+  // addNewItem() {
+  //   this.addDetalle();
+  //   setTimeout(() => {
+  //     this.saveItemDetEdit();
+  //     this.editSolicitud();
+  //     this.clearList();
+  //   }, 200);
+  // }
   //
   clearList() {
     this.itemSectorList = [];
@@ -1064,6 +1082,94 @@ export class SoliocComponent implements OnInit {
           );
         }
       );
+    }
+  }
+  
+  
+  //Guardar a la tabla
+  saveLocaltoResponse() {
+    for (let itm of this.itemSectorList) {
+      const data = {
+        itmID: this.lastIDItem, //modificar
+        itmTipoSol: this.cabecera.cabSolOCTipoSolicitud,
+        itmNumSol: this.cabecera.cabSolOCNoSolicitud,
+        itmIdDetalle: itm.det_id,
+        itmIdItem: itm.item_id,
+        itmCantidad: itm.item_cant,
+        itmSector: itm.item_sector,
+      };
+
+      this.item.push(data);
+
+      this.lastIDItem++;
+      console.log('proximo id de item:', this.lastIDItem);
+    }
+
+    for (let det of this.detalleList) {
+      const data = {
+        solCotID: this.lastIDDet,
+        solCotTipoSol: this.cabecera.cabSolOCTipoSolicitud,
+        solCotNoSol: this.cabecera.cabSolOCNoSolicitud,
+        solCotIdDetalle: det.det_id,
+        solCotDescripcion: det.det_descp,
+        solCotUnidad: det.det_unidad,
+        solCotCantidadTotal: det.det_cantidad,
+      };
+
+      this.detalle.push(data);
+
+      this.lastIDDet++;
+
+      console.log('proximo id de detalle: ', this.lastIDDet);
+    }
+  }
+  addNewItem() {
+    const data = {
+      itmID: this.lastIDItem, //obtener el ultimo id de los items y sumar +1
+      itmTipoSol: this.cabecera.cabSolOCTipoSolicitud,
+      itmNumSol: this.cabecera.cabSolOCNoSolicitud,
+      itmIdDetalle: this.idDetEdit,
+      itmIdItem: this.item_id,
+      itmCantidad: this.item_cant,
+      itmSector: this.item_sector,
+    };
+
+    this.item.push(data);
+    this.lastIDItem++;
+    console.log(this.item);
+    console.log('Ultimo id disponible:', this.lastIDItem);
+
+    this.calcularIdItem();
+    this.calcularCantDetalle();
+    this.item_cant = 1;
+    this.item_sector = 0;
+  }
+  //Al momento de seleccionar
+  selectDet(det: DetalleCotizacion) {
+    this.idDetEdit = det.solCotIdDetalle;
+    this.det_descp_edit = det.solCotDescripcion;
+    this.det_id_edit = det.solCotIdDetalle;
+    this.calcularIdItem();
+  }
+  //*
+  calcularCantDetalle() {
+    for (let det of this.detalle) {
+      if (det.solCotIdDetalle === this.idDetEdit) {
+        det.solCotCantidadTotal = 0; // Reiniciar la cantidad total del detalle
+        for (let itm of this.item) {
+          if (itm.itmIdDetalle === det.solCotIdDetalle) {
+            det.solCotCantidadTotal += itm.itmCantidad;
+          }
+        }
+      }
+    }
+    //this.det_cantidad += this.item_cant;
+  }
+  calcularIdItem() {
+    for (let itm of this.item) {
+      if (itm.itmIdDetalle === this.idDetEdit) {
+        this.item_id = itm.itmIdItem + 1;
+      }
     }
   }
 }
