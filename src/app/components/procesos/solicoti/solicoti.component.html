@@ -8,7 +8,7 @@
                     <button class="btn btn-primary m-2" (click)="changeView('crear')">
                         Crear
                     </button>
-                    <button class="btn btn-primary m-2" (click)="metodo()">Boton</button>
+                    <button class="btn btn-primary m-2">Boton</button>
                     <span *ngIf="changeview === 'crear'"></span>
                 </div>
             </div>
@@ -632,11 +632,11 @@
         <div class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea Guardar los Cambios Realizados?
+                    Guardar cambios
                 </h3>
             </div>
             <div class="modal-body">
-                <p>Texto</p>
+                <p>¿Está seguro que desea guardar los cambios realizados en la solicitud?</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveEdit()">
