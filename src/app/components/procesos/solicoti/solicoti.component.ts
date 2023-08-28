@@ -106,13 +106,15 @@ export class SolicotiComponent implements OnInit {
   //edicion de solicitud de cotizacion
   solID: number = this.serviceGlobal.solID;
   idDlt!: number;
+  idDltDetList!: number;
+  idDltDet!: number
   idNSolDlt!: number;
   idItmDlt!: number;
   idDetEdit!: number;
   det_id_edit!: number;
   det_descp_edit!: string;
-  lastIDItem!: number;
-  lastIDDet!: number;
+  // lastIDItem!: number;
+  // lastIDDet!: number;
 
 
 
@@ -139,23 +141,24 @@ export class SolicotiComponent implements OnInit {
     this.nivelRut$ = this.service.getNivelbyEstado('A').pipe(
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
     );
-    this.service.getLastItemID().subscribe(
-      response => {
-        this.lastIDItem = response[0].itmID + 1;
-      },
-      error => {
-        console.log("Error, no se ha podido recuperar el ultimo id: ", error)
-      }
-    );
 
-    this.service.getLastDetalleID().subscribe(
-      response => {
-        this.lastIDDet = response[0].solCotID + 1;
-      },
-      error => {
-        console.log("Error, no se ha podido recuperar el ultimo detalle: ", error)
-      }
-    );
+    // this.service.getLastItemID().subscribe(
+    //   response => {
+    //     this.lastIDItem = response[0].itmID + 1;
+    //   },
+    //   error => {
+    //     console.log("Error, no se ha podido recuperar el ultimo id: ", error)
+    //   }
+    // );
+
+    // this.service.getLastDetalleID().subscribe(
+    //   response => {
+    //     this.lastIDDet = response[0].solCotID + 1;
+    //   },
+    //   error => {
+    //     console.log("Error, no se ha podido recuperar el ultimo detalle: ", error)
+    //   }
+    // );
 
     if (this.changeview == 'editar') {
       this.editSolicitud();
@@ -577,6 +580,7 @@ export class SolicotiComponent implements OnInit {
     //si esta en la vista de editar, enviar los datos a las listas de la respuesta
     if (this.changeview == "editar") {
       this.saveLocaltoResponse();
+      console.log("Item a enviar a la api: ", this.item)
     }
 
     this.det_descp = '';
@@ -682,7 +686,7 @@ export class SolicotiComponent implements OnInit {
       this.idToIndexMap.delete(index);
     }
     this.calcularSumaItems();
-    
+
     for (let i = 0; i < this.tmpItemSect.length; i++) {
       this.tmpItemSect[i].item_id = i + 1;
       this.idToIndexMap.set(this.tmpItemSect[i].item_id, i);
@@ -713,11 +717,12 @@ export class SolicotiComponent implements OnInit {
 
   }
 
+  //guarda los items de la lista local a la lista ITEM que tiene la respuesta de la solicitud
   saveLocaltoResponse() {
     for (let itm of this.itemSectorList) {
 
       const data = {
-        itmID: this.lastIDItem,//modificar
+        itmID: 0,//valor sin importancia porque lo asigna la base de datos
         itmTipoSol: this.cabecera.cabSolCotTipoSolicitud,
         itmNumSol: this.cabecera.cabSolCotNoSolicitud,
         itmIdDetalle: itm.det_id,
@@ -727,15 +732,14 @@ export class SolicotiComponent implements OnInit {
       }
 
       this.item.push(data);
-
-      this.lastIDItem++;
-      console.log("proximo id de item:", this.lastIDItem);
     }
+
+    this.itemSectorList = [];
 
     for (let det of this.detalleList) {
 
       const data = {
-        solCotID: this.lastIDDet,
+        solCotID: 0,//valor sin importancia porque lo asigna la base de datos
         solCotTipoSol: this.cabecera.cabSolCotTipoSolicitud,
         solCotNoSol: this.cabecera.cabSolCotNoSolicitud,
         solCotIdDetalle: det.det_id,
@@ -745,15 +749,12 @@ export class SolicotiComponent implements OnInit {
       }
 
       this.detalle.push(data);
-
-      this.lastIDDet++;
-
-      console.log("proximo id de detalle: ", this.lastIDDet);
     }
 
+    this.detalleList = [];
   }
 
-  //editar solicitudes
+  /////////////////////////////////////////PETICION DE SOLICITUD SELECCIONADA/////////////////////////////////////////
   async editSolicitud() {
     this.clearSolGuardada();
     await this.getSolicitud();
@@ -838,14 +839,74 @@ export class SolicotiComponent implements OnInit {
     this.changeView('consultar');
   }
 
-
-
-
-
-
-
-
   //ELIMINAR ITEMS Y REORNDENAR LOS IDS
+
+  metodo() {
+    // console.log("Cabecera: ", this.cabecera);
+    // console.log("Lista de detalles hacia la api: ", this.detalle);
+    // console.log("Lista de items hacia la api: ", this.item);
+    const dataCAB = {
+      cabSolCotTipoSolicitud: this.cabecera.cabSolCotTipoSolicitud,
+      cabSolCotArea: this.cabecera.cabSolCotArea,
+      cabSolCotNoSolicitud: this.cabecera.cabSolCotNoSolicitud,
+      cabSolCotSolicitante: this.cabecera.cabSolCotSolicitante,
+      cabSolCotFecha: this.fechaSinFormato,
+      cabSolCotAsunto: this.cabecera.cabSolCotAsunto,
+      cabSolCotProcedimiento: this.cabecera.cabSolCotProcedimiento,
+      cabSolCotObervaciones: this.cabecera.cabSolCotObervaciones,
+      cabSolCotAdjCot: this.cabecera.cabSolCotAdjCot,
+      cabSolCotNumCotizacion: this.cabecera.cabSolCotNumCotizacion,
+      cabSolCotEstado: this.cabecera.cabSolCotEstado,
+      cabSolCotEstadoTracking: this.cabecera.cabSolCotEstadoTracking,
+      cabSolCotPlazoEntrega: this.cabecera.cabSolCotPlazoEntrega,
+      cabSolCotFechaMaxentrega: this.cabecera.cabSolCotFechaMaxentrega,
+      cabSolCotInspector: this.cabecera.cabSolCotInspector,
+      cabSolCotTelefInspector: this.cabecera.cabSolCotTelefInspector,
+      cabSolCotNumerico: this.cabecera.cabSolCotNumerico
+    };
+
+    console.log("Cabecera editada: ",this.cabecera.cabSolCotID, dataCAB);
+    this.service.updateCabCotizacion(11, dataCAB).subscribe(
+      (response) => {
+        console.log('ACTUALIZADA CORRECTAMENTE');
+      },
+      (error) => {
+        console.log('error : ', error);
+      }
+    );
+  }
+  confDeleteDet(idListDet: number, idDetalle: number) {
+    this.idDltDetList = idListDet;
+    this.idDltDet = idDetalle;
+  }
+
+  deleteDetSaved() {//elimina el item de la lista local y llama al metodo que ejecuta los cambios en la base
+    const index = this.detalle.findIndex(det => det.solCotID === this.idDltDetList);
+    console.log("Detalle a eliminar numero ", index)
+
+    if (index !== -1) {
+      this.detalle.splice(index, 1);
+      this.det_id--;
+      /*this.reorderAndSaveItems();
+      this.calcularCantDetalle();
+      this.calcularIdItem();*/
+
+      //ELIMINAR ITEMS QUE PERTENECEN AL DETALLE ELIMINADO
+      for (let i = this.item.length - 1; i >= 0; i--) {
+        if (this.item[i].itmIdDetalle === this.idDltDet) {
+          this.item.splice(i, 1);
+        }
+      }
+
+      //ACTUALIZAR EL ID DEL DETALLE DE LOS SIGUIENTES ITEMS
+      for (let i = 0; i < this.item.length; i++) {
+        if (this.item[i].itmIdDetalle > this.idDltDet) {
+          this.item[i].itmIdDetalle = this.item[i].itmIdDetalle - 1;
+        }
+      }
+    }
+    console.log(this.item);
+  }
 
   confDeleteItm(idList: number, idItem: number, idNSol: number) {//abre el modal y guarda los datos del item en variables locales
     this.idDlt = idList;
@@ -862,7 +923,6 @@ export class SolicotiComponent implements OnInit {
       this.reorderAndSaveItems();
       this.calcularCantDetalle();
       this.calcularIdItem();
-      //this.saveItemDB();
     }
   }
 
@@ -917,9 +977,6 @@ export class SolicotiComponent implements OnInit {
 
 
 
-
-
-
   /*async checkAndDeleteDetails() {
     //verificar si algun detalle no tiene items y eliminarlo
     for (let det of this.detalle) {
@@ -961,10 +1018,13 @@ export class SolicotiComponent implements OnInit {
 
   }*/
 
+  openModalItem() {
+    this.item_id = 1;
+  }
   //AGREGAR NUEVO ITEM A UN DETALLE SELECCIONADO
   addNewItem() {
     const data = {
-      itmID: this.lastIDItem,//obtener el ultimo id de los items y sumar +1
+      itmID: 0,//valor sin importancia porque lo asigna la base de datos
       itmTipoSol: this.cabecera.cabSolCotTipoSolicitud,
       itmNumSol: this.cabecera.cabSolCotNoSolicitud,
       itmIdDetalle: this.idDetEdit,
@@ -974,9 +1034,8 @@ export class SolicotiComponent implements OnInit {
     }
 
     this.item.push(data);
-    this.lastIDItem++;
+
     console.log(this.item);
-    console.log("Ultimo id disponible:", this.lastIDItem);
 
 
     this.calcularIdItem();
@@ -1127,55 +1186,145 @@ export class SolicotiComponent implements OnInit {
     return fechaConvertida;
   }
 
-  saveEditCabecera() {
+  async saveEditCabecera() {
     const dataCAB = {
-      cabSolOCID: this.cabecera.cabSolCotID,
-      cabSolOCTipoSolicitud: this.cabecera.cabSolCotTipoSolicitud,
-      cabSolOCArea: this.cabecera.cabSolCotArea,
-      cabSolOCNoSolicitud: this.cabecera.cabSolCotNoSolicitud,
-      cabSolOCSolicitante: this.cabecera.cabSolCotSolicitante,
-      cabSolOCFecha: this.fechaSinFormato,
-      cabSolOCAsunto: this.cabecera.cabSolCotAsunto,
-      cabSolOCProcedimiento: this.cabecera.cabSolCotProcedimiento,
-      cabSolOCObervaciones: this.cabecera.cabSolCotObervaciones,
-      cabSolOCAdjCot: this.cabecera.cabSolCotAdjCot,
-      cabSolOCNumCotizacion: this.cabecera.cabSolCotNumCotizacion,
-      cabSolOCEstado: this.cabecera.cabSolCotEstado,
-      cabSolOCEstadoTracking: this.cabecera.cabSolCotEstadoTracking,
-      cabSolOCPlazoEntrega: this.cabecera.cabSolCotPlazoEntrega,
-      cabSolOCFechaMaxentrega: this.cabecera.cabSolCotFechaMaxentrega,
-      cabSolOCInspector: this.cabecera.cabSolCotInspector,
-      cabSolOCTelefInspector: this.cabecera.cabSolCotTelefInspector,
-      cabSolOCNumerico: this.cabecera.cabSolCotNumerico
+      cabSolCotTipoSolicitud: this.cabecera.cabSolCotTipoSolicitud,
+      cabSolCotArea: this.cabecera.cabSolCotArea,
+      cabSolCotNoSolicitud: this.cabecera.cabSolCotNoSolicitud,
+      cabSolCotSolicitante: this.cabecera.cabSolCotSolicitante,
+      cabSolCotFecha: this.fechaSinFormato,
+      cabSolCotAsunto: this.cabecera.cabSolCotAsunto,
+      cabSolCotProcedimiento: this.cabecera.cabSolCotProcedimiento,
+      cabSolCotObervaciones: this.cabecera.cabSolCotObervaciones,
+      cabSolCotAdjCot: this.cabecera.cabSolCotAdjCot,
+      cabSolCotNumCotizacion: this.cabecera.cabSolCotNumCotizacion,
+      cabSolCotEstado: this.cabecera.cabSolCotEstado,
+      cabSolCotEstadoTracking: this.cabecera.cabSolCotEstadoTracking,
+      cabSolCotPlazoEntrega: this.cabecera.cabSolCotPlazoEntrega,
+      cabSolCotFechaMaxentrega: this.cabecera.cabSolCotFechaMaxentrega,
+      cabSolCotInspector: this.cabecera.cabSolCotInspector,
+      cabSolCotTelefInspector: this.cabecera.cabSolCotTelefInspector,
+      cabSolCotNumerico: this.cabecera.cabSolCotNumerico
     };
-    //* Enviar datos para actualizar en tabla cab_sol_orden_compra
-    console.log('2. guardando solicitud...', dataCAB);
-    this.service.updateOrdencompra(this.cabecera.cabSolCotID, dataCAB).subscribe(
-      (response) => {
-        console.log('Actualizada ');
-        this.showmsj = true;
-        this.msjExito = 'Solicitud N°' + this.cabecera.cabSolCotNumerico + ' editada exitosamente.';
 
-        setTimeout(() => {
-          this.msjExito = '';
-          this.showmsj = false;
-          //this.router.navigate(['allrequest']);
-          this.clear();
-        }, 4000);
+    console.log("Cabecera editada: ",this.cabecera.cabSolCotID, dataCAB);
+    this.service.updateCabCotizacion(11, dataCAB).subscribe(
+      (response) => {
+        console.log('ACTUALIZADA CORRECTAMENTE');
       },
       (error) => {
         console.log('error : ', error);
-        this.showmsjerror = true;
-        this.msjError = "No se ha podido guardar la solicitud, intente nuevamente.";
-
-        setTimeout(() => {
-          this.showmsjerror = false;
-          this.msjError = "";
-        }, 2500);
       }
     );
 
   }
 
+  async saveEditDetalle() {
+    //eliminar todos los detalles de la solicitud
+    try {
+      this.service.deleteAllDetBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
+        response => {
+          console.log("Todos los detalles eliminados");
+        },
+        error => {
+          console.log("Error: ", error);
+        }
+      );
+    } catch (error) {
+      console.error("Error durante la eliminación:", error);
+    }
+
+    //guardar los nuevos detalles de la solicitud
+    for (let detalle of this.detalle) {
+
+      const data = {
+        solCotTipoSol: this.cabecera.cabSolCotTipoSolicitud,
+        solCotNoSol: this.cabecera.cabSolCotNoSolicitud,
+        solCotIdDetalle: detalle.solCotIdDetalle,
+        solCotDescripcion: detalle.solCotDescripcion,
+        solCotUnidad: detalle.solCotUnidad,
+        solCotCantidadTotal: detalle.solCotCantidadTotal
+      }
+      console.log("Nuevo detalle: ", data);
+      this.service.addDetalleCotizacion(data).subscribe(
+        response => {
+          console.log("Nuevo detalle", detalle.solCotIdDetalle, " guardado en la base");
+        },
+        error => {
+          console.log("No se ha podido registrar el detalle, error: ", error);
+        }
+      );
+
+    }
+  }
+
+  async saveEditItem() {
+    //eliminar todos los items de la solicitud
+    try {
+      this.service.deleteAllItemBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
+        response => {
+          console.log("Todos los items eliminados");
+        },
+        error => {
+          console.log("Error: ", error);
+        }
+      );
+    } catch (error) {
+      console.error("Error durante la eliminación:", error);
+    }
+
+    //guardar los nuevos items de la solicitud
+    for (let item of this.item) {
+
+      const data = {
+        itmTipoSol: this.cabecera.cabSolCotTipoSolicitud,
+        itmNumSol: this.cabecera.cabSolCotNoSolicitud,
+        itmIdDetalle: item.itmIdDetalle,
+        itmIdItem: item.itmIdItem,
+        itmCantidad: item.itmCantidad,
+        itmSector: item.itmSector
+      }
+      console.log("Nuevo item: ", data);
+
+      this.service.addItemSector(data).subscribe(
+        response => {
+          console.log("Nuevo item guardado en la base, item:", item.itmIdItem, ", detalle:", item.itmIdDetalle);
+        },
+        error => {
+          console.log("No se pudo guardar el item no:" + item.itmIdItem + ", error: ", error);
+        }
+      );
+
+    }
+  }
+
+
+  //GUARDA TODA LA EDICION DE LA SOLICITUD
+  async saveEdit() {
+    try {
+      await this.saveEditCabecera();
+      await this.saveEditDetalle();
+      await this.saveEditItem();
+
+      this.showmsj = true;
+      this.msjExito = 'Solicitud N°' + this.cabecera.cabSolCotNumerico + ' editada exitosamente.';
+      
+      setTimeout(() => {
+        this.msjExito = '';
+        this.showmsj = false;
+        this.clear();
+      }, 4000);
+
+    } catch (error) {
+      console.log('Error:', error);
+      this.showmsjerror = true;
+      this.msjError = "No se ha podido guardar la solicitud, intente nuevamente.";
+
+      setTimeout(() => {
+        this.showmsjerror = false;
+        this.msjError = "";
+      }, 2500);
+    }
+  }
 
 }

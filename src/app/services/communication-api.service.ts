@@ -197,11 +197,20 @@ export class CommunicationApiService {
   updateOrdencompra( id:number,data:any){
     return this.http.put(this.APIUrl + `/CabSolOrdenCompras/${id}`,data);
   }
+
+  updateCabCotizacion( id:number,data:any){
+    return this.http.put(this.APIUrl + `/CabSolCotizacions/${id}`,data);
+  }
   
 
   deleteAllItemBySol(tipoSol: number, noSol: number){
     return this.http.delete(`${this.APIUrl}/ItemSectors/DeleteAllItems?tipoSol=${tipoSol}&noSol=${noSol}`);
   }
+
+  deleteAllDetBySol(tipoSol: number, noSol: number){
+    return this.http.delete(`${this.APIUrl}/DetSolCotizacions/DeleteAllDetails?tipoSol=${tipoSol}&noSol=${noSol}`);
+  }
+
 
   deleteDetallebyId(id:number){
     return this.http.delete(this.APIUrl + `/DetSolCotizacions/${id}`);
