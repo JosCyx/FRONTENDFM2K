@@ -645,11 +645,12 @@ export class SoliocComponent implements OnInit {
 
     this.tmpItemSect.push(tmpItemSector);
 
+    for(let itm of this.tmpItemSect){
+      this.item_id=itm.item_id+1;
+    }
     //this.det_cantidad += this.item_cant;
     this.calcularSumaItems();
-
     //aumenta el valor del id de los items
-
     this.item_cant = 1;
     this.item_sector = 0;
   }
@@ -962,19 +963,7 @@ export class SoliocComponent implements OnInit {
   }
   async saveEditDetalle() {
     //eliminar todos los detalles de la solicitud
-    try {
-      this.service.deleteAllDetBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
-        response => {
-          console.log("Todos los detalles eliminados");
-        },
-        error => {
-          console.log("Error: ", error);
-        }
-      );
-    } catch (error) {
-      console.error("Error durante la eliminación:", error);
-    }
-
+    await this.deleteAllDetails();
     //guardar los nuevos detalles de la solicitud
     for (let detalle of this.detalle) {
 
@@ -998,21 +987,29 @@ export class SoliocComponent implements OnInit {
 
     }
   }
+  //
+  deleteAllDetails(): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        this.service.deleteAllDetBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
+          response => {
+            console.log("Todos los detalles eliminados");
+            resolve();
+          },
+          error => {
+            console.log("Error: ", error);
+            reject(error);
+          }
+        );
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+  //
   async saveEditItem() {
     //eliminar todos los items de la solicitud
-    try {
-      this.service.deleteAllItemBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
-        response => {
-          console.log("Todos los items eliminados");
-        },
-        error => {
-          console.log("Error: ", error);
-        }
-      );
-    } catch (error) {
-      console.error("Error durante la eliminación:", error);
-    }
-
+    await this.deleteAllItems();
     //guardar los nuevos items de la solicitud
     for (let item of this.item) {
 
@@ -1037,6 +1034,26 @@ export class SoliocComponent implements OnInit {
 
     }
   }
+  //
+  deleteAllItems(): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        this.service.deleteAllItemBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
+          response => {
+            console.log("Todos los items eliminados");
+            resolve();
+          },
+          error => {
+            console.log("Error: ", error);
+            reject(error);
+          }
+        );
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+  //
   clearList() {
     this.itemSectorList = [];
     this.detalleList = [];
@@ -1232,6 +1249,12 @@ export class SoliocComponent implements OnInit {
       for (let i = 0; i < this.item.length; i++) {
         if (this.item[i].itmIdDetalle > this.idDltDet) {
           this.item[i].itmIdDetalle = this.item[i].itmIdDetalle - 1;
+        }
+      }
+      //ACTUALIZAR EL ID DE LOS DETALLE
+      for (let d = 0; d < this.detalle.length; d++) {
+        if(this.detalle[d].solCotIdDetalle > this.idDltDet){
+          this.detalle[d].solCotIdDetalle=this.detalle[d].solCotIdDetalle-1;
         }
       }
     }

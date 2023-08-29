@@ -1107,6 +1107,7 @@ export class SolicotiComponent implements OnInit {
         this.msjExito = '';
         this.showmsj = false;
         this.clear();
+        this.router.navigate(['allrequest']);
       }, 4000);
 
     } catch (error) {

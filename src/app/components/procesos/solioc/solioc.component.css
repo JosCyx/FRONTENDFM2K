@@ -38,4 +38,11 @@
 .std{
     padding-left: 0px;
 }
-
+/* .btn-primary {
+    background-color: red !important;
+    border: red ;
+    border-radius: 2px;
+} */
+.mr-3{
+    margin-right: 10px !important;
+}
