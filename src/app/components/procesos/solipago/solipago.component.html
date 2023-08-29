@@ -1,4 +1,155 @@
 <app-menu></app-menu>
-<div class="containerglobal sticky-top">
-    <p>solipago works!</p>
+<div class="container">
+    <h2 class="font-weight-bolt ruteo">Solicitud de Pago</h2>
+    <div class="">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <button class="btn btn-primary m-2">Crear</button>
+                    <button class="btn btn-primary m-2">Boton</button>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="form-cot">
+        <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
+        <h3 class="font-weight-bold" style="padding-top: 20pt">
+            Registrar nueva solicitud de pago
+        </h3>
+
+        <div class="solicitud">
+            <div class="cabecera mb-3">
+                <div class="input-group mb-1">
+                    <label class="input-group-text">Fecha:</label>
+                    <input type="text" class="form-control" disabled/>
+                </div>
+                <div class="row mb-1">
+                    <div class="input-group col">
+                        <label class="input-group-text">Solicitado por*:</label>
+                        <input type="text" class="form-control" id="busqueda" list="sugerencias" [(ngModel)]="empleado"
+                            (keyup)="searchEmpleado()" placeholder="Ingrese el nombre del empleado" />
+                        <datalist id="sugerencias">
+                            <ng-container *ngFor="let emp of empleados">
+                                <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+                            </ng-container>
+                        </datalist>
+                        <button class="btn btn-success">
+                            <i class="bi bi-check-lg"></i>
+                        </button>
+                    </div>
+                    <div class="input-group col">
+                        <label class="input-group-text">Area:</label>
+                        <input type="text" class="form-control"
+                            placeholder="Area del empleado solicitante" disabled />
+                    </div>
+                </div>
+                <div class="input-group mb-1">
+                    <label class="input-group-text">Asunto*:</label>
+                    <input type="text" class="form-control" placeholder="Ingrese el asunto"/>
+                </div>
+            </div>
+
+            <div class="detalle">
+                <table class="table table-striped text-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">Item</th>
+                            <th scope="col">Descripción*</th>
+                            <th scope="col">Presupuesto*</th>
+                            <th scope="col">Unidad</th>
+                            <th scope="col">Cantidad Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <th class="align-middle">1</th>
+                            <td class="align-middle">
+                                <textarea name="descripcion" class="form-control" rows="2" cols="50"></textarea>
+                            </td>
+                            <td class="align-middle">
+                                <button class="btn btn-outline-primary" data-toggle="modal" data-target="#itemsector">
+                                    Desglose
+                                </button>
+                            </td>
+                            <td class="align-middle" style="width: 150px">
+                                <select class="form-control">
+                                    <option value="Unidad" selected>Unidad</option>
+                                    <option value="Sacos">Sacos</option>
+                                    <option value="Paquete">Paquete</option>
+                                    <option value="Avance de Obra">Avance de Obra</option>
+                                    <option value="Millar">Millar</option>
+                                    <option value="Metros">Metros</option>
+                                    <option value="Kilos">Kilos</option>
+                                    <option value="Gramos">Gramos</option>
+                                    <option value="Caneca">Caneca</option>
+                                </select>
+                            </td>
+                            <td class="align-middle cel-prep">
+                                <input type="text" class="form-control text-center" disabled />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5" class="align-middle text-end">
+                                <button class="btn btn-success">
+                                    <i class="bi bi-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="foot-cabecera">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="floatingInput" 
+                        placeholder="Materiales y procedimientos a seguir:" />
+                    <label for="floatingInput">Materiales y procedimientos a seguir:</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="floatingInput" 
+                        placeholder="Materiales y procedimientos a seguir:" />
+                    <label for="floatingInput">Observaciones:</label>
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Adjunto cotizaciones:</label>
+                    <select class="form-select">
+                        <option value="SI">Sí</option>
+                        <option value="NO" selected>No</option>
+                    </select>
+                    <label class="input-group-text">Número de cotizaciones:</label>
+                    <input class="form-control" type="number" placeholder="Cantidad"/>
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text">Plazo de entrega*:</label>
+                    <input class="form-control" type="date" for="plazoentrega"/>
+                    <label class="input-group-text">Fecha máxima de entrega*:</label>
+                    <input class="form-control" type="date" for="fechamaxima" />
+                </div>
+                <div class="text-end">
+                    <p class="tip">*Campos obligatorios</p>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex row">
+            <div class="col">
+                <div class="alert alert-success" role="alert">
+                    <span><i class="bi bi-check-circle-fill"> mensaje de exito</i></span>
+                </div>
+                <div class="alert alert-danger" role="alert">
+                    <span><i class="bi bi-exclamation-triangle-fill"> mensaje de error</i></span>
+                </div>
+            </div>
+
+            <div class="col text-end">
+                <button class="btn btn-primary m-2">
+                    Guardar
+                </button>
+                <button class="btn btn-danger m-2" >
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
