@@ -1275,8 +1275,9 @@ export class SoliocComponent implements OnInit {
       setTimeout(() => {
         this.msjExito = '';
         this.showmsj = false;
+        this.router.navigate(['allrequest']);
         this.clear();
-      }, 4000);
+      },2500);
 
     } catch (error) {
       console.log('Error:', error);
