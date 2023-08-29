@@ -173,7 +173,7 @@
                   [disabled]="!det_descp || tmpItemSect.length === 0"
                   (click)="addDetalle()"
                 >
-                  <i class="bi bi-list-check"></i>
+                  <i class="bi bi-check"></i>
                 </button>
               </td>
             </tr>
@@ -404,33 +404,39 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngIf="item.length == 0">
+            <tr *ngIf="detalle.length == 0">
               <td class="text-danger" colspan="6">
                 No se han registrado items para esta solicitud
               </td>
             </tr>
             <!-- * tabla Principal-->
             <tr *ngFor="let det of detalle; let i = index">
-              <td class="align-middle">{{ i + 1 }}</td>
-              <td class="align-middle">{{ det.solCotDescripcion }}</td>
-              <td class="align-middle">
-                <button
-                  class="btn btn-outline-primary"
-                  (click)="selectDet(det)"
-                  data-toggle="modal"
-                  data-target="#itemEditarsector"
-                >
-                  Editar
-                </button>
-              </td>
-              <td class="align-middle">{{ det.solCotUnidad }}</td>
-              <td class="align-middle">
-                {{ det.solCotCantidadTotal }}
-                <button class="btn text-danger">
-                  <i class="bi bi-x-circle"></i>
-                </button>
-              </td>
-            </tr>
+                            <td class="align-middle">{{ i+1 }}</td>
+                            <td class="align-middle">
+                                <input type="text" class="form-control" [(ngModel)]="det.solCotDescripcion"></td>
+                            <td class="align-middle"><button class="btn btn-outline-primary" (click)="selectDet(det)"
+                                data-toggle="modal" data-target="#itemsectorEdit">Editar</button></td>
+                            <td class="align-middle">
+                                <select class="form-control" [(ngModel)]="det.solCotUnidad">
+                                    <option value="Unidad">Unidad</option>
+                                    <option value="Sacos">Sacos</option>
+                                    <option value="Paquete">Paquete</option>
+                                    <option value="Avance de Obra">Avance de Obra</option>
+                                    <option value="Millar">Millar</option>
+                                    <option value="Metros">Metros</option>
+                                    <option value="Kilos">Kilos</option>
+                                    <option value="Gramos">Gramos</option>
+                                    <option value="Caneca">Caneca</option>
+                                </select>
+                            </td>
+                            <td class="align-middle">
+                                {{ det.solCotCantidadTotal }}
+                                <button class="btn text-danger" (click)="confDeleteDet(det.solCotID, det.solCotIdDetalle)" 
+                                data-toggle="modal" data-target="#dltDetSaved">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </td>
+                        </tr>
             <tr>
               <th class="align-middle">{{ det_id }}</th>
               <td class="align-middle">
@@ -448,7 +454,7 @@
                   class="btn btn-outline-primary"
                   data-toggle="modal"
                   data-target="#itemsector"
-                  [disabled]="!det_descp"
+                  [disabled]="!det_descp" (click)="openModalItem()"
                 >
                   Desglose
                 </button>
@@ -482,7 +488,7 @@
                   [disabled]="!det_descp || tmpItemSect.length === 0"
                   (click)="addDetalle()"
                 >
-                  <i class="bi bi-list-check"></i>
+                  <i class="bi bi-check"></i>
                 </button>
               </td>
             </tr>
@@ -680,7 +686,7 @@
                       [(ngModel)]="item_sector"
                     >
                       <option selected disabled value="0">
-                        Selecciona una aplicación...
+                        Selecciona una sector...
                       </option>
                       <option
                         *ngFor="let sect of sectores$ | async"
@@ -699,7 +705,7 @@
                     [disabled]="!item_sector"
                     (click)="addItemSector()"
                   >
-                    <i class="bi bi-list-check"></i>
+                    <i class="bi bi-check"></i>
                   </button>
                 </td>
               </tr>
@@ -730,140 +736,96 @@
   </div>
 </div>
 <!-- *Modal para Editar Item -->
-<div
-  class="modal fade"
-  #exampleModal
-  id="itemEditarsector"
-  data-backdrop="static"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header justify-content-center">
-        <h3 class="font-weight-bold" id="exampleModalLabel">
-          Editar el Item segun el sector
-        </h3>
-      </div>
-      <div class="modal-body">
-        <table class="table table-striped text-center justify-content-center">
-          <thead>
-            <tr>
-              <th scope="col">N° Detalle</th>
-              <th scope="col">Descripción</th>
-              <th scope="col">N° Item</th>
-              <th scope="col">Cantidad*</th>
-              <th scope="col" colspan="2">Sector*</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let itm of item; let i = index">
-              <ng-container *ngIf="idDetEdit == itm.itmIdDetalle">
-                <th class="align-middle">{{ itm.itmIdDetalle }}</th>
-                <ng-container *ngFor="let detd of detalle; let d = index">
-                  <td
-                    *ngIf="detd.solCotIdDetalle == itm.itmIdDetalle"
-                    class="align-middle"
-                  >
-                    {{ detd.solCotDescripcion }}
-                  </td>
-                </ng-container>
-                <td class="align-middle">{{ itm.itmIdItem }}</td>
-                <td class="align-middle">{{ itm.itmCantidad }}</td>
-                <!-- <ng-container *ngFor="let detu of detalle; let d = index">
-                        <td *ngIf="detu.solCotIdDetalle == itm.itmIdDetalle" class="align-middle">
-                            {{ detu.solCotUnidad }}
-                        </td>
-                    </ng-container> -->
-                <ng-container *ngFor="let sect of sectores$ | async">
-                  <td
-                    *ngIf="sect.sectIdNomina == itm.itmSector"
-                    class="align-middle"
-                  >
-                    {{ sect.sectNombre }}
-                  </td>
-                </ng-container>
-                <td>
-                  <button
-                    class="btn text-danger"
-                    data-toggle="modal"
-                    data-target="#dltItemSaved"
-                    (click)="
-                      confDeleteItm(itm.itmID, itm.itmIdItem, itm.itmNumSol)
-                    "
-                  >
-                    <i class="bi bi-x-circle"></i>
-                  </button>
-                </td>
-              </ng-container>
-            </tr>
-            <tr>
-              <td class="align-middle">{{ det_id_edit }}</td>
-              <td class="align-middle">
-                <input
-                  class="form-control"
-                  type="text"
-                  value="Descripción"
-                  [(ngModel)]="det_descp_edit"
-                  placeholder="Descripción"
-                  disabled
-                />
-              </td>
-              <td class="align-middle cel-prep">
-                <input
-                  type="text"
-                  class="form-control text-center"
-                  [(ngModel)]="item_id"
-                  disabled
-                />
-              </td>
-              <td class="align-middle">
-                <div class="cel-prep">
-                  <input
-                    class="form-control"
-                    [(ngModel)]="item_cant"
-                    min="1"
-                    type="number"
-                    placeholder="Cantidad"
-                  />
-                </div>
-              </td>
-              <td class="align-middle" style="width: 150px" colspan="2">
-                <div class="cel-prep">
-                  <select
-                    class="form-select"
-                    name="item_sector"
-                    [(ngModel)]="item_sector"
-                  >
-                    <option
-                      *ngFor="let sect of sectores$ | async"
-                      [value]="sect.sectIdNomina"
-                    >
-                      {{ sect.sectNombre }}
-                    </option>
-                  </select>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="6" class="align-middle text-end">
-                <button class="btn btn-success" (click)="addNewItem()">
-                  <i class="bi bi-check"></i>
+<div class="modal fade" #exampleModal id="itemsectorEdit" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    Editar items segun el sector
+                </h3>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped text-center justify-content-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">N° Detalle</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">N° Item</th>
+                            <th scope="col">Cantidad*</th>
+                            <th scope="col" colspan="2">Sector*</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let itm of item; let i = index">
+                            <ng-container *ngIf="idDetEdit == itm.itmIdDetalle">
+                                <th class="align-middle">{{ itm.itmIdDetalle }}</th>
+                                <ng-container *ngFor="let detd of detalle; let d = index">
+                                    <td *ngIf="detd.solCotIdDetalle == itm.itmIdDetalle" class="align-middle">
+                                        <input type="text" class="form-control" [value]="detd.solCotDescripcion" disabled>
+                                    </td>
+                                </ng-container>
+                                <td class="align-middle">{{ itm.itmIdItem }}</td>
+                                <td class="align-middle">{{ itm.itmCantidad }}</td>
+                                <!-- <ng-container *ngFor="let detu of detalle; let d = index">
+                                    <td *ngIf="detu.solCotIdDetalle == itm.itmIdDetalle" class="align-middle">
+                                        {{ detu.solCotUnidad }}
+                                    </td>
+                                </ng-container> -->
+                                <ng-container *ngFor="let sect of sectores$ | async">
+                                    <td *ngIf="sect.sectIdNomina == itm.itmSector" class="align-middle">
+                                        {{ sect.sectNombre }}
+                                    </td>
+                                </ng-container>
+                                <td>
+                                    <button class="btn text-danger" data-toggle="modal" data-target="#dltItemSaved"
+                                        (click)="confDeleteItm(itm.itmID, itm.itmIdItem, itm.itmNumSol)">
+                                        <i class="bi bi-x-circle"></i></button>
+                                </td>
+                            </ng-container>
+
+                        </tr>
+                        <tr>
+                            <td class="align-middle">{{ det_id_edit }}</td>
+                            <td class="align-middle">
+                                <input class="form-control" type="text" value="Descripción" [(ngModel)]="det_descp_edit"
+                                    placeholder="Descripción" disabled />
+                            </td>
+                            <td class="align-middle cel-prep">
+                                <input type="text" class="form-control text-center" [(ngModel)]="item_id" disabled />
+                            </td>
+                            <td class="align-middle">
+                                <div class="cel-prep">
+                                    <input class="form-control" [(ngModel)]="item_cant" min="1" type="number"
+                                        placeholder="Cantidad" />
+                                </div>
+                            </td>
+                            <td class="align-middle" style="width: 150px" colspan="2">
+                                <div class="cel-prep">
+                                    <select class="form-select" name="item_sector" [(ngModel)]="item_sector">
+                                        <option *ngFor="let sect of sectores$ | async" [value]="sect.sectIdNomina">
+                                            {{ sect.sectNombre }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="align-middle text-end">
+                                <button class="btn btn-success" (click)="addNewItem()">
+                                    <i class="bi bi-check"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal" (click)="cancelarItem()">
+                    Confirmar
                 </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-dismiss="modal" (click)="cancelarItem()">
-            Confirmar
-        </button>
+            </div>
+        </div>
     </div>
-    </div>
-  </div>
 </div>
 <!-- * -->
 <!--*Modal para verificar el envío-->
@@ -916,25 +878,20 @@
     <div class="modal-content">
       <div class="modal-header justify-content-center">
         <h3 class="font-weight-bold" id="exampleModalLabel">
-          ¿Está seguro que desea Guardar los Cambios Realizados?
+          Guardar cambios
         </h3>
       </div>
       <div class="modal-body">
-        <p>Texto</p>
+        <p>¿Esta seguro que desea guardar los cambios realizados en la solicitud ?</p>
       </div>
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-dismiss="modal"
-          (click)="guardaredicionCabece()"
-        >
-          Confirmar
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveEdit()">
+            Confirmar
         </button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">
-          Cancelar
+            Cancelar
         </button>
-      </div>
+    </div>
     </div>
   </div>
 </div>
@@ -974,4 +931,28 @@
       </div>
     </div>
   </div>
+</div>
+<!--Modal para confirmar eliminacion de detalle-->
+<div class="modal fade" #exampleModal id="dltDetSaved" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea eliminar este detalle?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteDetSaved()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

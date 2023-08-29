@@ -113,8 +113,10 @@ export class SoliocComponent implements OnInit {
   det_id_edit!: number;
   det_descp_edit!: string;
   //
-  lastIDItem!: number;
-  lastIDDet!: number;
+  idDltDetList!: number;
+  idDltDet!: number
+  // lastIDItem!: number;
+  // lastIDDet!: number;
 
   constructor(
     private service: CommunicationApiService,
@@ -588,6 +590,7 @@ export class SoliocComponent implements OnInit {
     //
     if (this.changeview == 'editar') {
       this.saveLocaltoResponse();
+      console.log("item a enviar a APi ");
     }
 
     this.det_descp = '';
@@ -595,16 +598,21 @@ export class SoliocComponent implements OnInit {
     this.det_cantidad = 0;
     this.tmpItemSect = [];
   }
+
   incrementDetID() {
     //aumenta el valor del id de detalle
-    if (this.detalleList.length == 0) {
-      this.det_id = 1;
-    } else {
-      for (let det of this.detalleList) {
-        this.det_id = det.det_id + 1;
-      }
+    
+    
+      if (this.detalleList.length == 0) {
+        this.det_id = 1;
+      } else {
+        for (let det of this.detalleList) {
+          this.det_id = det.det_id + 1;
+        }
+      
     }
-  }
+    }
+    
   async deleteDetalle(id: number) {
     const index = this.detalleList.findIndex(
       (detalle) => detalle.det_id === id
@@ -622,8 +630,6 @@ export class SoliocComponent implements OnInit {
       this.idToIndexMap.set(this.detalleList[i].det_id, i);
     }
     this.incrementDetID();
-
-    setTimeout(() => {}, 500);
   }
 
   //agregar los items a una lista temporal
@@ -735,7 +741,11 @@ export class SoliocComponent implements OnInit {
 
     for (let det of this.solicitudEdit.detalles) {
       this.detalle.push(det as DetalleCotizacion);
+      this.det_id = det.solCotIdDetalle + 2;
     }
+    this.detalle.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
+    this.det_id = this.detalle.length+1;
+
 
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
@@ -916,7 +926,7 @@ export class SoliocComponent implements OnInit {
     return fechaConvertida;
   }
   //* Editar orden compra en el Enviar
-  guardaredicionCabece() {
+  async saveEditCabecera() {
     const dataCAB = {
       cabSolOCID: this.cabecera.cabSolOCID,
       cabSolOCTipoSolicitud: this.cabecera.cabSolOCTipoSolicitud,
@@ -944,59 +954,93 @@ export class SoliocComponent implements OnInit {
     this.service.updateOrdencompra(this.cabecera.cabSolOCID, dataCAB).subscribe(
       (response) => {
         console.log('Actualizar ');
-        this.showmsj = true;
-        this.msjExito =
-          'Solicitud N°' +
-          this.cabecera.cabSolOCNumerico +
-          ' editada exitosamente.';
-
-        setTimeout(() => {
-          this.msjExito = '';
-          this.showmsj = false;
-          this.clear();
-        }, 4000);
-      },
+             },
       (error) => {
         console.log('error : ', error);
-        this.showmsjerror = true;
-        this.msjError =
-          'No se ha podido guardar la solicitud, intente nuevamente.';
-
-        setTimeout(() => {
-          this.showmsjerror = false;
-          this.msjError = '';
-        }, 2500);
       }
     );
   }
-  //** */
-  // addNewItem() {
-  //   this.addDetalle();
-  //   setTimeout(() => {
-  //     this.saveItemDetEdit();
-  //     this.editSolicitud();
-  //     this.clearList();
-  //   }, 200);
-  // }
-  //
+  async saveEditDetalle() {
+    //eliminar todos los detalles de la solicitud
+    try {
+      this.service.deleteAllDetBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
+        response => {
+          console.log("Todos los detalles eliminados");
+        },
+        error => {
+          console.log("Error: ", error);
+        }
+      );
+    } catch (error) {
+      console.error("Error durante la eliminación:", error);
+    }
+
+    //guardar los nuevos detalles de la solicitud
+    for (let detalle of this.detalle) {
+
+      const data = {
+        solCotTipoSol: this.cabecera.cabSolOCTipoSolicitud,
+        solCotNoSol: this.cabecera.cabSolOCNoSolicitud,
+        solCotIdDetalle: detalle.solCotIdDetalle,
+        solCotDescripcion: detalle.solCotDescripcion,
+        solCotUnidad: detalle.solCotUnidad,
+        solCotCantidadTotal: detalle.solCotCantidadTotal
+      }
+      console.log("Nuevo detalle: ", data);
+      this.service.addDetalleCotizacion(data).subscribe(
+        response => {
+          console.log("Nuevo detalle", detalle.solCotIdDetalle, " guardado en la base");
+        },
+        error => {
+          console.log("No se ha podido registrar el detalle, error: ", error);
+        }
+      );
+
+    }
+  }
+  async saveEditItem() {
+    //eliminar todos los items de la solicitud
+    try {
+      this.service.deleteAllItemBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
+        response => {
+          console.log("Todos los items eliminados");
+        },
+        error => {
+          console.log("Error: ", error);
+        }
+      );
+    } catch (error) {
+      console.error("Error durante la eliminación:", error);
+    }
+
+    //guardar los nuevos items de la solicitud
+    for (let item of this.item) {
+
+      const data = {
+        itmTipoSol: this.cabecera.cabSolOCTipoSolicitud,
+        itmNumSol: this.cabecera.cabSolOCNoSolicitud,
+        itmIdDetalle: item.itmIdDetalle,
+        itmIdItem: item.itmIdItem,
+        itmCantidad: item.itmCantidad,
+        itmSector: item.itmSector
+      }
+      console.log("Nuevo item: ", data);
+
+      this.service.addItemSector(data).subscribe(
+        response => {
+          console.log("Nuevo item guardado en la base, item:", item.itmIdItem, ", detalle:", item.itmIdDetalle);
+        },
+        error => {
+          console.log("No se pudo guardar el item no:" + item.itmIdItem + ", error: ", error);
+        }
+      );
+
+    }
+  }
   clearList() {
     this.itemSectorList = [];
     this.detalleList = [];
   }
-  //*
-  changeDet() {
-    this.detType = !this.detType;
-    this.det_descp = '';
-    this.itemSectorList = [];
-    ////MODIFICAR PARA QUE MUESTRE ID 1 CUANDO SE CREE UN NUEVO DETALLE
-    if (!this.detType) {
-      for (let det of this.detalle) {
-        this.det_id = det.solCotIdDetalle + 1;
-        this.item_id = 1;
-      }
-    }
-  }
-
   setDetId() {
     const selectedDetalle = this.detalle.find(
       (det) => det.solCotDescripcion === this.det_descp
@@ -1090,7 +1134,7 @@ export class SoliocComponent implements OnInit {
   saveLocaltoResponse() {
     for (let itm of this.itemSectorList) {
       const data = {
-        itmID: this.lastIDItem, //modificar
+        itmID: 0, //modificar
         itmTipoSol: this.cabecera.cabSolOCTipoSolicitud,
         itmNumSol: this.cabecera.cabSolOCNoSolicitud,
         itmIdDetalle: itm.det_id,
@@ -1098,16 +1142,12 @@ export class SoliocComponent implements OnInit {
         itmCantidad: itm.item_cant,
         itmSector: itm.item_sector,
       };
-
       this.item.push(data);
-
-      this.lastIDItem++;
-      console.log('proximo id de item:', this.lastIDItem);
     }
-
+    this.itemSectorList=[];
     for (let det of this.detalleList) {
       const data = {
-        solCotID: this.lastIDDet,
+        solCotID: 0,
         solCotTipoSol: this.cabecera.cabSolOCTipoSolicitud,
         solCotNoSol: this.cabecera.cabSolOCNoSolicitud,
         solCotIdDetalle: det.det_id,
@@ -1117,15 +1157,12 @@ export class SoliocComponent implements OnInit {
       };
 
       this.detalle.push(data);
-
-      this.lastIDDet++;
-
-      console.log('proximo id de detalle: ', this.lastIDDet);
     }
+    this.detalleList = [];
   }
   addNewItem() {
     const data = {
-      itmID: this.lastIDItem, //obtener el ultimo id de los items y sumar +1
+      itmID: 0, //obtener el ultimo id de los items y sumar +1
       itmTipoSol: this.cabecera.cabSolOCTipoSolicitud,
       itmNumSol: this.cabecera.cabSolOCNoSolicitud,
       itmIdDetalle: this.idDetEdit,
@@ -1135,10 +1172,7 @@ export class SoliocComponent implements OnInit {
     };
 
     this.item.push(data);
-    this.lastIDItem++;
     console.log(this.item);
-    console.log('Ultimo id disponible:', this.lastIDItem);
-
     this.calcularIdItem();
     this.calcularCantDetalle();
     this.item_cant = 1;
@@ -1170,6 +1204,66 @@ export class SoliocComponent implements OnInit {
       if (itm.itmIdDetalle === this.idDetEdit) {
         this.item_id = itm.itmIdItem + 1;
       }
+    }
+  }
+  confDeleteDet(idListDet: number, idDetalle: number) {
+    this.idDltDetList = idListDet;
+    this.idDltDet = idDetalle;
+  }
+  deleteDetSaved() {//elimina el item de la lista local y llama al metodo que ejecuta los cambios en la base
+    const index = this.detalle.findIndex(det => det.solCotID === this.idDltDetList);
+    console.log("Detalle a eliminar numero ", index)
+
+    if (index !== -1) {
+      this.detalle.splice(index, 1);
+      this.det_id--;
+      /*this.reorderAndSaveItems();
+      this.calcularCantDetalle();
+      this.calcularIdItem();*/
+
+      //ELIMINAR ITEMS QUE PERTENECEN AL DETALLE ELIMINADO
+      for (let i = this.item.length - 1; i >= 0; i--) {
+        if (this.item[i].itmIdDetalle === this.idDltDet) {
+          this.item.splice(i, 1);
+        }
+      }
+
+      //ACTUALIZAR EL ID DEL DETALLE DE LOS SIGUIENTES ITEMS
+      for (let i = 0; i < this.item.length; i++) {
+        if (this.item[i].itmIdDetalle > this.idDltDet) {
+          this.item[i].itmIdDetalle = this.item[i].itmIdDetalle - 1;
+        }
+      }
+    }
+    console.log(this.item);
+  }
+  openModalItem() {
+    this.item_id = 1;
+  }
+  async saveEdit() {
+    try {
+      await this.saveEditCabecera();
+      await this.saveEditDetalle();
+      await this.saveEditItem();
+
+      this.showmsj = true;
+      this.msjExito = 'Solicitud N°' + this.cabecera.cabSolOCNumerico + ' editada exitosamente.';
+      
+      setTimeout(() => {
+        this.msjExito = '';
+        this.showmsj = false;
+        this.clear();
+      }, 4000);
+
+    } catch (error) {
+      console.log('Error:', error);
+      this.showmsjerror = true;
+      this.msjError = "No se ha podido guardar la solicitud, intente nuevamente.";
+
+      setTimeout(() => {
+        this.showmsjerror = false;
+        this.msjError = "";
+      }, 2500);
     }
   }
 }
