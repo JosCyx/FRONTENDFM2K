@@ -159,9 +159,11 @@ export class SolicotiComponent implements OnInit {
     //     console.log("Error, no se ha podido recuperar el ultimo detalle: ", error)
     //   }
     // );
+  
 
     if (this.changeview == 'editar') {
       this.editSolicitud();
+      
     }
 
   }
@@ -231,11 +233,6 @@ export class SolicotiComponent implements OnInit {
       }
     }
   }
-
-  /*//controla el contenido que se muestra en la pagina
-  changeView(view: string): void {
-    this.changeview = view;
-  }*/
 
   //tranforma la fecha actual en un formato especifico "Lunes, 31 de julio de 2023"
   formatDateToSpanish(date: Date): string {
@@ -409,7 +406,7 @@ export class SolicotiComponent implements OnInit {
 
       this.getSolName(this.trLastNoSol);
       this.showmsj = true;
-      this.msjExito = "Solicitud N°" + this.solNumerico + " generada exitosamente.";
+      this.msjExito = `Solicitud N° ${this.cabecera.cabSolCotNumerico} generada exitosamente.`;
 
 
       setTimeout(() => {
@@ -483,26 +480,6 @@ export class SolicotiComponent implements OnInit {
     }
     //console.log(this.itemSectorList);
   }
-  /*getIdCabecera(): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
-      this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol).subscribe(
-        (resultado) => {
-          if (resultado.length == 0) {
-            console.log("No se ha encontrado ninguna cabecera");
-          } else {
-            const cabID = resultado[0].cabSolCotID;
-            console.log('Id de la cabecera:', cabID);
-            resolve(cabID);
-          }
-        },
-        (error) => {
-          console.error('Error al obtener el id de la cabecera:', error);
-          reject(error);
-        }
-      );
-    });
-  }*/
-
 
   getLastDetalleCot(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
@@ -592,19 +569,18 @@ export class SolicotiComponent implements OnInit {
 
   }
 
-  /*deleteDetalle(id: number){
-    this.detalleList.splice(id-1,1);
-  }*/
-
   incrementDetID() {
     //aumenta el valor del id de detalle
-    if (this.detalleList.length == 0) {
-      this.det_id = 1;
-    } else {
-      for (let det of this.detalleList) {
-        this.det_id = det.det_id + 1;
+    
+      if (this.detalleList.length == 0) {
+        this.det_id = 1;
+      } else {
+        for (let det of this.detalleList) {
+          this.det_id = det.det_id + 1;
+        }
       }
-    }
+    
+
   }
 
   async deleteDetalle(id: number) {
@@ -785,9 +761,10 @@ export class SolicotiComponent implements OnInit {
 
     for (let det of this.solicitudEdit.detalles) {
       this.detalle.push(det as DetalleCotizacion);
-      this.det_id = det.solCotIdDetalle + 2;
+      this.det_id = det.solCotIdDetalle + 1;
     }
     this.detalle.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
+    this.det_id = this.detalle.length + 1;
 
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
@@ -839,42 +816,8 @@ export class SolicotiComponent implements OnInit {
     this.changeView('consultar');
   }
 
-  //ELIMINAR ITEMS Y REORNDENAR LOS IDS
+  //ELIMINAR ITEMS Y DETALLES Y REORNDENAR LOS IDS
 
-  metodo() {
-    // console.log("Cabecera: ", this.cabecera);
-    // console.log("Lista de detalles hacia la api: ", this.detalle);
-    // console.log("Lista de items hacia la api: ", this.item);
-    const dataCAB = {
-      cabSolCotTipoSolicitud: this.cabecera.cabSolCotTipoSolicitud,
-      cabSolCotArea: this.cabecera.cabSolCotArea,
-      cabSolCotNoSolicitud: this.cabecera.cabSolCotNoSolicitud,
-      cabSolCotSolicitante: this.cabecera.cabSolCotSolicitante,
-      cabSolCotFecha: this.fechaSinFormato,
-      cabSolCotAsunto: this.cabecera.cabSolCotAsunto,
-      cabSolCotProcedimiento: this.cabecera.cabSolCotProcedimiento,
-      cabSolCotObervaciones: this.cabecera.cabSolCotObervaciones,
-      cabSolCotAdjCot: this.cabecera.cabSolCotAdjCot,
-      cabSolCotNumCotizacion: this.cabecera.cabSolCotNumCotizacion,
-      cabSolCotEstado: this.cabecera.cabSolCotEstado,
-      cabSolCotEstadoTracking: this.cabecera.cabSolCotEstadoTracking,
-      cabSolCotPlazoEntrega: this.cabecera.cabSolCotPlazoEntrega,
-      cabSolCotFechaMaxentrega: this.cabecera.cabSolCotFechaMaxentrega,
-      cabSolCotInspector: this.cabecera.cabSolCotInspector,
-      cabSolCotTelefInspector: this.cabecera.cabSolCotTelefInspector,
-      cabSolCotNumerico: this.cabecera.cabSolCotNumerico
-    };
-
-    console.log("Cabecera editada: ",this.cabecera.cabSolCotID, dataCAB);
-    this.service.updateCabCotizacion(11, dataCAB).subscribe(
-      (response) => {
-        console.log('ACTUALIZADA CORRECTAMENTE');
-      },
-      (error) => {
-        console.log('error : ', error);
-      }
-    );
-  }
   confDeleteDet(idListDet: number, idDetalle: number) {
     this.idDltDetList = idListDet;
     this.idDltDet = idDetalle;
@@ -942,85 +885,10 @@ export class SolicotiComponent implements OnInit {
     console.log(this.item);
   }
 
-  //actualizar todos los detalles y verificar detalles sin items
-
-  /*async saveItemDB() {
-    try {
-      await this.deleteAllItems();
-      setTimeout(() => {
-        this.reorderAndSaveItems();
-        this.checkAndDeleteDetails();
-      }, 200);
-
-
-      console.log("Proceso completado exitosamente.");
-    } catch (error) {
-      console.error("Error durante el proceso:", error);
-    }
-
-  }*/
-
-  /* async deleteAllItems() {
-     try {
-       await this.service.deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt).subscribe(
-         response => {
-           console.log("todos los items eliminados");
-         },
-         error => {
-           console.log("Error: ", error);
-         }
-       );
-     } catch (error) {
-       console.error("Error durante la eliminación:", error);
-     }
-   }*/
-
-
-
-  /*async checkAndDeleteDetails() {
-    //verificar si algun detalle no tiene items y eliminarlo
-    for (let det of this.detalle) {
-      console.log(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle);
-
-      this.service.getItemsbyDet(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle).subscribe(
-        response => {
-          if (response === 0) {
-            console.log("NO existen items para el detalle: ", det.solCotIdDetalle);
-            //eliminar el detalle
-            this.service.deleteDetallebyId(det.solCotID).subscribe(
-              response => {
-                console.log("Se ha eliminado el detalle.");
-              },
-              error => {
-                console.log("No se pudo eliminar el detalle, error: ", error);
-              }
-            );
-          } else {
-            console.log("SI existen items para el detalle: ", det.solCotIdDetalle);
-          }
-        },
-        error => {
-          console.log("Error: ", error);
-        }
-      );
-    }
-  }*/
-
-  //añadir nuevos items a la solicitud cargada
-  /*addNewItemsss() {
-
-    this.addDetalle();
-    setTimeout(() => {
-      this.saveDetItemEdit();
-      this.editSolicitud();
-      this.clearList();
-    }, 200)
-
-  }*/
-
   openModalItem() {
     this.item_id = 1;
   }
+
   //AGREGAR NUEVO ITEM A UN DETALLE SELECCIONADO
   addNewItem() {
     const data = {
@@ -1081,99 +949,6 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
-  /*changeDet() {
-    this.detType = !this.detType;
-    this.det_descp = '';
-    this.itemSectorList = [];
-
-    if (!this.detType) {
-      for (let det of this.detalle) {
-        this.det_id = det.solCotIdDetalle + 2;
-        this.item_id = 1;
-      }
-    }
-  }*/
-
-
-  /*setDetId() {
-    const selectedDetalle = this.detalle.find(det => det.solCotDescripcion === this.det_descp);
-
-    if (selectedDetalle) {
-      this.det_id = selectedDetalle.solCotIdDetalle;
-    }
-
-    if (this.detType) {
-      for (let itm of this.item) {
-        if (itm.itmIdDetalle === this.det_id) {
-          this.item_id = itm.itmIdItem + 1;
-        }
-      }
-    } else {
-      this.item_id = 1;
-    }
-
-  }*/
-
-
-  //envia a la api los items y los detalles
-  /*saveDetItemEdit() {
-    //enviar la lista detalle a la api para registrarla
-    for (let detalle of this.detalleList) {
-      // Verificar si el detalle no existe en la lista actual de detalles
-      const exists = this.detalle.some(det => det.solCotIdDetalle === detalle.det_id);
-
-      if (exists) {
-        console.log("El detalle ya existe, no se ha guardado");
-      } else {
-        console.log("Guardando detalle nuevo:", detalle.det_id);
-
-        const data = {
-          solCotTipoSol: this.cabecera.cabSolCotTipoSolicitud,
-          solCotNoSol: this.cabecera.cabSolCotNoSolicitud,
-          solCotIdDetalle: detalle.det_id,
-          solCotDescripcion: detalle.det_descp,
-          solCotUnidad: detalle.det_unidad,
-          solCotCantidadTotal: detalle.det_cantidad
-        }
-        //console.log("Nuevo detalle: ",data);
-        this.service.addDetalleCotizacion(data).subscribe(
-          response => {
-            console.log("Nuevo detalle", detalle.det_id, " guardado en la base");
-          },
-          error => {
-            console.log("No se ha podido registrar el detalle, error: ", error);
-          }
-        );
-      }
-    }
-
-    //console.log(this.detalleList);
-
-    //enviar la lista itemsector a la api
-    for (let item of this.itemSectorList) {
-
-      const data = {
-        itmTipoSol: this.cabecera.cabSolCotTipoSolicitud,
-        itmNumSol: this.cabecera.cabSolCotNoSolicitud,
-        itmIdDetalle: item.det_id,
-        itmIdItem: item.item_id,
-        itmCantidad: item.item_cant,
-        itmSector: item.item_sector
-      }
-      //console.log("Nuevo item: ",data);
-      this.service.addItemSector(data).subscribe(
-        response => {
-          console.log("Nuevo item guardado en la base, item:", item.item_id, ", detalle:", item.det_id);
-        },
-        error => {
-          console.log("No se pudo guardar el item no:" + item.item_id + ", error: ", error);
-        }
-      );
-
-    }
-    //console.log(this.itemSectorList);
-  }*/
-
   clearList() {
     this.itemSectorList = [];
     this.detalleList = [];
@@ -1188,6 +963,7 @@ export class SolicotiComponent implements OnInit {
 
   async saveEditCabecera() {
     const dataCAB = {
+      cabSolCotID: this.cabecera.cabSolCotID,
       cabSolCotTipoSolicitud: this.cabecera.cabSolCotTipoSolicitud,
       cabSolCotArea: this.cabecera.cabSolCotArea,
       cabSolCotNoSolicitud: this.cabecera.cabSolCotNoSolicitud,
@@ -1207,8 +983,8 @@ export class SolicotiComponent implements OnInit {
       cabSolCotNumerico: this.cabecera.cabSolCotNumerico
     };
 
-    console.log("Cabecera editada: ",this.cabecera.cabSolCotID, dataCAB);
-    this.service.updateCabCotizacion(11, dataCAB).subscribe(
+    console.log("Cabecera editada: ", this.cabecera.cabSolCotID, dataCAB);
+    this.service.updateCabCotizacion(this.cabecera.cabSolCotID, dataCAB).subscribe(
       (response) => {
         console.log('ACTUALIZADA CORRECTAMENTE');
       },
@@ -1219,20 +995,10 @@ export class SolicotiComponent implements OnInit {
 
   }
 
+  //GUARDAR EDICION DE LOS DETALLES
   async saveEditDetalle() {
     //eliminar todos los detalles de la solicitud
-    try {
-      this.service.deleteAllDetBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
-        response => {
-          console.log("Todos los detalles eliminados");
-        },
-        error => {
-          console.log("Error: ", error);
-        }
-      );
-    } catch (error) {
-      console.error("Error durante la eliminación:", error);
-    }
+    this.deleteAllDetails();
 
     //guardar los nuevos detalles de la solicitud
     for (let detalle of this.detalle) {
@@ -1258,20 +1024,29 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
+  deleteAllDetails(): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        this.service.deleteAllDetBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
+          response => {
+            console.log("Todos los detalles eliminados");
+            resolve();
+          },
+          error => {
+            console.log("Error: ", error);
+            reject(error);
+          }
+        );
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  //GUARDAR EDICION DE LOS ITEMS
   async saveEditItem() {
     //eliminar todos los items de la solicitud
-    try {
-      this.service.deleteAllItemBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
-        response => {
-          console.log("Todos los items eliminados");
-        },
-        error => {
-          console.log("Error: ", error);
-        }
-      );
-    } catch (error) {
-      console.error("Error durante la eliminación:", error);
-    }
+    this.deleteAllItems();
 
     //guardar los nuevos items de la solicitud
     for (let item of this.item) {
@@ -1298,6 +1073,25 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
+  deleteAllItems(): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        this.service.deleteAllItemBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
+          response => {
+            console.log("Todos los items eliminados");
+            resolve();
+          },
+          error => {
+            console.log("Error: ", error);
+            reject(error);
+          }
+        );
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
 
   //GUARDA TODA LA EDICION DE LA SOLICITUD
   async saveEdit() {
@@ -1307,8 +1101,8 @@ export class SolicotiComponent implements OnInit {
       await this.saveEditItem();
 
       this.showmsj = true;
-      this.msjExito = 'Solicitud N°' + this.cabecera.cabSolCotNumerico + ' editada exitosamente.';
-      
+      this.msjExito = `Solicitud N° ${this.cabecera.cabSolCotNumerico} editada exitosamente.`;
+
       setTimeout(() => {
         this.msjExito = '';
         this.showmsj = false;

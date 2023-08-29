@@ -193,7 +193,8 @@ export class CommunicationApiService {
   deleteItemSector(tipoSol: number, noSol: number, noDet: number, noItm: number): Observable<any> {
     return this.http.delete(`${this.APIUrl}/ItemSectors/${tipoSol}/${noSol}/${noDet}/${noItm}`);
   }
-  //put
+  
+  //ACTUALIZAR CABECERAS DE COTIZACION Y ORDEN DE COMPRA
   updateOrdencompra( id:number,data:any){
     return this.http.put(this.APIUrl + `/CabSolOrdenCompras/${id}`,data);
   }
@@ -201,7 +202,6 @@ export class CommunicationApiService {
   updateCabCotizacion( id:number,data:any){
     return this.http.put(this.APIUrl + `/CabSolCotizacions/${id}`,data);
   }
-  
 
   deleteAllItemBySol(tipoSol: number, noSol: number){
     return this.http.delete(`${this.APIUrl}/ItemSectors/DeleteAllItems?tipoSol=${tipoSol}&noSol=${noSol}`);
