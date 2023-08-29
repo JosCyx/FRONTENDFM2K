@@ -299,7 +299,9 @@
                         <tr *ngFor="let det of detalle; let i = index">
                             <td class="align-middle">{{ i+1 }}</td>
                             <td class="align-middle">
-                                <input type="text" class="form-control" [(ngModel)]="det.solCotDescripcion"></td>
+                                <!-- <input type="text" class="form-control" [(ngModel)]="det.solCotDescripcion"></td> -->
+                                <textarea name="descripcion" class="form-control" rows="2" cols="10"
+                                    placeholder="Descripción" [(ngModel)]="det.solCotDescripcion"></textarea>
                             <td class="align-middle"><button class="btn btn-outline-primary" (click)="selectDet(det)"
                                 data-toggle="modal" data-target="#itemsectorEdit">Editar</button></td>
                             <td class="align-middle">

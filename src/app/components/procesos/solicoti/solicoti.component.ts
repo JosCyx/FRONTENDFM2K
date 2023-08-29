@@ -159,9 +159,11 @@ export class SolicotiComponent implements OnInit {
     //     console.log("Error, no se ha podido recuperar el ultimo detalle: ", error)
     //   }
     // );
+  
 
     if (this.changeview == 'editar') {
       this.editSolicitud();
+      
     }
 
   }
@@ -231,11 +233,6 @@ export class SolicotiComponent implements OnInit {
       }
     }
   }
-
-  /*//controla el contenido que se muestra en la pagina
-  changeView(view: string): void {
-    this.changeview = view;
-  }*/
 
   //tranforma la fecha actual en un formato especifico "Lunes, 31 de julio de 2023"
   formatDateToSpanish(date: Date): string {
@@ -483,26 +480,6 @@ export class SolicotiComponent implements OnInit {
     }
     //console.log(this.itemSectorList);
   }
-  /*getIdCabecera(): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
-      this.service.getIDCabecera(this.trTipoSolicitud, this.trLastNoSol).subscribe(
-        (resultado) => {
-          if (resultado.length == 0) {
-            console.log("No se ha encontrado ninguna cabecera");
-          } else {
-            const cabID = resultado[0].cabSolCotID;
-            console.log('Id de la cabecera:', cabID);
-            resolve(cabID);
-          }
-        },
-        (error) => {
-          console.error('Error al obtener el id de la cabecera:', error);
-          reject(error);
-        }
-      );
-    });
-  }*/
-
 
   getLastDetalleCot(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
@@ -592,18 +569,9 @@ export class SolicotiComponent implements OnInit {
 
   }
 
-  /*deleteDetalle(id: number){
-    this.detalleList.splice(id-1,1);
-  }*/
-
   incrementDetID() {
     //aumenta el valor del id de detalle
-    if (this.changeview === 'editar') {
-      for (let det of this.detalle) {
-        console.log(this.detalle.length)
-        this.det_id = det.solCotIdDetalle + 2;
-      }
-    } else {
+    
       if (this.detalleList.length == 0) {
         this.det_id = 1;
       } else {
@@ -611,7 +579,7 @@ export class SolicotiComponent implements OnInit {
           this.det_id = det.det_id + 1;
         }
       }
-    }
+    
 
   }
 
@@ -796,6 +764,7 @@ export class SolicotiComponent implements OnInit {
       this.det_id = det.solCotIdDetalle + 1;
     }
     this.detalle.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
+    this.det_id = this.detalle.length + 1;
 
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
@@ -1029,18 +998,7 @@ export class SolicotiComponent implements OnInit {
   //GUARDAR EDICION DE LOS DETALLES
   async saveEditDetalle() {
     //eliminar todos los detalles de la solicitud
-    try {
-      this.service.deleteAllDetBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
-        response => {
-          console.log("Todos los detalles eliminados");
-        },
-        error => {
-          console.log("Error: ", error);
-        }
-      );
-    } catch (error) {
-      console.error("Error durante la eliminación:", error);
-    }
+    this.deleteAllDetails();
 
     //guardar los nuevos detalles de la solicitud
     for (let detalle of this.detalle) {
@@ -1066,21 +1024,29 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
+  deleteAllDetails(): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        this.service.deleteAllDetBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
+          response => {
+            console.log("Todos los detalles eliminados");
+            resolve();
+          },
+          error => {
+            console.log("Error: ", error);
+            reject(error);
+          }
+        );
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
   //GUARDAR EDICION DE LOS ITEMS
   async saveEditItem() {
     //eliminar todos los items de la solicitud
-    try {
-      this.service.deleteAllItemBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
-        response => {
-          console.log("Todos los items eliminados");
-        },
-        error => {
-          console.log("Error: ", error);
-        }
-      );
-    } catch (error) {
-      console.error("Error durante la eliminación:", error);
-    }
+    this.deleteAllItems();
 
     //guardar los nuevos items de la solicitud
     for (let item of this.item) {
@@ -1105,6 +1071,25 @@ export class SolicotiComponent implements OnInit {
       );
 
     }
+  }
+
+  deleteAllItems(): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        this.service.deleteAllItemBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
+          response => {
+            console.log("Todos los items eliminados");
+            resolve();
+          },
+          error => {
+            console.log("Error: ", error);
+            reject(error);
+          }
+        );
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 
 
