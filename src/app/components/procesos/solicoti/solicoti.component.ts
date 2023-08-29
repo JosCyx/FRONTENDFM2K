@@ -761,7 +761,7 @@ export class SolicotiComponent implements OnInit {
 
     for (let det of this.solicitudEdit.detalles) {
       this.detalle.push(det as DetalleCotizacion);
-      this.det_id = det.solCotIdDetalle + 1;
+      
     }
     this.detalle.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
     this.det_id = this.detalle.length + 1;
@@ -769,6 +769,14 @@ export class SolicotiComponent implements OnInit {
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
     }
+
+    this.item.sort((a, b) => {
+      if (a.itmIdDetalle === b.itmIdDetalle) {
+        return a.itmIdItem - b.itmIdItem; // Si los detalles son iguales, ordenar por ID de item
+      }
+      return a.itmIdDetalle - b.itmIdDetalle; // Ordenar por ID de detalle
+    });
+
     this.fechaSinFormato = this.convertirStringAFecha(this.cabecera.cabSolCotFecha);
 
     //formatear la fecha de la solicitud para mostrar dia de semana y fecha
@@ -821,6 +829,7 @@ export class SolicotiComponent implements OnInit {
   confDeleteDet(idListDet: number, idDetalle: number) {
     this.idDltDetList = idListDet;
     this.idDltDet = idDetalle;
+    console.log(this.idDltDetList, this.idDltDet)
   }
 
   deleteDetSaved() {//elimina el item de la lista local y llama al metodo que ejecuta los cambios en la base
@@ -845,6 +854,13 @@ export class SolicotiComponent implements OnInit {
       for (let i = 0; i < this.item.length; i++) {
         if (this.item[i].itmIdDetalle > this.idDltDet) {
           this.item[i].itmIdDetalle = this.item[i].itmIdDetalle - 1;
+        }
+      }
+
+      //ACTUALIZAR EL ID DE LOS DETALLES LUEGO DE ELIMINAR UN DETALLE
+      for(let d = 0; d < this.detalle.length; d++){
+        if(this.detalle[d].solCotIdDetalle > this.idDltDet){
+          this.detalle[d].solCotIdDetalle = this.detalle[d].solCotIdDetalle - 1;
         }
       }
     }
@@ -998,7 +1014,7 @@ export class SolicotiComponent implements OnInit {
   //GUARDAR EDICION DE LOS DETALLES
   async saveEditDetalle() {
     //eliminar todos los detalles de la solicitud
-    this.deleteAllDetails();
+    await this.deleteAllDetails();
 
     //guardar los nuevos detalles de la solicitud
     for (let detalle of this.detalle) {
@@ -1046,7 +1062,7 @@ export class SolicotiComponent implements OnInit {
   //GUARDAR EDICION DE LOS ITEMS
   async saveEditItem() {
     //eliminar todos los items de la solicitud
-    this.deleteAllItems();
+    await this.deleteAllItems();
 
     //guardar los nuevos items de la solicitud
     for (let item of this.item) {
@@ -1107,7 +1123,8 @@ export class SolicotiComponent implements OnInit {
         this.msjExito = '';
         this.showmsj = false;
         this.clear();
-      }, 4000);
+        this.router.navigate(['allrequest']);
+      }, 2500);
 
     } catch (error) {
       console.log('Error:', error);
