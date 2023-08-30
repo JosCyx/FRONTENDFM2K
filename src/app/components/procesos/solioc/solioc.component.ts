@@ -751,6 +751,12 @@ export class SoliocComponent implements OnInit {
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
     }
+    this.item.sort((a, b) => {
+      if (a.itmIdDetalle === b.itmIdDetalle) {
+        return a.itmIdItem - b.itmIdItem; // Si los detalles son iguales, ordenar por ID de item
+      }
+      return a.itmIdDetalle - b.itmIdDetalle; // Ordenar por ID de detalle
+    });
     this.fechaSinFormato = this.convertirStringAFecha(
       this.cabecera.cabSolOCFecha
     );
