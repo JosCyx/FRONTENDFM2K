@@ -1,37 +1,56 @@
-<body class="text-center">
-    <div class="mt-5">
-        <img src="http://malecon.org.ec/img/logo_byn.png">
+<div class="container">
+    <div class="text-center mt-5">
+        <img class=" bg-secondary p-2 rounded" src="https://malecon2000.com/public/img/logomalecon2000.png">
     </div>
 
-    <div class="container">
-        <form class="form-signin">
-            <!--Cambios-->
-            <div class="login">
-    
-                <h1 class="h3 mb-3 font-weight-normal">Inicio de Sesion</h1>
-    
-                <div class="mt-5">
-                    <div class="m-3">
-                        <label for="inputEmail" class="sr-only">Usuario</label>
-    
-                        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required=""autofocus="">
+
+    <form class="form-signin" [formGroup]="loginForm" (ngSubmit)="login()">
+        <!--Cambios-->
+        <div class="login">
+
+            <h1 class="h3 mb-3 font-weight-normal text-center">Inicio de Sesión</h1>
+
+            <div class="mt-5">
+                <div class="m-3">
+                    <label for="username" class="sr-only">Usuario</label>
+
+                    <input type="text" id="username" class="form-control" formControlName="username"
+                        placeholder="Ingrese su usuario">
+                    <div class="form-text text-danger"
+                        *ngIf="Username.errors?.['required'] && (Username.touched || Username.dirty)">
+                        Ingrese un nombre usuario.
                     </div>
-                    <div class="m-3">
-                        <label for="inputPassword" class="sr-only">Contraseña</label>
-    
-                        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
+                    <div class="form-text text-danger"
+                        *ngIf="Username.errors?.['minlength'] && (Username.touched || Username.dirty)">
+                        El nombre de usuario es muy corto.
                     </div>
                 </div>
-    
-                <div class="text-center btn-login ">
-                    <button class="btn col-3 btn-primary mt-3" type="submit" (click)="login()">Ingresar</button>
+                <div class="m-3">
+                    <label for="password" class="sr-only">Contraseña</label>
+
+                    <input type="password" id="password" class="form-control" formControlName="password"
+                        placeholder="Ingrese su contraseña">
+                    <div class="form-text text-danger"
+                        *ngIf="Password.errors?.['required'] && (Password.touched || Password.dirty)">
+                        Ingrese una contraseña.
+                    </div>
+                    <div class="form-text text-danger"
+                        *ngIf="Username.errors?.['minlength'] && (Username.touched || Username.dirty)">
+                        El nombre de usuario es muy corto.
+                    </div>
                 </div>
-    
-    
             </div>
-        </form>
-    </div>
-    
+
+            <div class="text-center btn-login ">
+                <button class="btn col-3 btn-primary mt-3" type="submit"
+                    [disabled]="loginForm.invalid">Ingresar</button>
+            </div>
 
 
-</body>
+        </div>
+    </form>
+
+
+
+
+</div>
