@@ -6,7 +6,6 @@ import { ItemSector } from 'src/app/models/procesos/ItemSector';
 import { Router } from '@angular/router';
 import { format, parseISO } from 'date-fns';
 import { es, oc } from 'date-fns/locale';
-import { CabeceraCotizacion } from 'src/app/models/procesos/solcotizacion/CabeceraCotizacion';
 import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/DetalleCotizacion';
 import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotizacion';
 import { GlobalService } from 'src/app/services/global.service';
@@ -92,6 +91,7 @@ export class SoliocComponent implements OnInit {
   detallesList$!: Observable<any[]>;
   itemxSector$!: Observable<any[]>;
   sectores$!: Observable<any[]>;
+  nivelRut$!: Observable<any[]>;
 
   //listas locales para manejar los datos
   detalleList: Detalle[] = [];
@@ -103,11 +103,20 @@ export class SoliocComponent implements OnInit {
   //sectores: any[] = [];
   inspectores: any[] = [];
 
-  //variable editar
+  //variable editar orden compra
   solID: number = this.serviceGlobal.solID;
   idDlt!: number;
   idNSolDlt!: number;
   idItmDlt!: number;
+  //
+  idDetEdit!: number;
+  det_id_edit!: number;
+  det_descp_edit!: string;
+  //
+  idDltDetList!: number;
+  idDltDet!: number
+  // lastIDItem!: number;
+  // lastIDDet!: number;
 
   constructor(
     private service: CommunicationApiService,
@@ -122,7 +131,9 @@ export class SoliocComponent implements OnInit {
     });
 
     this.inspectores$ = this.service.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
-
+    this.nivelRut$ = this.service
+      .getNivelbyEstado('A')
+      .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
     this.sectores$ = this.service
       .getSectoresList()
       .pipe(
@@ -266,10 +277,10 @@ export class SoliocComponent implements OnInit {
   }
 
   cancelarItem(): void {
+    this.calcularCantDetalle();
     this.det_cantidad = 0;
-    if (!this.detType) {
-      this.item_id = 1;
-    }
+    this.det_descp_edit = '';
+    this.item_id = 1;
     this.tmpItemSect = [];
   }
 
@@ -562,6 +573,7 @@ export class SoliocComponent implements OnInit {
   }
   //agrega los detalles a la lista detalles
   addDetalle() {
+    this.saveItemSect();
     const detalle = {
       det_id: this.det_id,
       det_descp: this.det_descp,
@@ -570,13 +582,15 @@ export class SoliocComponent implements OnInit {
     };
 
     this.detalleList.push(detalle);
-    //console.log(this.detalleList);
-
-    //aumenta el valor del id de detalle
     this.incrementDetID();
 
     if (!this.detType) {
       this.item_id = 1;
+    }
+    //
+    if (this.changeview == 'editar') {
+      this.saveLocaltoResponse();
+      console.log("item a enviar a APi ");
     }
 
     this.det_descp = '';
@@ -584,16 +598,21 @@ export class SoliocComponent implements OnInit {
     this.det_cantidad = 0;
     this.tmpItemSect = [];
   }
+
   incrementDetID() {
     //aumenta el valor del id de detalle
-    if (this.detalleList.length == 0) {
-      this.det_id = 1;
-    } else {
-      for (let det of this.detalleList) {
-        this.det_id = det.det_id + 1;
-      }
+    
+    
+      if (this.detalleList.length == 0) {
+        this.det_id = 1;
+      } else {
+        for (let det of this.detalleList) {
+          this.det_id = det.det_id + 1;
+        }
+      
     }
-  }
+    }
+    
   async deleteDetalle(id: number) {
     const index = this.detalleList.findIndex(
       (detalle) => detalle.det_id === id
@@ -611,8 +630,6 @@ export class SoliocComponent implements OnInit {
       this.idToIndexMap.set(this.detalleList[i].det_id, i);
     }
     this.incrementDetID();
-
-    setTimeout(() => {}, 500);
   }
 
   //agregar los items a una lista temporal
@@ -628,14 +645,22 @@ export class SoliocComponent implements OnInit {
 
     this.tmpItemSect.push(tmpItemSector);
 
-    this.incrementItemID();
-
-    this.det_cantidad += this.item_cant;
-
+    for(let itm of this.tmpItemSect){
+      this.item_id=itm.item_id+1;
+    }
+    //this.det_cantidad += this.item_cant;
+    this.calcularSumaItems();
     //aumenta el valor del id de los items
-
     this.item_cant = 1;
     this.item_sector = 0;
+  }
+  calcularSumaItems() {
+    this.det_cantidad = 0;
+    for (let itm of this.tmpItemSect) {
+      if (itm.det_id === this.det_id) {
+        this.det_cantidad += itm.item_cant;
+      }
+    }
   }
 
   //agregar los items de la lista temporal a la lista definitiva
@@ -676,14 +701,14 @@ export class SoliocComponent implements OnInit {
       this.tmpItemSect.splice(index, 1);
       this.idToIndexMap.delete(index);
     }
-
+    this.calcularSumaItems();
     for (let i = 0; i < this.tmpItemSect.length; i++) {
       this.tmpItemSect[i].item_id = i + 1;
       this.idToIndexMap.set(this.tmpItemSect[i].item_id, i);
     }
     this.incrementItemID();
 
-    setTimeout(() => {}, 500);
+    //setTimeout(() => {}, 500);
   }
   //
   async editSolicitud() {
@@ -717,11 +742,21 @@ export class SoliocComponent implements OnInit {
 
     for (let det of this.solicitudEdit.detalles) {
       this.detalle.push(det as DetalleCotizacion);
+      this.det_id = det.solCotIdDetalle + 2;
     }
+    this.detalle.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
+    this.det_id = this.detalle.length+1;
+
 
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
     }
+    this.item.sort((a, b) => {
+      if (a.itmIdDetalle === b.itmIdDetalle) {
+        return a.itmIdItem - b.itmIdItem; // Si los detalles son iguales, ordenar por ID de item
+      }
+      return a.itmIdDetalle - b.itmIdDetalle; // Ordenar por ID de detalle
+    });
     this.fechaSinFormato = this.convertirStringAFecha(
       this.cabecera.cabSolOCFecha
     );
@@ -783,41 +818,43 @@ export class SoliocComponent implements OnInit {
   }
   deleteItemSaved() {
     const index = this.item.findIndex((itm) => itm.itmID === this.idDlt);
-
     if (index !== -1) {
       this.item.splice(index, 1);
-      this.saveItemDB();
+      // this.saveItemDB();
+      this.reorderAndSaveItems();
+      this.calcularCantDetalle();
+      this.calcularIdItem();
     }
   }
   //
-  async saveItemDB() {
-    try {
-      await this.deleteAllItems();
-      setTimeout(() => {
-        this.reorderAndSaveItems();
-        this.checkAndDeleteDetails();
-      }, 200);
-      console.log('Proceso completado exitosamente.');
-    } catch (error) {
-      console.error('Error durante el proceso:', error);
-    }
-  }
-  async deleteAllItems() {
-    try {
-      await this.service
-        .deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt)
-        .subscribe(
-          (response) => {
-            console.log('todos los Item eliminados');
-          },
-          (error) => {
-            console.log('Error: ', error);
-          }
-        );
-    } catch (error) {
-      console.error('Error durante la eliminación:', error);
-    }
-  }
+  // async saveItemDB() {
+  //   try {
+  //     await this.deleteAllItems();
+  //     setTimeout(() => {
+  //       this.reorderAndSaveItems();
+  //       this.checkAndDeleteDetails();
+  //     }, 200);
+  //     console.log('Proceso completado exitosamente.');
+  //   } catch (error) {
+  //     console.error('Error durante el proceso:', error);
+  //   }
+  // }
+  // async deleteAllItems() {
+  //   try {
+  //     await this.service
+  //       .deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt)
+  //       .subscribe(
+  //         (response) => {
+  //           console.log('todos los Item eliminados');
+  //         },
+  //         (error) => {
+  //           console.log('Error: ', error);
+  //         }
+  //       );
+  //   } catch (error) {
+  //     console.error('Error durante la eliminación:', error);
+  //   }
+  // }
   async reorderAndSaveItems() {
     const detailItemMap: { [key: number]: number } = {};
 
@@ -850,53 +887,53 @@ export class SoliocComponent implements OnInit {
       );
     }
   }
-  async checkAndDeleteDetails() {
-    //verificar si algun detalle no tiene items y eliminarlo
-    for (let det of this.detalle) {
-      console.log(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle);
+  // async checkAndDeleteDetails() {
+  //   //verificar si algun detalle no tiene items y eliminarlo
+  //   for (let det of this.detalle) {
+  //     console.log(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle);
 
-      this.service
-        .getItemsbyDet(
-          this.trTipoSolicitud,
-          this.idNSolDlt,
-          det.solCotIdDetalle
-        )
-        .subscribe(
-          (response) => {
-            if (response === 0) {
-              console.log(
-                'NO existen items para el detalle: ',
-                det.solCotIdDetalle
-              );
-              //eliminar el detalle
-              this.service.deleteDetallebyId(det.solCotID).subscribe(
-                (response) => {
-                  console.log('Se ha eliminado el detalle.');
-                },
-                (error) => {
-                  console.log('No se pudo eliminar el detalle, error: ', error);
-                }
-              );
-            } else {
-              console.log(
-                'SI existen items para el detalle: ',
-                det.solCotIdDetalle
-              );
-            }
-          },
-          (error) => {
-            console.log('Error: ', error);
-          }
-        );
-    }
-  }
+  //     this.service
+  //       .getItemsbyDet(
+  //         this.trTipoSolicitud,
+  //         this.idNSolDlt,
+  //         det.solCotIdDetalle
+  //       )
+  //       .subscribe(
+  //         (response) => {
+  //           if (response === 0) {
+  //             console.log(
+  //               'NO existen items para el detalle: ',
+  //               det.solCotIdDetalle
+  //             );
+  //             //eliminar el detalle
+  //             this.service.deleteDetallebyId(det.solCotID).subscribe(
+  //               (response) => {
+  //                 console.log('Se ha eliminado el detalle.');
+  //               },
+  //               (error) => {
+  //                 console.log('No se pudo eliminar el detalle, error: ', error);
+  //               }
+  //             );
+  //           } else {
+  //             console.log(
+  //               'SI existen items para el detalle: ',
+  //               det.solCotIdDetalle
+  //             );
+  //           }
+  //         },
+  //         (error) => {
+  //           console.log('Error: ', error);
+  //         }
+  //       );
+  //   }
+  // }
   //* convertir de tipo String a  new DATE
   convertirStringAFecha(fechaStr: string): Date {
     const fechaConvertida = new Date(fechaStr);
     return fechaConvertida;
   }
   //* Editar orden compra en el Enviar
-  guardaredicionCabece() {
+  async saveEditCabecera() {
     const dataCAB = {
       cabSolOCID: this.cabecera.cabSolOCID,
       cabSolOCTipoSolicitud: this.cabecera.cabSolOCTipoSolicitud,
@@ -924,51 +961,109 @@ export class SoliocComponent implements OnInit {
     this.service.updateOrdencompra(this.cabecera.cabSolOCID, dataCAB).subscribe(
       (response) => {
         console.log('Actualizar ');
-        this.showmsj = true;
-        this.msjExito =
-          'Solicitud N°' +
-          this.cabecera.cabSolOCNumerico +
-          ' editada exitosamente.';
-
-        setTimeout(() => {
-          this.msjExito = '';
-          this.showmsj = false;
-          this.clear();
-        }, 4000);
-      },
+             },
       (error) => {
         console.log('error : ', error);
       }
     );
   }
-  //** */
-  addNewItem() {
-    this.addDetalle();
-    setTimeout(() => {
-      this.saveItemDetEdit();
-      this.editSolicitud();
-      this.clearList();
-    }, 200);
+  async saveEditDetalle() {
+    //eliminar todos los detalles de la solicitud
+    await this.deleteAllDetails();
+    //guardar los nuevos detalles de la solicitud
+    for (let detalle of this.detalle) {
+
+      const data = {
+        solCotTipoSol: this.cabecera.cabSolOCTipoSolicitud,
+        solCotNoSol: this.cabecera.cabSolOCNoSolicitud,
+        solCotIdDetalle: detalle.solCotIdDetalle,
+        solCotDescripcion: detalle.solCotDescripcion,
+        solCotUnidad: detalle.solCotUnidad,
+        solCotCantidadTotal: detalle.solCotCantidadTotal
+      }
+      console.log("Nuevo detalle: ", data);
+      this.service.addDetalleCotizacion(data).subscribe(
+        response => {
+          console.log("Nuevo detalle", detalle.solCotIdDetalle, " guardado en la base");
+        },
+        error => {
+          console.log("No se ha podido registrar el detalle, error: ", error);
+        }
+      );
+
+    }
+  }
+  //
+  deleteAllDetails(): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        this.service.deleteAllDetBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
+          response => {
+            console.log("Todos los detalles eliminados");
+            resolve();
+          },
+          error => {
+            console.log("Error: ", error);
+            reject(error);
+          }
+        );
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+  //
+  async saveEditItem() {
+    //eliminar todos los items de la solicitud
+    await this.deleteAllItems();
+    //guardar los nuevos items de la solicitud
+    for (let item of this.item) {
+
+      const data = {
+        itmTipoSol: this.cabecera.cabSolOCTipoSolicitud,
+        itmNumSol: this.cabecera.cabSolOCNoSolicitud,
+        itmIdDetalle: item.itmIdDetalle,
+        itmIdItem: item.itmIdItem,
+        itmCantidad: item.itmCantidad,
+        itmSector: item.itmSector
+      }
+      console.log("Nuevo item: ", data);
+
+      this.service.addItemSector(data).subscribe(
+        response => {
+          console.log("Nuevo item guardado en la base, item:", item.itmIdItem, ", detalle:", item.itmIdDetalle);
+        },
+        error => {
+          console.log("No se pudo guardar el item no:" + item.itmIdItem + ", error: ", error);
+        }
+      );
+
+    }
+  }
+  //
+  deleteAllItems(): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        this.service.deleteAllItemBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
+          response => {
+            console.log("Todos los items eliminados");
+            resolve();
+          },
+          error => {
+            console.log("Error: ", error);
+            reject(error);
+          }
+        );
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
   //
   clearList() {
     this.itemSectorList = [];
     this.detalleList = [];
   }
-  //*
-  changeDet() {
-    this.detType = !this.detType;
-    this.det_descp = '';
-    this.itemSectorList = [];
-    ////MODIFICAR PARA QUE MUESTRE ID 1 CUANDO SE CREE UN NUEVO DETALLE
-    if (!this.detType) {
-      for (let det of this.detalle) {
-        this.det_id = det.solCotIdDetalle + 1;
-        this.item_id = 1;
-      }
-    }
-  }
-
   setDetId() {
     const selectedDetalle = this.detalle.find(
       (det) => det.solCotDescripcion === this.det_descp
@@ -1054,6 +1149,151 @@ export class SoliocComponent implements OnInit {
           );
         }
       );
+    }
+  }
+  
+  
+  //Guardar a la tabla
+  saveLocaltoResponse() {
+    for (let itm of this.itemSectorList) {
+      const data = {
+        itmID: 0, //modificar
+        itmTipoSol: this.cabecera.cabSolOCTipoSolicitud,
+        itmNumSol: this.cabecera.cabSolOCNoSolicitud,
+        itmIdDetalle: itm.det_id,
+        itmIdItem: itm.item_id,
+        itmCantidad: itm.item_cant,
+        itmSector: itm.item_sector,
+      };
+      this.item.push(data);
+    }
+    this.itemSectorList=[];
+    for (let det of this.detalleList) {
+      const data = {
+        solCotID: 0,
+        solCotTipoSol: this.cabecera.cabSolOCTipoSolicitud,
+        solCotNoSol: this.cabecera.cabSolOCNoSolicitud,
+        solCotIdDetalle: det.det_id,
+        solCotDescripcion: det.det_descp,
+        solCotUnidad: det.det_unidad,
+        solCotCantidadTotal: det.det_cantidad,
+      };
+
+      this.detalle.push(data);
+    }
+    this.detalleList = [];
+  }
+  addNewItem() {
+    const data = {
+      itmID: 0, //obtener el ultimo id de los items y sumar +1
+      itmTipoSol: this.cabecera.cabSolOCTipoSolicitud,
+      itmNumSol: this.cabecera.cabSolOCNoSolicitud,
+      itmIdDetalle: this.idDetEdit,
+      itmIdItem: this.item_id,
+      itmCantidad: this.item_cant,
+      itmSector: this.item_sector,
+    };
+
+    this.item.push(data);
+    console.log(this.item);
+    this.calcularIdItem();
+    this.calcularCantDetalle();
+    this.item_cant = 1;
+    this.item_sector = 0;
+  }
+  //Al momento de seleccionar
+  selectDet(det: DetalleCotizacion) {
+    this.idDetEdit = det.solCotIdDetalle;
+    this.det_descp_edit = det.solCotDescripcion;
+    this.det_id_edit = det.solCotIdDetalle;
+    this.calcularIdItem();
+  }
+  //*
+  calcularCantDetalle() {
+    for (let det of this.detalle) {
+      if (det.solCotIdDetalle === this.idDetEdit) {
+        det.solCotCantidadTotal = 0; // Reiniciar la cantidad total del detalle
+        for (let itm of this.item) {
+          if (itm.itmIdDetalle === det.solCotIdDetalle) {
+            det.solCotCantidadTotal += itm.itmCantidad;
+          }
+        }
+      }
+    }
+    //this.det_cantidad += this.item_cant;
+  }
+  calcularIdItem() {
+    for (let itm of this.item) {
+      if (itm.itmIdDetalle === this.idDetEdit) {
+        this.item_id = itm.itmIdItem + 1;
+      }
+    }
+  }
+  confDeleteDet(idListDet: number, idDetalle: number) {
+    this.idDltDetList = idListDet;
+    this.idDltDet = idDetalle;
+  }
+  deleteDetSaved() {//elimina el item de la lista local y llama al metodo que ejecuta los cambios en la base
+    const index = this.detalle.findIndex(det => det.solCotID === this.idDltDetList);
+    console.log("Detalle a eliminar numero ", index)
+
+    if (index !== -1) {
+      this.detalle.splice(index, 1);
+      this.det_id--;
+      /*this.reorderAndSaveItems();
+      this.calcularCantDetalle();
+      this.calcularIdItem();*/
+
+      //ELIMINAR ITEMS QUE PERTENECEN AL DETALLE ELIMINADO
+      for (let i = this.item.length - 1; i >= 0; i--) {
+        if (this.item[i].itmIdDetalle === this.idDltDet) {
+          this.item.splice(i, 1);
+        }
+      }
+
+      //ACTUALIZAR EL ID DEL DETALLE DE LOS SIGUIENTES ITEMS
+      for (let i = 0; i < this.item.length; i++) {
+        if (this.item[i].itmIdDetalle > this.idDltDet) {
+          this.item[i].itmIdDetalle = this.item[i].itmIdDetalle - 1;
+        }
+      }
+      //ACTUALIZAR EL ID DE LOS DETALLE
+      for (let d = 0; d < this.detalle.length; d++) {
+        if(this.detalle[d].solCotIdDetalle > this.idDltDet){
+          this.detalle[d].solCotIdDetalle=this.detalle[d].solCotIdDetalle-1;
+        }
+      }
+    }
+    console.log(this.item);
+  }
+  openModalItem() {
+    this.item_id = 1;
+  }
+  async saveEdit() {
+    try {
+      await this.saveEditCabecera();
+      await this.saveEditDetalle();
+      await this.saveEditItem();
+
+      this.showmsj = true;
+      this.msjExito = 'Solicitud N°' + this.cabecera.cabSolOCNumerico + ' editada exitosamente.';
+      
+      setTimeout(() => {
+        this.msjExito = '';
+        this.showmsj = false;
+        this.router.navigate(['allrequest']);
+        this.clear();
+      },2500);
+
+    } catch (error) {
+      console.log('Error:', error);
+      this.showmsjerror = true;
+      this.msjError = "No se ha podido guardar la solicitud, intente nuevamente.";
+
+      setTimeout(() => {
+        this.showmsjerror = false;
+        this.msjError = "";
+      }, 2500);
     }
   }
 }
