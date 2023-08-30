@@ -1,6 +1,13 @@
+.container{
+    /*background-image: url('imagen de fondo');
+    background-size: cover; */
+    background-repeat: no-repeat;
+}
+
 .login{
     padding: 15%;
 }
+
 .container{
     width: 40%;
 }

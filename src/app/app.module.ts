@@ -27,6 +27,7 @@ import { CommunicationApiService } from './services/communication-api.service';
 import { MenuAdminComponent } from './components/templates/menu-admin/menu-admin.component';
 import { AllrequestComponent } from './components/procesos/allrequest/allrequest.component';
 import { BreadcrumbComponent } from './components/templates/breadcrumb/breadcrumb.component';
+import { AuthService } from './services/auth.service';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,7 @@ import { BreadcrumbComponent } from './components/templates/breadcrumb/breadcrum
     HttpClientModule,
     NgxPaginationModule
   ],
-  providers: [CommunicationApiService],
+  providers: [CommunicationApiService,AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
