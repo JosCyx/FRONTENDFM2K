@@ -25,6 +25,6 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   login(user: string, pass: string){
-    return this.http.get(this.APIurl + '/Usuarios');
+    return this.http.get(this.APIurl + `/Usuarios/Login?username=${user}&pass=${pass}`);
   }
 }
