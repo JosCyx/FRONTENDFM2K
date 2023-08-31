@@ -6,7 +6,9 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <button class="btn btn-primary m-2">Crear</button>
-          <button class="btn btn-primary m-2">Boton</button>
+          <button class="btn btn-primary m-2" >
+            Boton
+          </button>
         </div>
       </div>
     </nav>
@@ -23,15 +25,25 @@
         <div class="row">
           <div class="input-group col mb-1">
             <label class="input-group-text">Fecha:</label>
-            <input type="text" class="form-control"  />
+            <input
+              type="text"
+              class="form-control"
+              disabled
+              [value]="fechaFormateada"
+            />
           </div>
           <!--  -->
           <div class="input-group col mb-1">
             <label class="input-group-text">No orden de compra :</label>
-            <input type="text" class="form-control"  placeholder="Ingrese el numero de compra"   />
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Ingrese el numero de compra"
+              [(ngModel)]="cab_ordencompra"
+            />
           </div>
         </div>
-        <div class="row mb-1 ">
+        <div class="row mb-1">
           <div class="input-group col">
             <label class="input-group-text">Solicitado por*:</label>
             <input
@@ -50,7 +62,7 @@
                 ></option>
               </ng-container>
             </datalist>
-            <button class="btn btn-success" (click)="selectEmpleado()" >
+            <button class="btn btn-success" (click)="selectEmpleado()">
               <i class="bi bi-check-lg"></i>
             </button>
           </div>
@@ -61,19 +73,27 @@
               class="form-control"
               [value]="showArea"
               placeholder="Area del empleado solicitante"
-              
             />
           </div>
           <!--  -->
         </div>
-        <div class="row ">
+        <div class="row">
           <div class="input-group col mb-1">
             <label class="input-group-text">No factura:</label>
-            <input type="text" class="form-control" placeholder="Ingrese el numero Factura"  />
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Ingrese el numero Factura"
+              [(ngModel)]="cab_nofactura"
+            />
           </div>
           <div class="input-group col mb-1">
             <label class="input-group-text">Fecha de Factura:</label>
-            <input type="text" class="form-control" placeholder="Ingrese la Fecha" />
+            <input
+              type="date"
+              class="form-control"
+              [(ngModel)]="cab_fechafactura"
+            />
           </div>
         </div>
         <div class="row mb-1">
@@ -88,7 +108,12 @@
           </div>
           <div class="input-group col">
             <label class="input-group-text">Ruc del proveedor|cédula </label>
-            <input type="text" class="form-control" placeholder="Ingrese el Ruc "  />
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Ingrese el Ruc "
+              [(ngModel)]="cab_rucproveedor"
+            />
           </div>
         </div>
       </div>
@@ -138,7 +163,7 @@
                 </select>
               </td>
               <td class="align-middle cel-prep">
-                <input type="text" class="form-control text-center"  />
+                <input type="text" class="form-control text-center" />
               </td>
             </tr>
             <tr>
@@ -159,7 +184,7 @@
             class="form-control"
             id="floatingInput"
             placeholder=""
-            
+            [(ngModel)]="cab_observa"
           />
           <label for="floatingInput">Observaciones:</label>
         </div>
@@ -167,32 +192,55 @@
           <input
             type="text"
             class="form-control"
-            id="floatingInput"
+            id="floatingInputM"
             placeholder=""
-            
+            [(ngModel)]="cab_aplicarmult"
           />
-          <label for="floatingInput">Aplicar multa:</label>
+          <label for="floatingInputM">Aplicar multa:</label>
         </div>
         <div class="input-group mb-3">
           <label class="input-group-text">Valor a descontar:</label>
-          <input class="form-control" type="number" placeholder="Ingrese el valor a descontar"   />
+          <input
+            class="form-control"
+            type="number"
+            placeholder="Ingrese el valor a descontar"
+            [(ngModel)]="cab_valordescontar"
+          />
           <label class="input-group-text">Pago total autorizado:</label>
-          <input class="form-control" type="number" placeholder="Ingrese el valor Total"  />
+          <input
+            class="form-control"
+            type="number"
+            placeholder="Ingrese el valor Total"
+            [(ngModel)]="cab_totalautorizado"
+          />
         </div>
         <div class="input-group mb-3">
           <label class="input-group-text">Recibe:</label>
-          <select class="form-select"    >
-            <option value="1">1</option>
-            <option value="2" selected>2</option>
-          </select>
+          <input
+              type="text"
+              class="form-control"
+              id="busqueda"
+              list="sugerencias"
+              [(ngModel)]="receptor"
+              (keyup)="searchEmpleado()"
+              placeholder="Ingrese el nombre del empleado"
+            />
+            <datalist id="sugerencias" >
+              <ng-container *ngFor="let emp of empleados">
+                <option
+                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+                ></option>
+              </ng-container>
+            </datalist>
           <label class="input-group-text">Fecha de Inspeccion*:</label>
-          <input class="form-control" type="date" for="fechamaxima"   />
+          <input class="form-control" type="date" for="fechamaxima" [(ngModel)]="cab_fechaInspeccion" />
         </div>
         <div class="input-group mb-3">
           <label class="input-group-text">Cancelación de orden :</label>
-          <select class="form-select"  >
-            <option value="1">1</option>
-            <option value="2" selected>2</option>
+          <select class="form-select" [(ngModel)]="cab_cancelarOrden" >
+            <option disabled selected >Seleccione un opcion....</option>
+            <option value="TTL">TOTAL</option>
+            <option value="PCL" >PARCIAL</option>
           </select>
         </div>
         <div class="text-end">
@@ -215,9 +263,41 @@
       </div>
 
       <div class="col text-end">
-        <button class="btn btn-primary m-2">Guardar</button>
+        <button class="btn btn-primary m-2" data-toggle="modal" data-target="#GuardarSolicitud" (click)="saveReceptor()" >Guardar</button>
         <button class="btn btn-danger m-2">Cancelar</button>
       </div>
+    </div>
+  </div>
+</div>
+<!-- Modals para confirmar  -->
+<div
+  class="modal fade"
+  #exampleModal
+  id="GuardarSolicitud"
+  data-backdrop="static"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          Guardar cambios
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>¿Esta seguro que desea guardar los cambios realizados en la solicitud ?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="generarSolicitud()" >
+            Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+            Cancelar
+        </button>
+    </div>
     </div>
   </div>
 </div>
