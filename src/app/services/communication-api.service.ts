@@ -142,6 +142,10 @@ export class CommunicationApiService {
   addSolOC(data: any) {
     return this.http.post(this.APIUrl + '/CabSolOrdenCompras', data);
   }
+  //*METODO SOLICITUD DE PAGO
+  addSolPag(data: any) {
+    return this.http.post(this.APIUrl + '/CabSolPago', data);
+  }
 
   getIDCabecera(tipoSol: number, noSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/CabSolCotizacions/GetCabecerabyID?tipoSol=${tipoSol}&noSol=${noSol}`);
