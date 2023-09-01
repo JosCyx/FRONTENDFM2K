@@ -20,6 +20,10 @@ export class SolipagoComponent implements OnInit {
   fecha: Date = new Date();
   fechaFormateada:string = this.formatDateToSpanish(this.fecha);
   receptor!: string;
+  //Variables de input para solicitar tipo de solicitud  y no solicitud
+  valorinput:string='';
+  tipoSolicitudes!:number;
+  noSolicitud!:number;
 
 
   //*variables de cabecera
@@ -297,5 +301,31 @@ export class SolipagoComponent implements OnInit {
       }
     }
     console.log(this.cab_recibe);
+  }
+   async Obtener(){
+    const partes = this.valorinput.match(/(\d+)-(\d+)/);
+    console.log(partes);
+    if ( partes && partes.length === 3 ) {
+      this.tipoSolicitudes=parseInt(partes[1],10);
+      this.noSolicitud=parseInt(partes[2],10)
+      console.log(this.tipoSolicitudes);
+      console.log(this.noSolicitud);
+    }else{
+      console.log("No tiene ningun formato realizado")
+    }
+    console.log("el valor de la de los input",this.valorinput);
+    try {
+      await this.service.getDetalle_solicitud(this.tipoSolicitudes,this.noSolicitud).subscribe(
+        (response) => {
+          console.log(response);
+        },
+        (error) => {
+          console.log('error al guardar la cabecera: ', error);
+        }
+      );  
+    } catch (error) {
+      console.log("error",error)
+    }
+    
   }
 }
