@@ -6,9 +6,7 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
           <button class="btn btn-primary m-2">Crear</button>
-          <button class="btn btn-primary m-2" >
-            Boton
-          </button>
+          <button class="btn btn-primary m-2">Boton</button>
         </div>
       </div>
     </nav>
@@ -103,7 +101,6 @@
               type="text"
               class="form-control"
               placeholder="Ingrese el nombre del proveedor"
-              
             />
           </div>
           <div class="input-group col">
@@ -116,17 +113,30 @@
             />
           </div>
         </div>
+        <div class="input-group">
+          <label class="input-group-text"> Solicitud Asociada</label>
+          <input
+          [(ngModel)]="valorinput"
+            type="text"
+            class="form-control mr-1"
+            placeholder="Ingrese la Solicitador Asociada..."
+          />
+          <button class="btn btn-success" (click)="Obtener()" >
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
       </div>
 
       <div class="detalle">
         <table class="table table-striped text-center">
           <thead>
             <tr>
-              <th scope="col">Item</th>
-              <th scope="col">Descripción*</th>
-              <th scope="col">Presupuesto*</th>
-              <th scope="col">Unidad</th>
-              <th scope="col">Cantidad Total</th>
+              <th scope="col"></th>
+              <th scope="col">Item a Cancelar*</th>
+              <th scope="col">Cantidad contratada</th>
+              <th scope="col">Cantidad recibida</th>
+              <th scope="col">Valor unitario</th>
+              <th scope="col">Subtotal</th>
             </tr>
           </thead>
           <tbody>
@@ -141,32 +151,30 @@
                 ></textarea>
               </td>
               <td class="align-middle">
-                <button
-                  class="btn btn-outline-primary"
-                  data-toggle="modal"
-                  data-target="#itemsector"
-                >
-                  Desglose
-                </button>
+                <input type="text" class="form-control text-center" />
               </td>
               <td class="align-middle" style="width: 150px">
-                <select class="form-control">
-                  <option value="Unidad" selected>Unidad</option>
-                  <option value="Sacos">Sacos</option>
-                  <option value="Paquete">Paquete</option>
-                  <option value="Avance de Obra">Avance de Obra</option>
-                  <option value="Millar">Millar</option>
-                  <option value="Metros">Metros</option>
-                  <option value="Kilos">Kilos</option>
-                  <option value="Gramos">Gramos</option>
-                  <option value="Caneca">Caneca</option>
-                </select>
+                <input type="text" class="form-control text-center" />
               </td>
               <td class="align-middle cel-prep">
                 <input type="text" class="form-control text-center" />
               </td>
+              <td class="align-middle">
+                <input type="text" class="form-control text-center" />
+              </td>
             </tr>
             <tr>
+              <td class="align-middle text-end"></td>
+              <td class="align-middle text-end"></td>
+              <td class="align-middle text-end"></td>
+              <td class="align-middle text-end"></td>
+              <td class="align-middle text-end">Total</td>
+              <td class="align-middle text-end">
+                <input type="text" class="form-control text-center" />
+              </td>
+            </tr>
+            <tr>
+              <td></td>
               <td colspan="5" class="align-middle text-end">
                 <button class="btn btn-success">
                   <i class="bi bi-check"></i>
@@ -217,30 +225,35 @@
         <div class="input-group mb-3">
           <label class="input-group-text">Recibe:</label>
           <input
-              type="text"
-              class="form-control"
-              id="busqueda"
-              list="sugerencias"
-              [(ngModel)]="receptor"
-              (keyup)="searchEmpleado()"
-              placeholder="Ingrese el nombre del empleado"
-            />
-            <datalist id="sugerencias" >
-              <ng-container *ngFor="let emp of empleados">
-                <option
-                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-                ></option>
-              </ng-container>
-            </datalist>
+            type="text"
+            class="form-control"
+            id="busqueda"
+            list="sugerencias"
+            [(ngModel)]="receptor"
+            (keyup)="searchEmpleado()"
+            placeholder="Ingrese el nombre del empleado"
+          />
+          <datalist id="sugerencias">
+            <ng-container *ngFor="let emp of empleados">
+              <option
+                [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+              ></option>
+            </ng-container>
+          </datalist>
           <label class="input-group-text">Fecha de Inspeccion*:</label>
-          <input class="form-control" type="date" for="fechamaxima" [(ngModel)]="cab_fechaInspeccion" />
+          <input
+            class="form-control"
+            type="date"
+            for="fechamaxima"
+            [(ngModel)]="cab_fechaInspeccion"
+          />
         </div>
         <div class="input-group mb-3">
           <label class="input-group-text">Cancelación de orden :</label>
-          <select class="form-select" [(ngModel)]="cab_cancelarOrden" >
-            <option disabled selected >Seleccione un opcion....</option>
+          <select class="form-select" [(ngModel)]="cab_cancelarOrden">
+            <option disabled selected>Seleccione un opcion....</option>
             <option value="TTL">TOTAL</option>
-            <option value="PCL" >PARCIAL</option>
+            <option value="PCL">PARCIAL</option>
           </select>
         </div>
         <div class="text-end">
@@ -263,7 +276,14 @@
       </div>
 
       <div class="col text-end">
-        <button class="btn btn-primary m-2" data-toggle="modal" data-target="#GuardarSolicitud" (click)="saveReceptor()" >Guardar</button>
+        <button
+          class="btn btn-primary m-2"
+          data-toggle="modal"
+          data-target="#GuardarSolicitud"
+          (click)="saveReceptor()"
+        >
+          Guardar
+        </button>
         <button class="btn btn-danger m-2">Cancelar</button>
       </div>
     </div>
@@ -283,21 +303,27 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header justify-content-center">
-        <h3 class="font-weight-bold" id="exampleModalLabel">
-          Guardar cambios
-        </h3>
+        <h3 class="font-weight-bold" id="exampleModalLabel">Guardar cambios</h3>
       </div>
       <div class="modal-body">
-        <p>¿Esta seguro que desea guardar los cambios realizados en la solicitud ?</p>
+        <p>
+          ¿Esta seguro que desea guardar los cambios realizados en la solicitud
+          ?
+        </p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="generarSolicitud()" >
-            Confirmar
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-dismiss="modal"
+          (click)="generarSolicitud()"
+        >
+          Confirmar
         </button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">
-            Cancelar
+          Cancelar
         </button>
-    </div>
+      </div>
     </div>
   </div>
 </div>
