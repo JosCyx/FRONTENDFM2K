@@ -231,5 +231,9 @@ export class CommunicationApiService {
   getLastDetalleID():Observable<any>{
     return this.http.get<any>(this.APIUrl + '/DetSolCotizacions/GetLastDetalleID');
   }
+  //Procedimiento de GetDetalle_solicitud
+  getDetalle_solicitud(tipoSol: number, noSol: number): Observable<any> {
+    return this.http.get<any>(`${this.APIUrl}/DetSolCotizacions/GetDetalleSolicitud?tipoSol=${tipoSol}&noSol=${noSol}`);
+  }
 
 }
