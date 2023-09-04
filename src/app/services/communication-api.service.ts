@@ -235,5 +235,9 @@ export class CommunicationApiService {
   getDetalle_solicitud(tipoSol: number, noSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/DetSolCotizacions/GetDetalleSolicitud?tipoSol=${tipoSol}&noSol=${noSol}`);
   }
+  //Detalle de solicitud de pago
+  addSolDetPago(data:any){
+    return this.http.post(this.APIUrl + '/DetSolPagoes', data);
+  }
 
 }
