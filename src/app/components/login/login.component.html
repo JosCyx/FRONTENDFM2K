@@ -39,6 +39,18 @@
                         La contraseña ingresada es muy corta.
                     </div>
                 </div>
+                <div class="col text-center">
+                    <div *ngIf="showmsj" class="alert alert-success" role="alert">
+                        <div class="msg">{{ msjExito }}</div> 
+                    </div>
+                    <div *ngIf="showmsj" class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+                        <span class="msg"><i class="bi bi-exclamation-triangle-fill">
+                                {{ msjError }}</i></span>
+                    </div>
+                </div>
             </div>
 
             <div class="text-center btn-login ">

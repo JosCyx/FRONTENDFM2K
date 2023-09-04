@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { GlobalService } from 'src/app/services/global.service';
 
-interface useResponse {
+/*interface userResponse {
   usEmpresa: number;
   usId: number;
   usLogin: string;
@@ -22,7 +22,7 @@ interface useResponse {
   audUsuario: any; // Puedes especificar el tipo adecuado aquí si lo conoces
   audObservacion: any; // Puedes especificar el tipo adecuado aquí si lo conoces
   audVeces: any; // Puedes especificar el tipo adecuado aquí si lo conoces
-}
+}*/
 
 
 @Component({
@@ -31,10 +31,11 @@ interface useResponse {
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-
-  user!: string;
-  pass!: string;
-  some!: string;
+  showmsj: boolean = false;
+  //msjExito: string = 'Bienvenido Administrador.'
+  msjExito!: string;
+  showmsjerror: boolean = false;
+  msjError!: string;
 
   loginForm = new FormGroup({
     username: new FormControl("", [
@@ -66,40 +67,57 @@ export class LoginComponent {
     if (this.loginForm.valid) {
 
       //enviar como parametro el valor ingresado en el formulario del usuario y la contraseña
-      /*this.authService.login(this.loginForm.value.username!, this.loginForm.value.password!).subscribe(
-        (response: useResponse) => {
+      this.authService.login('admin', 'admin2023').subscribe(
+        (response: any) => {
+          // this.authService.userLogin = response.usLogin;
+          // this.authService.userIdNomina = response.usIdNomina;
+          //this.checkAuthorization();
+          console.log(response);
+
           //redirigir a la siguiente pagina si el login es correcto
-          console.log("Exito, datos de usuario: ", response.usNombre)
-          this.globalService.isLogin = true;
-          this.router.navigate(['main']);
+          this.showmsj = true;
+          this.msjExito = `Bienvenido(a) ${response.usNombre}.`;
 
-          nombres: any;
-            apellidos: any;
-            identificacion: any;
-            rol: any;
-            area: any;
-            dpto: any;
-            correo: any;
+          setTimeout(() => {
+            this.showmsj = false;
+            this.msjExito = '';
+            this.globalService.isLogin = true;
+            this.router.navigate(['main']);
+          }, 2000);
 
-
-            //CORREGIR LOS DATOS QUE SE VA A RECIBIR DEL USUARIO
-
-          //guardar los datos del usuario en el arreglo de authService, accediendo a cada propiedad de la respuesta: this.authService.userData.rol = res.usRol
-          this.authService.userData.nombres = response.usNombre;
-          this.authService.userData.apellidos = response.us
         },
         error => {
-          if (error.status == 404) {
-            console.log("El usuario no existe.");
+          /*if (error.status == 404) {
+            //console.log("El usuario no existe.");
+            console.log("Error 404:", error)
+            this.showmsjerror = true;
+            this.msjError = 'El usuario no existe.';
+
+            setTimeout(() => {
+              this.showmsjerror = false;
+              this.msjError = '';
+            }, 3000);
           } else if (error.status == 400) {
-            console.log("La contraseña no coincide.");
-          }
+            //console.log("La contraseña no coincide.");
+            console.log("Error 400:", error)
+            this.showmsjerror = true;
+            this.msjError = 'La contraseña no coincide.';
+
+            setTimeout(() => {
+              this.showmsjerror = false;
+              this.msjError = '';
+            }, 3000);
+          }*/
           console.log("Error:", error)
         }
-      );*/
+      );
     } else {
       console.log("Login invalido");
     }
+
+  }
+
+  checkAuthorization(){
 
   }
 }
