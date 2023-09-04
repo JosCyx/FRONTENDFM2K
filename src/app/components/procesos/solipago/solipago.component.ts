@@ -3,6 +3,14 @@ import { Observable } from 'rxjs';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
 
+interface DetalleSolPagos {
+  itemDesc: string;
+  cantidadContrat: number;
+  cantidadRecibid: number;
+  valorUnitario: number;
+  subTotal: number;
+}
+
 @Component({
   selector: 'app-solipago',
   templateUrl: './solipago.component.html',
@@ -18,17 +26,18 @@ export class SolipagoComponent implements OnInit {
   areaNmco!: string;
   solNumerico!: string;
   fecha: Date = new Date();
-  fechaFormateada:string = this.formatDateToSpanish(this.fecha);
+  fechaFormateada: string = this.formatDateToSpanish(this.fecha);
   receptor!: string;
-  //Variables de input para solicitar tipo de solicitud  y no solicitud
-  valorinput:string='';
-  tipoSolicitudes!:number;
-  noSolicitud!:number;
-
+  //*Variables de input para solicitar tipo de solicitud  y no solicitud
+  valorinput: string = '';
+  tipoSolinput!: number;
+  noSolicinput!: number;
+  //Creacion de Lista para guardar los tipos de solicit y no solicitud
+  detalleSolPagos: any[] = [];
 
   //*variables de cabecera
   cab_area!: number;
-  cab_fecha:string=this.formatDateToYYYYMMDD(this.fecha);
+  cab_fecha: string = this.formatDateToYYYYMMDD(this.fecha);
   cab_ordencompra!: string;
   cab_nofactura!: string;
   cab_fechafactura!: Date;
@@ -49,6 +58,8 @@ export class SolipagoComponent implements OnInit {
   trLastNoSol!: number;
   trNivelEmision: number = 10; //nivel de emision por defecto
   trIdNomEmp!: number;
+  //
+  Total!: number;
 
   constructor(private service: CommunicationApiService) {}
 
@@ -67,11 +78,11 @@ export class SolipagoComponent implements OnInit {
       this.empleadosList$.subscribe((data) => {
         this.empleados = data;
       });
-    } else if(this.receptor.length >2) {
+    } else if (this.receptor.length > 2) {
       this.empleadosList$.subscribe((data) => {
         this.empleados = data;
       });
-    }else{
+    } else {
       this.empleados = [];
     }
   }
@@ -82,7 +93,7 @@ export class SolipagoComponent implements OnInit {
     } else {
       for (let emp of this.empleados) {
         if (
-          (emp.empleadoNombres + ' ' + emp.empleadoApellidos) ==
+          emp.empleadoNombres + ' ' + emp.empleadoApellidos ==
           this.empleado
         ) {
           this.trIdNomEmp = emp.empleadoIdNomina;
@@ -252,27 +263,27 @@ export class SolipagoComponent implements OnInit {
     this.getSolName(this.trLastNoSol);
 
     const dataCAB = {
-   cabPagoNumerico: this.solNumerico,
-   cabPagoTipoSolicitud: this.trTipoSolicitud,
-   cabPagoNoSolicitud: this.trLastNoSol,
-   cabPagoAreaSolicitante: this.cab_area,
-   cabPagoSolicitante: this.trIdNomEmp,
-   cabPagoNoOrdenCompra: this.cab_ordencompra,
-   cabPagoFechaEmision: this.cab_fecha,
-   cabPagoFechaEnvio: this.cab_fecha,
-   cabPagoNumFactura: this.cab_nofactura,
-   cabPagoFechaFactura: this.cab_fechafactura,
-   cabPagoProveedor: 23,
-   cabPagoRucProveedor: this.cab_rucproveedor,
-   cabPagoObservaciones: this.cab_observa,
-   cabPagoAplicarMulta: this.cab_aplicarmult,
-   cabPagoValorMulta: this.cab_valordescontar,
-   cabPagoValorTotalAut: this.cab_totalautorizado,
-   cabPagoReceptor:this.cab_recibe,
-   cabPagoFechaInspeccion: this.cab_fechaInspeccion,
-   cabPagoCancelacionOrden: this.cab_cancelarOrden,
-   cabPagoEstado: this.cab_estado,
-   cabPagoEstadoTrack: this.trNivelEmision,
+      cabPagoNumerico: this.solNumerico,
+      cabPagoTipoSolicitud: this.trTipoSolicitud,
+      cabPagoNoSolicitud: this.trLastNoSol,
+      cabPagoAreaSolicitante: this.cab_area,
+      cabPagoSolicitante: this.trIdNomEmp,
+      cabPagoNoOrdenCompra: this.cab_ordencompra,
+      cabPagoFechaEmision: this.cab_fecha,
+      cabPagoFechaEnvio: this.cab_fecha,
+      cabPagoNumFactura: this.cab_nofactura,
+      cabPagoFechaFactura: this.cab_fechafactura,
+      cabPagoProveedor: 23,
+      cabPagoRucProveedor: this.cab_rucproveedor,
+      cabPagoObservaciones: this.cab_observa,
+      cabPagoAplicarMulta: this.cab_aplicarmult,
+      cabPagoValorMulta: this.cab_valordescontar,
+      cabPagoValorTotalAut: this.cab_totalautorizado,
+      cabPagoReceptor: this.cab_recibe,
+      cabPagoFechaInspeccion: this.cab_fechaInspeccion,
+      cabPagoCancelacionOrden: this.cab_cancelarOrden,
+      cabPagoEstado: this.cab_estado,
+      cabPagoEstadoTrack: this.trNivelEmision,
     };
 
     //enviar datos de cabecera a la API
@@ -283,49 +294,75 @@ export class SolipagoComponent implements OnInit {
         console.log('Solicitud', this.solNumerico);
         console.log('Agregando cuerpo de la cabecera...');
         //this.addBodySol();
+        this.AddDetSolPago();
         console.log('Cuerpo agregado.');
       },
       (error) => {
         console.log('error al guardar la cabecera: ', error);
       }
     );
-  } 
-  saveReceptor(){
+  }
+  saveReceptor() {
     for (let emp of this.empleados) {
-      if (
-        (emp.empleadoNombres + ' ' + emp.empleadoApellidos) ==
-        this.receptor
-) {
+      if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
         this.cab_recibe = emp.empleadoIdNomina;
         //console.log("Empleado ID:",this.trIdNomEmp);
       }
     }
     console.log(this.cab_recibe);
   }
-   async Obtener(){
+  async Obtener() {
     const partes = this.valorinput.match(/(\d+)-(\d+)/);
     console.log(partes);
-    if ( partes && partes.length === 3 ) {
-      this.tipoSolicitudes=parseInt(partes[1],10);
-      this.noSolicitud=parseInt(partes[2],10)
-      console.log(this.tipoSolicitudes);
-      console.log(this.noSolicitud);
-    }else{
-      console.log("No tiene ningun formato realizado")
+    if (partes && partes.length === 3) {
+      this.tipoSolinput = parseInt(partes[1], 10);
+      this.noSolicinput = parseInt(partes[2], 10);
+      console.log('Tipo de solicitus', this.tipoSolinput);
+      console.log('Numero de solicitud', this.noSolicinput);
+    } else {
+      console.log('No tiene ningun formato realizado');
     }
-    console.log("el valor de la de los input",this.valorinput);
+    console.log('el valor de la de los input', this.valorinput);
     try {
-      await this.service.getDetalle_solicitud(this.tipoSolicitudes,this.noSolicitud).subscribe(
+      this.service
+        .getDetalle_solicitud(this.tipoSolinput, this.noSolicinput)
+        .subscribe(
+          (response) => {
+            console.log('esto hay en el response', response);
+            this.detalleSolPagos = response.map((ini: any) => ({
+              itemDesc: ini.solCotDescripcion,
+            }));
+            console.log('cambios ', this.detalleSolPagos);
+          },
+          (error) => {
+            console.log('error al guardar la cabecera: ', error);
+          }
+        );
+    } catch (error) {
+      console.log('error', error);
+    }
+  }
+  AddDetSolPago() {
+    for (let detPago of this.detalleSolPagos) {
+      const dataDetPag = {
+        detPagoTipoSol: this.trTipoSolicitud,
+        detPagoNoSol: this.trLastNoSol,
+        detPagoIdDetalle: 2,
+        detPagoItemDesc: detPago.itemDesc,
+        detPagoCantContratada: detPago.cantidadContrat,
+        detPagoCantRecibida: detPago.cantidadRecibid,
+        detPagoValUnitario: detPago.valorUnitario,
+        detPagoSubtotal: detPago.subTotal,
+      };
+      console.log('listas', dataDetPag);
+      this.service.addSolDetPago(dataDetPag).subscribe(
         (response) => {
-          console.log(response);
+          console.log('Detalle Guardado ');
         },
         (error) => {
-          console.log('error al guardar la cabecera: ', error);
+          console.log('No se puede guardar el detalle', error);
         }
-      );  
-    } catch (error) {
-      console.log("error",error)
+      );
     }
-    
   }
 }
