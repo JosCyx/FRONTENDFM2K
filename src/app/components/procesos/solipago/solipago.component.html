@@ -119,7 +119,7 @@
           [(ngModel)]="valorinput"
             type="text"
             class="form-control mr-1"
-            placeholder="Ingrese la Solicitador Asociada..."
+            placeholder="Ingrese la Solicitud Asociada..."
           />
           <button class="btn btn-success" (click)="Obtener()" >
             <i class="bi bi-search"></i>
@@ -140,27 +140,29 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th class="align-middle">1</th>
+            <tr *ngFor="let det of detalleSolPagos; let i=index" >
+              <th class="align-middle">{{i+1}}</th>
               <td class="align-middle">
                 <textarea
                   name="descripcion"
                   class="form-control"
                   rows="2"
                   cols="50"
-                ></textarea>
+                  disabled
+                  
+                >{{det.itemDesc}}</textarea>
               </td>
               <td class="align-middle">
-                <input type="text" class="form-control text-center" />
+                <input type="number" class="form-control text-center" [(ngModel)]="det.cantidadContrat" />
               </td>
               <td class="align-middle" style="width: 150px">
-                <input type="text" class="form-control text-center" />
+                <input type="number" class="form-control text-center" [(ngModel)]="det.cantidadRecibid"  />
               </td>
               <td class="align-middle cel-prep">
-                <input type="text" class="form-control text-center" />
+                <input type="number" class="form-control text-center" [(ngModel)]="det.valorUnitario" />
               </td>
               <td class="align-middle">
-                <input type="text" class="form-control text-center" />
+                <input type="number" class="form-control text-center" [(ngModel)]="det.subTotal" />
               </td>
             </tr>
             <tr>
@@ -170,15 +172,7 @@
               <td class="align-middle text-end"></td>
               <td class="align-middle text-end">Total</td>
               <td class="align-middle text-end">
-                <input type="text" class="form-control text-center" />
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td colspan="5" class="align-middle text-end">
-                <button class="btn btn-success">
-                  <i class="bi bi-check"></i>
-                </button>
+                <input type="number" class="form-control text-center" [(ngModel)]="Total" />
               </td>
             </tr>
           </tbody>
