@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { HttpHeaders } from '@angular/common/http';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,13 +12,28 @@ export class CommunicationApiService {
   //url de la api a donde se realizan las llamadas
   readonly APIUrl = "https://localhost:7086/api";
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private cookieService: CookieService) { }
 
-  //METODOS CRUD PARA CADA ENTIDAD, SE HAN INCLUIDO UNICAMENTE LOS METODOS QUE SE ESTAN UTILIZANDO Y DE LOS CUALES SE HAYA CREADO UN CONTROLADOR
 
   //obtener toda la lista
-  getRolsList(): Observable<any[]> {
+  geetRolsList(): Observable<any[]> {
     return this.http.get<any>(this.APIUrl + '/Rols');
+  }
+
+  //METODO DE PRUEBA (ENVIO DE PETICION + TOKEN, NO RECIBE RESPUESTA)
+  getRolsList(): Observable<any[]> {
+    // Obtiene el token de la cookie
+    const authToken = this.cookieService.get('authToken');
+
+    // Define las cabeceras de la solicitud con el token
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${authToken}` // Agrega el token como encabezado de autorización
+    });
+
+    // Realiza la solicitud GET incluyendo las cabeceras con el token
+    console.log(this.APIUrl + '/Rols', { headers: headers });
+    return this.http.get<any>(this.APIUrl + '/Rols', { headers: headers });
   }
 
   //obtiene un rol dependiendo del codigo que se le pase como parametro

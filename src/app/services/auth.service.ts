@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -18,11 +17,7 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  lrogin(user: string, pass: string){
-    return this.http.get(this.APIurl + `/Usuarios/Login?username=${user}&pass=${pass}`);
-  }
 
-  //CORREGIR EL LLAMADO A LA API
   login(user: string, pass: string){
     // Crea un objeto con los datos del usuario y la contraseña
     const body = {

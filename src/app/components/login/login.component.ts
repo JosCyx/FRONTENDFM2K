@@ -3,6 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { GlobalService } from 'src/app/services/global.service';
+import { CookieService } from 'ngx-cookie-service';
+
 
 /*interface userResponse {
   usEmpresa: number;
@@ -37,6 +39,7 @@ export class LoginComponent {
   showmsjerror: boolean = false;
   msjError!: string;
 
+
   loginForm = new FormGroup({
     username: new FormControl("", [
       Validators.required,
@@ -51,7 +54,8 @@ export class LoginComponent {
   constructor(
     private router: Router,
     private globalService: GlobalService,
-    private authService: AuthService
+    private authService: AuthService,
+    private cookieService: CookieService
   ) { }
 
   get Username(): FormControl {
@@ -67,17 +71,26 @@ export class LoginComponent {
     if (this.loginForm.valid) {
 
       //enviar como parametro el valor ingresado en el formulario del usuario y la contraseña
-      this.authService.login('admin', 'admin2023').subscribe(
+      this.authService.login(this.loginForm.value.username!, this.loginForm.value.password!).subscribe(
         (response: any) => {
-          // this.authService.userLogin = response.usLogin;
-          // this.authService.userIdNomina = response.usIdNomina;
+          //this.authService.userLogin = response.usuario.usLogin;
+          //this.authService.userIdNomina = response.usuario.usIdNomina;
           //this.checkAuthorization();
           console.log(response);
 
           //redirigir a la siguiente pagina si el login es correcto
           this.showmsj = true;
-          this.msjExito = `Bienvenido(a) ${response.usNombre}.`;
+          this.msjExito = `Bienvenido(a) ${response.usuario.usNombre}.`;
 
+          //creacion de una cookie para almacenar el token de autenticacion que durará 12 horas
+          const expirationDate = new Date();
+          expirationDate.setHours(expirationDate.getHours() + 12);
+          this.cookieService.set('authToken', response.token, expirationDate);
+
+          //imprimir token del usuario
+          //console.log(this.cookieService.get('authToken'));
+
+          //limpieza del mensaje
           setTimeout(() => {
             this.showmsj = false;
             this.msjExito = '';
@@ -117,7 +130,7 @@ export class LoginComponent {
 
   }
 
-  checkAuthorization(){
+  checkAuthorization() {
 
   }
 }
