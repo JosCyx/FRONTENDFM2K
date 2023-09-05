@@ -166,7 +166,7 @@ export class CommunicationApiService {
 
   //retorna todas las solicitudes de pago
   getAllPago(): Observable<any[]> {
-    return this.http.get<any>(this.APIUrl + '/MODIFICAR');
+    return this.http.get<any>(this.APIUrl + '/CabSolPago');
   }
 
   getLastDetalleCot(tipoSol: number, noSol: number): Observable<any> {
@@ -235,9 +235,12 @@ export class CommunicationApiService {
   getDetalle_solicitud(tipoSol: number, noSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/DetSolCotizacions/GetDetalleSolicitud?tipoSol=${tipoSol}&noSol=${noSol}`);
   }
-  //Detalle de solicitud de pago
+  //*ADD Detalle de solicitud de pago
   addSolDetPago(data:any){
     return this.http.post(this.APIUrl + '/DetSolPagoes', data);
   }
-
+  //*Buscar el ID por cabecera y detalle de solicitud de pago 
+  getSolPagobyId(id: number): Observable<any> {
+    return this.http.get<any>(`${this.APIUrl}/CabSolPago/GetSolicitudByID?ID=${id}`);
+  }
 }
