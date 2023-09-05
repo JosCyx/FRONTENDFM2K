@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
+import { GlobalService } from 'src/app/services/global.service';
+import { DetallePago } from 'src/app/models/procesos/solcotizacion/DetallePago';
+
 
 interface DetalleSolPagos {
   itemDesc: string;
@@ -9,6 +12,10 @@ interface DetalleSolPagos {
   cantidadRecibid: number;
   valorUnitario: number;
   subTotal: number;
+}
+interface SolicitudData {
+  cabecera: any;
+  detalles: any[];
 }
 
 @Component({
@@ -35,6 +42,14 @@ export class SolipagoComponent implements OnInit {
   //Creacion de Lista para guardar los tipos de solicit y no solicitud
   detalleSolPagos: any[] = [];
 
+  changeview: string = this.serviceGlobal.solView;
+  //Mensaje
+  msjExito!: string;
+  msjError!: string;
+  showmsj: boolean = false;
+  showmsjerror: boolean = false;
+  //
+  SolID: number = this.serviceGlobal.solID;
   //*variables de cabecera
   cab_area!: number;
   cab_fecha: string = this.formatDateToYYYYMMDD(this.fecha);
@@ -53,15 +68,20 @@ export class SolipagoComponent implements OnInit {
   cab_estado: string = 'A'; //estado inicial Activo
   //*
   cabecera!: CabeceraPago;
+  detallePago:DetallePago[] = [];
+  solicitudEdit!: SolicitudData;
+
   //* Variables para guardar el traking
   trTipoSolicitud: number = 3; //indica el tipo de solicitud co el que estamos trabajando, este valor cambia en cada tipo de solicitud
   trLastNoSol!: number;
   trNivelEmision: number = 10; //nivel de emision por defecto
   trIdNomEmp!: number;
   //
-  Total!: number;
+  Total: number=0;
+  //
+  empleadoEdi:any[]=[];
 
-  constructor(private service: CommunicationApiService) {}
+  constructor(private service: CommunicationApiService,private serviceGlobal: GlobalService) {}
 
   ngOnInit(): void {
     this.empleadosList$ = this.service.getEmpleadosList();
@@ -71,6 +91,9 @@ export class SolipagoComponent implements OnInit {
     this.areaList$.subscribe((data) => {
       this.areas = data;
     });
+    if (this.changeview == 'editar') {
+      this.editSolicitud();
+    }
   }
 
   searchEmpleado(): void {
@@ -275,6 +298,7 @@ export class SolipagoComponent implements OnInit {
       cabPagoFechaFactura: this.cab_fechafactura,
       cabPagoProveedor: 23,
       cabPagoRucProveedor: this.cab_rucproveedor,
+      cabpagototal:this.Total,
       cabPagoObservaciones: this.cab_observa,
       cabPagoAplicarMulta: this.cab_aplicarmult,
       cabPagoValorMulta: this.cab_valordescontar,
@@ -293,6 +317,8 @@ export class SolipagoComponent implements OnInit {
         console.log('Cabecera agregada.');
         console.log('Solicitud', this.solNumerico);
         console.log('Agregando cuerpo de la cabecera...');
+        this.showmsj=true;
+        this.msjExito='Solicitud de Pago Generada Exitosamente'; 
         //this.addBodySol();
         this.AddDetSolPago();
         console.log('Cuerpo agregado.');
@@ -302,6 +328,7 @@ export class SolipagoComponent implements OnInit {
       }
     );
   }
+  //Guardar el ID DEL QUE RECIBE
   saveReceptor() {
     for (let emp of this.empleados) {
       if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
@@ -309,7 +336,8 @@ export class SolipagoComponent implements OnInit {
         //console.log("Empleado ID:",this.trIdNomEmp);
       }
     }
-    console.log(this.cab_recibe);
+    
+    console.log(`cAMBIOS EN ESTO ${this.cab_recibe}`);
   }
   async Obtener() {
     const partes = this.valorinput.match(/(\d+)-(\d+)/);
@@ -330,6 +358,7 @@ export class SolipagoComponent implements OnInit {
           (response) => {
             console.log('esto hay en el response', response);
             this.detalleSolPagos = response.map((ini: any) => ({
+              idDetalle:ini.solCotIdDetalle,
               itemDesc: ini.solCotDescripcion,
             }));
             console.log('cambios ', this.detalleSolPagos);
@@ -342,12 +371,13 @@ export class SolipagoComponent implements OnInit {
       console.log('error', error);
     }
   }
+  //* Agregamos los detalles de pago a base
   AddDetSolPago() {
     for (let detPago of this.detalleSolPagos) {
       const dataDetPag = {
         detPagoTipoSol: this.trTipoSolicitud,
         detPagoNoSol: this.trLastNoSol,
-        detPagoIdDetalle: 2,
+        detPagoIdDetalle: detPago.idDetalle,
         detPagoItemDesc: detPago.itemDesc,
         detPagoCantContratada: detPago.cantidadContrat,
         detPagoCantRecibida: detPago.cantidadRecibid,
@@ -365,4 +395,32 @@ export class SolipagoComponent implements OnInit {
       );
     }
   }
+  //Calculo de Total 
+  calculoTotal(){
+    this.Total = 0;
+    for(let PagoTotal of this.detalleSolPagos){
+      this.Total=this.Total+PagoTotal.subTotal;
+      console.log(`el total es to  ${this.Total}`);
+    }
+  }
+  async editSolicitud(){
+    this.getSoliPagos();
+    this.saveData();
+
+  }
+  //* Obtener los datos de cabecera de solicitud y detalle
+  async getSoliPagos(){
+    try{
+      const data = await this.service.getSolPagobyId(this.SolID).toPromise();
+      this.solicitudEdit=data;
+    }catch(error){
+      console.error("Error en la solicitud",error)
+    }
+  }
+  async saveData(){
+    this.cabecera=this.solicitudEdit.cabecera;
+    for(let det of this.solicitudEdit.detalles){
+      this.detallePago.push(det as DetallePago);
+    }
+    }
 }
