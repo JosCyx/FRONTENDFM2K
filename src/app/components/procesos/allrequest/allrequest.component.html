@@ -38,7 +38,7 @@
             <th class="align-middle cab-z">Area solicitante</th>
             <th class="align-middle cab-x">N° Solicitud</th>
             <th class="align-middle cab-z">Empleado solicitante</th>
-            <th class="align-middle cab-z">Asunto</th>
+            <th class="align-middle cab-z" *ngIf="btp != 3" >Asunto</th>
             <th class="align-middle cab-x">Fecha</th>
             <th class="align-middle cab-x">Estado</th>
             <th class="align-middle cab-x">Tracking</th>
@@ -104,26 +104,26 @@
           </ng-container>
 
           <ng-container *ngIf="btp == 3">
-            <tr *ngFor="let sol of allSol$ | async" (click)="selectSol(sol.cabSolOCID)">
-              <td class="align-middle">{{sol.cabSolOCNumerico}}</td>
+            <tr *ngFor="let sol of allSol$ | async" (click)="selectSol(sol.cabPagoID)">
+              <td class="align-middle">{{sol.cabPagoNumerico}}</td>
               <ng-container *ngFor="let area of areaList$|async">
-                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolOCArea">
+                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabPagoAreaSolicitante">
                   {{ area.areaDecp }}</td>
               </ng-container>
-              <td class="align-middle">{{sol.cabSolOCNoSolicitud}}</td>
+              <td class="align-middle">{{sol.cabPagoNoSolicitud}}</td>
               <ng-container *ngFor="let emp of empleadoList$|async">
-                <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolOCSolicitante">
+                <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabPagoSolicitante">
                   {{ emp.empleadoNombres }}<br>{{ emp.empleadoApellidos }}</td>
               </ng-container>
-              <td class="align-middle">{{sol.cabSolOCAsunto}}</td>
-              <td class="align-middle">{{sol.cabSolOCFecha | date:'yyyy-MM-dd'}}</td>
-              <td class="align-middle" [ngSwitch]="sol.cabSolOCEstado">
+              
+              <td class="align-middle">{{sol.cabPagoFechaEmision | date:'yyyy-MM-dd'}}</td>
+              <td class="align-middle" [ngSwitch]="sol.cabPagoEstado">
                 <span *ngSwitchCase="'A'">Activo</span>
                 <span *ngSwitchCase="'F'">Finalizado</span>
                 <span *ngSwitchCase="'C'">Cancelado</span>
               </td>
               <ng-container *ngFor="let trck of trckList$|async">
-                <td class="align-middle" *ngIf="trck.nivel === sol.cabSolOCEstadoTracking">
+                <td class="align-middle" *ngIf="trck.nivel === sol.cabPagoEstadoTrack">
                   {{ trck.descRuteo }}</td>
               </ng-container>
             </tr>
