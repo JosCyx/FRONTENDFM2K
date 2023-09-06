@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
 import { GlobalService } from 'src/app/services/global.service';
 import { DetallePago } from 'src/app/models/procesos/solcotizacion/DetallePago';
-
+import { format, parseISO } from 'date-fns';
 
 interface DetalleSolPagos {
   itemDesc: string;
@@ -28,6 +28,8 @@ export class SolipagoComponent implements OnInit {
   empleados: any[] = [];
   showArea: string = '';
   empleadosList$!: Observable<any[]>;
+  nivelRut$!: Observable<any[]>;
+
   areaList$!: Observable<any[]>;
   areas: any[] = [];
   areaNmco!: string;
@@ -68,7 +70,7 @@ export class SolipagoComponent implements OnInit {
   cab_estado: string = 'A'; //estado inicial Activo
   //*
   cabecera!: CabeceraPago;
-  detallePago:DetallePago[] = [];
+  detallePago: DetallePago[] = [];
   solicitudEdit!: SolicitudData;
 
   //* Variables para guardar el traking
@@ -77,16 +79,26 @@ export class SolipagoComponent implements OnInit {
   trNivelEmision: number = 10; //nivel de emision por defecto
   trIdNomEmp!: number;
   //
-  Total: number=0;
+  Total: number = 0;
   //
-  empleadoEdi:any[]=[];
+  empleadoEdi: any[] = [];
 
-  constructor(private service: CommunicationApiService,private serviceGlobal: GlobalService) {}
+  constructor(
+    private service: CommunicationApiService,
+    private serviceGlobal: GlobalService
+  ) {}
 
   ngOnInit(): void {
     this.empleadosList$ = this.service.getEmpleadosList();
+    this.empleadosList$.subscribe((data) => {
+      this.empleadoEdi = data;
+    });
 
     this.areaList$ = this.service.getAreaList();
+
+    this.nivelRut$ = this.service
+      .getNivelbyEstado('A')
+      .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
 
     this.areaList$.subscribe((data) => {
       this.areas = data;
@@ -298,7 +310,7 @@ export class SolipagoComponent implements OnInit {
       cabPagoFechaFactura: this.cab_fechafactura,
       cabPagoProveedor: 23,
       cabPagoRucProveedor: this.cab_rucproveedor,
-      cabpagototal:this.Total,
+      cabpagototal: this.Total,
       cabPagoObservaciones: this.cab_observa,
       cabPagoAplicarMulta: this.cab_aplicarmult,
       cabPagoValorMulta: this.cab_valordescontar,
@@ -317,8 +329,8 @@ export class SolipagoComponent implements OnInit {
         console.log('Cabecera agregada.');
         console.log('Solicitud', this.solNumerico);
         console.log('Agregando cuerpo de la cabecera...');
-        this.showmsj=true;
-        this.msjExito='Solicitud de Pago Generada Exitosamente'; 
+        this.showmsj = true;
+        this.msjExito = 'Solicitud de Pago Generada Exitosamente';
         //this.addBodySol();
         this.AddDetSolPago();
         console.log('Cuerpo agregado.');
@@ -336,7 +348,7 @@ export class SolipagoComponent implements OnInit {
         //console.log("Empleado ID:",this.trIdNomEmp);
       }
     }
-    
+
     console.log(`cAMBIOS EN ESTO ${this.cab_recibe}`);
   }
   async Obtener() {
@@ -358,7 +370,7 @@ export class SolipagoComponent implements OnInit {
           (response) => {
             console.log('esto hay en el response', response);
             this.detalleSolPagos = response.map((ini: any) => ({
-              idDetalle:ini.solCotIdDetalle,
+              idDetalle: ini.solCotIdDetalle,
               itemDesc: ini.solCotDescripcion,
             }));
             console.log('cambios ', this.detalleSolPagos);
@@ -395,32 +407,142 @@ export class SolipagoComponent implements OnInit {
       );
     }
   }
-  //Calculo de Total 
-  calculoTotal(){
+  //Calculo de Total
+  calculoTotal() {
     this.Total = 0;
-    for(let PagoTotal of this.detalleSolPagos){
-      this.Total=this.Total+PagoTotal.subTotal;
+    for (let PagoTotal of this.detalleSolPagos) {
+      this.Total = this.Total + PagoTotal.subTotal;
       console.log(`el total es to  ${this.Total}`);
     }
   }
-  async editSolicitud(){
-    this.getSoliPagos();
-    this.saveData();
-
+  //
+  calculoEditotal() {
+    this.cabecera.cabpagototal = 0;
+    for (let PagoTotal of this.detallePago) {
+      this.cabecera.cabpagototal =
+        this.cabecera.cabpagototal + PagoTotal.detPagoSubtotal;
+      console.log(`el total es to  ${this.cabecera.cabpagototal}`);
+    }
+  }
+  async editSolicitud() {
+    await this.getSoliPagos();
+    await this.saveData();
   }
   //* Obtener los datos de cabecera de solicitud y detalle
-  async getSoliPagos(){
-    try{
+  async getSoliPagos() {
+    try {
       const data = await this.service.getSolPagobyId(this.SolID).toPromise();
-      this.solicitudEdit=data;
-    }catch(error){
-      console.error("Error en la solicitud",error)
+      this.solicitudEdit = data;
+    } catch (error) {
+      console.error('Error en la solicitud', error);
     }
   }
-  async saveData(){
-    this.cabecera=this.solicitudEdit.cabecera;
-    for(let det of this.solicitudEdit.detalles){
+  async saveData() {
+    console.log('CABECERA', this.solicitudEdit.cabecera);
+    console.log('DETALLES', this.solicitudEdit.detalles);
+    this.cabecera = this.solicitudEdit.cabecera;
+    for (let det of this.solicitudEdit.detalles) {
       this.detallePago.push(det as DetallePago);
     }
+    //ordenamiento de detalle de solicitud pago
+    this.detallePago.sort((a, b) => a.detPagoIdDetalle - b.detPagoIdDetalle);
+    //formatear la fecha de la solicitud de pago
+    this.cabecera.cabPagoFechaInspeccion = format(
+      parseISO(this.cabecera.cabPagoFechaInspeccion),
+      'yyyy-MM-dd'
+    );
+    this.cabecera.cabPagoFechaFactura = format(
+      parseISO(this.cabecera.cabPagoFechaFactura),
+      'yyyy-MM-dd'
+    );
+  }
+  //
+  get estadoTexto(): string {
+    switch (this.cabecera.cabPagoEstado) {
+      case 'A':
+        return 'Activo';
+      case 'F':
+        return 'Finalizado';
+      case 'C':
+        return 'Cancelado';
+      default:
+        return ''; // Manejo por defecto si el valor no es A, F o C
     }
+  }
+  //Guardar lo editado de  solicitud de pago
+  async savePagoEdit() {
+    try {
+      console.log('Se guardo la edicion ');
+      await this.saveEditCabeceraPago();
+      await this.saveEditdetPago();
+
+      this.showmsj = true;
+      this.msjExito = `Solicitud N° ${this.cabecera.cabPagoNumerico},editada exitosamente`;
+    } catch (error) {
+      console.error('Error: ' + error);
+      this.showmsjerror = true;
+      this.msjError =
+        'No se ha podido guardar la solicitud, intente nuevamente.';
+    }
+  }
+  async saveEditCabeceraPago() {
+    const dataCAB = {
+      cabPagoID: this.cabecera.cabPagoID,
+      cabPagoNumerico: this.cabecera.cabPagoNumerico,
+      cabPagoTipoSolicitud: this.cabecera.cabPagoTipoSolicitud,
+      cabPagoNoSolicitud: this.cabecera.cabPagoNoSolicitud,
+      cabPagoAreaSolicitante: this.cabecera.cabPagoAreaSolicitante,
+      cabPagoSolicitante: this.cabecera.cabPagoSolicitante,
+      cabPagoNoOrdenCompra: this.cabecera.cabPagoNoOrdenCompra,
+      cabPagoFechaEmision: this.cabecera.cabPagoFechaEmision,
+      cabPagoFechaEnvio: this.cabecera.cabPagoFechaEnvio,
+      cabPagoNumFactura: this.cabecera.cabPagoNumFactura,
+      cabPagoFechaFactura: this.cabecera.cabPagoFechaFactura,
+      cabPagoProveedor: this.cabecera.cabPagoProveedor,
+      cabPagoRucProveedor: this.cabecera.cabPagoRucProveedor,
+      cabpagototal: this.cabecera.cabpagototal,
+      cabPagoObservaciones: this.cabecera.cabPagoObservaciones,
+      cabPagoAplicarMulta: this.cabecera.cabPagoAplicarMulta,
+      cabPagoValorMulta: this.cabecera.cabPagoValorMulta,
+      cabPagoValorTotalAut: this.cabecera.cabPagoValorTotalAut,
+      cabPagoReceptor: this.cabecera.cabPagoReceptor,
+      cabPagoFechaInspeccion: this.cabecera.cabPagoFechaInspeccion,
+      cabPagoCancelacionOrden: this.cabecera.cabPagoCancelacionOrden,
+      cabPagoEstado: this.cabecera.cabPagoEstado,
+      cabPagoEstadoTrack: this.cabecera.cabPagoEstadoTrack,
+    };
+    console.log('esta guardo  solicitud ', dataCAB);
+    this.service.updatecabPago(this.cabecera.cabPagoID, dataCAB).subscribe(
+      (response) => {
+        console.log('Solicitud de Pago Editado');
+      },
+      (error) => {
+        console.log('Error', error);
+      }
+    );
+  }
+  async saveEditdetPago() {
+    for (let Depago of this.detallePago) {
+      const data = {
+        detPagoID: Depago.detPagoID,
+        detPagoTipoSol: this.cabecera.cabPagoTipoSolicitud,
+        detPagoNoSol: this.cabecera.cabPagoNoSolicitud,
+        detPagoIdDetall: Depago.detPagoIdDetalle,
+        detPagoItemDesc: Depago.detPagoItemDesc,
+        detPagoCantContratada: Depago.detPagoCantContratada,
+        detPagoCantRecibida: Depago.detPagoCantRecibida,
+        detPagoValUnitario: Depago.detPagoValUnitario,
+        detPagoSubtotal: Depago.detPagoSubtotal,
+      };
+      console.log('se edito detalle pago', data);
+      this.service.updatedetpago(Depago.detPagoID, data).subscribe(
+        (response) => {
+          console.log('Detalle de pago actualizado');
+        },
+        (error) => {
+          console.log('Error', error);
+        }
+      );
+    }
+  }
 }
