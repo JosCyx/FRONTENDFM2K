@@ -12,7 +12,7 @@
     </nav>
   </div>
 
-  <div class="form-cot" *ngIf="changeview ==='crear'" >
+  <div class="form-cot" *ngIf="changeview === 'crear'">
     <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
     <h3 class="font-weight-bold" style="padding-top: 20pt">
       Registrar nueva solicitud de pago
@@ -116,12 +116,12 @@
         <div class="input-group">
           <label class="input-group-text"> Solicitud Asociada</label>
           <input
-          [(ngModel)]="valorinput"
+            [(ngModel)]="valorinput"
             type="text"
             class="form-control mr-1"
             placeholder="Ingrese la Solicitud Asociada..."
           />
-          <button class="btn btn-success" (click)="Obtener()" >
+          <button class="btn btn-success" (click)="Obtener()">
             <i class="bi bi-search"></i>
           </button>
         </div>
@@ -140,8 +140,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let det of detalleSolPagos; let i=index" >
-              <th class="align-middle">{{i+1}}</th>
+            <tr *ngFor="let det of detalleSolPagos; let i = index">
+              <th class="align-middle">{{ i + 1 }}</th>
               <td class="align-middle">
                 <textarea
                   name="descripcion"
@@ -149,20 +149,37 @@
                   rows="2"
                   cols="50"
                   disabled
-                  
-                >{{det.itemDesc}}</textarea>
+                  >{{ det.itemDesc }}</textarea
+                >
               </td>
               <td class="align-middle">
-                <input type="number" class="form-control text-center" [(ngModel)]="det.cantidadContrat" />
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  [(ngModel)]="det.cantidadContrat"
+                />
               </td>
               <td class="align-middle" style="width: 150px">
-                <input type="number" class="form-control text-center" [(ngModel)]="det.cantidadRecibid"  />
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  [(ngModel)]="det.cantidadRecibid"
+                />
               </td>
               <td class="align-middle cel-prep">
-                <input type="number" class="form-control text-center" [(ngModel)]="det.valorUnitario" />
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  [(ngModel)]="det.valorUnitario"
+                />
               </td>
               <td class="align-middle">
-                <input type="number" class="form-control text-center" [(ngModel)]="det.subTotal"  (input)="calculoTotal()" />
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  [(ngModel)]="det.subTotal"
+                  (input)="calculoTotal()"
+                />
               </td>
             </tr>
             <tr>
@@ -172,7 +189,11 @@
               <td class="align-middle text-end"></td>
               <td class="align-middle text-end">Total</td>
               <td class="align-middle text-end">
-                <input type="number" class="form-control text-center" [(ngModel)]="Total" />
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  [(ngModel)]="Total"
+                />
               </td>
             </tr>
           </tbody>
@@ -258,8 +279,10 @@
     <!-- Mensaje de error  -->
     <div class="d-flex row">
       <div class="col">
-        <div  *ngIf="showmsj" class="alert alert-success" role="alert">
-          <span><i class="bi bi-check-circle-fill">{{msjExito}}</i></span>
+        <div *ngIf="showmsj" class="alert alert-success" role="alert">
+          <span
+            ><i class="bi bi-check-circle-fill">{{ msjExito }}</i></span
+          >
         </div>
         <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
           <span
@@ -283,7 +306,7 @@
       </div>
     </div>
   </div>
-  <div class="form-cot" *ngIf="changeview ==='editar'" >
+  <div class="form-cot" *ngIf="changeview === 'editar'">
     <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
     <h3 class="font-weight-bold" style="padding-top: 20pt">
       Editar solicitud de pago
@@ -308,43 +331,36 @@
               type="text"
               class="form-control"
               placeholder="Ingrese el numero de compra"
-              [(ngModel)]="cab_ordencompra"
+              [(ngModel)]="cabecera.cabPagoNoOrdenCompra"
             />
           </div>
         </div>
         <div class="row mb-1">
           <div class="input-group col">
             <label class="input-group-text">Solicitado por*:</label>
-            <ng-container  *ngFor="let emPa of empleadoEdi" >
+            <ng-container *ngFor="let emPa of empleadoEdi">
               <input
-              *ngIf="emPa.empleadoIdNomina==cabecera.cabPagoSolicitante"
-              type="text"
-              class="form-control"
-              id="busqueda"
-              list="sugerencias"
-              [value]="emPa.empleadoNombres+' '+emPa.empleadoApellidos"
-              disabled
-            />
+                *ngIf="emPa.empleadoIdNomina == cabecera.cabPagoSolicitante"
+                type="text"
+                class="form-control"
+                id="busqueda"
+                list="sugerencias"
+                [value]="emPa.empleadoNombres + ' ' + emPa.empleadoApellidos"
+                disabled
+              />
             </ng-container>
-            <datalist id="sugerencias">
-              <ng-container *ngFor="let emp of empleados">
-                <option
-                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-                ></option>
-              </ng-container>
-            </datalist>
-            <button class="btn btn-success" (click)="selectEmpleado()">
-              <i class="bi bi-check-lg"></i>
-            </button>
           </div>
           <div class="input-group col">
             <label class="input-group-text">Area:</label>
-            <input
-              type="text"
-              class="form-control"
-              [value]="showArea"
-              placeholder="Area del empleado solicitante"
-            />
+            <ng-container *ngFor="let are of areas">
+              <input
+                *ngIf="are.areaIdNomina == cabecera.cabPagoAreaSolicitante"
+                type="text"
+                class="form-control"
+                [value]="are.areaDecp"
+                disabled
+              />
+            </ng-container>
           </div>
           <!--  -->
         </div>
@@ -355,15 +371,15 @@
               type="text"
               class="form-control"
               placeholder="Ingrese el numero Factura"
-              [(ngModel)]="cab_nofactura"
+              [(ngModel)]="cabecera.cabPagoNumFactura"
             />
           </div>
           <div class="input-group col mb-1">
             <label class="input-group-text">Fecha de Factura:</label>
             <input
-              type="date"
+              type="text"
               class="form-control"
-              [(ngModel)]="cab_fechafactura"
+              [(ngModel)]="cabecera.cabPagoFechaFactura"
             />
           </div>
         </div>
@@ -374,6 +390,7 @@
               type="text"
               class="form-control"
               placeholder="Ingrese el nombre del proveedor"
+              [(ngModel)]="cabecera.cabPagoProveedor"
             />
           </div>
           <div class="input-group col">
@@ -382,21 +399,32 @@
               type="text"
               class="form-control"
               placeholder="Ingrese el Ruc "
-              [(ngModel)]="cab_rucproveedor"
+              [(ngModel)]="cabecera.cabPagoRucProveedor"
             />
           </div>
         </div>
-        <div class="input-group">
-          <label class="input-group-text"> Solicitud Asociada</label>
-          <input
-          [(ngModel)]="valorinput"
-            type="text"
-            class="form-control mr-1"
-            placeholder="Ingrese la Solicitud Asociada..."
-          />
-          <button class="btn btn-success" (click)="Obtener()" >
-            <i class="bi bi-search"></i>
-          </button>
+        <div class="row">
+          <div class="input-group col">
+            <label class="input-group-text">Estado:</label>
+            <input
+              type="text"
+              class="form-control"
+              [value]="estadoTexto"
+              disabled
+            />
+          </div>
+          <div class="input-group col">
+            <label class="input-group-text">Traking:</label>
+            <ng-container *ngFor="let nvTRK of nivelRut$ | async">
+              <input
+                *ngIf="nvTRK.nivel === cabecera.cabPagoEstadoTrack"
+                type="text"
+                class="form-control"
+                [value]="nvTRK.descRuteo"
+                disabled
+              />
+            </ng-container>
+          </div>
         </div>
       </div>
 
@@ -413,8 +441,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let det of detallePago; let i=index" >
-              <th class="align-middle">{{i+1}}</th>
+            <tr *ngFor="let det of detallePago; let i = index">
+              <th class="align-middle">{{ i + 1 }}</th>
               <td class="align-middle">
                 <textarea
                   name="descripcion"
@@ -422,20 +450,37 @@
                   rows="2"
                   cols="50"
                   disabled
-                  
-                >{{det.detPagoItemDesc}}</textarea>
+                  >{{ det.detPagoItemDesc }}</textarea
+                >
               </td>
               <td class="align-middle">
-                <input type="number" class="form-control text-center" [(ngModel)]="det.detPagoCantContratada" />
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  [(ngModel)]="det.detPagoCantContratada"
+                />
               </td>
               <td class="align-middle" style="width: 150px">
-                <input type="number" class="form-control text-center" [(ngModel)]="det.detPagoCantRecibida"  />
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  [(ngModel)]="det.detPagoCantRecibida"
+                />
               </td>
               <td class="align-middle cel-prep">
-                <input type="number" class="form-control text-center" [(ngModel)]="det.detPagoValUnitario" />
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  [(ngModel)]="det.detPagoValUnitario"
+                />
               </td>
               <td class="align-middle">
-                <input type="number" class="form-control text-center" [(ngModel)]="det.detPagoSubtotal"  (input)="calculoTotal()" />
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  [(ngModel)]="det.detPagoSubtotal"
+                  (input)="calculoEditotal()"
+                />
               </td>
             </tr>
             <tr>
@@ -445,7 +490,11 @@
               <td class="align-middle text-end"></td>
               <td class="align-middle text-end">Total</td>
               <td class="align-middle text-end">
-                <input type="number" class="form-control text-center" [(ngModel)]="Total" />
+                <input
+                  type="number"
+                  class="form-control text-center"
+                  [(ngModel)]="cabecera.cabpagototal"
+                />
               </td>
             </tr>
           </tbody>
@@ -459,7 +508,7 @@
             class="form-control"
             id="floatingInput"
             placeholder=""
-            [(ngModel)]="cab_observa"
+            [(ngModel)]="cabecera.cabPagoObservaciones"
           />
           <label for="floatingInput">Observaciones:</label>
         </div>
@@ -469,7 +518,7 @@
             class="form-control"
             id="floatingInputM"
             placeholder=""
-            [(ngModel)]="cab_aplicarmult"
+            [(ngModel)]="cabecera.cabPagoAplicarMulta"
           />
           <label for="floatingInputM">Aplicar multa:</label>
         </div>
@@ -479,45 +528,40 @@
             class="form-control"
             type="number"
             placeholder="Ingrese el valor a descontar"
-            [(ngModel)]="cab_valordescontar"
+            [(ngModel)]="cabecera.cabPagoValorMulta"
           />
           <label class="input-group-text">Pago total autorizado:</label>
           <input
             class="form-control"
             type="number"
             placeholder="Ingrese el valor Total"
-            [(ngModel)]="cab_totalautorizado"
+            [(ngModel)]="cabecera.cabPagoValorTotalAut"
           />
         </div>
         <div class="input-group mb-3">
           <label class="input-group-text">Recibe:</label>
-          <input
-            type="text"
-            class="form-control"
-            id="busqueda"
-            list="sugerencias"
-            [(ngModel)]="receptor"
-            (keyup)="searchEmpleado()"
-            placeholder="Ingrese el nombre del empleado"
-          />
-          <datalist id="sugerencias">
-            <ng-container *ngFor="let emp of empleados">
-              <option
-                [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-              ></option>
-            </ng-container>
-          </datalist>
+          <ng-container *ngFor="let emp of empleadoEdi">
+            <input
+              *ngIf="emp.empleadoIdNomina == cabecera.cabPagoReceptor"
+              type="text"
+              class="form-control"
+              [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+            />
+          </ng-container>
           <label class="input-group-text">Fecha de Inspeccion*:</label>
           <input
             class="form-control"
-            type="date"
+            type="text"
             for="fechamaxima"
-            [(ngModel)]="cab_fechaInspeccion"
+            [(ngModel)]="cabecera.cabPagoFechaInspeccion"
           />
         </div>
         <div class="input-group mb-3">
           <label class="input-group-text">Cancelación de orden :</label>
-          <select class="form-select" [(ngModel)]="cab_cancelarOrden">
+          <select
+            class="form-select"
+            [(ngModel)]="cabecera.cabPagoCancelacionOrden"
+          >
             <option disabled selected>Seleccione un opcion....</option>
             <option value="TTL">TOTAL</option>
             <option value="PCL">PARCIAL</option>
@@ -530,13 +574,15 @@
     </div>
     <div class="d-flex row">
       <div class="col">
-        <div class="alert alert-success" role="alert">
-          <span><i class="bi bi-check-circle-fill"> mensaje de exito</i></span>
+        <div *ngIf="showmsj" class="alert alert-success" role="alert">
+          <span
+            ><i class="bi bi-check-circle-fill">{{ msjExito }}</i></span
+          >
         </div>
-        <div class="alert alert-danger" role="alert">
+        <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
           <span
             ><i class="bi bi-exclamation-triangle-fill">
-              mensaje de error</i
+              {{ msjError }}</i
             ></span
           >
         </div>
@@ -546,8 +592,7 @@
         <button
           class="btn btn-primary m-2"
           data-toggle="modal"
-          data-target="#GuardarSolicitud"
-          (click)="saveReceptor()"
+          data-target="#GuardarPagoEdit"
         >
           Guardar
         </button>
@@ -556,7 +601,7 @@
     </div>
   </div>
 </div>
-<!-- Modals para confirmar  -->
+<!-- Modulo para guardar solicitud   -->
 <div
   class="modal fade"
   #exampleModal
@@ -595,3 +640,42 @@
   </div>
 </div>
 <!--Fin modulo enviar -->
+<!-- Modulo para editar -->
+<div
+  class="modal fade"
+  #exampleModal
+  id="GuardarPagoEdit"
+  data-backdrop="static"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">Guardar cambios</h3>
+      </div>
+      <div class="modal-body">
+        <p>
+          ¿Esta seguro que desea guardar los cambios realizados en la solicitud
+          ?
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-dismiss="modal"
+          (click)="savePagoEdit()"
+        >
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--  -->
