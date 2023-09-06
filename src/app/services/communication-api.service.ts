@@ -142,10 +142,7 @@ export class CommunicationApiService {
   addSolOC(data: any) {
     return this.http.post(this.APIUrl + '/CabSolOrdenCompras', data);
   }
-  //*METODO SOLICITUD DE PAGO
-  addSolPag(data: any) {
-    return this.http.post(this.APIUrl + '/CabSolPago', data);
-  }
+  
 
   getIDCabecera(tipoSol: number, noSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/CabSolCotizacions/GetCabecerabyID?tipoSol=${tipoSol}&noSol=${noSol}`);
@@ -235,6 +232,10 @@ export class CommunicationApiService {
   getDetalle_solicitud(tipoSol: number, noSol: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/DetSolCotizacions/GetDetalleSolicitud?tipoSol=${tipoSol}&noSol=${noSol}`);
   }
+  //*METODO Cabecera SOLICITUD DE PAGO
+  addSolPag(data: any) {
+    return this.http.post(this.APIUrl + '/CabSolPago', data);
+  }
   //*ADD Detalle de solicitud de pago
   addSolDetPago(data:any){
     return this.http.post(this.APIUrl + '/DetSolPagoes', data);
@@ -242,5 +243,13 @@ export class CommunicationApiService {
   //*Buscar el ID por cabecera y detalle de solicitud de pago 
   getSolPagobyId(id: number): Observable<any> {
     return this.http.get<any>(`${this.APIUrl}/CabSolPago/GetSolicitudByID?ID=${id}`);
+  }
+  //*Actualiza el ID por cabecera de solicitud de pago 
+  updatecabPago(id:number,data:any){
+    return this.http.put(this.APIUrl + `/CabSolPago/${id}`,data);
+  }
+  //*Actualiza el ID del  detalle de solicitud de pago
+  updatedetpago( id:number, data:any){
+    return this.http.put(this.APIUrl + `/DetSolPagoes/${id}`, data);
   }
 }
