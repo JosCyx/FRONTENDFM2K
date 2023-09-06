@@ -12,7 +12,7 @@ export class CabeceraPago {
   public cabPagoFechaFactura: string;
   public cabPagoProveedor: number;
   public cabPagoRucProveedor: string;
-  public cabPagototal: number;
+  public cabpagototal: number;
   public cabPagoObservaciones: string | null;
   public cabPagoAplicarMulta: string | null;
   public cabPagoValorMulta: number;
@@ -37,7 +37,7 @@ export class CabeceraPago {
     this.cabPagoFechaFactura = data.cabPagoFechaFactura;
     this.cabPagoProveedor = data.cabPagoProveedor;
     this.cabPagoRucProveedor = data.cabPagoRucProveedor;
-    this.cabPagototal=data.cabPagototal;
+    this.cabpagototal=data.cabpagototal;
     this.cabPagoObservaciones = data.cabPagoObservaciones;
     this.cabPagoAplicarMulta = data.cabPagoAplicarMulta;
     this.cabPagoValorMulta = data.cabPagoValorMulta;
