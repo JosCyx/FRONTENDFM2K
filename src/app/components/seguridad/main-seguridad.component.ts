@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-main-seguridad',
@@ -7,4 +9,5 @@ import { Component } from '@angular/core';
 })
 export class MainSeguridadComponent {
 
+  
 }

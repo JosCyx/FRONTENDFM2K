@@ -15,12 +15,6 @@ export class CommunicationApiService {
   constructor(private http: HttpClient, private cookieService: CookieService) { }
 
 
-  //obtener toda la lista
-  geetRolsList(): Observable<any[]> {
-    return this.http.get<any>(this.APIUrl + '/Rols');
-  }
-
-  //METODO DE PRUEBA (ENVIO DE PETICION + TOKEN, NO RECIBE RESPUESTA)
   getRolsList(): Observable<any[]> {
     // Obtiene el token de la cookie
     const authToken = this.cookieService.get('authToken');

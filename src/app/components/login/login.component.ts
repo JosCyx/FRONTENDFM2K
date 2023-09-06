@@ -1,30 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/services/auth.service';
-import { GlobalService } from 'src/app/services/global.service';
+import { AuthService } from 'src/app/services/authentication/auth.service';
 import { CookieService } from 'ngx-cookie-service';
-
-
-/*interface userResponse {
-  usEmpresa: number;
-  usId: number;
-  usLogin: string;
-  usContrasenia: string;
-  usNombre: string;
-  usEstado: string;
-  usFechaInicio: string;
-  usFechaCaduca: string;
-  usServicioC: any; // Puedes especificar el tipo adecuado aquí si lo conoces
-  usUserData: any; // Puedes especificar el tipo adecuado aquí si lo conoces
-  usBanUserData: any; // Puedes especificar el tipo adecuado aquí si lo conoces
-  usTipoAcceso: any; // Puedes especificar el tipo adecuado aquí si lo conoces
-  audEvento: any; // Puedes especificar el tipo adecuado aquí si lo conoces
-  audFecha: any; // Puedes especificar el tipo adecuado aquí si lo conoces
-  audUsuario: any; // Puedes especificar el tipo adecuado aquí si lo conoces
-  audObservacion: any; // Puedes especificar el tipo adecuado aquí si lo conoces
-  audVeces: any; // Puedes especificar el tipo adecuado aquí si lo conoces
-}*/
 
 
 @Component({
@@ -32,7 +10,7 @@ import { CookieService } from 'ngx-cookie-service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit{
   showmsj: boolean = false;
   //msjExito: string = 'Bienvenido Administrador.'
   msjExito!: string;
@@ -53,7 +31,6 @@ export class LoginComponent {
 
   constructor(
     private router: Router,
-    private globalService: GlobalService,
     private authService: AuthService,
     private cookieService: CookieService
   ) { }
@@ -66,6 +43,23 @@ export class LoginComponent {
     return this.loginForm.get("password") as FormControl;
   }
 
+  ngOnInit(): void {
+    if(this.authService.isAuthenticated()){
+      this.router.navigate(['main']);
+    }
+  }
+
+  clearCookies() {
+    const cookies = this.cookieService.getAll();
+    
+    for (const cookieName in cookies) {
+      if (cookies.hasOwnProperty(cookieName)) {
+        this.cookieService.delete(cookieName);
+      }
+    }
+    console.log(cookies);
+  }
+    
 
   login(): void {
     if (this.loginForm.valid) {
@@ -94,13 +88,12 @@ export class LoginComponent {
           setTimeout(() => {
             this.showmsj = false;
             this.msjExito = '';
-            this.globalService.isLogin = true;
             this.router.navigate(['main']);
           }, 2000);
 
         },
         error => {
-          /*if (error.status == 404) {
+          if (error.status == 404) {
             //console.log("El usuario no existe.");
             console.log("Error 404:", error)
             this.showmsjerror = true;
@@ -120,9 +113,9 @@ export class LoginComponent {
               this.showmsjerror = false;
               this.msjError = '';
             }, 3000);
-          }*/
+          }
           console.log("Error:", error)
-        }
+        } 
       );
     } else {
       console.log("Login invalido");
