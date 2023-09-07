@@ -159,30 +159,13 @@ export class SolicotiComponent implements OnInit {
 
     this.nivelRut$ = this.nivRuteService.getNivelbyEstado('A').pipe(
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
-    );
+    );  
 
-    // this.service.getLastItemID().subscribe(
-    //   response => {
-    //     this.lastIDItem = response[0].itmID + 1;
-    //   },
-    //   error => {
-    //     console.log("Error, no se ha podido recuperar el ultimo id: ", error)
-    //   }
-    // );
-
-    // this.service.getLastDetalleID().subscribe(
-    //   response => {
-    //     this.lastIDDet = response[0].solCotID + 1;
-    //   },
-    //   error => {
-    //     console.log("Error, no se ha podido recuperar el ultimo detalle: ", error)
-    //   }
-    // );
-  
-
-    if (this.changeview == 'editar') {
+    /////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////
+    //modificar logica de visualizacion de crear o editar
+    if (this.serviceGlobal.changePage == true && this.changeview == 'editar') {
       this.editSolicitud();
-      
     }
 
   }
