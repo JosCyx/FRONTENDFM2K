@@ -5,7 +5,9 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <button class="btn btn-primary m-2">Crear</button>
+          <button class="btn btn-primary m-2" (click)="changeView('crear')">
+            Crear
+          </button>
           <button class="btn btn-primary m-2">Boton</button>
         </div>
       </div>
@@ -302,7 +304,9 @@
         >
           Guardar
         </button>
-        <button class="btn btn-danger m-2">Cancelar</button>
+        <button class="btn btn-danger m-2" (click)="cancelar()">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>
@@ -403,27 +407,37 @@
             />
           </div>
         </div>
-        <div class="row">
-          <div class="input-group col">
-            <label class="input-group-text">Estado:</label>
-            <input
-              type="text"
-              class="form-control"
-              [value]="estadoTexto"
-              disabled
-            />
-          </div>
-          <div class="input-group col">
-            <label class="input-group-text">Traking:</label>
-            <ng-container *ngFor="let nvTRK of nivelRut$ | async">
+        <div class="row " >
+            <div class="input-group col">
+              <label class="input-group-text">Motivo Devolucion:</label>
+              <select  class="form-select " >
+                <option value="">1</option>
+                <option value="">2</option>
+                <option value="">3</option>
+              </select>
+            </div>
+          <div class="row col ">
+            <div class="input-group col">
+              <label class="input-group-text">Estado:</label>
               <input
-                *ngIf="nvTRK.nivel === cabecera.cabPagoEstadoTrack"
                 type="text"
                 class="form-control"
-                [value]="nvTRK.descRuteo"
+                [value]="estadoTexto"
                 disabled
               />
-            </ng-container>
+            </div>
+            <div class="input-group col">
+              <label class="input-group-text">Traking:</label>
+              <ng-container *ngFor="let nvTRK of nivelRut$ | async">
+                <input
+                  *ngIf="nvTRK.nivel === cabecera.cabPagoEstadoTrack"
+                  type="text"
+                  class="form-control"
+                  [value]="nvTRK.descRuteo"
+                  disabled
+                />
+              </ng-container>
+            </div>
           </div>
         </div>
       </div>
@@ -507,7 +521,6 @@
             type="text"
             class="form-control"
             id="floatingInput"
-            placeholder=""
             [(ngModel)]="cabecera.cabPagoObservaciones"
           />
           <label for="floatingInput">Observaciones:</label>
@@ -516,11 +529,10 @@
           <input
             type="text"
             class="form-control"
-            id="floatingInputM"
-            placeholder=""
+            id="floatingInput"
             [(ngModel)]="cabecera.cabPagoAplicarMulta"
           />
-          <label for="floatingInputM">Aplicar multa:</label>
+          <label for="floatingInput">Aplicar multa:</label>
         </div>
         <div class="input-group mb-3">
           <label class="input-group-text">Valor a descontar:</label>
@@ -596,7 +608,9 @@
         >
           Guardar
         </button>
-        <button class="btn btn-danger m-2">Cancelar</button>
+        <button class="btn btn-danger m-2" (click)="cancelarEdi()">
+          Cancelar
+        </button>
       </div>
     </div>
   </div>

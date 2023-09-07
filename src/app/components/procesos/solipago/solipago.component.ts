@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, map } from 'rxjs';
+import { Router } from '@angular/router';
 import { CommunicationApiService } from 'src/app/services/communication-api.service';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
 import { GlobalService } from 'src/app/services/global.service';
@@ -85,6 +86,7 @@ export class SolipagoComponent implements OnInit {
 
   constructor(
     private service: CommunicationApiService,
+    private router: Router,
     private serviceGlobal: GlobalService
   ) {}
 
@@ -148,6 +150,10 @@ export class SolipagoComponent implements OnInit {
       }
     }
   }
+  async changeView(view: string) {
+    this.changeview = view;
+    this.clear();
+  }
   //* Metodo para agregar la Cabecera
   //NOTE
   //tranforma la fecha actual en un formato especifico "Lunes, 31 de julio de 2023"
@@ -191,8 +197,14 @@ export class SolipagoComponent implements OnInit {
 
     return `${year}-${month}-${day}`;
   }
-  //Limpiar
-  cancelarAll(): void {
+  //Limpiar en modulo de crear pago 
+  cancelar():void{
+    this.clear();
+    this.ngOnInit();
+  }
+  //Limpiar en modulo Editar
+  cancelarEdi(): void {
+    this.router.navigate(['allrequest']);
     this.clear();
   }
   //
@@ -373,7 +385,7 @@ export class SolipagoComponent implements OnInit {
               idDetalle: ini.solCotIdDetalle,
               itemDesc: ini.solCotDescripcion,
             }));
-            console.log('cambios ', this.detalleSolPagos);
+            console.log('cambios en el map ', this.detalleSolPagos);
           },
           (error) => {
             console.log('error al guardar la cabecera: ', error);
@@ -415,7 +427,7 @@ export class SolipagoComponent implements OnInit {
       console.log(`el total es to  ${this.Total}`);
     }
   }
-  //
+  //Calculo  Total de Edicion
   calculoEditotal() {
     this.cabecera.cabpagototal = 0;
     for (let PagoTotal of this.detallePago) {
@@ -478,6 +490,12 @@ export class SolipagoComponent implements OnInit {
 
       this.showmsj = true;
       this.msjExito = `Solicitud N° ${this.cabecera.cabPagoNumerico},editada exitosamente`;
+      setTimeout(() =>{
+        this.msjExito ='';
+        this.showmsj=false;
+        this.router.navigate(['allrequest']);
+
+      },2500)
     } catch (error) {
       console.error('Error: ' + error);
       this.showmsjerror = true;
@@ -511,7 +529,7 @@ export class SolipagoComponent implements OnInit {
       cabPagoEstado: this.cabecera.cabPagoEstado,
       cabPagoEstadoTrack: this.cabecera.cabPagoEstadoTrack,
     };
-    console.log('esta guardo  solicitud ', dataCAB);
+    console.log('esta guardo editada de cabecera solicitud ', dataCAB);
     this.service.updatecabPago(this.cabecera.cabPagoID, dataCAB).subscribe(
       (response) => {
         console.log('Solicitud de Pago Editado');
@@ -527,7 +545,7 @@ export class SolipagoComponent implements OnInit {
         detPagoID: Depago.detPagoID,
         detPagoTipoSol: this.cabecera.cabPagoTipoSolicitud,
         detPagoNoSol: this.cabecera.cabPagoNoSolicitud,
-        detPagoIdDetall: Depago.detPagoIdDetalle,
+        detPagoIdDetalle: Depago.detPagoIdDetalle,
         detPagoItemDesc: Depago.detPagoItemDesc,
         detPagoCantContratada: Depago.detPagoCantContratada,
         detPagoCantRecibida: Depago.detPagoCantRecibida,
