@@ -1,5 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { CommunicationApiService } from 'src/app/services/communication-api.service';
+//servicios de comunicacion
+import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
+import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
+import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
+import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
+import { TrackingService } from 'src/app/services/comunicationAPI/seguridad/tracking.service';
+import { CabCotizacionService } from 'src/app/services/comunicationAPI/solicitudes/cab-cotizacion.service';
+import { DetCotOCService } from 'src/app/services/comunicationAPI/solicitudes/det-cot-oc.service';
+import { ItemSectorService } from 'src/app/services/comunicationAPI/solicitudes/item-sector.service';
+
 import { Observable, map } from 'rxjs';
 import { Detalle } from 'src/app/models/procesos/Detalle';
 import { ItemSector } from 'src/app/models/procesos/ItemSector';
@@ -10,6 +19,7 @@ import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotiza
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Router } from '@angular/router';
+
 
 interface SolicitudData {
   cabecera: any;
@@ -118,27 +128,36 @@ export class SolicotiComponent implements OnInit {
 
 
 
-  constructor(private router: Router, private service: CommunicationApiService, private serviceGlobal: GlobalService) { }
+  constructor(private router: Router, 
+    private empService: EmpleadosService, 
+    private sectService: SectoresService, 
+    private areaService: AreasService, 
+    private nivRuteService: NivelRuteoService,
+    private solTrckService: TrackingService,
+    private cabCotService: CabCotizacionService, 
+    private detCotService: DetCotOCService,
+    private itmSectService: ItemSectorService,
+    private serviceGlobal: GlobalService) { }
 
   ngOnInit(): void {
-    this.empleadosList$ = this.service.getEmpleadosList();
+    this.empleadosList$ = this.empService.getEmpleadosList();
     this.empleadosList$.subscribe((data) => {
       this.empleadosEdit = data;
     });
 
-    this.inspectores$ = this.service.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
+    this.inspectores$ = this.empService.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
 
-    this.sectores$ = this.service.getSectoresList().pipe(
+    this.sectores$ = this.sectService.getSectoresList().pipe(
       map(sectores => sectores.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre)))
     );
 
-    this.areaList$ = this.service.getAreaList();
+    this.areaList$ = this.areaService.getAreaList();
 
     this.areaList$.subscribe((data) => {
       this.areas = data;
     });
 
-    this.nivelRut$ = this.service.getNivelbyEstado('A').pipe(
+    this.nivelRut$ = this.nivRuteService.getNivelbyEstado('A').pipe(
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
     );
 
@@ -300,7 +319,7 @@ export class SolicotiComponent implements OnInit {
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
   getLastSol(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
-      this.service.getLastSolicitud(this.trTipoSolicitud).subscribe(
+      this.solTrckService.getLastSolicitud(this.trTipoSolicitud).subscribe(
         (resultado) => {
           if (resultado === 0) {
             console.log('No se ha registrado ninguna solicitud de este tipo.');
@@ -332,7 +351,7 @@ export class SolicotiComponent implements OnInit {
         };
 
         //console.log("1. guardando tracking: ", dataTRK);
-        this.service.generateTracking(dataTRK).subscribe(
+        this.solTrckService.generateTracking(dataTRK).subscribe(
           () => {
             //console.log("Tracking guardado con éxito.");
             resolve();
@@ -379,7 +398,7 @@ export class SolicotiComponent implements OnInit {
 
     //enviar datos de cabecera a la API
     console.log("2. guardando solicitud...", dataCAB);
-    await this.service.addSolCot(dataCAB).subscribe(
+    await this.cabCotService.addSolCot(dataCAB).subscribe(
       response => {
         console.log("Cabecera agregada.");
         console.log("Solicitud", this.solNumerico);
@@ -444,7 +463,7 @@ export class SolicotiComponent implements OnInit {
       }
 
       //envia a la api el arreglo data por medio del metodo post
-      this.service.addDetalleCotizacion(data).subscribe(
+      this.detCotService.addDetalleCotizacion(data).subscribe(
         response => {
           console.log("3. Detalle añadido exitosamente.");
         },
@@ -468,7 +487,7 @@ export class SolicotiComponent implements OnInit {
         itmSector: item.item_sector
       }
 
-      this.service.addItemSector(data).subscribe(
+      this.itmSectService.addItemSector(data).subscribe(
         response => {
           console.log("4. Item guardado exitosamente.");
         },
@@ -483,7 +502,7 @@ export class SolicotiComponent implements OnInit {
 
   getLastDetalleCot(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
-      this.service.getLastDetalleCot(this.trTipoSolicitud, this.trLastNoSol).subscribe(
+      this.detCotService.getLastDetalleCot(this.trTipoSolicitud, this.trLastNoSol).subscribe(
         (resultado) => {
           if (resultado === 0) {
             console.log('No se ha registrado ningun detalle para esta solicitud. Se asigna 0.');
@@ -748,7 +767,7 @@ export class SolicotiComponent implements OnInit {
 
   async getSolicitud() {
     try {
-      const data = await this.service.getCotizacionbyId(this.solID).toPromise();
+      const data = await this.cabCotService.getCotizacionbyId(this.solID).toPromise();
       this.solicitudEdit = data;
     } catch (error) {
       console.error('Error al obtener la solicitud:', error);
@@ -1000,7 +1019,7 @@ export class SolicotiComponent implements OnInit {
     };
 
     console.log("Cabecera editada: ", this.cabecera.cabSolCotID, dataCAB);
-    this.service.updateCabCotizacion(this.cabecera.cabSolCotID, dataCAB).subscribe(
+    this.cabCotService.updateCabCotizacion(this.cabecera.cabSolCotID, dataCAB).subscribe(
       (response) => {
         console.log('ACTUALIZADA CORRECTAMENTE');
       },
@@ -1028,7 +1047,7 @@ export class SolicotiComponent implements OnInit {
         solCotCantidadTotal: detalle.solCotCantidadTotal
       }
       console.log("Nuevo detalle: ", data);
-      this.service.addDetalleCotizacion(data).subscribe(
+      this.detCotService.addDetalleCotizacion(data).subscribe(
         response => {
           console.log("Nuevo detalle", detalle.solCotIdDetalle, " guardado en la base");
         },
@@ -1043,7 +1062,7 @@ export class SolicotiComponent implements OnInit {
   deleteAllDetails(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        this.service.deleteAllDetBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
+        this.detCotService.deleteAllDetBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
           response => {
             console.log("Todos los detalles eliminados");
             resolve();
@@ -1077,7 +1096,7 @@ export class SolicotiComponent implements OnInit {
       }
       console.log("Nuevo item: ", data);
 
-      this.service.addItemSector(data).subscribe(
+      this.itmSectService.addItemSector(data).subscribe(
         response => {
           console.log("Nuevo item guardado en la base, item:", item.itmIdItem, ", detalle:", item.itmIdDetalle);
         },
@@ -1092,7 +1111,7 @@ export class SolicotiComponent implements OnInit {
   deleteAllItems(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        this.service.deleteAllItemBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
+        this.itmSectService.deleteAllItemBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
           response => {
             console.log("Todos los items eliminados");
             resolve();

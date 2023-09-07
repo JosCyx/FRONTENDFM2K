@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CommunicationApiService } from 'src/app/services/communication-api.service';
+import { AplicacionesService } from 'src/app/services/comunicationAPI/seguridad/aplicaciones.service';
+import { RolesService } from 'src/app/services/comunicationAPI/seguridad/roles.service';
 
 
 
@@ -28,11 +29,12 @@ export class RolesComponent implements OnInit {
   // Map to display data associate with foreign keys
   //rolsMap: Map<number, string> = new Map()
 
-  constructor(private service: CommunicationApiService) { }
+  constructor(private rolService: RolesService,
+    private appService: AplicacionesService) { }
 
   ngOnInit() {
-    this.rolList$ = this.service.getRolsList();
-    this.appsList$ = this.service.getAplicacionesList();
+    this.rolList$ = this.rolService.getRolsList();
+    this.appsList$ = this.appService.getAplicacionesList();
   }
 
   agregarRol(): void {
@@ -45,7 +47,7 @@ export class RolesComponent implements OnInit {
     };
 
     // Llamar al método addRols() del servicio para enviar los datos a la API
-    this.service.addRols(data).subscribe(
+    this.rolService.addRols(data).subscribe(
       response => {
         // Manejar la respuesta de la API aquí si es necesario
         console.log('Rol agregado exitosamente:', response);
@@ -97,7 +99,7 @@ export class RolesComponent implements OnInit {
     this.roCodigo = index;
   
     // Llamar al método getRolById() del servicio para obtener el rol por su código
-    this.service.getRolById(this.roCodigo).subscribe(
+    this.rolService.getRolById(this.roCodigo).subscribe(
       response => {
         // Asignar los valores del rol obtenido a las variables locales
         this.nombre = response.roNombre;
@@ -125,7 +127,7 @@ export class RolesComponent implements OnInit {
     };
   
     // Llamar al método updateRols() del servicio para enviar los datos actualizados a la API
-    this.service.updateRols(this.roCodigo, data).subscribe(
+    this.rolService.updateRols(this.roCodigo, data).subscribe(
       response => {
         // Manejar la respuesta de la API aquí si es necesario
         console.log('Rol actualizado exitosamente:', response);
@@ -150,7 +152,7 @@ export class RolesComponent implements OnInit {
   /*elimina un rol de la tabla roles de la base de datos, no se usa por el momento ya que la eliminacion de los elementos debe ser lógica
   es decir se deben inactivar y no eliminar*/
   eliminarRol(roCodigo : number):void{
-    this.service.deleteRols(roCodigo).subscribe(
+    this.rolService.deleteRols(roCodigo).subscribe(
       response => {
         // Manejar la respuesta de la API aquí si es necesario
         console.log('Rol eliminadp exitosamente:', response);

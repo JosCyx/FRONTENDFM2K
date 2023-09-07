@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Usuario } from 'src/app/models/seguridad/Usuario';
 
 @Component({
   selector: 'app-usuarios',
@@ -17,12 +16,12 @@ export class UsuariosComponent {
   confirmPass: string = '';
   changeview: string = 'consulta'; 
 
-  listUsers: Usuario [] = [];
+  listUsers: any [] = [];
 
 
   //añade un nuevo usuario a la listUsers
   agregarUsuario(){
-    const usuario: Usuario = {
+    const usuario: any = {
       user: this.user,
       pass: this.pass,
       nombre: this.nombre,

@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, map  } from 'rxjs';
 import { Niveles } from 'src/app/models/Niveles';
-import { CommunicationApiService } from 'src/app/services/communication-api.service';
+import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
+import { TipoSolService } from 'src/app/services/comunicationAPI/solicitudes/tipo-sol.service';
+import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
+import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/ruteo-area.service';
 
 @Component({
   selector: 'app-ruteo',
@@ -50,14 +53,18 @@ export class RuteoComponent implements OnInit {
   getNivelEstado: string = 'A';//variable que controla el estado de los niveles a obtener, 'A' retorna solo estados acivos, 'I' retorna estados inactivos
 
 
-  constructor(private service: CommunicationApiService) { }
+  constructor(
+    private areaService: AreasService,
+    private tipSolService: TipoSolService,
+    private nivRuteoService: NivelRuteoService,
+    private rutAreaService: RuteoAreaService) { }
 
 
   ngOnInit() {
-    this.areaList$ = this.service.getAreaList();
-    this.TipoSol$ = this.service.getTipoSolicitud();
+    this.areaList$ = this.areaService.getAreaList();
+    this.TipoSol$ = this.tipSolService.getTipoSolicitud();
     
-    this.nivelRut$ = this.service.getNivelbyEstado(this.getNivelEstado).pipe(
+    this.nivelRut$ = this.nivRuteoService.getNivelbyEstado(this.getNivelEstado).pipe(
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
     );   
 
@@ -122,7 +129,7 @@ export class RuteoComponent implements OnInit {
     for (let nivel of this.nivelesList) {
       if (nivel.estado === true) {
 
-        this.service.checkRuteoExistence(this.rutTipoSol, this.rutArea, nivel.nivel).subscribe(
+        this.rutAreaService.checkRuteoExistence(this.rutTipoSol, this.rutArea, nivel.nivel).subscribe(
           (data: any) => {
             if (data) {
               // Si el ruteo ya existe se guardan los valores de los niveles en una lista para mostrarlos en un mensaje
@@ -149,7 +156,7 @@ export class RuteoComponent implements OnInit {
               };
 
 
-              this.service.addRuteos(data).subscribe(
+              this.rutAreaService.addRuteos(data).subscribe(
                 () => {
                   console.log('Ruteo agregado exitosamente');
                   this.mensajeExito = 'Niveles asignados exitosamente.';
@@ -181,7 +188,7 @@ export class RuteoComponent implements OnInit {
     this.ruteoList = [];
     this.mensajeError = '';
 
-    this.service.getRuteosByArea(this.busqArea).subscribe(
+    this.rutAreaService.getRuteosByArea(this.busqArea).subscribe(
       response => {
         this.ruteoList = response;
         this.checkBusq = true;
@@ -231,7 +238,7 @@ export class RuteoComponent implements OnInit {
         estadoRuteo: this.nvEstado
       }
 
-      this.service.addnivelRuteo(data).subscribe(
+      this.nivRuteoService.addnivelRuteo(data).subscribe(
         response => {
           console.log("Nivel añadido correctamente.");
           this.mensajeExito = 'Nivel registrado exitosamente.';
@@ -257,7 +264,7 @@ export class RuteoComponent implements OnInit {
   }
 
   borrarRuteo(): void {
-    this.service.deleteRuteo(this.dltTipoSol, this.dltArea, this.dltNivel).subscribe(
+    this.rutAreaService.deleteRuteo(this.dltTipoSol, this.dltArea, this.dltNivel).subscribe(
       response => {
         this.mensajeExito = 'Se ha eliminado el nivel seleccionado.';
         setTimeout(() => {

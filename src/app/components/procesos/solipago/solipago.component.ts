@@ -1,11 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Router } from '@angular/router';
-import { CommunicationApiService } from 'src/app/services/communication-api.service';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
 import { GlobalService } from 'src/app/services/global.service';
 import { DetallePago } from 'src/app/models/procesos/solcotizacion/DetallePago';
 import { format, parseISO } from 'date-fns';
+import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
+import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
+import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
+import { CabPagoService } from 'src/app/services/comunicationAPI/solicitudes/cab-pago.service';
+import { DetPagoService } from 'src/app/services/comunicationAPI/solicitudes/det-pago.service';
+import { TrackingService } from 'src/app/services/comunicationAPI/seguridad/tracking.service';
+import { DetCotOCService } from 'src/app/services/comunicationAPI/solicitudes/det-cot-oc.service';
 
 interface DetalleSolPagos {
   itemDesc: string;
@@ -85,20 +91,26 @@ export class SolipagoComponent implements OnInit {
   empleadoEdi: any[] = [];
 
   constructor(
-    private service: CommunicationApiService,
+    private empService: EmpleadosService, 
+    private areaService: AreasService, 
+    private nivRuteService: NivelRuteoService,
+    private cabPagoService: CabPagoService,
+    private detPagoService: DetPagoService,
+    private solTrckService: TrackingService,
+    private detSolService: DetCotOCService,
     private router: Router,
     private serviceGlobal: GlobalService
   ) {}
 
   ngOnInit(): void {
-    this.empleadosList$ = this.service.getEmpleadosList();
+    this.empleadosList$ = this.empService.getEmpleadosList();
     this.empleadosList$.subscribe((data) => {
       this.empleadoEdi = data;
     });
 
-    this.areaList$ = this.service.getAreaList();
+    this.areaList$ = this.areaService.getAreaList();
 
-    this.nivelRut$ = this.service
+    this.nivelRut$ = this.nivRuteService
       .getNivelbyEstado('A')
       .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
 
@@ -254,7 +266,7 @@ export class SolipagoComponent implements OnInit {
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
   getLastSol(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
-      this.service.getLastSolicitud(this.trTipoSolicitud).subscribe(
+      this.solTrckService.getLastSolicitud(this.trTipoSolicitud).subscribe(
         (resultado) => {
           if (resultado === 0) {
             console.log('No se ha registrado ninguna solicitud de este tipo.');
@@ -289,7 +301,7 @@ export class SolipagoComponent implements OnInit {
         };
 
         console.log('1. guardando tracking: ', dataTRK);
-        this.service.generateTracking(dataTRK).subscribe(
+        this.solTrckService.generateTracking(dataTRK).subscribe(
           () => {
             console.log('Tracking guardado con éxito.');
             resolve();
@@ -336,7 +348,7 @@ export class SolipagoComponent implements OnInit {
 
     //enviar datos de cabecera a la API
     console.log('2. guardando solicitud...', dataCAB);
-    await this.service.addSolPag(dataCAB).subscribe(
+    await this.cabPagoService.addSolPag(dataCAB).subscribe(
       (response) => {
         console.log('Cabecera agregada.');
         console.log('Solicitud', this.solNumerico);
@@ -376,7 +388,7 @@ export class SolipagoComponent implements OnInit {
     }
     console.log('el valor de la de los input', this.valorinput);
     try {
-      this.service
+      this.detSolService
         .getDetalle_solicitud(this.tipoSolinput, this.noSolicinput)
         .subscribe(
           (response) => {
@@ -409,7 +421,7 @@ export class SolipagoComponent implements OnInit {
         detPagoSubtotal: detPago.subTotal,
       };
       console.log('listas', dataDetPag);
-      this.service.addSolDetPago(dataDetPag).subscribe(
+      this.detPagoService.addSolDetPago(dataDetPag).subscribe(
         (response) => {
           console.log('Detalle Guardado ');
         },
@@ -443,7 +455,7 @@ export class SolipagoComponent implements OnInit {
   //* Obtener los datos de cabecera de solicitud y detalle
   async getSoliPagos() {
     try {
-      const data = await this.service.getSolPagobyId(this.SolID).toPromise();
+      const data = await this.cabPagoService.getSolPagobyId(this.SolID).toPromise();
       this.solicitudEdit = data;
     } catch (error) {
       console.error('Error en la solicitud', error);
@@ -530,7 +542,7 @@ export class SolipagoComponent implements OnInit {
       cabPagoEstadoTrack: this.cabecera.cabPagoEstadoTrack,
     };
     console.log('esta guardo editada de cabecera solicitud ', dataCAB);
-    this.service.updatecabPago(this.cabecera.cabPagoID, dataCAB).subscribe(
+    this.cabPagoService.updatecabPago(this.cabecera.cabPagoID, dataCAB).subscribe(
       (response) => {
         console.log('Solicitud de Pago Editado');
       },
@@ -553,7 +565,7 @@ export class SolipagoComponent implements OnInit {
         detPagoSubtotal: Depago.detPagoSubtotal,
       };
       console.log('se edito detalle pago', data);
-      this.service.updatedetpago(Depago.detPagoID, data).subscribe(
+      this.detPagoService.updatedetpago(Depago.detPagoID, data).subscribe(
         (response) => {
           console.log('Detalle de pago actualizado');
         },

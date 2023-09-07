@@ -1,5 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { CommunicationApiService } from 'src/app/services/communication-api.service';
+
+
+import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
+import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
+import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
+import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
+import { TrackingService } from 'src/app/services/comunicationAPI/seguridad/tracking.service';
+import { CabOrdCompraService } from 'src/app/services/comunicationAPI/solicitudes/cab-ord-compra.service';
+import { DetCotOCService } from 'src/app/services/comunicationAPI/solicitudes/det-cot-oc.service';
+import { ItemSectorService } from 'src/app/services/comunicationAPI/solicitudes/item-sector.service';
+
 import { Observable, map } from 'rxjs';
 import { Detalle } from 'src/app/models/procesos/Detalle';
 import { ItemSector } from 'src/app/models/procesos/ItemSector';
@@ -119,22 +129,29 @@ export class SoliocComponent implements OnInit {
   // lastIDDet!: number;
 
   constructor(
-    private service: CommunicationApiService,
+    private empService: EmpleadosService, 
+    private sectService: SectoresService, 
+    private areaService: AreasService, 
+    private nivRuteService: NivelRuteoService,
+    private solTrckService: TrackingService,
+    private cabOCService: CabOrdCompraService, 
+    private detCotService: DetCotOCService,
+    private itmSectService: ItemSectorService,
     private router: Router,
     private serviceGlobal: GlobalService
   ) {}
 
   ngOnInit(): void {
-    this.empleadosList$ = this.service.getEmpleadosList();
+    this.empleadosList$ = this.empService.getEmpleadosList();
     this.empleadosList$.subscribe((data) => {
       this.empleadoedit = data;
     });
 
-    this.inspectores$ = this.service.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
-    this.nivelRut$ = this.service
+    this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
+    this.nivelRut$ = this.nivRuteService
       .getNivelbyEstado('A')
       .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
-    this.sectores$ = this.service
+    this.sectores$ = this.sectService
       .getSectoresList()
       .pipe(
         map((sectores) =>
@@ -142,7 +159,7 @@ export class SoliocComponent implements OnInit {
         )
       );
 
-    this.areaList$ = this.service.getAreaList();
+    this.areaList$ = this.areaService.getAreaList();
 
     this.areaList$.subscribe((data) => {
       this.areas = data;
@@ -333,7 +350,7 @@ export class SoliocComponent implements OnInit {
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
   getLastSol(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
-      this.service.getLastSolicitud(this.trTipoSolicitud).subscribe(
+      this.solTrckService.getLastSolicitud(this.trTipoSolicitud).subscribe(
         (resultado) => {
           if (resultado === 0) {
             console.log('No se ha registrado ninguna solicitud de este tipo.');
@@ -368,7 +385,7 @@ export class SoliocComponent implements OnInit {
         };
 
         console.log('1. guardando tracking: ', dataTRK);
-        this.service.generateTracking(dataTRK).subscribe(
+        this.solTrckService.generateTracking(dataTRK).subscribe(
           () => {
             console.log('Tracking guardado con éxito.');
             resolve();
@@ -413,7 +430,7 @@ export class SoliocComponent implements OnInit {
 
     //enviar datos de cabecera a la API
     console.log('2. guardando solicitud...', dataCAB);
-    await this.service.addSolOC(dataCAB).subscribe(
+    await this.cabOCService.addSolOC(dataCAB).subscribe(
       (response) => {
         console.log('Cabecera agregada.');
         console.log('Solicitud', this.solNumerico);
@@ -467,7 +484,7 @@ export class SoliocComponent implements OnInit {
         solCotCantidadTotal: detalle.det_cantidad,
       };
       //envia a la api el arreglo data por medio del metodo post
-      this.service.addDetalleCotizacion(data).subscribe(
+      this.detCotService.addDetalleCotizacion(data).subscribe(
         (response) => {
           console.log('3. Detalle añadido exitosamente.');
         },
@@ -488,7 +505,7 @@ export class SoliocComponent implements OnInit {
         itmSector: item.item_sector,
       };
 
-      this.service.addItemSector(data).subscribe(
+      this.itmSectService.addItemSector(data).subscribe(
         (response) => {
           console.log('4. Item guardado exitosamente.');
         },
@@ -523,7 +540,7 @@ export class SoliocComponent implements OnInit {
   }*/
   getLastDetalleCot(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
-      this.service
+      this.detCotService
         .getLastDetalleCot(this.trTipoSolicitud, this.trLastNoSol)
         .subscribe(
           (resultado) => {
@@ -727,7 +744,7 @@ export class SoliocComponent implements OnInit {
   //editar solicitudes
   async getSolicitud() {
     try {
-      const data = await this.service
+      const data = await this.cabOCService
         .getOrdenComprabyId(this.SolID)
         .toPromise();
       this.solicitudEdit = data;
@@ -877,7 +894,7 @@ export class SoliocComponent implements OnInit {
         itmSector: item.itmSector,
       };
 
-      this.service.addItemSector(data).subscribe(
+      this.itmSectService.addItemSector(data).subscribe(
         (response) => {
           console.log('Item guardado exitosamente.');
         },
@@ -958,7 +975,7 @@ export class SoliocComponent implements OnInit {
     };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
     console.log('2. guardando solicitud...', dataCAB);
-    this.service.updateOrdencompra(this.cabecera.cabSolOCID, dataCAB).subscribe(
+    this.cabOCService.updateOrdencompra(this.cabecera.cabSolOCID, dataCAB).subscribe(
       (response) => {
         console.log('Actualizar ');
              },
@@ -982,7 +999,7 @@ export class SoliocComponent implements OnInit {
         solCotCantidadTotal: detalle.solCotCantidadTotal
       }
       console.log("Nuevo detalle: ", data);
-      this.service.addDetalleCotizacion(data).subscribe(
+      this.detCotService.addDetalleCotizacion(data).subscribe(
         response => {
           console.log("Nuevo detalle", detalle.solCotIdDetalle, " guardado en la base");
         },
@@ -997,7 +1014,7 @@ export class SoliocComponent implements OnInit {
   deleteAllDetails(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        this.service.deleteAllDetBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
+        this.detCotService.deleteAllDetBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
           response => {
             console.log("Todos los detalles eliminados");
             resolve();
@@ -1029,7 +1046,7 @@ export class SoliocComponent implements OnInit {
       }
       console.log("Nuevo item: ", data);
 
-      this.service.addItemSector(data).subscribe(
+      this.itmSectService.addItemSector(data).subscribe(
         response => {
           console.log("Nuevo item guardado en la base, item:", item.itmIdItem, ", detalle:", item.itmIdDetalle);
         },
@@ -1044,7 +1061,7 @@ export class SoliocComponent implements OnInit {
   deleteAllItems(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        this.service.deleteAllItemBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
+        this.itmSectService.deleteAllItemBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
           response => {
             console.log("Todos los items eliminados");
             resolve();
@@ -1105,7 +1122,7 @@ export class SoliocComponent implements OnInit {
           solCotCantidadTotal: detalle.det_cantidad,
         };
         //console.log("Nuevo detalle: ",data);
-        this.service.addDetalleCotizacion(data).subscribe(
+        this.detCotService.addDetalleCotizacion(data).subscribe(
           (response) => {
             console.log(
               'Nuevo detalle',
@@ -1133,7 +1150,7 @@ export class SoliocComponent implements OnInit {
         itmSector: item.item_sector,
       };
       //console.log("Nuevo item: ",data);
-      this.service.addItemSector(data).subscribe(
+      this.itmSectService.addItemSector(data).subscribe(
         (response) => {
           console.log(
             'Nuevo item guardado en la base, item:',

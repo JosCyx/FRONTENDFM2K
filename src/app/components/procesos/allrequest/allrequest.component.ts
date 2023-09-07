@@ -2,8 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CabeceraCotizacion } from 'src/app/models/procesos/solcotizacion/CabeceraCotizacion';
-import { CommunicationApiService } from 'src/app/services/communication-api.service';
+import { TipoSolService } from 'src/app/services/comunicationAPI/solicitudes/tipo-sol.service';
+import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service'; 
+import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
+import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 import { GlobalService } from 'src/app/services/global.service';
+import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
+import { CabCotizacionService } from 'src/app/services/comunicationAPI/solicitudes/cab-cotizacion.service';
+import { CabOrdCompraService } from 'src/app/services/comunicationAPI/solicitudes/cab-ord-compra.service';
+import { CabPagoService } from 'src/app/services/comunicationAPI/solicitudes/cab-pago.service';
 
 
 
@@ -37,35 +44,44 @@ export class AllrequestComponent implements OnInit {
 
   changeview: string = 'consultar';
 
-  constructor(private router: Router, private service: CommunicationApiService, private serviceGlobal: GlobalService) { }
+  constructor(private router: Router,
+    private serviceGlobal: GlobalService,
+    private tipoSolService: TipoSolService,
+    private empService: EmpleadosService,
+    private areaService: AreasService,
+    private sectService: SectoresService,
+    private nivRuteoService: NivelRuteoService,
+    private cabCotService: CabCotizacionService,
+    private cabOCService: CabOrdCompraService,
+    private cabPagoService: CabPagoService) { }
 
   ngOnInit(): void {
-    this.tipoSol$ = this.service.getTipoSolicitud();
+    this.tipoSol$ = this.tipoSolService.getTipoSolicitud();
 
-    this.empleadoList$ = this.service.getEmpleadosList();
+    this.empleadoList$ = this.empService.getEmpleadosList();
     this.empleadoList$.subscribe((data) => {
       this.empleados = data;
     });
 
-    this.areaList$ = this.service.getAreaList();
+    this.areaList$ = this.areaService.getAreaList();
     this.areaList$.subscribe((data) => {
       this.areas = data;
     });
 
-    this.sectores$ = this.service.getSectoresList();
+    this.sectores$ = this.sectService.getSectoresList();
 
-    this.trckList$ = this.service.getNivelruteo();
+    this.trckList$ = this.nivRuteoService.getNivelruteo();
   }
 
   consultarSol(): void {
     this.btp = this.bsqTipoSol;
     this.isConsulta = true;
     if (this.bsqTipoSol == 1) {
-      this.allSol$ = this.service.getAllCotizaciones();
+      this.allSol$ = this.cabCotService.getAllCotizaciones();
     } else if (this.bsqTipoSol == 2) {
-      this.allSol$ = this.service.getAllOrdenCmp();
+      this.allSol$ = this.cabOCService.getAllOrdenCmp();
     } else if (this.bsqTipoSol == 3) {
-      this.allSol$ = this.service.getAllPago();
+      this.allSol$ = this.cabPagoService.getAllPago();
     }
 
   }

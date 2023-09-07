@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CommunicationApiService } from 'src/app/services/communication-api.service';
+import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
+import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
+import { DepartamentosService } from 'src/app/services/comunicationAPI/seguridad/departamentos.service';
 import { Observable, map } from 'rxjs';
 
 
@@ -44,11 +46,14 @@ export class EmpleadosComponent implements OnInit {
   dptoList$!: Observable<any[]>;
 
 
-  constructor(private service: CommunicationApiService) { }
+  constructor(
+    private empService: EmpleadosService,
+    private areaService: AreasService,
+    private deptoService: DepartamentosService) { }
 
   ngOnInit() {
     //carga los datos de la tabla empleados en un observable
-    this.empleadoList$ = this.service.getEmpleadosList();
+    this.empleadoList$ = this.empService.getEmpleadosList();
 
     //pasa los datos del observable de empleados a una lista
     this.empleadoList$.subscribe((data) => {
@@ -56,10 +61,10 @@ export class EmpleadosComponent implements OnInit {
     });
 
     //carga los datos de la tabla area en un observable
-    this.areaList$ = this.service.getAreaList();
+    this.areaList$ = this.areaService.getAreaList();
 
     //carga el contenido de la tabla de departamentos en un observable ordenandolos en orden alfabético
-    this.dptoList$ = this.service.getDepartamentos().pipe(
+    this.dptoList$ = this.deptoService.getDepartamentos().pipe(
       map(departamentos => departamentos.sort((a, b) => a.depDescp.localeCompare(b.depDescp)))
     );
 
@@ -188,7 +193,7 @@ export class EmpleadosComponent implements OnInit {
       empleadoEstado: this.empEstado
     };
 
-    this.service.addEmpleados(data).subscribe(
+    this.empService.addEmpleados(data).subscribe(
       response => {
         // Manejar la respuesta de la API aquí si es necesario
         console.log('Empleado agregado exitosamente:', response);
@@ -211,7 +216,7 @@ export class EmpleadosComponent implements OnInit {
   editarEmpleado(id: number) {
     this.empId = id;
 
-    this.service.getEmpleadoById(this.empId).subscribe(
+    this.empService.getEmpleadoById(this.empId).subscribe(
       response => {
         //aunque no se muestren en pantalla todas, guardamos todos los datos que trae nuestra tabla en variables locales para luego usarlas al enviar el put
         this.empIdNomina = response.empleadoIdNomina;
@@ -255,7 +260,7 @@ export class EmpleadosComponent implements OnInit {
     };
 
     // Llamar al método updateEmpleado() del servicio para enviar los datos actualizados a la API
-    this.service.updateEmpelado(this.empId, data).subscribe(
+    this.empService.updateEmpelado(this.empId, data).subscribe(
       response => {
         // Manejar la respuesta de la API aquí si es necesario
         console.log('Empleado actualizado exitosamente:', response);
