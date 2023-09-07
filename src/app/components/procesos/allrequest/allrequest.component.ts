@@ -65,7 +65,7 @@ export class AllrequestComponent implements OnInit {
     } else if (this.bsqTipoSol == 2) {
       this.allSol$ = this.service.getAllOrdenCmp();
     } else if (this.bsqTipoSol == 3) {
-      this.allSol$ = this.service.getAllOrdenCmp();
+      this.allSol$ = this.service.getAllPago();
     }
 
   }
@@ -95,6 +95,8 @@ export class AllrequestComponent implements OnInit {
       this.router.navigate(['solicoti']);
     } else if (this.bsqTipoSol == 2) {
       this.router.navigate(['solioc']);
+    }else if (this.bsqTipoSol == 3) {
+      this.router.navigate(['solipago']);
     }
 
   }
