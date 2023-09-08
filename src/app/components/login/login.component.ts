@@ -67,9 +67,7 @@ export class LoginComponent implements OnInit{
       //enviar como parametro el valor ingresado en el formulario del usuario y la contraseña
       this.authService.login(this.loginForm.value.username!, this.loginForm.value.password!).subscribe(
         (response: any) => {
-          this.cookieService.set('userLogin', response.usuario.usLogin);
-          this.cookieService.set('userIdNomina', response.usuario.usIdNomina);
-          this.cookieService.set('userName', response.usuario.usNombre);
+          
 
           //verifica los roles que tiene asignado ese usuario
           //this.checkAuthorization();
@@ -83,6 +81,10 @@ export class LoginComponent implements OnInit{
           const expirationDate = new Date();
           expirationDate.setHours(expirationDate.getHours() + 12);
           this.cookieService.set('authToken', response.token, expirationDate);
+
+          this.cookieService.set('userLogin', response.usuario.usLogin, expirationDate);
+          this.cookieService.set('userIdNomina', response.usuario.usIdNomina, expirationDate);
+          this.cookieService.set('userName', response.usuario.usNombre, expirationDate);
 
           //imprimir token del usuario
           //console.log(this.cookieService.get('authToken'));
