@@ -9,10 +9,6 @@ import jwt_decode from 'jwt-decode';
 
 export class AuthService {
 
-  //DATOS DEL USUARIO PARA REALIZAR AUTORIZACION
-  userLogin!: string;
-  userIdNomina!: number;
-
   //COMUNICACION CON LA API PARA REALIZAR EL LOGIN
   readonly APIurl = 'https://localhost:7086/api';
 
@@ -46,7 +42,7 @@ export class AuthService {
       const currentTimestamp = Math.floor(Date.now() / 1000);
 
       if (decodedToken.exp > currentTimestamp) {
-        console.log("SI AUTENTICADO");
+        //console.log("SI AUTENTICADO");
         return true; // El token no ha expirado, el usuario está autenticado
       } else {
         console.log("NO AUTENTICADO, EXPIRADO");

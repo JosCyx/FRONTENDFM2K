@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 //servicios de comunicacion
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -159,31 +159,12 @@ export class SolicotiComponent implements OnInit {
 
     this.nivelRut$ = this.nivRuteService.getNivelbyEstado('A').pipe(
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
-    );
+    );  
 
-    // this.service.getLastItemID().subscribe(
-    //   response => {
-    //     this.lastIDItem = response[0].itmID + 1;
-    //   },
-    //   error => {
-    //     console.log("Error, no se ha podido recuperar el ultimo id: ", error)
-    //   }
-    // );
-
-    // this.service.getLastDetalleID().subscribe(
-    //   response => {
-    //     this.lastIDDet = response[0].solCotID + 1;
-    //   },
-    //   error => {
-    //     console.log("Error, no se ha podido recuperar el ultimo detalle: ", error)
-    //   }
-    // );
-  
-
+    
     if (this.changeview == 'editar') {
       this.editSolicitud();
-      
-    }
+    } 
 
   }
 
@@ -838,6 +819,7 @@ export class SolicotiComponent implements OnInit {
   }
 
   cancelar(): void {
+    this.serviceGlobal.solView = 'crear';
     this.router.navigate(['allrequest']);
     this.clear();
     this.changeView('consultar');
@@ -1142,6 +1124,7 @@ export class SolicotiComponent implements OnInit {
         this.msjExito = '';
         this.showmsj = false;
         this.clear();
+        this.serviceGlobal.solView = 'crear';
         this.router.navigate(['allrequest']);
       }, 2500);
 

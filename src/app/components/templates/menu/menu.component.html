@@ -17,6 +17,7 @@
   </nav>
   
 </header>
+<p class="text-end m-2 user-name" style="font-weight: bold; font-style: italic;">Usted se ha identificado como: {{userName}}</p>
 <div class="sidebar" [ngClass]="{'show': showSB, 'hide': !showSB}">
   <ul class="nav flex-column">
     <li class="nav-item dropdown">
@@ -36,9 +37,9 @@
         Procesos
       </a>
       <div class="dropdown-menu" aria-labelledby="configuracionDropdown">
-        <a class="dropdown-item" routerLink="/solicoti">Solicitud de cotizacion</a>
-        <a class="dropdown-item" routerLink="/solioc">Solicitud de O/C</a>
-        <a class="dropdown-item" routerLink="/solipago">Solicitud de pago</a>
+        <a class="dropdown-item" (click)="routToCot()">Solicitud de cotizacion</a>
+        <a class="dropdown-item" (click)="routToOC()">Solicitud de O/C</a>
+        <a class="dropdown-item" (click)="routToPago()">Solicitud de pago</a>
         <a class="dropdown-item" routerLink="/allrequest">Todas las solicitudes</a>
         <a class="dropdown-item" routerLink="norute">Solicitudes abiertas</a>
         <a class="dropdown-item" routerLink="norute">Solicitudes no aprobadas</a>

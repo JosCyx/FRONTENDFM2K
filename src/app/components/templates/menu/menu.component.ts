@@ -9,11 +9,13 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrls: ['./menu.component.css']
 })
 export class MenuComponent {
-  appSelected: boolean = this.globalService.appSelected;
+  userName: string = this.cookieService.get('userName');
   isLogin: boolean = false;
   showSB: boolean = false;
 
-  constructor(private globalService: GlobalService,private router: Router, private cookieService: CookieService) { }
+  constructor(private globalService: GlobalService,
+    private router: Router, 
+    private cookieService: CookieService) { }
 
   isSidebarVisible = false;
 
@@ -32,9 +34,38 @@ export class MenuComponent {
   //destruye la cookie
   logOut(){
     this.cookieService.delete('authToken');
+    this.cookieService.delete('userLogin');
+    this.cookieService.delete('userIdNomina');
+    this.cookieService.delete('userName');
     this.router.navigate(['login']);
     //console.log('Token vacio', this.cookieService.get('authToken'))
 
   }
 
+  routToCot(){
+    this.globalService.solView = 'crear';
+    this.router.navigate(['allrequest']);
+
+    setTimeout(()=>{
+      this.router.navigate(['solicoti']);
+    },1);
+  }
+
+  routToOC(){
+    this.globalService.solView = 'crear';
+    this.router.navigate(['allrequest']);
+
+    setTimeout(()=>{
+      this.router.navigate(['solioc']);
+    },1);
+  }
+
+  routToPago(){
+    this.globalService.solView = 'crear';
+    this.router.navigate(['allrequest']);
+
+    setTimeout(()=>{
+      this.router.navigate(['solipago']);
+    },1);
+  }
 }

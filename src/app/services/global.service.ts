@@ -5,13 +5,9 @@ import { Injectable } from '@angular/core';
 })
 export class GlobalService {
 
-  appSelected: boolean = false;
-
-  solView: string = 'crear'; 
+  solView: string = 'crear';
+  changePage: boolean = false; 
   solID: number = 0;
 
   constructor() { }
-
-  
-
 }
