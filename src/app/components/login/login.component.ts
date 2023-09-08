@@ -67,17 +67,11 @@ export class LoginComponent implements OnInit{
       //enviar como parametro el valor ingresado en el formulario del usuario y la contraseña
       this.authService.login(this.loginForm.value.username!, this.loginForm.value.password!).subscribe(
         (response: any) => {
-          
-
-          //verifica los roles que tiene asignado ese usuario
-          //this.checkAuthorization();
-          
-
-          //redirigir a la siguiente pagina si el login es correcto
+          //mensaje de bienvenida
           this.showmsj = true;
           this.msjExito = `Bienvenido(a) ${response.usuario.usNombre}.`;
 
-          //creacion de una cookie para almacenar el token de autenticacion que durará 12 horas
+          //creacion de cookies para almacenar los datos de inicio de sesion con duracion de 12 horas
           const expirationDate = new Date();
           expirationDate.setHours(expirationDate.getHours() + 12);
           this.cookieService.set('authToken', response.token, expirationDate);
@@ -86,8 +80,7 @@ export class LoginComponent implements OnInit{
           this.cookieService.set('userIdNomina', response.usuario.usIdNomina, expirationDate);
           this.cookieService.set('userName', response.usuario.usNombre, expirationDate);
 
-          //imprimir token del usuario
-          //console.log(this.cookieService.get('authToken'));
+          //this.checkAuthorization();
 
           //limpieza del mensaje
           setTimeout(() => {
