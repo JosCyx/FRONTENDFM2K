@@ -67,10 +67,13 @@ export class LoginComponent implements OnInit{
       //enviar como parametro el valor ingresado en el formulario del usuario y la contraseña
       this.authService.login(this.loginForm.value.username!, this.loginForm.value.password!).subscribe(
         (response: any) => {
-          //this.authService.userLogin = response.usuario.usLogin;
-          //this.authService.userIdNomina = response.usuario.usIdNomina;
+          this.cookieService.set('userLogin', response.usuario.usLogin);
+          this.cookieService.set('userIdNomina', response.usuario.usIdNomina);
+          this.cookieService.set('userName', response.usuario.usNombre);
+
+          //verifica los roles que tiene asignado ese usuario
           //this.checkAuthorization();
-          console.log(response);
+          
 
           //redirigir a la siguiente pagina si el login es correcto
           this.showmsj = true;
@@ -123,6 +126,7 @@ export class LoginComponent implements OnInit{
 
   }
 
+  //consulta a la base los roles asociados al usuario autenticado y realiza la autorizacion
   checkAuthorization() {
 
   }

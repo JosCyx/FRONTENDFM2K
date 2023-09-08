@@ -9,11 +9,13 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrls: ['./menu-admin.component.css']
 })
 export class MenuAdminComponent {
-  appSelected: boolean = this.globalService.appSelected;
+  userName: string = this.cookieService.get('userName');
   isLogin: boolean = false;
   showSB: boolean = false;
 
-  constructor(private globalService: GlobalService,private router: Router, private cookieService: CookieService) { }
+  constructor(private globalService: GlobalService,
+    private router: Router, 
+    private cookieService: CookieService) { }
 
   isSidebarVisible = false;
 
@@ -31,6 +33,9 @@ export class MenuAdminComponent {
 
   logOut(){
     this.cookieService.delete('authToken');
+    this.cookieService.delete('userLogin');
+    this.cookieService.delete('userIdNomina');
+    this.cookieService.delete('userName');
     this.router.navigate(['login']);
     //console.log('Token vacio', this.cookieService.get('authToken'))
 

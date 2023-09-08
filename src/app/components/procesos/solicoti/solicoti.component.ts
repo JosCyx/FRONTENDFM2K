@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 //servicios de comunicacion
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -161,12 +161,10 @@ export class SolicotiComponent implements OnInit {
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
     );  
 
-    /////////////////////////////////////////////////////
-    /////////////////////////////////////////////////////
-    //modificar logica de visualizacion de crear o editar
-    if (this.serviceGlobal.changePage == true && this.changeview == 'editar') {
+    
+    if (this.changeview == 'editar') {
       this.editSolicitud();
-    }
+    } 
 
   }
 
@@ -821,6 +819,7 @@ export class SolicotiComponent implements OnInit {
   }
 
   cancelar(): void {
+    this.serviceGlobal.solView = 'crear';
     this.router.navigate(['allrequest']);
     this.clear();
     this.changeView('consultar');
@@ -1125,6 +1124,7 @@ export class SolicotiComponent implements OnInit {
         this.msjExito = '';
         this.showmsj = false;
         this.clear();
+        this.serviceGlobal.solView = 'crear';
         this.router.navigate(['allrequest']);
       }, 2500);
 
