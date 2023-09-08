@@ -28,7 +28,6 @@ import { MenuAdminComponent } from './components/templates/menu-admin/menu-admin
 import { AllrequestComponent } from './components/procesos/allrequest/allrequest.component';
 import { BreadcrumbComponent } from './components/templates/breadcrumb/breadcrumb.component';
 import { AuthService } from './services/authentication/auth.service';
-import { ReloadDirective } from './reload.directive';
 
 @NgModule({
   declarations: [
@@ -51,8 +50,7 @@ import { ReloadDirective } from './reload.directive';
     MenuComponent,
     MenuAdminComponent,
     AllrequestComponent,
-    BreadcrumbComponent,
-    ReloadDirective
+    BreadcrumbComponent
   ],
   imports: [
     BrowserModule,
