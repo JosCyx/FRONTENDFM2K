@@ -11,6 +11,7 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit{
+  loading: boolean = false;
   showmsj: boolean = false;
   //msjExito: string = 'Bienvenido Administrador.'
   msjExito!: string;
@@ -62,6 +63,8 @@ export class LoginComponent implements OnInit{
     
 
   login(): void {
+    this.loading = true;
+
     if (this.loginForm.valid) {
 
       //enviar como parametro el valor ingresado en el formulario del usuario y la contraseña
@@ -85,6 +88,7 @@ export class LoginComponent implements OnInit{
           //limpieza del mensaje
           setTimeout(() => {
             this.showmsj = false;
+            this.loading = false;
             this.msjExito = '';
             this.router.navigate(['main']);
           }, 2000);

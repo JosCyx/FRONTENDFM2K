@@ -1,22 +1,36 @@
-.container{
-    /*background-image: url('imagen de fondo');
-    background-size: cover; */
-    background-repeat: no-repeat;
+.background {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.9)), url('../../../assets/img/background.jpeg');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
 
-.login{
-    padding: 15%;
+
+.container {
+    background-color: rgb(231, 231, 231, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
 }
 
-.container{
+
+.login {
+    padding: 8%;
+}
+
+.container {
     width: 40%;
 }
 
-.btn-login{
+.btn-login {
     margin: 0 auto;
 }
 
-.msg{
+.msg {
     font-weight: 500;
     font-style: italic;
 }
