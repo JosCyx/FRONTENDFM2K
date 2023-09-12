@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
@@ -42,8 +41,8 @@ export class SoliocComponent implements OnInit {
   solNumerico!: string;
   noSolFormat!: string;
   proveedor!: string;
-  buscarProveedor!:string ;
-  tipobusqProv:string='nombre';
+  buscarProveedor: string = '';
+  tipobusqProv: string = 'nombre';
 
   //
   cabecera!: CabeceraOrdenCompra;
@@ -99,6 +98,7 @@ export class SoliocComponent implements OnInit {
   detType: boolean = true;
 
   //listas con datos de la DB
+  proveedorList$!: Observable<any[]>; //lista de proveedores
   empleadosList$!: Observable<any[]>;
   areaList$!: Observable<any[]>;
   inspectores$!: Observable<any[]>;
@@ -112,6 +112,7 @@ export class SoliocComponent implements OnInit {
   itemSectorList: ItemSector[] = [];
   tmpItemSect: ItemSector[] = [];
   empleados: any[] = [];
+  proveedores: any[] = [];
   empleadoedit: any[] = [];
   areas: any[] = [];
   //sectores: any[] = [];
@@ -128,17 +129,17 @@ export class SoliocComponent implements OnInit {
   det_descp_edit!: string;
   //
   idDltDetList!: number;
-  idDltDet!: number
+  idDltDet!: number;
   // lastIDItem!: number;
   // lastIDDet!: number;
 
   constructor(
-    private empService: EmpleadosService, 
-    private sectService: SectoresService, 
-    private areaService: AreasService, 
+    private empService: EmpleadosService,
+    private sectService: SectoresService,
+    private areaService: AreasService,
     private nivRuteService: NivelRuteoService,
     private solTrckService: TrackingService,
-    private cabOCService: CabOrdCompraService, 
+    private cabOCService: CabOrdCompraService,
     private detCotService: DetCotOCService,
     private itmSectService: ItemSectorService,
     private router: Router,
@@ -151,7 +152,8 @@ export class SoliocComponent implements OnInit {
     this.empleadosList$.subscribe((data) => {
       this.empleadoedit = data;
     });
-
+    //Buscar nombre proveedor por ID
+    //
     this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
     this.nivelRut$ = this.nivRuteService
       .getNivelbyEstado('A')
@@ -205,8 +207,7 @@ export class SoliocComponent implements OnInit {
       if (this.inspector) {
         const empleadoSeleccionado = this.inspectores.find(
           (emp) =>
-            emp.empleadoNombres + ' ' + emp.empleadoApellidos === this.inspector
-        );
+            (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.inspector);
         this.cab_inspector = empleadoSeleccionado
           ? empleadoSeleccionado.empleadoIdNomina
           : null;
@@ -323,6 +324,9 @@ export class SoliocComponent implements OnInit {
     this.detalleList = [];
     this.itemSectorList = [];
     this.tmpItemSect = [];
+    this.cab_ruc_prov = ''; 
+    this.buscarProveedor = ''; 
+    this.cab_proveedor = '';
   }
 
   getSolName(noSol: number) {
@@ -429,7 +433,7 @@ export class SoliocComponent implements OnInit {
       cabSolOCInspector: this.cab_inspector,
       cabSolOCTelefInspector: this.cab_telef_insp,
       cabSolOCNumerico: this.solNumerico,
-      cabSolOCProveedor: this.proveedor,
+      cabSolOCProveedor: this.cab_proveedor,
       cabSolOCRUCProveedor: this.cab_ruc_prov,
     };
 
@@ -612,7 +616,7 @@ export class SoliocComponent implements OnInit {
     //
     if (this.changeview == 'editar') {
       this.saveLocaltoResponse();
-      console.log("item a enviar a APi ");
+      console.log('item a enviar a APi ');
     }
 
     this.det_descp = '';
@@ -623,18 +627,16 @@ export class SoliocComponent implements OnInit {
 
   incrementDetID() {
     //aumenta el valor del id de detalle
-    
-    
-      if (this.detalleList.length == 0) {
-        this.det_id = 1;
-      } else {
-        for (let det of this.detalleList) {
-          this.det_id = det.det_id + 1;
-        }
-      
+
+    if (this.detalleList.length == 0) {
+      this.det_id = 1;
+    } else {
+      for (let det of this.detalleList) {
+        this.det_id = det.det_id + 1;
+      }
     }
-    }
-    
+  }
+
   async deleteDetalle(id: number) {
     const index = this.detalleList.findIndex(
       (detalle) => detalle.det_id === id
@@ -667,8 +669,8 @@ export class SoliocComponent implements OnInit {
 
     this.tmpItemSect.push(tmpItemSector);
 
-    for(let itm of this.tmpItemSect){
-      this.item_id=itm.item_id+1;
+    for (let itm of this.tmpItemSect) {
+      this.item_id = itm.item_id + 1;
     }
     //this.det_cantidad += this.item_cant;
     this.calcularSumaItems();
@@ -767,8 +769,7 @@ export class SoliocComponent implements OnInit {
       this.det_id = det.solCotIdDetalle + 2;
     }
     this.detalle.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
-    this.det_id = this.detalle.length+1;
-
+    this.det_id = this.detalle.length + 1;
 
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
@@ -980,55 +981,64 @@ export class SoliocComponent implements OnInit {
     };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
     console.log('2. guardando solicitud...', dataCAB);
-    this.cabOCService.updateOrdencompra(this.cabecera.cabSolOCID, dataCAB).subscribe(
-      (response) => {
-        console.log('Actualizar ');
-             },
-      (error) => {
-        console.log('error : ', error);
-      }
-    );
+    this.cabOCService
+      .updateOrdencompra(this.cabecera.cabSolOCID, dataCAB)
+      .subscribe(
+        (response) => {
+          console.log('Actualizar ');
+        },
+        (error) => {
+          console.log('error : ', error);
+        }
+      );
   }
   async saveEditDetalle() {
     //eliminar todos los detalles de la solicitud
     await this.deleteAllDetails();
     //guardar los nuevos detalles de la solicitud
     for (let detalle of this.detalle) {
-
       const data = {
         solCotTipoSol: this.cabecera.cabSolOCTipoSolicitud,
         solCotNoSol: this.cabecera.cabSolOCNoSolicitud,
         solCotIdDetalle: detalle.solCotIdDetalle,
         solCotDescripcion: detalle.solCotDescripcion,
         solCotUnidad: detalle.solCotUnidad,
-        solCotCantidadTotal: detalle.solCotCantidadTotal
-      }
-      console.log("Nuevo detalle: ", data);
+        solCotCantidadTotal: detalle.solCotCantidadTotal,
+      };
+      console.log('Nuevo detalle: ', data);
       this.detCotService.addDetalleCotizacion(data).subscribe(
-        response => {
-          console.log("Nuevo detalle", detalle.solCotIdDetalle, " guardado en la base");
+        (response) => {
+          console.log(
+            'Nuevo detalle',
+            detalle.solCotIdDetalle,
+            ' guardado en la base'
+          );
         },
-        error => {
-          console.log("No se ha podido registrar el detalle, error: ", error);
+        (error) => {
+          console.log('No se ha podido registrar el detalle, error: ', error);
         }
       );
-
     }
   }
   //
   deleteAllDetails(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        this.detCotService.deleteAllDetBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
-          response => {
-            console.log("Todos los detalles eliminados");
-            resolve();
-          },
-          error => {
-            console.log("Error: ", error);
-            reject(error);
-          }
-        );
+        this.detCotService
+          .deleteAllDetBySol(
+            this.cabecera.cabSolOCTipoSolicitud,
+            this.cabecera.cabSolOCNoSolicitud
+          )
+          .subscribe(
+            (response) => {
+              console.log('Todos los detalles eliminados');
+              resolve();
+            },
+            (error) => {
+              console.log('Error: ', error);
+              reject(error);
+            }
+          );
       } catch (error) {
         reject(error);
       }
@@ -1040,42 +1050,53 @@ export class SoliocComponent implements OnInit {
     await this.deleteAllItems();
     //guardar los nuevos items de la solicitud
     for (let item of this.item) {
-
       const data = {
         itmTipoSol: this.cabecera.cabSolOCTipoSolicitud,
         itmNumSol: this.cabecera.cabSolOCNoSolicitud,
         itmIdDetalle: item.itmIdDetalle,
         itmIdItem: item.itmIdItem,
         itmCantidad: item.itmCantidad,
-        itmSector: item.itmSector
-      }
-      console.log("Nuevo item: ", data);
+        itmSector: item.itmSector,
+      };
+      console.log('Nuevo item: ', data);
 
       this.itmSectService.addItemSector(data).subscribe(
-        response => {
-          console.log("Nuevo item guardado en la base, item:", item.itmIdItem, ", detalle:", item.itmIdDetalle);
+        (response) => {
+          console.log(
+            'Nuevo item guardado en la base, item:',
+            item.itmIdItem,
+            ', detalle:',
+            item.itmIdDetalle
+          );
         },
-        error => {
-          console.log("No se pudo guardar el item no:" + item.itmIdItem + ", error: ", error);
+        (error) => {
+          console.log(
+            'No se pudo guardar el item no:' + item.itmIdItem + ', error: ',
+            error
+          );
         }
       );
-
     }
   }
   //
   deleteAllItems(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        this.itmSectService.deleteAllItemBySol(this.cabecera.cabSolOCTipoSolicitud, this.cabecera.cabSolOCNoSolicitud).subscribe(
-          response => {
-            console.log("Todos los items eliminados");
-            resolve();
-          },
-          error => {
-            console.log("Error: ", error);
-            reject(error);
-          }
-        );
+        this.itmSectService
+          .deleteAllItemBySol(
+            this.cabecera.cabSolOCTipoSolicitud,
+            this.cabecera.cabSolOCNoSolicitud
+          )
+          .subscribe(
+            (response) => {
+              console.log('Todos los items eliminados');
+              resolve();
+            },
+            (error) => {
+              console.log('Error: ', error);
+              reject(error);
+            }
+          );
       } catch (error) {
         reject(error);
       }
@@ -1173,8 +1194,7 @@ export class SoliocComponent implements OnInit {
       );
     }
   }
-  
-  
+
   //Guardar a la tabla
   saveLocaltoResponse() {
     for (let itm of this.itemSectorList) {
@@ -1189,7 +1209,7 @@ export class SoliocComponent implements OnInit {
       };
       this.item.push(data);
     }
-    this.itemSectorList=[];
+    this.itemSectorList = [];
     for (let det of this.detalleList) {
       const data = {
         solCotID: 0,
@@ -1255,9 +1275,12 @@ export class SoliocComponent implements OnInit {
     this.idDltDetList = idListDet;
     this.idDltDet = idDetalle;
   }
-  deleteDetSaved() {//elimina el item de la lista local y llama al metodo que ejecuta los cambios en la base
-    const index = this.detalle.findIndex(det => det.solCotID === this.idDltDetList);
-    console.log("Detalle a eliminar numero ", index)
+  deleteDetSaved() {
+    //elimina el item de la lista local y llama al metodo que ejecuta los cambios en la base
+    const index = this.detalle.findIndex(
+      (det) => det.solCotID === this.idDltDetList
+    );
+    console.log('Detalle a eliminar numero ', index);
 
     if (index !== -1) {
       this.detalle.splice(index, 1);
@@ -1281,8 +1304,8 @@ export class SoliocComponent implements OnInit {
       }
       //ACTUALIZAR EL ID DE LOS DETALLE
       for (let d = 0; d < this.detalle.length; d++) {
-        if(this.detalle[d].solCotIdDetalle > this.idDltDet){
-          this.detalle[d].solCotIdDetalle=this.detalle[d].solCotIdDetalle-1;
+        if (this.detalle[d].solCotIdDetalle > this.idDltDet) {
+          this.detalle[d].solCotIdDetalle = this.detalle[d].solCotIdDetalle - 1;
         }
       }
     }
@@ -1298,48 +1321,71 @@ export class SoliocComponent implements OnInit {
       await this.saveEditItem();
 
       this.showmsj = true;
-      this.msjExito = 'Solicitud N°' + this.cabecera.cabSolOCNumerico + ' editada exitosamente.';
-      
+      this.msjExito =
+        'Solicitud N°' +
+        this.cabecera.cabSolOCNumerico +
+        ' editada exitosamente.';
+
       setTimeout(() => {
         this.msjExito = '';
         this.showmsj = false;
         this.router.navigate(['allrequest']);
         this.clear();
-      },2500);
-
+      }, 2500);
     } catch (error) {
       console.log('Error:', error);
       this.showmsjerror = true;
-      this.msjError = "No se ha podido guardar la solicitud, intente nuevamente.";
+      this.msjError =
+        'No se ha podido guardar la solicitud, intente nuevamente.';
 
       setTimeout(() => {
         this.showmsjerror = false;
-        this.msjError = "";
+        this.msjError = '';
       }, 2500);
     }
   }
-  //metodo buscar un Nombre Proveedor 
-  async getProveedorByName(){
-    try {
-      const NombreData=await this.provService.getProveedorByNombre(this.buscarProveedor).toPromise();
-      console.log("Cambios ",NombreData);
-    } catch (error) {
-      console.error('Error al Obtener el Nombre del Proveedor:', error);
-    }
-  }
-  // metodo para buscar proveedor por RUC
-   getProveedorByRUC(){
-    try {
-      let ruc = '0930350152';
-      const RUCData= this.provService.getProveedorByRUC(ruc).subscribe(
-        (ruc) => {
-          console.log("RUC ",ruc);
-
+  //Buscar Proveedor y guardar
+  searchProveedor(): void {
+    if (this.buscarProveedor.length > 2) {
+      console.log('Buscar Proveedor: ', this.buscarProveedor);
+      this.provService.getProveedorByNombre(this.buscarProveedor).subscribe(
+        (data) => {
+          this.proveedores = data;
+          console.log('Proveedor ', this.proveedores);
+          if (this.proveedores.length > 0) {
+            this.cab_proveedor = this.proveedores[0].prov_nombre;
+            this.cab_ruc_prov = this.proveedores[0].prov_ruc;
+          }
         },
         (error) => {
-          console.error('Error al Obtener el RUC del Proveedor:', error);
+          console.error('error en buscar proveedor: ', error);
         }
       );
+    }
+  }
+  //Limpiar los campos al momento de cambiar el tipo de busqueda
+  limpiarCampos(): void {
+    this.cab_ruc_prov = ''; 
+      this.buscarProveedor = ''; 
+      this.cab_proveedor = '';
+  }
+  // metodo para buscar proveedor por RUC
+  searchProveedorRuc(): void {
+    try {
+      console.log('Buscar Proveedor por RUC: ', this.buscarProveedor);
+      this.provService.getProveedorByRUC(this.buscarProveedor).subscribe({
+        next: (data) => {
+          console.log('mis datos ', data);
+          if (data) {
+            this.cab_proveedor = data[0].prov_nombre;
+            this.cab_ruc_prov = data[0].prov_ruc;
+            console.log('Proveedor ', this.cab_proveedor);
+            console.log('RUC ', this.cab_ruc_prov);
+          }
+        },
+        error: (error) => {},
+        complete: () => console.info('completado'),
+      });
     } catch (error) {
       console.error('Error al Obtener el RUC del Proveedor:', error);
     }
