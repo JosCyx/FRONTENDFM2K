@@ -352,46 +352,16 @@
                 </table>
             </div>
 
-            <div class="proveedores" *ngIf="actionEdit == 'proveedores'">
-
-                <div class="busqProveedor m-2">
-                    <h3>Busqueda de proveedores</h3>
-                    <div class="input-group mb-3">
-                        <select class="form-select" name="buscarOpcion" style="background-color: #d6d6d6;">
-                            <option selected value="nombre">Nombres</option>
-                            <option value="ruc">RUC</option>
-                        </select>
-                        <input type="text" class="form-control" placeholder="Término de busqueda"
-                            name="terminoBusqueda">
-                        <button class="btn btn-outline-success" type="button">Buscar</button>
-                        <button class="btn btn-outline-danger">Cancelar</button>
-                    </div>
-                </div>
-                <div>
-                    <table class="table table-striped table-bordered text-center">
-                        <thead>
-                            <tr>
-                                <th>Ruc</th>
-                                <th>Nombre</th>
-                                <th>Correo</th>
-                                <th>Teléfono</th>
-                                <th>Dirección</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
-                </div>
+            <div *ngIf="actionEdit == 'proveedores'">
+                <app-cot-proveedores></app-cot-proveedores>
             </div>
 
             <div *ngIf="actionEdit == 'presupuesto'">
-                <p>presupuesto</p>
+                <app-cot-presupuesto></app-cot-presupuesto>
             </div>
 
             <div *ngIf="actionEdit == 'documentacion'">
-                <p>documentacion</p>
+                <app-cot-documentacion></app-cot-documentacion>
             </div>
 
             <div class="foot-cabecera">
