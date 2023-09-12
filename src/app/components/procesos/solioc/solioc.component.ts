@@ -9,6 +9,7 @@ import { TrackingService } from 'src/app/services/comunicationAPI/seguridad/trac
 import { CabOrdCompraService } from 'src/app/services/comunicationAPI/solicitudes/cab-ord-compra.service';
 import { DetCotOCService } from 'src/app/services/comunicationAPI/solicitudes/det-cot-oc.service';
 import { ItemSectorService } from 'src/app/services/comunicationAPI/solicitudes/item-sector.service';
+import { ProveedorService } from 'src/app/services/comunicationAPI/seguridad/proveedor.service';
 
 import { Observable, map } from 'rxjs';
 import { Detalle } from 'src/app/models/procesos/Detalle';
@@ -41,6 +42,9 @@ export class SoliocComponent implements OnInit {
   solNumerico!: string;
   noSolFormat!: string;
   proveedor!: string;
+  buscarProveedor!:string ;
+  tipobusqProv:string='nombre';
+
   //
   cabecera!: CabeceraOrdenCompra;
   detalle: DetalleCotizacion[] = [];
@@ -68,7 +72,7 @@ export class SoliocComponent implements OnInit {
   cab_inspector!: number;
   cab_telef_insp!: string;
   cab_ruc_prov!: string;
-  cab_proveedor!: number;
+  cab_proveedor!: string;
 
   //variables del detalle
   det_id: number = 1; //se usa para el detalle y para el item por sector
@@ -138,6 +142,7 @@ export class SoliocComponent implements OnInit {
     private detCotService: DetCotOCService,
     private itmSectService: ItemSectorService,
     private router: Router,
+    private provService: ProveedorService,
     private serviceGlobal: GlobalService
   ) {}
 
@@ -1311,6 +1316,32 @@ export class SoliocComponent implements OnInit {
         this.showmsjerror = false;
         this.msjError = "";
       }, 2500);
+    }
+  }
+  //metodo buscar un Nombre Proveedor 
+  async getProveedorByName(){
+    try {
+      const NombreData=await this.provService.getProveedorByNombre(this.buscarProveedor).toPromise();
+      console.log("Cambios ",NombreData);
+    } catch (error) {
+      console.error('Error al Obtener el Nombre del Proveedor:', error);
+    }
+  }
+  // metodo para buscar proveedor por RUC
+   getProveedorByRUC(){
+    try {
+      let ruc = '0930350152';
+      const RUCData= this.provService.getProveedorByRUC(ruc).subscribe(
+        (ruc) => {
+          console.log("RUC ",ruc);
+
+        },
+        (error) => {
+          console.error('Error al Obtener el RUC del Proveedor:', error);
+        }
+      );
+    } catch (error) {
+      console.error('Error al Obtener el RUC del Proveedor:', error);
     }
   }
 }

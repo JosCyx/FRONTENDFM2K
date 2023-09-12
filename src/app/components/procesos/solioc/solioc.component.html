@@ -8,7 +8,7 @@
           <button class="btn btn-primary m-2" (click)="changeView('crear')">
             Crear
           </button>
-          <button class="btn btn-primary m-2">Boton</button>
+          <button class="btn btn-primary m-2"  >Boton</button>
         </div>
       </div>
     </nav>
@@ -67,15 +67,33 @@
         </div>
         <div class="row mb-1">
           <div class="input-group col">
-            <label for="" class="input-group-text">Proveedor</label>
-            <select name="" id="" class="form-select" [(ngModel)]="proveedor">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
+            <select
+              name=""
+              class="form-select"
+              style="background-color: #d6d6d6"
+              [(ngModel)]="tipobusqProv"
+            >
+              <option value="nombre" selected>Nombre</option>
+              <option value="ruc">Ruc</option>
             </select>
+
+            <input  [(ngModel)]="buscarProveedor"  type="text" class="form-control" list="proveedor"  />
+            <datalist id="proveedor">
+              <ng-container *ngFor="let emp of empleados">
+                <option
+                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+                ></option>
+              </ng-container>
+            </datalist>
+            <button class="btn btn-success" (click)="getProveedorByName()" >
+              <i class="bi bi-check-lg" ></i>
+            </button>
           </div>
           <div class="input-group col">
-            <label class="input-group-text">RUC:</label>
+            <label class="input-group-text">
+              <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
+              <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
+            </label>
             <input
               type="text "
               class="form-control"

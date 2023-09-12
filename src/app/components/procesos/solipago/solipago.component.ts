@@ -167,7 +167,6 @@ export class SolipagoComponent implements OnInit {
     this.clear();
   }
   //* Metodo para agregar la Cabecera
-  //NOTE
   //tranforma la fecha actual en un formato especifico "Lunes, 31 de julio de 2023"
   formatDateToSpanish(date: Date): string {
     const daysOfWeek = [
