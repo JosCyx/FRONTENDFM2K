@@ -74,26 +74,33 @@
               [(ngModel)]="tipobusqProv"
               (ngModelChange)="limpiarCampos()"
             >
-              <option value="nombre" selected>Nombre</option>
+              <option value="nombre" selected>Proveedor</option>
               <option value="ruc">Ruc</option>
             </select>
 
             <input
+            *ngIf="tipobusqProv == 'nombre'"
               [(ngModel)]="buscarProveedor"
               type="text"
               class="form-control"
               list="proveedor"
-              (keyup)="
-                tipobusqProv == 'nombre'
-                  ? searchProveedor()
-                  : searchProveedorRuc()
-              "
+              (keyup)="searchProveedor(buscarProveedor)"
+            />
+            <input
+            *ngIf="tipobusqProv == 'ruc'"
+              [(ngModel)]="buscarProveedor"
+              type="text"
+              class="form-control"
+              list="proveedor"
             />
             <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
               <ng-container *ngFor="let prov of proveedores">
                 <option [value]="prov.prov_nombre"></option>
               </ng-container>
             </datalist>
+            <button   *ngIf="tipobusqProv=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(buscarProveedor)" >
+              <i class="bi bi-check-lg"></i>
+            </button>
           </div>
           <div class="input-group col">
             <label class="input-group-text">
@@ -390,24 +397,57 @@
         <!-- Nuevos Campos  -->
         <div class="row mb-1">
           <div class="input-group col">
-            <label for="" class="input-group-text">Proveedor</label>
             <select
               name=""
-              id=""
               class="form-select"
-              [(ngModel)]="cabecera.cabSolOCProveedor"
+              style="background-color: #d6d6d6"
+              [(ngModel)]="tipobusqProv"
+              (ngModelChange)="limpiarCampos()"
             >
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
+              <option value="nombre" selected>Proveedor</option>
+              <option value="ruc">Ruc</option>
             </select>
+            <input
+              [(ngModel)]="cabecera.cabSolOCProveedor"
+              *ngIf="tipobusqProv == 'nombre'"
+              type="text"
+              class="form-control"
+              list="proveedor"
+              (keyup)="searchProveedor(cabecera.cabSolOCProveedor)"
+            />
+            <input
+              [(ngModel)]="cabecera.cabSolOCRUCProveedor"
+              *ngIf="tipobusqProv == 'ruc'"
+              type="text"
+              class="form-control"
+              list="proveedor"
+            />
+            <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
+              <ng-container *ngFor="let prov of proveedores">
+                <option [value]="prov.prov_nombre"></option>
+              </ng-container>
+            </datalist>
+            <button   *ngIf="tipobusqProv=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(cabecera.cabSolOCRUCProveedor)" >
+              <i class="bi bi-check-lg"></i>
+            </button>
           </div>
+
           <div class="input-group col">
-            <label class="input-group-text">RUC:</label>
+            <label class="input-group-text">
+              <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
+              <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
+            </label>
             <input
               type="text "
               class="form-control"
+              *ngIf="tipobusqProv == 'nombre'"
               [(ngModel)]="cabecera.cabSolOCRUCProveedor"
+            />
+            <input
+              type="text "
+              class="form-control"
+              *ngIf="tipobusqProv == 'ruc'"
+              [(ngModel)]="cabecera.cabSolOCProveedor"
             />
           </div>
         </div>

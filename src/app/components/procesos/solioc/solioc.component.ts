@@ -152,8 +152,6 @@ export class SoliocComponent implements OnInit {
     this.empleadosList$.subscribe((data) => {
       this.empleadoedit = data;
     });
-    //Buscar nombre proveedor por ID
-    //
     this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
     this.nivelRut$ = this.nivRuteService
       .getNivelbyEstado('A')
@@ -207,7 +205,8 @@ export class SoliocComponent implements OnInit {
       if (this.inspector) {
         const empleadoSeleccionado = this.inspectores.find(
           (emp) =>
-            (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.inspector);
+            emp.empleadoNombres + ' ' + emp.empleadoApellidos === this.inspector
+        );
         this.cab_inspector = empleadoSeleccionado
           ? empleadoSeleccionado.empleadoIdNomina
           : null;
@@ -324,8 +323,8 @@ export class SoliocComponent implements OnInit {
     this.detalleList = [];
     this.itemSectorList = [];
     this.tmpItemSect = [];
-    this.cab_ruc_prov = ''; 
-    this.buscarProveedor = ''; 
+    this.cab_ruc_prov = '';
+    this.buscarProveedor = '';
     this.cab_proveedor = '';
   }
 
@@ -985,7 +984,7 @@ export class SoliocComponent implements OnInit {
       .updateOrdencompra(this.cabecera.cabSolOCID, dataCAB)
       .subscribe(
         (response) => {
-          console.log('Actualizar ');
+          console.log('Datos actualizados con éxito. ');
         },
         (error) => {
           console.log('error : ', error);
@@ -1345,16 +1344,21 @@ export class SoliocComponent implements OnInit {
     }
   }
   //Buscar Proveedor y guardar
-  searchProveedor(): void {
-    if (this.buscarProveedor.length > 2) {
-      console.log('Buscar Proveedor: ', this.buscarProveedor);
-      this.provService.getProveedorByNombre(this.buscarProveedor).subscribe(
+  searchProveedor(datos: string): void {
+    if (datos.length > 2) {
+      console.log('Buscar Proveedor: ', datos);
+      this.provService.getProveedorByNombre(datos).subscribe(
         (data) => {
           this.proveedores = data;
           console.log('Proveedor ', this.proveedores);
           if (this.proveedores.length > 0) {
-            this.cab_proveedor = this.proveedores[0].prov_nombre;
-            this.cab_ruc_prov = this.proveedores[0].prov_ruc;
+            if (this.changeview == 'crear') {
+              this.cab_proveedor = this.proveedores[0].prov_nombre;
+              this.cab_ruc_prov = this.proveedores[0].prov_ruc;
+            } else if (this.changeview == 'editar') {
+              this.cabecera.cabSolOCProveedor = this.proveedores[0].prov_nombre;
+              this.cabecera.cabSolOCRUCProveedor = this.proveedores[0].prov_ruc;
+            }
           }
         },
         (error) => {
@@ -1365,25 +1369,40 @@ export class SoliocComponent implements OnInit {
   }
   //Limpiar los campos al momento de cambiar el tipo de busqueda
   limpiarCampos(): void {
-    this.cab_ruc_prov = ''; 
-      this.buscarProveedor = ''; 
-      this.cab_proveedor = '';
+    this.cab_ruc_prov = '';
+    this.buscarProveedor = '';
+    this.cab_proveedor = '';
+    this.cabecera.cabSolOCProveedor = '';
+    this.cabecera.cabSolOCRUCProveedor = '';
   }
   // metodo para buscar proveedor por RUC
-  searchProveedorRuc(): void {
+  searchProveedorRuc(datos: string): void {
     try {
-      console.log('Buscar Proveedor por RUC: ', this.buscarProveedor);
-      this.provService.getProveedorByRUC(this.buscarProveedor).subscribe({
+      console.log('Buscar Proveedor por RUC: ', datos);
+      this.provService.getProveedorByRUC(datos).subscribe({
         next: (data) => {
           console.log('mis datos ', data);
           if (data) {
-            this.cab_proveedor = data[0].prov_nombre;
-            this.cab_ruc_prov = data[0].prov_ruc;
-            console.log('Proveedor ', this.cab_proveedor);
-            console.log('RUC ', this.cab_ruc_prov);
+            if (this.changeview == 'crear') {
+              this.cab_proveedor = data[0].prov_nombre;
+              this.cab_ruc_prov = data[0].prov_ruc;
+              console.log('Proveedor ', this.cab_proveedor);
+              console.log('RUC ', this.cab_ruc_prov);
+            } else if (this.changeview == 'editar') {
+              this.cabecera.cabSolOCProveedor = data[0].prov_nombre;
+              this.cabecera.cabSolOCRUCProveedor = data[0].prov_ruc;
+              console.log(
+                'Proveedor  de cabecera',
+                this.cabecera.cabSolOCProveedor
+              );
+              console.log(
+                'Proveedor  de RUC CABECERA',
+                this.cabecera.cabSolOCRUCProveedor
+              );
+            }
           }
         },
-        error: (error) => {},
+        error: (error) => {console.error('Error al Obtener el RUC del Proveedor:', error);},
         complete: () => console.info('completado'),
       });
     } catch (error) {
