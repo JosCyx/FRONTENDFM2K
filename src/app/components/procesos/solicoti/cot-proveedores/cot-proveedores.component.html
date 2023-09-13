@@ -1,28 +1,35 @@
 <div class="proveedores mb-2 ">
     <div class="row p-3">
         <div class="busqProveedor row col">
-            <h3>Busqueda de proveedores</h3>
             <div class="input-group col">
-                <select class="form-select custom-select" [(ngModel)]="tipoBusqProv" name="buscarOpcion" style="background-color: #d6d6d6;">
-                    <option selected value="nombre">Nombres</option>
-                    <option value="ruc">RUC</option>
+                <select class="form-select custom-select" [(ngModel)]="tipoBusqProv" name="buscarOpcion"
+                    style="background-color: #d6d6d6;">
+                    <option selected value="nombre">Nombre del proveedor</option>
+                    <option value="ruc">Ruc del proveedor</option>
                 </select>
-                <input type="text" class="form-control" placeholder="Término de busqueda"
-                    name="terminoBusqueda" [(ngModel)]="terminoBusq">
-                <button class="btn btn-success" type="button" (click)="searchProveedor()">Buscar</button>
-                
+                <input type="text" class="form-control" placeholder="Término de busqueda" name="terminoBusqueda"
+                    [(ngModel)]="terminoBusq">
+                <button class="btn btn-success" type="button" (click)="searchProveedor()"><i class="bi bi-search"> Buscar</i></button>
+
             </div>
             <div class="col">
-                <button class="btn btn-primary" data-toggle="modal" data-target="#newProveedor">Nuevo proveedor</button>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#newProveedor"><i class="bi bi-plus-circle"> Nuevo proveedor</i></button>
             </div>
         </div>
     </div>
-    
+
     <div class="busqueda_prov p-3">
-        <div class="bg-light rounded text-center" *ngIf="!proveedoresList$">
-            <h4 *ngIf="!proveedoresList$" class="text-danger m-3 p-3">Ingrese un término de busqueda</h4>
+        <div *ngIf="showmsj" class="alert alert-danger text-center" role="alert">
+            <span><i class="bi bi-exclamation-triangle-fill">  {{ msjError }}</i></span>
         </div>
-        <table *ngIf="proveedoresList$" class="table table-bordered text-center table-hover table-rounded">
+        <div *ngIf="isSearched" class="alert alert-primary text-center" role="alert">
+            <span><i class="bi bi-info-circle">  Busque un proveedor para añadirlo a la solicitud o agregue uno nuevo.</i></span>
+        </div>
+        <div *ngIf="proveedoresList.length != 0" class="align-items-center input-group mb-1 justify-content-end">
+            <button class="btn btn-primary" (click)="prevPage()"><i class="bi bi-arrow-left"></i></button>
+            <button class="btn btn-primary" (click)="nextPage()"><i class="bi bi-arrow-right"></i></button>
+        </div>
+        <table *ngIf="proveedoresList.length != 0" class="table table-bordered text-center table-hover table-rounded">
             <thead>
                 <tr>
                     <th class="align-middle">Ruc</th>
@@ -31,13 +38,15 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let prov of proveedoresList$ | async" (click)="selectProveedor(prov)"> 
+                <tr *ngFor="let prov of proveedoresList | paginate: { itemsPerPage: 10, currentPage: page }"
+                    (click)="selectProveedor(prov)" (click)="selectProveedor(prov)">
                     <td class="align-middle">{{prov.prov_ruc}}</td>
                     <td class="align-middle">{{prov.prov_nombre}}</td>
                     <td class="align-middle">{{prov.prov_telefono}}</td>
                 </tr>
             </tbody>
         </table>
+        <!-- <pagination-controls class="text-end" *ngIf="proveedoresList$" (pageChange)="page = $event"></pagination-controls> -->
     </div>
     <div class="selected-prov p-3" *ngIf="proveedorListSelected.length != 0">
         <h3>Proveedores seleccionados</h3>
@@ -54,13 +63,19 @@
             </thead>
             <tbody>
                 <tr *ngFor="let prov of proveedorListSelected let i=index">
-                    <td class="align-middle">{{prov.prov_ruc}}</td>
-                    <td class="align-middle">{{prov.prov_nombre}}</td>
-                    <td class="align-middle"><input type="email" class="form-control" placeholder="Ingrese el correo" [value]="prov.prov_telefono"></td>
-                    <td class="align-middle"><input type="email" class="form-control" placeholder="Ingrese el correo" required></td>
-                    <td class="align-middle"><input type="text" class="form-control" placeholder="Ingrese la dirección"></td>
-                    <td class="align-middle"><a class="btn-prov" (click)="deleteProvSelected(i)"><i class="bi bi-x-circle-fill text-danger m-1"></i></a>
-                        <a class="btn-prov" data-toggle="modal" data-target="#senMailtoProv"> <i class="bi bi-envelope-fill text-success  m-1"></i></a></td>
+                    <td class="align-middle">{{prov.ruc}}</td>
+                    <td class="align-middle">{{prov.nombre}}</td>
+                    <td class="align-middle"><input type="text" class="form-control" placeholder="Ingrese el teléfono"
+                            [(ngModel)]="prov.telefono"></td>
+                    <td class="align-middle"><input type="email" class="form-control" placeholder="Ingrese el correo"
+                            [(ngModel)]="prov.correo" required></td>
+                    <td class="align-middle"><input type="text" class="form-control" placeholder="Ingrese la dirección"
+                            [(ngModel)]="prov.direccion"></td>
+                    <td class="align-middle"><a class="btn-prov" (click)="deleteProvSelected(i)"><i
+                                class="bi bi-x-circle-fill text-danger m-1"></i></a>
+                        <a class="btn-prov" data-toggle="modal" data-target="#senMailtoProv" (click)="sendMailtoProv()">
+                            <i class="bi bi-envelope-fill text-success  m-1"></i></a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -94,9 +109,9 @@
 </div>
 
 <!-- Modal para crear nuevo proveedor-->
-<div class="modal fade" id="newProveedor" data-backdrop="static" tabindex="-1" role="dialog"
+<div class="modal fade" #newProveedorModal id="newProveedor" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
@@ -104,16 +119,48 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <p>Cuerpo</p>
+                <div class="row mb-2">
+                    <div class="input-group col">
+                        <label class="input-group-text" for="ruc">Ruc*:</label>
+                        <input type="text" class="form-control" name="ruc" [(ngModel)]="newPrvRuc"
+                            placeholder="Ingrese el ruc del nuevo proveedor">
+                    </div>
+                    <div class="input-group col">
+                        <label class="input-group-text" for="nombre">Nombre*:</label>
+                        <input type="text" class="form-control" name="nombre" [(ngModel)]="newPrvNombre"
+                            placeholder="Ingrese el nombre del nuevo proveedor">
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="input-group col">
+                        <label class="input-group-text" for="phone">Teléfono*:</label>
+                        <input type="text" class="form-control" name="phone" [(ngModel)]="newPrvTelefono"
+                            placeholder="Ingrese el teléfono del nuevo proveedor">
+                    </div>
+                    <div class="input-group col">
+                        <label class="input-group-text" for="address">Dirección:</label>
+                    <input type="text" class="form-control" name="address" [(ngModel)]="newPrvDireccion"
+                        placeholder="Ingrese la dirección del nuevo proveedor">
+                    </div>
+                </div>
+                <div class="input-group mb-2">
+                    <label class="input-group-text" for="correo">Correo*:</label>
+                        <input type="email" class="form-control" name="correo" [(ngModel)]="newPrvCorreo"
+                            placeholder="Ingrese el correo del nuevo proveedor">
+                </div>
+                <div class="text-end">
+                    <p class="tip">*Campos obligatorios</p>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="addProveedor()">
                     Confirmar
                 </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="clearNewPrv()">
                     Cancelar
                 </button>
             </div>
         </div>
     </div>
 </div>
+
