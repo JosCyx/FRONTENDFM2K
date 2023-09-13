@@ -98,20 +98,56 @@
         </div>
         <div class="row mb-1">
           <div class="input-group col">
-            <label class="input-group-text">Nombre del proveedor:</label>
+            <select
+              class="form-select"
+              style="background-color: #d6d6d6"
+              [(ngModel)]="tipobusqueda"
+              (ngModelChange)="limpiarCampos()"
+            >
+              <option value="nombre" selected>Proveedor</option>
+              <option value="ruc">Ruc</option>
+            </select>
+            <!--  -->
             <input
+              *ngIf="tipobusqueda == 'nombre'"
+              [(ngModel)]="buscarProveedor"
               type="text"
               class="form-control"
-              placeholder="Ingrese el nombre del proveedor"
+              list="proveedor"
+              (keyup)="searchProveedor(buscarProveedor)"
             />
+            <input
+              *ngIf="tipobusqueda == 'ruc'"
+              [(ngModel)]="buscarProveedor"
+              type="text"
+              class="form-control"
+              list="proveedor"
+            />
+            <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'">
+              <ng-container *ngFor="let prov of proveedores">
+                <option [value]="prov.prov_nombre"></option>
+              </ng-container>
+            </datalist>
+            <button   *ngIf="tipobusqueda=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(buscarProveedor)" >
+              <i class="bi bi-check-lg"></i>
+            </button>
           </div>
           <div class="input-group col">
-            <label class="input-group-text">Ruc del proveedor|cédula </label>
+            <label class="input-group-text">
+              <span *ngIf="tipobusqueda == 'nombre'"> RUC:</span>
+              <span *ngIf="tipobusqueda == 'ruc'">Nombre:</span>
+            </label>
             <input
               type="text"
               class="form-control"
-              placeholder="Ingrese el Ruc "
+              *ngIf="tipobusqueda == 'nombre'"
               [(ngModel)]="cab_rucproveedor"
+            />
+            <input
+              type="text "
+              class="form-control"
+              *ngIf="tipobusqueda == 'ruc'"
+              [(ngModel)]="cab_proveedor"
             />
           </div>
         </div>
@@ -311,7 +347,6 @@
     </div>
   </div>
 
-  
   <div class="form-cot" *ngIf="changeview === 'editar'">
     <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
     <h3 class="font-weight-bold" style="padding-top: 20pt">
@@ -391,34 +426,69 @@
         </div>
         <div class="row mb-1">
           <div class="input-group col">
-            <label class="input-group-text">Nombre del proveedor:</label>
+            <select
+              name=""
+              class="form-select"
+              style="background-color: #d6d6d6"
+              [(ngModel)]="tipobusqueda"
+              (ngModelChange)="limpiarCampos()"
+            >
+              <option value="nombre" selected>Proveedor</option>
+              <option value="ruc">Ruc</option>
+            </select>
             <input
+              [(ngModel)]="cabecera.cabPagoProveedor"
+              *ngIf="tipobusqueda == 'nombre'"
               type="text"
               class="form-control"
-              placeholder="Ingrese el nombre del proveedor"
+              list="proveedor"
+              (keyup)="searchProveedor(cabecera.cabPagoProveedor)"
+            />
+            <input
+              [(ngModel)]="cabecera.cabPagoRucProveedor"
+              *ngIf="tipobusqueda == 'ruc'"
+              type="text"
+              class="form-control"
+              list="proveedor"
+            />
+            <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'" >
+              <ng-container *ngFor="let prov of proveedores">
+                <option [value]="prov.prov_nombre"></option>
+              </ng-container>
+            </datalist>
+            <button   *ngIf="tipobusqueda=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(cabecera.cabPagoRucProveedor)" >
+              <i class="bi bi-check-lg"></i>
+            </button>            
+          </div>
+          <div class="input-group col">
+            <label class="input-group-text">
+              <span *ngIf="tipobusqueda == 'nombre'"> RUC:</span>
+              <span *ngIf="tipobusqueda == 'ruc'">Nombre:</span>
+            </label>
+            <input
+              type="text "
+              class="form-control"
+              *ngIf="tipobusqueda == 'nombre'"
+              [(ngModel)]="cabecera.cabPagoRucProveedor"
+            />
+            <input
+              type="text "
+              class="form-control"
+              *ngIf="tipobusqueda == 'ruc'"
               [(ngModel)]="cabecera.cabPagoProveedor"
             />
           </div>
-          <div class="input-group col">
-            <label class="input-group-text">Ruc del proveedor|cédula </label>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Ingrese el Ruc "
-              [(ngModel)]="cabecera.cabPagoRucProveedor"
-            />
-          </div>
         </div>
-        <div class="row " >
-            <div class="input-group col">
-              <label class="input-group-text">Motivo Devolucion:</label>
-              <select  class="form-select " >
-                <option value="">1</option>
-                <option value="">2</option>
-                <option value="">3</option>
-              </select>
-            </div>
-          <div class="row col ">
+        <div class="row">
+          <div class="input-group col">
+            <label class="input-group-text">Motivo Devolucion:</label>
+            <select class="form-select">
+              <option value="">1</option>
+              <option value="">2</option>
+              <option value="">3</option>
+            </select>
+          </div>
+          <div class="row col">
             <div class="input-group col">
               <label class="input-group-text">Estado:</label>
               <input
