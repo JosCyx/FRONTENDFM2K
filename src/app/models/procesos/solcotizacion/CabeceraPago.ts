@@ -10,7 +10,7 @@ export class CabeceraPago {
   public cabPagoFechaEnvio: string;
   public cabPagoNumFactura: string;
   public cabPagoFechaFactura: string;
-  public cabPagoProveedor: number;
+  public cabPagoProveedor: string ;
   public cabPagoRucProveedor: string;
   public cabpagototal: number;
   public cabPagoObservaciones: string | null;
