@@ -3,6 +3,10 @@
     border-radius: 5pt;
 }
 
+.nav-item{
+    font-weight: bold;
+}
+
 .custom-select{
     width: 25%;
 }

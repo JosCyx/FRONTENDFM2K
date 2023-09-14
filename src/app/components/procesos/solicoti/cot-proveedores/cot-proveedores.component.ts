@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ProveedorService } from 'src/app/services/comunicationAPI/seguridad/proveedor.service';
+import { ProvCotizacionService } from 'src/app/services/comunicationAPI/solicitudes/prov-cotizacion.service';
 
 interface selectedProveedor {
   ruc: string,
@@ -17,9 +18,15 @@ interface selectedProveedor {
   templateUrl: './cot-proveedores.component.html',
   styleUrls: ['./cot-proveedores.component.css']
 })
-export class CotProveedoresComponent {
+export class CotProveedoresComponent implements OnInit {
+  //valores para identificar la solicitud cargada
+  @Input() tipoSol: number = 0;
+  @Input() noSol: number = 0;
 
-  constructor(private provService: ProveedorService) { }
+  actionProv: string = 'consultar';
+  idDltProv!: number;
+
+  constructor(private provService: ProveedorService, private provCotService: ProvCotizacionService) { }
 
   //variables de busqueda
   tipoBusqProv: string = 'nombre';
@@ -27,6 +34,7 @@ export class CotProveedoresComponent {
   isSearched: boolean = true;
   page: number = 1; // Inicializa la página actual en 1
   showmsj: boolean = false;
+  showadv: boolean = false;
   msjError: string = '';
 
   //variables para crear nuevo proveedor
@@ -43,6 +51,13 @@ export class CotProveedoresComponent {
   proveedoresList$!: Observable<any[]>;
   proveedoresList: any[] = [];
 
+  //lista para los proveedores asignados a la cotizacion
+  assignedProvs$!: Observable<any[]>;
+
+  ngOnInit(): void {
+    this.getProvCotizacion();
+  }
+
   searchProveedor() {
     this.page = 1;
     if (this.terminoBusq == '') {
@@ -57,7 +72,7 @@ export class CotProveedoresComponent {
         this.msjError = '';
       }, 2500)
 
-      
+
     } else {
       if (this.tipoBusqProv == 'nombre') {
         //console.log("busqueda por nombre");
@@ -119,6 +134,10 @@ export class CotProveedoresComponent {
     if (this.page > 1) {
       this.page--; // Disminuir currentPage en uno si no está en la primera página
     }
+  }
+
+  selectAction(action: string) {
+    this.actionProv = action;
   }
 
   selectProveedor(prov: any) {
@@ -191,6 +210,81 @@ export class CotProveedoresComponent {
     this.newPrvNombre = '';
     this.newPrvRuc = '';
     this.newPrvTelefono = '';
+  }
+
+  saveProvDB() {
+    console.log(this.proveedorListSelected);
+    for (let provIndx = 0; provIndx < this.proveedorListSelected.length; provIndx++) {
+      const prov = this.proveedorListSelected[provIndx];
+      //console.log(prov);
+      const data = {
+        cotProvTipoSolicitud: this.tipoSol,
+        cotProvNoSolicitud: this.noSol,
+        cotProvNoProveedor: provIndx + 1,
+        cotProvRuc: prov.ruc,
+        cotProvNombre: prov.nombre,
+        cotProvTelefono: prov.telefono,
+        cotProvCorreo: prov.correo,
+        cotProvDireccion: prov.direccion
+      }
+      this.provCotService.addProvCotizacion(data).subscribe(
+        response => {
+          console.log("Proveedor guardado exitosamente: ", prov.nombre);
+        },
+        error => {
+          if (error.status == 409) {
+            console.log("Error, este proveedor ya se ha asignado:", error);
+            this.showadv = true;
+            this.msjError = `El proveedor ${data.cotProvNombre} ya está asignado.`;
+
+            setTimeout(() => {
+              this.isSearched = true;
+              this.showadv = false;
+              this.msjError = '';
+            }, 5000)
+
+            //mostrar mensaje de error
+          }
+          console.log("Error:", error)
+        }
+      );
+    }
+
+    this.proveedorListSelected = [];
+    this.proveedoresList = [];
+    this.terminoBusq = '';
+
+    setTimeout(() => {
+      this.getProvCotizacion();
+    }, 100)
+  }
+
+  getProvCotizacion() {
+    this.assignedProvs$ = this.provCotService.getProvCot(this.tipoSol, this.noSol);
+    this.assignedProvs$.subscribe(
+      response => {
+        console.log("Conulta exitosa: ", response);
+      },
+      error => {
+        console.log("Error:", error);
+      }
+    );
+  }
+
+  deleteProvAssigned() {
+    this.provCotService.deleteProvCot(this.idDltProv).subscribe(
+      response => {
+        console.log("Proveedor eliminado: ", response);
+        this.getProvCotizacion();
+      },
+      error => {
+        console.log("Error:", error);
+      }
+    );
+  }
+
+  selectIdDltProv(id: number) {
+    this.idDltProv = id;
   }
 
   sendMailtoProv() {

@@ -195,16 +195,16 @@
         <div class="tabs-edit">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" (click)="selectEditAction('edicion')">Edición</a>
+                    <a class="nav-link" [ngClass]="{'active': actionEdit === 'edicion'}" (click)="selectEditAction('edicion')">Edición</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" (click)="selectEditAction('proveedores')">Proveedores</a>
+                    <a class="nav-link" [ngClass]="{'active': actionEdit === 'proveedores'}" (click)="selectEditAction('proveedores')">Proveedores</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" (click)="selectEditAction('presupuesto')">Revisión presupuestaria</a>
+                    <a class="nav-link" [ngClass]="{'active': actionEdit === 'presupuesto'}" (click)="selectEditAction('presupuesto')">Revisión presupuestaria</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" (click)="selectEditAction('documentacion')">Documentación</a>
+                    <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}" (click)="selectEditAction('documentacion')">Documentación</a>
                 </li>
             </ul>
         </div>
@@ -353,11 +353,7 @@
             </div>
 
             <div *ngIf="actionEdit == 'proveedores'">
-                <app-cot-proveedores></app-cot-proveedores>
-            </div>
-
-            <div *ngIf="actionEdit == 'presupuesto'">
-                <app-cot-presupuesto></app-cot-presupuesto>
+                <app-cot-proveedores [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"></app-cot-proveedores>
             </div>
 
             <div *ngIf="actionEdit == 'documentacion'">

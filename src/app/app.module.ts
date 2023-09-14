@@ -30,7 +30,6 @@ import { AllrequestComponent } from './components/procesos/allrequest/allrequest
 import { BreadcrumbComponent } from './components/templates/breadcrumb/breadcrumb.component';
 import { AuthService } from './services/authentication/auth.service';
 import { CotProveedoresComponent } from './components/procesos/solicoti/cot-proveedores/cot-proveedores.component';
-import { CotPresupuestoComponent } from './components/procesos/solicoti/cot-presupuesto/cot-presupuesto.component';
 import { CotDocumentacionComponent } from './components/procesos/solicoti/cot-documentacion/cot-documentacion.component';
 
 @NgModule({
@@ -56,7 +55,6 @@ import { CotDocumentacionComponent } from './components/procesos/solicoti/cot-do
     AllrequestComponent,
     BreadcrumbComponent,
     CotProveedoresComponent,
-    CotPresupuestoComponent,
     CotDocumentacionComponent
   ],
   imports: [
