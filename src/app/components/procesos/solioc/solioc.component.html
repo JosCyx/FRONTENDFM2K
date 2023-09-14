@@ -669,8 +669,17 @@
             class="form-control"
             id="busqueda"
             list="inspectores"
-            [(ngModel)]="cabecera.cabSolOCInspector"
+            [(ngModel)]="inspector"
+            (keyup)="searchInspector()"
+            (input)="onInputChanged()"
           />
+          <datalist id="inspectores">
+            <ng-container *ngFor="let empOP of inspectores">
+              <option
+                [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"
+              ></option>
+            </ng-container>
+          </datalist>
           <label class="input-group-text">Teléfono:</label>
           <input
             class="form-control"

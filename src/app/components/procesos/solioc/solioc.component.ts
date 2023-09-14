@@ -117,6 +117,7 @@ export class SoliocComponent implements OnInit {
   areas: any[] = [];
   //sectores: any[] = [];
   inspectores: any[] = [];
+  inspectoresEdit: any[] = [];
 
   //variable editar orden compra
   solID: number = this.serviceGlobal.solID;
@@ -152,7 +153,11 @@ export class SoliocComponent implements OnInit {
     this.empleadosList$.subscribe((data) => {
       this.empleadoedit = data;
     });
+
     this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
+    this.inspectores$.subscribe((data) => {
+      this.inspectoresEdit = data;
+    });
     this.nivelRut$ = this.nivRuteService
       .getNivelbyEstado('A')
       .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
@@ -203,16 +208,27 @@ export class SoliocComponent implements OnInit {
     this.inputTimer = setTimeout(() => {
       // Coloca aquí la lógica que deseas ejecutar después de que el usuario haya terminado de modificar el input
       if (this.inspector) {
-        const empleadoSeleccionado = this.inspectores.find(
-          (emp) =>
-            emp.empleadoNombres + ' ' + emp.empleadoApellidos === this.inspector
+        const empleadoSeleccionado = this.inspectores.find((emp) =>
+             emp.empleadoNombres + ' ' + emp.empleadoApellidos ===
+              this.inspector
         );
-        this.cab_inspector = empleadoSeleccionado
-          ? empleadoSeleccionado.empleadoIdNomina
-          : null;
-        console.log('Inspector ID', this.cab_inspector);
+        if (this.changeview == 'crear') {
+          this.cab_inspector = empleadoSeleccionado
+            ? empleadoSeleccionado.empleadoIdNomina
+            : null;
+          console.log('Inspector ID', this.cab_inspector);
+        } else if (this.changeview == 'editar') {
+          this.cabecera.cabSolOCInspector = empleadoSeleccionado
+            ? empleadoSeleccionado.empleadoIdNomina
+            : null;
+          console.log(
+            'Inspector id de Cabecera',
+            this.cabecera.cabSolOCInspector
+          );
+        }
       } else {
         this.cab_inspector = 0;
+        this.cabecera.cabSolOCInspector = 0;
       }
     }, 500); // Retraso de 1 segundo (ajusta el valor según tus necesidades)
   }
@@ -797,6 +813,11 @@ export class SoliocComponent implements OnInit {
       parseISO(this.cabecera.cabSolOCFechaMaxentrega),
       'yyyy-MM-dd'
     );
+    for (let empl of this.inspectoresEdit) {
+      if (empl.empleadoIdNomina == this.cabecera.cabSolOCInspector) {
+        this.inspector = empl.empleadoNombres + ' ' + empl.empleadoApellidos;
+      }
+    }
 
     // Formatear el plazo de entrega en formato 'yyyy-MM-dd'
     this.cabecera.cabSolOCPlazoEntrega = format(
@@ -1402,7 +1423,9 @@ export class SoliocComponent implements OnInit {
             }
           }
         },
-        error: (error) => {console.error('Error al Obtener el RUC del Proveedor:', error);},
+        error: (error) => {
+          console.error('Error al Obtener el RUC del Proveedor:', error);
+        },
         complete: () => console.info('completado'),
       });
     } catch (error) {
