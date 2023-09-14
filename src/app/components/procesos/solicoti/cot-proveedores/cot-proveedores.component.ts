@@ -23,10 +23,15 @@ export class CotProveedoresComponent implements OnInit {
   @Input() tipoSol: number = 0;
   @Input() noSol: number = 0;
 
+  //variables para controlar comportamiento de la pagina
   actionProv: string = 'consultar';
-  idDltProv!: number;
+  hasProvs: boolean = false;
 
-  constructor(private provService: ProveedorService, private provCotService: ProvCotizacionService) { }
+  //variables de acciones de proveedores asignados
+  idDltProv!: number;
+  emailProv!: string;
+
+  
 
   //variables de busqueda
   tipoBusqProv: string = 'nombre';
@@ -54,6 +59,9 @@ export class CotProveedoresComponent implements OnInit {
   //lista para los proveedores asignados a la cotizacion
   assignedProvs$!: Observable<any[]>;
 
+  constructor(private provService: ProveedorService, 
+    private provCotService: ProvCotizacionService) { }
+
   ngOnInit(): void {
     this.getProvCotizacion();
   }
@@ -68,6 +76,7 @@ export class CotProveedoresComponent implements OnInit {
       this.msjError = 'Ingrese un nombre o ruc para buscar proveedores.';
 
       setTimeout(() => {
+        this.isSearched = true;
         this.showmsj = false;
         this.msjError = '';
       }, 2500)
@@ -113,6 +122,7 @@ export class CotProveedoresComponent implements OnInit {
               this.msjError = 'No se han encontrado proveedores con el dato ingresado, intente nuevamente.';
 
               setTimeout(() => {
+
                 this.showmsj = false;
                 this.msjError = '';
               }, 2500)
@@ -173,6 +183,16 @@ export class CotProveedoresComponent implements OnInit {
 
   }
 
+  verifyPhoneEmailProv(): boolean {
+    for (let prov of this.proveedorListSelected) {
+      if (!prov.telefono || prov.telefono === '' || !prov.correo || prov.correo === '') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
   deleteProvSelected(id: number) {
     this.proveedorListSelected.splice(id, 1);
   }
@@ -213,50 +233,56 @@ export class CotProveedoresComponent implements OnInit {
   }
 
   saveProvDB() {
-    console.log(this.proveedorListSelected);
-    for (let provIndx = 0; provIndx < this.proveedorListSelected.length; provIndx++) {
-      const prov = this.proveedorListSelected[provIndx];
-      //console.log(prov);
-      const data = {
-        cotProvTipoSolicitud: this.tipoSol,
-        cotProvNoSolicitud: this.noSol,
-        cotProvNoProveedor: provIndx + 1,
-        cotProvRuc: prov.ruc,
-        cotProvNombre: prov.nombre,
-        cotProvTelefono: prov.telefono,
-        cotProvCorreo: prov.correo,
-        cotProvDireccion: prov.direccion
-      }
-      this.provCotService.addProvCotizacion(data).subscribe(
-        response => {
-          console.log("Proveedor guardado exitosamente: ", prov.nombre);
-        },
-        error => {
-          if (error.status == 409) {
-            console.log("Error, este proveedor ya se ha asignado:", error);
-            this.showadv = true;
-            this.msjError = `El proveedor ${data.cotProvNombre} ya está asignado.`;
+    if (this.verifyPhoneEmailProv()) {
+      console.log(this.proveedorListSelected);
 
-            setTimeout(() => {
-              this.isSearched = true;
-              this.showadv = false;
-              this.msjError = '';
-            }, 5000)
-
-            //mostrar mensaje de error
-          }
-          console.log("Error:", error)
+      for (let prov of this.proveedorListSelected) {
+        //console.log(prov);
+        const data = {
+          cotProvTipoSolicitud: this.tipoSol,
+          cotProvNoSolicitud: this.noSol,
+          cotProvRuc: prov.ruc,
+          cotProvNombre: prov.nombre,
+          cotProvTelefono: prov.telefono,
+          cotProvCorreo: prov.correo,
+          cotProvDireccion: prov.direccion
         }
-      );
+        this.provCotService.addProvCotizacion(data).subscribe(
+          response => {
+            console.log("Proveedor guardado exitosamente: ", prov.nombre);
+            this.hasProvs = false;
+            this.actionProv = 'consultar';
+          },
+          error => {
+            if (error.status == 409) {
+              console.log("Error, este proveedor ya se ha asignado:", error);
+              this.showadv = true;
+              this.msjError = `El proveedor ${data.cotProvNombre} ya está asignado.`;
+
+              setTimeout(() => {
+                this.actionProv = 'consultar';
+                this.isSearched = true;
+                this.showadv = false;
+                this.msjError = '';
+              }, 5000)
+
+            }
+            console.log("Error:", error)
+          }
+        );
+      }
+
+      this.proveedorListSelected = [];
+      this.proveedoresList = [];
+      this.terminoBusq = '';
+
+      setTimeout(() => {
+        this.getProvCotizacion();
+      }, 100);
+    } else {
+      alert("Debe llenar todos los campos requeridos antes de guardar los proveedores.")
     }
 
-    this.proveedorListSelected = [];
-    this.proveedoresList = [];
-    this.terminoBusq = '';
-
-    setTimeout(() => {
-      this.getProvCotizacion();
-    }, 100)
   }
 
   getProvCotizacion() {
@@ -264,6 +290,7 @@ export class CotProveedoresComponent implements OnInit {
     this.assignedProvs$.subscribe(
       response => {
         console.log("Conulta exitosa: ", response);
+        this.hasProvs = true;
       },
       error => {
         console.log("Error:", error);
@@ -283,12 +310,21 @@ export class CotProveedoresComponent implements OnInit {
     );
   }
 
+  //guarda el id del proveedor para eliminar
   selectIdDltProv(id: number) {
     this.idDltProv = id;
   }
 
+  //guarda el correo del proveedor para enviar email
+  selectEmailProv(email: string){
+    this.emailProv = email;
+  }
+
   sendMailtoProv() {
 
-    //console.log(this.proveedorListSelected);
+  }
+
+  generatePDFCot(){
+
   }
 }
