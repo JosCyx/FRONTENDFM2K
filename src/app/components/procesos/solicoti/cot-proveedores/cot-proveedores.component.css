@@ -1,0 +1,33 @@
+.proveedores{
+    background-color: rgb(202, 202, 202);
+    border-radius: 5pt;
+}
+
+.nav-item{
+    font-weight: bold;
+}
+
+.custom-select{
+    width: 25%;
+}
+
+.input-group-text{
+    background-color: #f3f3f3;
+}
+
+.tip{
+    font-size: 9pt;
+}
+
+.table-hover tbody tr:hover {
+    cursor: pointer;
+}
+
+.btn-prov{
+    font-size: 12pt;
+}
+
+.table-rounded {
+    border-radius: 5pt; /* Ajusta el valor según el grado de redondeo deseado */
+    overflow: hidden; /* Para evitar que el contenido se salga del borde redondeado */
+  }

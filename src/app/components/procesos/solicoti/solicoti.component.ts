@@ -1,4 +1,4 @@
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit, Input} from '@angular/core';
 //servicios de comunicacion
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -83,8 +83,8 @@ export class SolicotiComponent implements OnInit {
 
   //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
-  changeview: string = this.serviceGlobal.solView;
-  //changeview: string = 'editar';
+  //changeview: string = this.serviceGlobal.solView;
+  changeview: string = 'editar';
   msjExito!: string;
   msjError!: string;
   showmsj: boolean = false;
@@ -126,7 +126,9 @@ export class SolicotiComponent implements OnInit {
   // lastIDItem!: number;
   // lastIDDet!: number;
 
-
+  //variables compartidas con los demas componentes
+  @Input() sharedTipoSol!: number;
+  @Input() sharedNoSol!: number;
 
   constructor(private router: Router, 
     private empService: EmpleadosService, 
@@ -199,7 +201,7 @@ export class SolicotiComponent implements OnInit {
       // Coloca aquí la lógica que deseas ejecutar después de que el usuario haya terminado de modificar el input
       if (this.inspector) {
         const empleadoSeleccionado = this.inspectores.find(emp => (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.inspector);
-        this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : null;
+        this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : 'No se ha encontrado el inspector';
         console.log("Inspector ID", this.cab_inspector);
       } else {
         this.cab_inspector = 0;
@@ -758,6 +760,8 @@ export class SolicotiComponent implements OnInit {
   async saveData() {
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
     this.cabecera = this.solicitudEdit.cabecera;
+    this.sharedTipoSol = this.cabecera.cabSolCotTipoSolicitud;
+    this.sharedNoSol = this.cabecera.cabSolCotNoSolicitud;
 
     for (let det of this.solicitudEdit.detalles) {
       this.detalle.push(det as DetalleCotizacion);
@@ -1140,4 +1144,12 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
+  //////////////////////////////////////////////////EDICION DE PROVEEDORES///////////////////////////////////////////////////
+
+
+  actionEdit: string = 'edicion';
+
+  selectEditAction(action: string){
+    this.actionEdit = action;
+  }
 }

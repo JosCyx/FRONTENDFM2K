@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -28,6 +29,8 @@ import { MenuAdminComponent } from './components/templates/menu-admin/menu-admin
 import { AllrequestComponent } from './components/procesos/allrequest/allrequest.component';
 import { BreadcrumbComponent } from './components/templates/breadcrumb/breadcrumb.component';
 import { AuthService } from './services/authentication/auth.service';
+import { CotProveedoresComponent } from './components/procesos/solicoti/cot-proveedores/cot-proveedores.component';
+import { CotDocumentacionComponent } from './components/procesos/solicoti/cot-documentacion/cot-documentacion.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +53,9 @@ import { AuthService } from './services/authentication/auth.service';
     MenuComponent,
     MenuAdminComponent,
     AllrequestComponent,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    CotProveedoresComponent,
+    CotDocumentacionComponent
   ],
   imports: [
     BrowserModule,
@@ -59,7 +64,8 @@ import { AuthService } from './services/authentication/auth.service';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    ModalModule.forRoot()
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

@@ -1,68 +1,63 @@
-<div class="container">
-    <div class="text-center mt-5">
-        <img class=" bg-secondary p-2 rounded" src="https://malecon2000.com/public/img/logomalecon2000.png">
-    </div>
-
-
-    <form class="form-signin" [formGroup]="loginForm" (ngSubmit)="login()">
-        <!--Cambios-->
-        <div class="login">
-
-            <h1 class="h3 mb-3 font-weight-normal text-center">Inicio de Sesión</h1>
-
-            <div class="mt-5">
-                <div class="m-3">
-                    <label for="username" class="sr-only">Usuario</label>
-
-                    <input type="text" id="username" class="form-control" formControlName="username"
-                        placeholder="Ingrese su usuario">
-                    <div class="form-text text-danger"
-                        *ngIf="Username.errors?.['required'] && (Username.touched || Username.dirty)">
-                        Ingrese un nombre usuario.
-                    </div>
-                    <div class="form-text text-danger"
-                        *ngIf="Username.errors?.['minlength'] && (Username.touched || Username.dirty)">
-                        El nombre de usuario ingresado es muy corto.
-                    </div>
-                </div>
-                <div class="m-3">
-                    <label for="password" class="sr-only">Contraseña</label>
-
-                    <input type="password" id="password" class="form-control" formControlName="password"
-                        placeholder="Ingrese su contraseña">
-                    <div class="form-text text-danger"
-                        *ngIf="Password.errors?.['required'] && (Password.touched || Password.dirty)">
-                        Ingrese una contraseña.
-                    </div>
-                    <div class="form-text text-danger"
-                        *ngIf="Password.errors?.['minlength'] && (Password.touched || Password.dirty)">
-                        La contraseña ingresada es muy corta.
-                    </div>
-                </div>
-                <div class="col text-center">
-                    <div *ngIf="showmsj" class="alert alert-success" role="alert">
-                        <div class="msg">{{ msjExito }}</div> 
-                    </div>
-                    <div *ngIf="showmsj" class="spinner-border" role="status">
-                        <span class="sr-only">Loading...</span>
-                    </div>
-                    <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
-                        <span class="msg"><i class="bi bi-exclamation-triangle-fill">
-                                {{ msjError }}</i></span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center btn-login ">
-                <button class="btn col-3 btn-primary mt-3" type="submit"
-                        [disabled]="loginForm.invalid">Ingresar</button>
-            </div>
-
-
+<div class="background">
+    <div class="container">
+        <div class="text-center mt-5">
+            <img class=" bg-secondary p-2 rounded" src="https://malecon2000.com/public/img/logomalecon2000.png">
         </div>
-    </form>
 
+        <form class="form-signin" [formGroup]="loginForm" (ngSubmit)="login()">
+            
+            <div class="login">
 
+                <h1 class="h3 mb-3 font-weight-normal text-center">Inicio de Sesión</h1>
 
+                <div class="mt-5">
+                    <div class="m-3">
+                        <label for="username" class="sr-only">Usuario</label>
 
+                        <input type="text" id="username" class="form-control" formControlName="username"
+                            placeholder="Ingrese su usuario">
+                        <div class="form-text text-danger"
+                            *ngIf="Username.errors?.['required'] && (Username.touched || Username.dirty)">
+                            Ingrese un nombre usuario.
+                        </div>
+                        <div class="form-text text-danger"
+                            *ngIf="Username.errors?.['minlength'] && (Username.touched || Username.dirty)">
+                            El nombre de usuario ingresado es muy corto.
+                        </div>
+                    </div>
+                    <div class="m-3">
+                        <label for="password" class="sr-only">Contraseña</label>
+
+                        <input type="password" id="password" class="form-control" formControlName="password"
+                            placeholder="Ingrese su contraseña">
+                        <div class="form-text text-danger"
+                            *ngIf="Password.errors?.['required'] && (Password.touched || Password.dirty)">
+                            Ingrese una contraseña.
+                        </div>
+                        <div class="form-text text-danger"
+                            *ngIf="Password.errors?.['minlength'] && (Password.touched || Password.dirty)">
+                            La contraseña ingresada es muy corta.
+                        </div>
+                    </div>
+                    <div class="col text-center">
+                        <div *ngIf="showmsj" class="alert alert-success" role="alert">
+                            <div class="msg">{{ msjExito }}</div>
+                        </div>
+                        <div *ngIf="loading" class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+                            <span class="msg"><i class="bi bi-exclamation-triangle-fill">
+                                    {{ msjError }}</i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center btn-login ">
+                    <button class="btn col-3 btn-primary mt-3" type="submit"
+                        [disabled]="loginForm.invalid">Ingresar</button>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>

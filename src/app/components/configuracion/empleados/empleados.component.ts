@@ -83,6 +83,7 @@ export class EmpleadosComponent implements OnInit {
 
   //busca en la lista empleados segun el termino de busqueda proporcionado por la variable terminoBusqueda
   search() {
+    this.currentPage = 1;
     const term = this.terminoBusqueda.trim().toLowerCase();
 
     if (term === '') {

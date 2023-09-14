@@ -11,6 +11,7 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit{
+  loading: boolean = false;
   showmsj: boolean = false;
   //msjExito: string = 'Bienvenido Administrador.'
   msjExito!: string;
@@ -62,34 +63,32 @@ export class LoginComponent implements OnInit{
     
 
   login(): void {
+    this.loading = true;
+
     if (this.loginForm.valid) {
 
       //enviar como parametro el valor ingresado en el formulario del usuario y la contraseña
       this.authService.login(this.loginForm.value.username!, this.loginForm.value.password!).subscribe(
         (response: any) => {
-          this.cookieService.set('userLogin', response.usuario.usLogin);
-          this.cookieService.set('userIdNomina', response.usuario.usIdNomina);
-          this.cookieService.set('userName', response.usuario.usNombre);
-
-          //verifica los roles que tiene asignado ese usuario
-          //this.checkAuthorization();
-          
-
-          //redirigir a la siguiente pagina si el login es correcto
+          //mensaje de bienvenida
           this.showmsj = true;
           this.msjExito = `Bienvenido(a) ${response.usuario.usNombre}.`;
 
-          //creacion de una cookie para almacenar el token de autenticacion que durará 12 horas
+          //creacion de cookies para almacenar los datos de inicio de sesion con duracion de 12 horas
           const expirationDate = new Date();
           expirationDate.setHours(expirationDate.getHours() + 12);
           this.cookieService.set('authToken', response.token, expirationDate);
 
-          //imprimir token del usuario
-          //console.log(this.cookieService.get('authToken'));
+          this.cookieService.set('userLogin', response.usuario.usLogin, expirationDate);
+          this.cookieService.set('userIdNomina', response.usuario.usIdNomina, expirationDate);
+          this.cookieService.set('userName', response.usuario.usNombre, expirationDate);
+
+          //this.checkAuthorization();
 
           //limpieza del mensaje
           setTimeout(() => {
             this.showmsj = false;
+            this.loading = false;
             this.msjExito = '';
             this.router.navigate(['main']);
           }, 2000);
