@@ -72,7 +72,7 @@
               type="text"
               class="form-control"
               [value]="showArea"
-              placeholder="Area del empleado solicitante"
+              disabled 
             />
           </div>
           <!--  -->
@@ -128,7 +128,11 @@
                 <option [value]="prov.prov_nombre"></option>
               </ng-container>
             </datalist>
-            <button   *ngIf="tipobusqueda=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(buscarProveedor)" >
+            <button
+              *ngIf="tipobusqueda == 'ruc'"
+              class="btn btn-success"
+              (click)="searchProveedorRuc(buscarProveedor)"
+            >
               <i class="bi bi-check-lg"></i>
             </button>
           </div>
@@ -451,14 +455,18 @@
               class="form-control"
               list="proveedor"
             />
-            <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'" >
+            <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'">
               <ng-container *ngFor="let prov of proveedores">
                 <option [value]="prov.prov_nombre"></option>
               </ng-container>
             </datalist>
-            <button   *ngIf="tipobusqueda=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(cabecera.cabPagoRucProveedor)" >
+            <button
+              *ngIf="tipobusqueda == 'ruc'"
+              class="btn btn-success"
+              (click)="searchProveedorRuc(cabecera.cabPagoRucProveedor)"
+            >
               <i class="bi bi-check-lg"></i>
-            </button>            
+            </button>
           </div>
           <div class="input-group col">
             <label class="input-group-text">
@@ -624,14 +632,20 @@
         </div>
         <div class="input-group mb-3">
           <label class="input-group-text">Recibe:</label>
-          <ng-container *ngFor="let emp of empleadoEdi">
-            <input
-              *ngIf="emp.empleadoIdNomina == cabecera.cabPagoReceptor"
-              type="text"
-              class="form-control"
-              [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-            />
-          </ng-container>
+          <input
+            type="text"
+            class="form-control"
+            list="sugerenciasEdit"
+            [(ngModel)]="receptor"
+            (keyup)="searchEmpleado()"
+          />
+          <datalist id="sugerenciasEdit">
+            <ng-container *ngFor="let emp of empleadoEdi">
+              <option
+                [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+              ></option>
+            </ng-container>
+          </datalist>
           <label class="input-group-text">Fecha de Inspeccion*:</label>
           <input
             class="form-control"
@@ -677,6 +691,7 @@
           class="btn btn-primary m-2"
           data-toggle="modal"
           data-target="#GuardarPagoEdit"
+          (click)="saveReceptor()"
         >
           Guardar
         </button>

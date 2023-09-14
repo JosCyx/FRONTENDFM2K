@@ -372,14 +372,20 @@ export class SolipagoComponent implements OnInit {
   }
   //Guardar el ID DEL QUE RECIBE
   saveReceptor() {
-    for (let emp of this.empleados) {
+    for (let emp of this.empleados) { 
       if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
-        this.cab_recibe = emp.empleadoIdNomina;
+        this.cab_recibe = emp.empleadoIdNomina 
         //console.log("Empleado ID:",this.trIdNomEmp);
       }
     }
+    for (let emp of this.empleadoEdi) { 
+      if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
+        this.cabecera.cabPagoReceptor = emp.empleadoIdNomina;
+      }
+    }
 
-    console.log(`cAMBIOS EN ESTO ${this.cab_recibe}`);
+    console.log(`cAMBIOS EN ESTO ${this.cabecera.cabPagoReceptor}`);
+    console.log("cAMBIOS EddfdN ESTO ",this.cab_recibe);
   }
   async Obtener() {
     const partes = this.valorinput.match(/(\d+)-(\d+)/);
@@ -485,6 +491,11 @@ export class SolipagoComponent implements OnInit {
       parseISO(this.cabecera.cabPagoFechaFactura),
       'yyyy-MM-dd'
     );
+    for (let empl of this.empleadoEdi) {
+      if (empl.empleadoIdNomina == this.cabecera.cabPagoReceptor) {
+        this.receptor = empl.empleadoNombres + ' ' + empl.empleadoApellidos;
+      }
+    }
   }
   //
   get estadoTexto(): string {
