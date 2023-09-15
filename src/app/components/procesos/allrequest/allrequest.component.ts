@@ -78,10 +78,34 @@ export class AllrequestComponent implements OnInit {
     this.isConsulta = true;
     if (this.bsqTipoSol == 1) {
       this.allSol$ = this.cabCotService.getAllCotizaciones();
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito")
+        },
+        error => {
+          console.log("Error:",error)
+        }
+      );
     } else if (this.bsqTipoSol == 2) {
       this.allSol$ = this.cabOCService.getAllOrdenCmp();
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito")
+        },
+        error => {
+          console.log("Error:",error)
+        }
+      );
     } else if (this.bsqTipoSol == 3) {
       this.allSol$ = this.cabPagoService.getAllPago();
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito")
+        },
+        error => {
+          console.log("Error:",error)
+        }
+      );
     }
 
   }

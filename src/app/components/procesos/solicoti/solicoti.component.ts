@@ -1,4 +1,4 @@
-import { Component, OnInit, Input} from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 //servicios de comunicacion
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -109,6 +109,7 @@ export class SolicotiComponent implements OnInit {
   tmpItemSect: ItemSector[] = [];
   empleados: any[] = [];
   empleadosEdit: any[] = [];
+  inspectoresEdit: any[] = [];
   areas: any[] = [];
   //sectores: any[] = [];
   inspectores: any[] = [];
@@ -123,6 +124,7 @@ export class SolicotiComponent implements OnInit {
   idDetEdit!: number;
   det_id_edit!: number;
   det_descp_edit!: string;
+  nameInspector!: string;
   // lastIDItem!: number;
   // lastIDDet!: number;
 
@@ -130,13 +132,13 @@ export class SolicotiComponent implements OnInit {
   @Input() sharedTipoSol!: number;
   @Input() sharedNoSol!: number;
 
-  constructor(private router: Router, 
-    private empService: EmpleadosService, 
-    private sectService: SectoresService, 
-    private areaService: AreasService, 
+  constructor(private router: Router,
+    private empService: EmpleadosService,
+    private sectService: SectoresService,
+    private areaService: AreasService,
     private nivRuteService: NivelRuteoService,
     private solTrckService: TrackingService,
-    private cabCotService: CabCotizacionService, 
+    private cabCotService: CabCotizacionService,
     private detCotService: DetCotOCService,
     private itmSectService: ItemSectorService,
     private serviceGlobal: GlobalService) { }
@@ -148,6 +150,9 @@ export class SolicotiComponent implements OnInit {
     });
 
     this.inspectores$ = this.empService.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
+    /*this.inspectores$.subscribe((data) => {
+      this.inspectoresEdit = data;
+    });*/
 
     this.sectores$ = this.sectService.getSectoresList().pipe(
       map(sectores => sectores.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre)))
@@ -161,12 +166,12 @@ export class SolicotiComponent implements OnInit {
 
     this.nivelRut$ = this.nivRuteService.getNivelbyEstado('A').pipe(
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
-    );  
+    );
 
-    
+
     if (this.changeview == 'editar') {
       this.editSolicitud();
-    } 
+    }
 
   }
 
@@ -190,6 +195,25 @@ export class SolicotiComponent implements OnInit {
       this.inspectores = [];
     }
 
+  }
+
+  searchInspectorEdit(): void {
+    if (this.nameInspector.length > 2) {
+      this.inspectores$.subscribe((data) => {
+        this.inspectoresEdit = data;
+      });
+    } else {
+      this.inspectoresEdit = [];
+    }
+  }
+
+  saveIdInspector() {
+    for (let insp of this.inspectoresEdit) {
+      if ((insp.empleadoNombres + ' ' + insp.empleadoApellidos) == this.nameInspector) {
+        console.log(insp.empleadoIdNomina)
+        this.cabecera.cabSolCotInspector = insp.empleadoIdNomina;
+      }
+    }
   }
 
   onInputChanged(): void {
@@ -573,15 +597,15 @@ export class SolicotiComponent implements OnInit {
 
   incrementDetID() {
     //aumenta el valor del id de detalle
-    
-      if (this.detalleList.length == 0) {
-        this.det_id = 1;
-      } else {
-        for (let det of this.detalleList) {
-          this.det_id = det.det_id + 1;
-        }
+
+    if (this.detalleList.length == 0) {
+      this.det_id = 1;
+    } else {
+      for (let det of this.detalleList) {
+        this.det_id = det.det_id + 1;
       }
-    
+    }
+
 
   }
 
@@ -762,11 +786,18 @@ export class SolicotiComponent implements OnInit {
     this.cabecera = this.solicitudEdit.cabecera;
     this.sharedTipoSol = this.cabecera.cabSolCotTipoSolicitud;
     this.sharedNoSol = this.cabecera.cabSolCotNoSolicitud;
+    this.checkAprobPrep(this.cabecera.cabSolCotEstadoTracking);
+
+    for (let emp of this.empleadosEdit) {
+      if (emp.empleadoIdNomina == this.cabecera.cabSolCotInspector) {
+        this.nameInspector = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
+      }
+    }
 
     for (let det of this.solicitudEdit.detalles) {
       this.detalle.push(det as DetalleCotizacion);
-      
     }
+
     this.detalle.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
     this.det_id = this.detalle.length + 1;
 
@@ -863,8 +894,8 @@ export class SolicotiComponent implements OnInit {
       }
 
       //ACTUALIZAR EL ID DE LOS DETALLES LUEGO DE ELIMINAR UN DETALLE
-      for(let d = 0; d < this.detalle.length; d++){
-        if(this.detalle[d].solCotIdDetalle > this.idDltDet){
+      for (let d = 0; d < this.detalle.length; d++) {
+        if (this.detalle[d].solCotIdDetalle > this.idDltDet) {
           this.detalle[d].solCotIdDetalle = this.detalle[d].solCotIdDetalle - 1;
         }
       }
@@ -1001,7 +1032,9 @@ export class SolicotiComponent implements OnInit {
       cabSolCotFechaMaxentrega: this.cabecera.cabSolCotFechaMaxentrega,
       cabSolCotInspector: this.cabecera.cabSolCotInspector,
       cabSolCotTelefInspector: this.cabecera.cabSolCotTelefInspector,
-      cabSolCotNumerico: this.cabecera.cabSolCotNumerico
+      cabSolCotNumerico: this.cabecera.cabSolCotNumerico,
+      cabSolCotAprobPresup: this.cabecera.cabSolCotAprobPresup,
+      cabSolCotMtovioDev: this.cabecera.cabSolCotMtovioDev
     };
 
     console.log("Cabecera editada: ", this.cabecera.cabSolCotID, dataCAB);
@@ -1149,7 +1182,18 @@ export class SolicotiComponent implements OnInit {
 
   actionEdit: string = 'edicion';
 
-  selectEditAction(action: string){
+  selectEditAction(action: string) {
     this.actionEdit = action;
+  }
+
+  /////////////////////////////////////////////////APROBACION PRESUPUESTARIA//////////////////////////////////////////////////
+  aprobPreps: boolean = false;
+
+  checkAprobPrep(nivel: number) {
+    if (nivel == 60) {
+      this.aprobPreps = true;
+    } else {
+      this.aprobPreps = false;
+    }
   }
 }

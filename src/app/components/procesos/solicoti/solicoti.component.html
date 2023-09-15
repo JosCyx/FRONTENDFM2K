@@ -77,7 +77,7 @@
                         <tr>
                             <th class="align-middle">{{ det_id }}</th>
                             <td class="align-middle">
-                                <textarea name="descripcion" class="form-control" rows="2" cols="50"
+                                <textarea name="descripcion" class="form-control  limited-textarea" rows="2" cols="50"
                                     placeholder="Descripción" [(ngModel)]="det_descp"></textarea>
                             </td>
                             <td class="align-middle">
@@ -195,16 +195,16 @@
         <div class="tabs-edit">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link" [ngClass]="{'active': actionEdit === 'edicion'}" (click)="selectEditAction('edicion')">Edición</a>
+                    <a class="nav-link" [ngClass]="{'active': actionEdit === 'edicion'}"
+                        (click)="selectEditAction('edicion')">Edición</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" [ngClass]="{'active': actionEdit === 'proveedores'}" (click)="selectEditAction('proveedores')">Proveedores</a>
+                    <a class="nav-link" [ngClass]="{'active': actionEdit === 'proveedores'}"
+                        (click)="selectEditAction('proveedores')">Proveedores</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" [ngClass]="{'active': actionEdit === 'presupuesto'}" (click)="selectEditAction('presupuesto')">Revisión presupuestaria</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}" (click)="selectEditAction('documentacion')">Documentación</a>
+                    <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}"
+                        (click)="selectEditAction('documentacion')">Documentación</a>
                 </li>
             </ul>
         </div>
@@ -259,6 +259,34 @@
                     </div>
 
                 </div>
+
+                <div class="presupuestaria" *ngIf="aprobPreps">
+                    <div class="tabs-edit">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" style="font-style: italic; font-weight: bold;"
+                                    [ngClass]="{'active': 1}">Aprobación presupuestaria</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="form-presupuesto">
+                        <div class="input-group left">
+                            <label class="input-group-text" for="aprobacion">Aprobación presupuestaria:</label>
+                            <select class="form-select" name="aprobacion" [(ngModel)]="cabecera.cabSolCotAprobPresup">
+                                <option value="SI">Sí</option>
+                                <option value="NO">No</option>
+                            </select>
+                        </div>
+                        <div class="input-group right">
+                            <label class="input-group-text" for="motivoDev">Motivo de devolución:</label>
+                            <textarea class="form-control limited-textarea" name="motivoDev" rows="2"
+                                placeholder="Ingrese el motivo de devolución"
+                                [(ngModel)]="cabecera.cabSolCotMtovioDev"></textarea>
+                        </div>
+                    </div>
+                    
+
+                </div>
             </div>
 
             <div class="detalle" *ngIf="actionEdit == 'edicion'">
@@ -282,7 +310,7 @@
                             <td class="align-middle">{{ i+1 }}</td>
                             <td class="align-middle">
                                 <!-- <input type="text" class="form-control" [(ngModel)]="det.solCotDescripcion"></td> -->
-                                <textarea name="descripcion" class="form-control" rows="2" cols="10"
+                                <textarea name="descripcion" class="form-control  limited-textarea" rows="2" cols="10"
                                     placeholder="Descripción" [(ngModel)]="det.solCotDescripcion"></textarea>
                             <td class="align-middle"><button class="btn btn-outline-primary" (click)="selectDet(det)"
                                     data-toggle="modal" data-target="#itemsectorEdit">Editar</button></td>
@@ -312,7 +340,7 @@
                         <tr>
                             <th class="align-middle">{{ det_id }}</th>
                             <td class="align-middle">
-                                <textarea name="descripcion" class="form-control" rows="2" cols="10"
+                                <textarea name="descripcion" class="form-control  limited-textarea" rows="2" cols="10"
                                     placeholder="Descripción" [(ngModel)]="det_descp"></textarea>
                             </td>
 
@@ -390,8 +418,13 @@
                 </div>
                 <div class="input-group mb-1">
                     <label class="input-group-text">Inspector:</label>
-                    <input type="text" class="form-control" id="busqueda" list="inspectores"
-                        [(ngModel)]="cabecera.cabSolCotInspector" />
+                    <input type="text" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="nameInspector"
+                        (keyup)="searchInspectorEdit()" />
+                    <datalist id="inspectores">
+                        <ng-container *ngFor="let empOP of inspectoresEdit">
+                            <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>
+                        </ng-container>
+                    </datalist>
                     <label class="input-group-text">Teléfono:</label>
                     <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolCotTelefInspector" />
                 </div>
@@ -408,7 +441,8 @@
                 </div>
             </div>
             <div class="col text-end">
-                <button class="btn btn-primary m-2" data-toggle="modal" data-target="#guardarEdicion">Guardar</button>
+                <button class="btn btn-primary m-2" data-toggle="modal" data-target="#guardarEdicion"
+                    (click)="saveIdInspector()">Guardar</button>
                 <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud">
                     Enviar
                 </button>

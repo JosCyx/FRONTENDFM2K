@@ -2,12 +2,14 @@
     <div class="tabs-edit">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link" [ngClass]="{'active': actionProv === 'consultar'}" (click)="selectAction('consultar')" (click)="getProvCotizacion()">Proveedores asignados</a>
+                <a class="nav-link" [ngClass]="{'active': actionProv === 'consultar'}"
+                    (click)="selectAction('consultar')" (click)="getProvCotizacion()">Proveedores asignados</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" [ngClass]="{'active': actionProv === 'agregar'}" (click)="selectAction('agregar')">Asignar proveedores</a>
+                <a class="nav-link" [ngClass]="{'active': actionProv === 'agregar'}"
+                    (click)="selectAction('agregar')">Asignar proveedores</a>
             </li>
-            
+
         </ul>
     </div>
 </div>
@@ -23,24 +25,27 @@
                 </select>
                 <input type="text" class="form-control" placeholder="Término de busqueda" name="terminoBusqueda"
                     [(ngModel)]="terminoBusq">
-                <button class="btn btn-success" type="button" (click)="searchProveedor()"><i class="bi bi-search"> Buscar</i></button>
+                <button class="btn btn-success" type="button" (click)="searchProveedor()"><i class="bi bi-search">
+                        Buscar</i></button>
 
             </div>
             <div class="col">
-                <button class="btn btn-primary" data-toggle="modal" data-target="#newProveedor"><i class="bi bi-plus-circle"> Nuevo proveedor</i></button>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#newProveedor"><i
+                        class="bi bi-plus-circle"> Nuevo proveedor</i></button>
             </div>
         </div>
     </div>
 
     <div class="busqueda_prov p-3">
         <div *ngIf="showmsj" class="alert alert-danger text-center" role="alert">
-            <span><i class="bi bi-exclamation-triangle-fill">  {{ msjError }}</i></span>
+            <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
         </div>
         <div *ngIf="showadv" class="alert alert-warning text-center" role="alert">
-            <span><i class="bi bi-exclamation-circle-fill">  {{ msjError }}</i></span>
+            <span><i class="bi bi-exclamation-circle-fill"> {{ msjError }}</i></span>
         </div>
         <div *ngIf="isSearched" class="alert alert-primary text-center" role="alert">
-            <span><i class="bi bi-info-circle">  Busque un proveedor para añadirlo a la solicitud o agregue uno nuevo.</i></span>
+            <span><i class="bi bi-info-circle"> Busque un proveedor para añadirlo a la solicitud o agregue uno
+                    nuevo.</i></span>
         </div>
         <div *ngIf="proveedoresList.length != 0" class="align-items-center input-group mb-1 justify-content-end">
             <button class="btn btn-primary" (click)="prevPage()"><i class="bi bi-arrow-left"></i></button>
@@ -79,21 +84,33 @@
                 </tr>
             </thead>
             <tbody>
+
                 <tr *ngFor="let prov of proveedorListSelected let i=index">
+
                     <td class="align-middle">{{prov.ruc}}</td>
                     <td class="align-middle">{{prov.nombre}}</td>
-                    <td class="align-middle"><input type="text" class="form-control" placeholder="Ingrese el teléfono"
-                            [(ngModel)]="prov.telefono"></td>
-                    <td class="align-middle"><input type="email" class="form-control" placeholder="Ingrese el correo"
-                            [(ngModel)]="prov.correo" required></td>
-                    <td class="align-middle"><input type="text" class="form-control" placeholder="Ingrese la dirección"
-                            [(ngModel)]="prov.direccion"></td>
-                    <td class="align-middle"><a class="btn-prov" (click)="deleteProvSelected(i)"><i
+                    <td class="align-middle">
+                        <input type="text" class="form-control" placeholder="Ingrese el teléfono"
+                            [(ngModel)]="prov.telefono">
+                    </td>
+                    <td class="align-middle">
+                        <input type="email" class="form-control" placeholder="Ingrese el correo"
+                            [(ngModel)]="prov.correo" (keyup)="validarProvEmail(i)">
+                        <span class="text-danger tip" *ngIf="!prov.validEmail">El correo electrónico no es
+                            válido.</span>
+                    </td>
+                    <td class="align-middle">
+                        <input type="text" class="form-control" placeholder="Ingrese la dirección"
+                            [(ngModel)]="prov.direccion">
+                    </td>
+                    <td class="align-middle">
+                        <a class="btn-prov" (click)="deleteProvSelected(i)"><i
                                 class="bi bi-x-circle-fill text-danger m-1"></i></a>
                         <!-- <a class="btn-prov" data-toggle="modal" data-target="#senMailtoProv" (click)="sendMailtoProv()">
                             <i class="bi bi-envelope-fill text-success  m-1"></i></a> -->
                     </td>
                 </tr>
+
             </tbody>
         </table>
         <div class="text-end">
@@ -101,13 +118,13 @@
         </div>
     </div>
     <div class="p-2 text-end" *ngIf="proveedorListSelected.length != 0">
-        <button class="btn btn-primary"  data-toggle="modal" data-target="#saveProvCot">Guardar proveedores</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#saveProvCot">Guardar proveedores</button>
     </div>
 
 </div>
 
 <!-- lista de los proveedores ya asignados a la solicitud -->
-<div class="proveedores mb-2 "  *ngIf="actionProv == 'consultar'">
+<div class="proveedores mb-2 " *ngIf="actionProv == 'consultar'">
     <div class="selected-prov p-3">
         <table class="table table-striped table-bordered text-center table-rounded">
             <thead>
@@ -122,7 +139,8 @@
             </thead>
             <tbody>
                 <tr *ngIf="!hasProvs">
-                    <td class="align-middle text-danger" colspan="6">No hay proveedores asignados para esta solicitud</td>
+                    <td class="align-middle text-danger" colspan="6">No hay proveedores asignados para esta solicitud
+                    </td>
                 </tr>
                 <tr *ngFor="let prov of assignedProvs$ | async">
                     <td class="align-middle">{{prov.cotProvRuc}}</td>
@@ -131,9 +149,11 @@
                     <td class="align-middle">{{prov.cotProvCorreo}}</td>
                     <td class="align-middle">{{prov.cotProvDireccion}}</td>
                     <td class="align-middle">
-                        <a class="btn-prov" data-toggle="modal" data-target="#deleteProvAssigned" (click)="selectIdDltProv(prov.cotProvId)">
+                        <a class="btn-prov" data-toggle="modal" data-target="#deleteProvAssigned"
+                            (click)="selectIdDltProv(prov.cotProvId)">
                             <i class="bi bi-x-circle-fill text-danger m-3"></i></a>
-                        <a class="btn-prov" data-toggle="modal" data-target="#senMailtoProv" (click)="selectEmailProv(prov.cotProvCorreo)">
+                        <a class="btn-prov" data-toggle="modal" data-target="#senMailtoProv"
+                            (click)="selectEmailProv(prov.cotProvCorreo)">
                             <i class="bi bi-envelope-fill text-success  m-3"></i></a>
                     </td>
                 </tr>
@@ -181,7 +201,7 @@
                 <p>¿Está seguro que desea el proveedor?<br>Esta acción no se puede deshacer.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="deleteProvAssigned()">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteProvAssigned()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -206,7 +226,7 @@
                 <p>Cuerpo</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="sendMailtoProv()">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="sendMailtoProv()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -220,7 +240,7 @@
 <!-- Modal para crear nuevo proveedor-->
 <div class="modal fade" #newProveedorModal id="newProveedor" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
@@ -228,41 +248,110 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <div class="row mb-2">
-                    <div class="input-group col">
-                        <label class="input-group-text" for="ruc">Ruc*:</label>
-                        <input type="text" class="form-control" name="ruc" [(ngModel)]="newPrvRuc"
-                            placeholder="Ingrese el ruc del nuevo proveedor">
+                <form [formGroup]="dataForm" (ngSubmit)="addProveedor()">
+                    <div class="row mb-2">
+                        <div class="input-group col">
+                            <label class="input-group-text" for="ruc">Ruc*:</label>
+                            <input type="text" class="form-control" name="ruc"
+                                placeholder="Ingrese el ruc del nuevo proveedor" formControlName="newRuc">
+                        </div>
+                        <div class="input-group col">
+                            <label class="input-group-text" for="nombre">Nombre*:</label>
+                            <input type="text" class="form-control" name="nombreprv"
+                                placeholder="Ingrese el nombre del nuevo proveedor" formControlName="newNombre">
+                        </div>
                     </div>
-                    <div class="input-group col">
-                        <label class="input-group-text" for="nombre">Nombre*:</label>
-                        <input type="text" class="form-control" name="nombre" [(ngModel)]="newPrvNombre"
-                            placeholder="Ingrese el nombre del nuevo proveedor">
+                    <div class="row">
+                        <div class="form-text text-danger col"
+                            *ngIf="Ruc.errors?.['required'] && (Ruc.touched || Ruc.dirty)">
+                            Ingrese el número de Ruc del proveedor.
+                        </div>
+                        <div class="form-text text-danger col"
+                            *ngIf="Nombre.errors?.['required'] && (Nombre.touched || Nombre.dirty)">
+                            Ingrese el nombre del proveedor.
+                        </div>
                     </div>
-                </div>
-                <div class="row mb-2">
-                    <div class="input-group col">
-                        <label class="input-group-text" for="phone">Teléfono*:</label>
-                        <input type="text" class="form-control" name="phone" [(ngModel)]="newPrvTelefono"
-                            placeholder="Ingrese el teléfono del nuevo proveedor">
+                    <div class="row mb-2">
+                        <div class="input-group col">
+                            <label class="input-group-text" for="phone">Teléf.*:</label>
+                            <select class="form-select" name="pais" formControlName="newCodePhone">
+                                <option value="54">Argentina (+54)</option>
+                                <option value="591">Bolivia (+591)</option>
+                                <option value="55">Brasil (+55)</option>
+                                <option value="56">Chile (+56)</option>
+                                <option value="57">Colombia (+57)</option>
+                                <option value="506">Costa Rica (+506)</option>
+                                <option value="53">Cuba (+53)</option>
+                                <option value="1-809">República Dominicana (+1-809)</option>
+                                <option value="1-829">República Dominicana (+1-829)</option>
+                                <option value="1-849">República Dominicana (+1-849)</option>
+                                <option value="593">Ecuador (+593)</option>
+                                <option value="503">El Salvador (+503)</option>
+                                <option value="1">Estados Unidos / Canadá (+1)</option>
+                                <option value="502">Guatemala (+502)</option>
+                                <option value="504">Honduras (+504)</option>
+                                <option value="52">México (+52)</option>
+                                <option value="505">Nicaragua (+505)</option>
+                                <option value="507">Panamá (+507)</option>
+                                <option value="595">Paraguay (+595)</option>
+                                <option value="51">Perú (+51)</option>
+                                <option value="1-787">Puerto Rico (+1-787)</option>
+                                <option value="1-939">Puerto Rico (+1-939)</option>
+                                <option value="598">Uruguay (+598)</option>
+                                <option value="58">Venezuela (+58)</option>
+                              </select>
+                              
+                            <input type="text" class="form-control" name="phone"
+                                placeholder="Ingrese el teléfono del nuevo proveedor" formControlName="newPhone">
+
+                        </div>
+                        <div class="input-group col">
+                            <label class="input-group-text" for="address">Dirección:</label>
+                            <input type="text" class="form-control" name="address"
+                                placeholder="Ingrese la dirección del nuevo proveedor" formControlName="newDireccion">
+                        </div>
                     </div>
-                    <div class="input-group col">
-                        <label class="input-group-text" for="address">Dirección:</label>
-                    <input type="text" class="form-control" name="address" [(ngModel)]="newPrvDireccion"
-                        placeholder="Ingrese la dirección del nuevo proveedor">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-text text-danger"
+                                *ngIf="Phone.errors?.['required'] && (Phone.touched || Phone.dirty)">
+                                Ingrese un número de teléfono.
+                            </div>
+                            <div class="form-text text-danger"
+                                *ngIf="Phone.errors?.['pattern'] && (Phone.touched || Phone.dirty)">
+                                Ingrese un número de teléfono válido.
+                            </div>
+                            <div class="form-text text-danger"
+                                *ngIf="Phone.errors?.['maxlength'] || Phone.errors?.['minlength']">
+                                El teléfono debe tener 10 caracteres de longitud.
+                            </div>
+                        </div>
+                        <div class="form-text text-danger col"
+                            *ngIf="Direccion.errors?.['required'] && (Direccion.touched || Direccion.dirty)">
+                            Ingrese la dirección del proveedor.
+                        </div>
                     </div>
-                </div>
-                <div class="input-group mb-2">
-                    <label class="input-group-text" for="correo">Correo*:</label>
-                        <input type="email" class="form-control" name="correo" [(ngModel)]="newPrvCorreo"
-                            placeholder="Ingrese el correo del nuevo proveedor">
-                </div>
-                <div class="text-end">
-                    <p class="tip">*Campos obligatorios</p>
-                </div>
+
+                    <div class="input-group mb-2">
+                        <label class="input-group-text" for="correo">Correo*:</label>
+                        <input type="email" class="form-control" name="correo"
+                            placeholder="Ingrese el correo del nuevo proveedor" formControlName="newEmail">
+                    </div>
+                    <div class="form-text text-danger"
+                        *ngIf="Email.errors?.['required'] && (Email.touched || Email.dirty)">
+                        Ingrese un correo electrónico.
+                    </div>
+                    <div class="form-text text-danger"
+                        *ngIf="Email.errors?.['email'] && (Email.touched || Email.dirty)">
+                        Ingrese un correo electrónico válido.
+                    </div>
+                    <div class="text-end">
+                        <p class="tip">*Campos obligatorios</p>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="addProveedor()">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="addProveedor()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="clearNewPrv()">
@@ -272,4 +361,3 @@
         </div>
     </div>
 </div>
-
