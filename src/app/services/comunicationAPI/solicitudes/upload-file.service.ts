@@ -1,0 +1,41 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { CookieService } from 'ngx-cookie-service';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class UploadFileService {
+
+  readonly APIUrl = "https://localhost:7086/api";
+
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService
+  ) { }
+
+  private getHeadersWithAuthToken(): HttpHeaders {
+    // Obtiene el token de la cookie
+    const authToken = this.cookieService.get('authToken');
+
+    // Define las cabeceras de la solicitud con el token
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${authToken}`
+    });
+  }
+
+
+
+  //
+  uploadFile(bodys:FormData,prefijo:string,tiposol:number):Observable<any>{
+    console.log("este es mi body",bodys);
+    return this.http.post(`${this.APIUrl}/Documento/upload?prefijo=${prefijo}&tipoSOl=${tiposol}`,bodys);
+
+  }
+  getFile():Observable<any[]>{
+    return new Observable<any[]>();
+  }
+
+}
