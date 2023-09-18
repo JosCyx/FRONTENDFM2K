@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { ModalModule } from 'ngx-bootstrap/modal';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -65,7 +64,6 @@ import { CotDocumentacionComponent } from './components/procesos/solicoti/cot-do
     ReactiveFormsModule,
     HttpClientModule,
     NgxPaginationModule,
-    ModalModule.forRoot()
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]
