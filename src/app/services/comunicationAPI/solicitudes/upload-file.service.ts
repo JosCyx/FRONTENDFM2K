@@ -30,7 +30,6 @@ export class UploadFileService {
 
   //
   uploadFile(bodys:FormData,prefijo:string,tiposol:number):Observable<any>{
-    console.log("este es mi body",bodys);
     return this.http.post(`${this.APIUrl}/Documento/upload?prefijo=${prefijo}&tipoSOl=${tiposol}`,bodys);
 
   }
