@@ -153,7 +153,7 @@
                             (click)="selectIdDltProv(prov.cotProvId)">
                             <i class="bi bi-x-circle-fill text-danger m-3"></i></a>
                         <a class="btn-prov" data-toggle="modal" data-target="#senMailtoProv"
-                            (click)="selectEmailProv(prov.cotProvCorreo)">
+                            (click)="selectEmailProv(prov.cotProvCorreo, prov.cotProvNombre)">
                             <i class="bi bi-envelope-fill text-success  m-3"></i></a>
                     </td>
                 </tr>
@@ -215,7 +215,7 @@
 <!-- Modal para enviar correo al proveedor-->
 <div class="modal fade" id="senMailtoProv" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
@@ -223,7 +223,54 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <p>Cuerpo</p>
+
+                <div class="sol-cot-template" #solCotTemplate>
+                    <div>
+                        <h2>FUNDACION MALECON 2000</h2>
+                        <h3>SOLICITUD DE COTIZACION</h3>
+                    </div>
+                    <div>
+                        <div class="row mb-3">
+                            <div class="input-group col">
+                                <label class="input-group-text" for="fecha">Fecha:</label>
+                                <input class="form-control" type="text" name="fecha"
+                                    [value]="mail_cabecera.cabSolCotFecha" disabled>
+                            </div>
+                            <div class="input-group col">
+                                <label class="input-group-text" for="email">Para:</label>
+                                <input class="form-control" type="text" name="email" [value]="nombreProv" disabled>
+                            </div>
+                        </div>
+                        <div class="input-group text-end mb-2">
+                            <label class="input-group-text" for="asunto">Descripción:</label>
+                            <input class="form-control" type="text" name="asunto"
+                                [value]="mail_cabecera.cabSolCotAsunto" disabled>
+
+                        </div>
+
+                        <div>
+                            <table class="table table-bordered table-rounded">
+                                <thead>
+                                    <tr>
+                                        <th class="align-middle">Item</th>
+                                        <th class="align-middle">Descripcion</th>
+                                        <th class="align-middle">Unidad</th>
+                                        <th class="align-middle">Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let det of mail_detalles let i=index">
+                                        <td class="align-middle">{{i+1}}</td>
+                                        <td class="align-middle">{{det.solCotDescripcion}}</td>
+                                        <td class="align-middle">{{det.solCotUnidad}}</td>
+                                        <td class="align-middle">{{det.solCotCantidadTotal}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="sendMailtoProv()">
@@ -236,6 +283,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- Modal para crear nuevo proveedor-->
 <div class="modal fade" #newProveedorModal id="newProveedor" data-backdrop="static" tabindex="-1" role="dialog"
@@ -299,8 +347,8 @@
                                 <option value="1-939">Puerto Rico (+1-939)</option>
                                 <option value="598">Uruguay (+598)</option>
                                 <option value="58">Venezuela (+58)</option>
-                              </select>
-                              
+                            </select>
+
                             <input type="text" class="form-control" name="phone"
                                 placeholder="Ingrese el teléfono del nuevo proveedor" formControlName="newPhone">
 

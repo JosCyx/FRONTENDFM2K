@@ -269,22 +269,26 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="form-presupuesto">
-                        <div class="input-group left">
-                            <label class="input-group-text" for="aprobacion">Aprobación presupuestaria:</label>
-                            <select class="form-select" name="aprobacion" [(ngModel)]="cabecera.cabSolCotAprobPresup">
-                                <option value="SI">Sí</option>
-                                <option value="NO">No</option>
-                            </select>
+                    <div class="row mb-1">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <label class="input-group-text">Aprobación presupuestaria:</label>
+                                <select class="form-select" [(ngModel)]="cabecera.cabSolCotAprobPresup">
+                                    <option value="SI">Sí</option>
+                                    <option value="NO">No</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="input-group right">
-                            <label class="input-group-text" for="motivoDev">Motivo de devolución:</label>
-                            <textarea class="form-control limited-textarea" name="motivoDev" rows="2"
-                                placeholder="Ingrese el motivo de devolución"
-                                [(ngModel)]="cabecera.cabSolCotMtovioDev"></textarea>
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <label class="input-group-text">Motivo de devolución:</label>
+                                <textarea class="form-control limited-textarea" rows="1"
+                                    placeholder="Ingrese el motivo de devolución"
+                                    [(ngModel)]="cabecera.cabSolCotMtovioDev"></textarea>
+                            </div>
                         </div>
                     </div>
-                    
+
 
                 </div>
             </div>
@@ -381,7 +385,8 @@
             </div>
 
             <div *ngIf="actionEdit == 'proveedores'">
-                <app-cot-proveedores [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"></app-cot-proveedores>
+                <app-cot-proveedores [mail_cabecera]="sharedCabecera" [mail_detalles]="sharedDetalle"
+                    [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"></app-cot-proveedores>
             </div>
 
             <div *ngIf="actionEdit == 'documentacion'">

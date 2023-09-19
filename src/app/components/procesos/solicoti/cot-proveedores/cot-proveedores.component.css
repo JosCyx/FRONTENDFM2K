@@ -31,3 +31,12 @@
     border-radius: 5pt; /* Ajusta el valor según el grado de redondeo deseado */
     overflow: hidden; /* Para evitar que el contenido se salga del borde redondeado */
   }
+
+.sol-cot-template{
+    background-color: #dbdbdb;
+    border: 1px;
+    border-radius: 5px;
+    width: 95%;
+    margin: 0 auto;
+    padding: 20px;
+}

@@ -1,9 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ElementRef, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { ProveedorService } from 'src/app/services/comunicationAPI/seguridad/proveedor.service';
 import { ProvCotizacionService } from 'src/app/services/comunicationAPI/solicitudes/prov-cotizacion.service';
+import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
+import { CabeceraCotizacion } from 'src/app/models/procesos/solcotizacion/CabeceraCotizacion';
+import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/DetalleCotizacion';
 
 interface selectedProveedor {
   ruc: string,
@@ -21,6 +24,9 @@ interface selectedProveedor {
   styleUrls: ['./cot-proveedores.component.css']
 })
 export class CotProveedoresComponent implements OnInit {
+  //elemento que hace referencia al html para enviar al correo
+  @ViewChild('solCotTemplate') solCotTemplate!: ElementRef;
+
   //valores para identificar la solicitud cargada
   @Input() tipoSol: number = 0;
   @Input() noSol: number = 0;
@@ -32,6 +38,7 @@ export class CotProveedoresComponent implements OnInit {
   //variables de acciones de proveedores asignados
   idDltProv!: number;
   emailProv!: string;
+  nombreProv!: string;
 
   //formulario para añadir un nuevo proveedor
   dataForm = new FormGroup({
@@ -102,11 +109,26 @@ export class CotProveedoresComponent implements OnInit {
   //lista para los proveedores asignados a la cotizacion
   assignedProvs$!: Observable<any[]>;
 
+  //variables para el contenido del correo
+  //mail_asunto: string = 'FUNDACION MALECON 2000 - SOLICITUD DE COTIZACION';
+  mail_asunto: string = 'Correo de prueba 2';
+  @Input() mail_cabecera!: CabeceraCotizacion;
+  @Input() mail_detalles: DetalleCotizacion[] = [];
+  sol_fecha!: string;
+  sol_asunto!: string;
+  emailContent!: string;
+
   constructor(private provService: ProveedorService,
-    private provCotService: ProvCotizacionService) { }
+    private provCotService: ProvCotizacionService,
+    private sendMailService: SendEmailService) { }
 
   ngOnInit(): void {
     this.getProvCotizacion();
+
+    /*setTimeout(()=>{
+      this.sol_fecha = this.mail_cabecera.cabSolCotFecha;
+      this.sol_asunto = this.mail_cabecera.cabSolCotAsunto;
+    },200)*/
   }
 
   searchProveedor() {
@@ -247,12 +269,12 @@ export class CotProveedoresComponent implements OnInit {
     for (let i = 0; i < this.proveedorListSelected.length; i++) {
       const element = this.proveedorListSelected[i];
 
-      if(i == index){
+      if (i == index) {
         //console.log(element.correo);
         element.validEmail = this.verifyValidEmail(element.correo);
         console.log(element);
       }
-      
+
     }
   }
 
@@ -299,7 +321,7 @@ export class CotProveedoresComponent implements OnInit {
 
       for (let prov of this.proveedorListSelected) {
 
-        if(prov.validEmail === false){
+        if (prov.validEmail === false) {
           alert(`Error al asignar el proveedor ${prov.nombre}, el correo ingresado no es válido, por favor intente nuevamente.`)
         } else {
           const data = {
@@ -314,7 +336,7 @@ export class CotProveedoresComponent implements OnInit {
           this.provCotService.addProvCotizacion(data).subscribe(
             response => {
               //console.log("Proveedor guardado exitosamente: ", prov.nombre);
-              
+
               this.actionProv = 'consultar';
             },
             error => {
@@ -322,14 +344,14 @@ export class CotProveedoresComponent implements OnInit {
                 //console.log("Error, este proveedor ya se ha asignado:", error);
                 this.showadv = true;
                 this.msjError = `El proveedor ${data.cotProvNombre} ya está asignado a esta solicitud.`;
-  
+
                 setTimeout(() => {
                   this.actionProv = 'consultar';
                   this.isSearched = true;
                   this.showadv = false;
                   this.msjError = '';
                 }, 5000)
-  
+
               } else {
                 console.log("Error:", error);
               }
@@ -382,18 +404,81 @@ export class CotProveedoresComponent implements OnInit {
   }
 
   //guarda el correo del proveedor para enviar email
-  selectEmailProv(email: string) {
+  selectEmailProv(email: string, nombre: string) {
     this.emailProv = email;
+    this.nombreProv = nombre;
+    this.sol_fecha = this.mail_cabecera.cabSolCotFecha;
+    this.sol_asunto = this.mail_cabecera.cabSolCotAsunto;
   }
+
+  generateTableRows(): string {
+    let rows = '';
+    this.mail_detalles.forEach((det, i) => {
+      rows += `
+      <tr>
+        <td style="border: 1px solid #000; text-align: center;">${i + 1}</td>
+        <td style="border: 1px solid #000; text-align: center;">${det.solCotDescripcion}</td>
+        <td style="border: 1px solid #000; text-align: center;">${det.solCotUnidad}</td>
+        <td style="border: 1px solid #000; text-align: center;">${det.solCotCantidadTotal}</td>
+      </tr>
+    `;
+    });
+    return rows;
+  }
+
 
   //enviar el correo al proveedor seleccionado
   sendMailtoProv() {
+    //const contenidoHTML = this.solCotTemplate.nativeElement.innerHTML;
+    this.emailContent = `
+        <div style="font-family: Arial, sans-serif;">
+          <div style="text-align: center;">
+            <h2>FUNDACION MALECON 2000</h2>
+            <h3>SOLICITUD DE COTIZACION</h3>
+          </div>
+          <div>
+            <div style="margin-bottom: 20px;">
+              <label style="font-weight: bold;">Fecha: </label>
+              <span style="margin-left: 10px;">${this.sol_fecha}</span>
+              <label style="font-weight: bold; margin-left: 20px;">Para: </label>
+              <span style="margin-left: 10px;">${this.nombreProv}</span>
+            </div>
+            <div style="text-align: center; margin-bottom: 20px;">
+              <label style="font-weight: bold;">Descripción: </label>
+              <span>${this.sol_asunto}</span>
+            </div>
+            <table style="border-collapse: collapse; width: 75%;">
+              <thead>
+                <tr>
+                  <th style="border: 1px solid #000; text-align: center; font-weight: bold;">Item</th>
+                  <th style="border: 1px solid #000; text-align: center; font-weight: bold;">Descripcion</th>
+                  <th style="border: 1px solid #000; text-align: center; font-weight: bold;">Unidad</th>
+                  <th style="border: 1px solid #000; text-align: center; font-weight: bold;">Cantidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${this.generateTableRows()}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
 
-
+    const data = {
+      para: this.emailProv,
+      asunto: this.mail_asunto,
+      contenido: this.emailContent
+    }
+    this.sendMailService.sendMailtoProv(data).subscribe(
+      response => {
+        console.log("Exito")
+      },
+      error => {
+        console.log("Error:", error)
+      }
+    );
   }
 
-  //generar el pdf con los datos de la cotizacion
-  generatePDFCot() {
 
-  }
+
 }

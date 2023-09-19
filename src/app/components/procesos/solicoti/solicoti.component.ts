@@ -83,8 +83,8 @@ export class SolicotiComponent implements OnInit {
 
   //variables para controlar la funcionalidad de la pagina
   fechaFormat: string = this.formatDateToSpanish(this.fecha);
-  //changeview: string = this.serviceGlobal.solView;
-  changeview: string = 'editar';
+  changeview: string = this.serviceGlobal.solView;
+  //changeview: string = 'editar';
   msjExito!: string;
   msjError!: string;
   showmsj: boolean = false;
@@ -131,6 +131,8 @@ export class SolicotiComponent implements OnInit {
   //variables compartidas con los demas componentes
   @Input() sharedTipoSol!: number;
   @Input() sharedNoSol!: number;
+  @Input() sharedCabecera!: CabeceraCotizacion;
+  @Input() sharedDetalle: DetalleCotizacion[] = [];
 
   constructor(private router: Router,
     private empService: EmpleadosService,
@@ -784,6 +786,7 @@ export class SolicotiComponent implements OnInit {
   async saveData() {
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
     this.cabecera = this.solicitudEdit.cabecera;
+    this.sharedCabecera = this.cabecera;//envia la cabecera al componente de proveedores
     this.sharedTipoSol = this.cabecera.cabSolCotTipoSolicitud;
     this.sharedNoSol = this.cabecera.cabSolCotNoSolicitud;
     this.checkAprobPrep(this.cabecera.cabSolCotEstadoTracking);
@@ -797,6 +800,7 @@ export class SolicotiComponent implements OnInit {
     for (let det of this.solicitudEdit.detalles) {
       this.detalle.push(det as DetalleCotizacion);
     }
+    this.sharedDetalle = this.solicitudEdit.detalles;//envia los detalles al componente de proveedores
 
     this.detalle.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
     this.det_id = this.detalle.length + 1;
