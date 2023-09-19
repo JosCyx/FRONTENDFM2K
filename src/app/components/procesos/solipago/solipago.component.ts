@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
@@ -95,6 +95,9 @@ export class SolipagoComponent implements OnInit {
   //
   empleadoEdi: any[] = [];
   proveedores: any[] = [];
+  //variables compartidas con los demas componentes
+  @Input() sharedTipoSol!: number;
+  @Input() sharedNoSol!: number;
 
   constructor(
     private empService: EmpleadosService,
@@ -477,6 +480,8 @@ export class SolipagoComponent implements OnInit {
   }
   async saveData() {
     this.cabecera = this.solicitudEdit.cabecera;
+    this.sharedTipoSol=this.cabecera.cabPagoTipoSolicitud;
+    this.sharedNoSol=this.cabecera.cabPagoNoSolicitud;
     for (let det of this.solicitudEdit.detalles) {
       this.detallePago.push(det as DetallePago);
     }
@@ -667,5 +672,10 @@ export class SolipagoComponent implements OnInit {
     } catch (error) {
       console.error('error en buscar proveedor por RUC: ', error);
     }
+  }
+  //*Actiones  
+  actionEdit:string='edicion';
+  selectEditAction(action:string){
+    this.actionEdit=action;
   }
 }
