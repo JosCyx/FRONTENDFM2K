@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input } from '@angular/core';
 
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -133,6 +133,9 @@ export class SoliocComponent implements OnInit {
   idDltDet!: number;
   // lastIDItem!: number;
   // lastIDDet!: number;
+  //variables compartidas con los demas componentes
+  @Input() sharedTipoSol!: number;
+  @Input() sharedNoSol!: number;
 
   constructor(
     private empService: EmpleadosService,
@@ -778,6 +781,8 @@ export class SoliocComponent implements OnInit {
   async saveData() {
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
     this.cabecera = this.solicitudEdit.cabecera;
+    this.sharedTipoSol=this.cabecera.cabSolOCTipoSolicitud;
+    this.sharedNoSol=this.cabecera.cabSolOCNoSolicitud;
 
     for (let det of this.solicitudEdit.detalles) {
       this.detalle.push(det as DetalleCotizacion);

@@ -1,1 +1,15 @@
-<p>oc-documentacion works!</p>
+<div class="input-group m-2">
+    <label for="inputFile"  class="input-group-text" >
+      <i class="bi bi-upload"></i>
+    </label>
+    <input
+    id="inputFile"
+      type="file"
+      class="form-control"
+      id="inputFile"
+      (change)="getFiles($event)"
+    />
+    <button class="btn btn-success" (click)="sendfile()">
+      <i class="bi bi-check-lg"></i>
+    </button>
+</div>

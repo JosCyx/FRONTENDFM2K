@@ -497,6 +497,9 @@
           </div>
         </div>
       </div>
+      <div *ngIf="actionEdit =='documentacion'" >
+        <app-oc-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"></app-oc-documentacion>
+      </div>
       <!-- *EDITAR dentro del tablas -->
       <div class="detalle">
         <table class="table table-striped text-center">
