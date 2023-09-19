@@ -8,32 +8,30 @@ import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/
 })
 export class CotDocumentacionComponent {
   //Variable de archivo
-  filePDF: any;
   // filesAll!:any;
   filesAll!: File;
   
   //variables compartidas
-  @Input() tipoSol: number=1;
+  @Input() tipoSol!: number;
   @Input() noSol!: number;
   
-  prefijo: string = 'COT20-';
+  prefijo!: string;
   constructor(private uploadfile: UploadFileService) {}
+  imprimir(){
+    this.prefijo='COT'+this.noSol+'-';
+    console.log('Imprimir esto ', this.noSol, this.tipoSol,this.prefijo);
+  }
   getFiles(event: any): void {
-    console.log('Imprimir esto ', event);
     // const [files]=$event.target.files;
     this.filesAll = event.target.files[0];
-    console.log('Imprimir esto  de files ', this.filesAll);
     console.log('Imprimir esto  Objetos de pdf ', this.filesAll);
   }
 
   sendfile(): void {
-
       const body = new FormData();
-      // body.append('file',this.filePDF.File, this.filePDF.FileName);
+      this.prefijo='COT'+this.noSol+'-';
       body.append('archivos', this.filesAll);
-      console.log('este es mi body', body);
-
-      this.uploadfile.uploadFile(body,this.prefijo,1).subscribe({
+      this.uploadfile.uploadFile(body,this.prefijo,this.tipoSol).subscribe({
         next: (data) => {
           console.log('este es mi data', data);
         },
@@ -41,7 +39,7 @@ export class CotDocumentacionComponent {
           console.error('este es mi error', error);
         },
         complete: () => {
-          console.log('este es mi complete');
+          console.log('Proceso completado');
         },
       });
     
