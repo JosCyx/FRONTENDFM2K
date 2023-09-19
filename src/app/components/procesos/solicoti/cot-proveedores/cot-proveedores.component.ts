@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { ProveedorService } from 'src/app/services/comunicationAPI/seguridad/proveedor.service';
 import { ProvCotizacionService } from 'src/app/services/comunicationAPI/solicitudes/prov-cotizacion.service';
@@ -9,6 +10,7 @@ interface selectedProveedor {
   nombre: string,
   telefono: string,
   correo: string,
+  validEmail: boolean,
   direccion: string
 }
 
@@ -23,10 +25,63 @@ export class CotProveedoresComponent implements OnInit {
   @Input() tipoSol: number = 0;
   @Input() noSol: number = 0;
 
+  //variables para controlar comportamiento de la pagina
   actionProv: string = 'consultar';
-  idDltProv!: number;
+  hasProvs: boolean = false;
 
-  constructor(private provService: ProveedorService, private provCotService: ProvCotizacionService) { }
+  //variables de acciones de proveedores asignados
+  idDltProv!: number;
+  emailProv!: string;
+
+  //formulario para añadir un nuevo proveedor
+  dataForm = new FormGroup({
+    newRuc: new FormControl("", [
+      Validators.required
+    ]),
+    newNombre: new FormControl("", [
+      Validators.required
+    ]),
+    newDireccion: new FormControl("", [
+      Validators.required
+    ]),
+    newEmail: new FormControl("", [
+      Validators.required,
+      Validators.email
+    ]),
+    newPhone: new FormControl("", [
+      Validators.required,
+      Validators.pattern('^[0-9]*$'),
+      Validators.minLength(10),
+      Validators.maxLength(10)
+    ]),
+    newCodePhone: new FormControl("593", [
+      Validators.required
+    ])
+  });
+
+  get Ruc(): FormControl {
+    return this.dataForm.get("newRuc") as FormControl;
+  }
+
+  get Nombre(): FormControl {
+    return this.dataForm.get("newNombre") as FormControl;
+  }
+
+  get Direccion(): FormControl {
+    return this.dataForm.get("newDireccion") as FormControl;
+  }
+
+  get Email(): FormControl {
+    return this.dataForm.get("newEmail") as FormControl;
+  }
+
+  get Phone(): FormControl {
+    return this.dataForm.get("newPhone") as FormControl;
+  }
+
+  get CodePhone(): FormControl {
+    return this.dataForm.get("newCodePhone") as FormControl;
+  }
 
   //variables de busqueda
   tipoBusqProv: string = 'nombre';
@@ -37,13 +92,6 @@ export class CotProveedoresComponent implements OnInit {
   showadv: boolean = false;
   msjError: string = '';
 
-  //variables para crear nuevo proveedor
-  newPrvRuc: string = '';
-  newPrvNombre: string = '';
-  newPrvTelefono: string = '';
-  newPrvCorreo: string = '';
-  newPrvDireccion: string = '';
-
   //lista de proveedores seleccionados
   proveedorListSelected: selectedProveedor[] = [];
 
@@ -53,6 +101,9 @@ export class CotProveedoresComponent implements OnInit {
 
   //lista para los proveedores asignados a la cotizacion
   assignedProvs$!: Observable<any[]>;
+
+  constructor(private provService: ProveedorService,
+    private provCotService: ProvCotizacionService) { }
 
   ngOnInit(): void {
     this.getProvCotizacion();
@@ -68,6 +119,7 @@ export class CotProveedoresComponent implements OnInit {
       this.msjError = 'Ingrese un nombre o ruc para buscar proveedores.';
 
       setTimeout(() => {
+        this.isSearched = true;
         this.showmsj = false;
         this.msjError = '';
       }, 2500)
@@ -113,6 +165,7 @@ export class CotProveedoresComponent implements OnInit {
               this.msjError = 'No se han encontrado proveedores con el dato ingresado, intente nuevamente.';
 
               setTimeout(() => {
+
                 this.showmsj = false;
                 this.msjError = '';
               }, 2500)
@@ -153,7 +206,8 @@ export class CotProveedoresComponent implements OnInit {
         nombre: prov.prov_nombre || '',
         telefono: prov.prov_telefono || '',
         correo: '',
-        direccion: ''
+        direccion: '',
+        validEmail: true
       };
 
       // Agregar la nueva instancia a la lista proveedorListSelected
@@ -173,28 +227,57 @@ export class CotProveedoresComponent implements OnInit {
 
   }
 
+  verifyPhoneEmailProv(): boolean {
+    for (let prov of this.proveedorListSelected) {
+      if (!prov.telefono || prov.telefono === '' || !prov.correo || prov.correo === '') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  verifyValidEmail(correo: string): boolean {
+    const patronCorreo = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    return patronCorreo.test(correo);
+  }
+
+  validarProvEmail(index: number) {
+
+    for (let i = 0; i < this.proveedorListSelected.length; i++) {
+      const element = this.proveedorListSelected[i];
+
+      if(i == index){
+        //console.log(element.correo);
+        element.validEmail = this.verifyValidEmail(element.correo);
+        console.log(element);
+      }
+      
+    }
+  }
+
+
   deleteProvSelected(id: number) {
     this.proveedorListSelected.splice(id, 1);
   }
 
   addProveedor() {
     if (
-      this.newPrvRuc != '' &&
-      this.newPrvNombre != '' &&
-      this.newPrvTelefono != '' &&
-      this.newPrvCorreo != ''
+      this.dataForm.valid
     ) {
       // Si todos los campos están llenos, agrega el proveedor a la lista
       const newPrv = {
-        ruc: this.newPrvRuc,
-        nombre: this.newPrvNombre,
-        telefono: this.newPrvTelefono,
-        correo: this.newPrvCorreo,
-        direccion: this.newPrvDireccion
+        ruc: this.dataForm.value.newRuc!,
+        nombre: this.dataForm.value.newNombre!,
+        telefono: this.dataForm.value.newCodePhone! + ' ' + this.dataForm.value.newPhone!,
+        correo: this.dataForm.value.newEmail!,
+        direccion: this.dataForm.value.newDireccion!,
+        validEmail: true
       }
-
+      console.log(this.dataForm.value)
       this.proveedorListSelected.push(newPrv);
 
+      //limpiar el formulario
       this.clearNewPrv();
 
 
@@ -205,58 +288,67 @@ export class CotProveedoresComponent implements OnInit {
   }
 
   clearNewPrv() {
-    this.newPrvCorreo = '';
-    this.newPrvDireccion = '';
-    this.newPrvNombre = '';
-    this.newPrvRuc = '';
-    this.newPrvTelefono = '';
+    this.dataForm.reset();
   }
 
   saveProvDB() {
-    console.log(this.proveedorListSelected);
-    for (let provIndx = 0; provIndx < this.proveedorListSelected.length; provIndx++) {
-      const prov = this.proveedorListSelected[provIndx];
-      //console.log(prov);
-      const data = {
-        cotProvTipoSolicitud: this.tipoSol,
-        cotProvNoSolicitud: this.noSol,
-        cotProvNoProveedor: provIndx + 1,
-        cotProvRuc: prov.ruc,
-        cotProvNombre: prov.nombre,
-        cotProvTelefono: prov.telefono,
-        cotProvCorreo: prov.correo,
-        cotProvDireccion: prov.direccion
-      }
-      this.provCotService.addProvCotizacion(data).subscribe(
-        response => {
-          console.log("Proveedor guardado exitosamente: ", prov.nombre);
-        },
-        error => {
-          if (error.status == 409) {
-            console.log("Error, este proveedor ya se ha asignado:", error);
-            this.showadv = true;
-            this.msjError = `El proveedor ${data.cotProvNombre} ya está asignado.`;
+    if (this.verifyPhoneEmailProv()) {
+      console.log(this.proveedorListSelected);
 
-            setTimeout(() => {
-              this.isSearched = true;
-              this.showadv = false;
-              this.msjError = '';
-            }, 5000)
 
-            //mostrar mensaje de error
+
+      for (let prov of this.proveedorListSelected) {
+
+        if(prov.validEmail === false){
+          alert(`Error al asignar el proveedor ${prov.nombre}, el correo ingresado no es válido, por favor intente nuevamente.`)
+        } else {
+          const data = {
+            cotProvTipoSolicitud: this.tipoSol,
+            cotProvNoSolicitud: this.noSol,
+            cotProvRuc: prov.ruc,
+            cotProvNombre: prov.nombre,
+            cotProvTelefono: prov.telefono,
+            cotProvCorreo: prov.correo,
+            cotProvDireccion: prov.direccion
           }
-          console.log("Error:", error)
+          this.provCotService.addProvCotizacion(data).subscribe(
+            response => {
+              //console.log("Proveedor guardado exitosamente: ", prov.nombre);
+              
+              this.actionProv = 'consultar';
+            },
+            error => {
+              if (error.status == 409) {
+                //console.log("Error, este proveedor ya se ha asignado:", error);
+                this.showadv = true;
+                this.msjError = `El proveedor ${data.cotProvNombre} ya está asignado a esta solicitud.`;
+  
+                setTimeout(() => {
+                  this.actionProv = 'consultar';
+                  this.isSearched = true;
+                  this.showadv = false;
+                  this.msjError = '';
+                }, 5000)
+  
+              } else {
+                console.log("Error:", error);
+              }
+            }
+          );
         }
-      );
+      }
+      this.hasProvs = true;
+      this.proveedorListSelected = [];
+      this.proveedoresList = [];
+      this.terminoBusq = '';
+
+      setTimeout(() => {
+        this.getProvCotizacion();
+      }, 100);
+    } else {
+      alert("Debe llenar todos los campos requeridos antes de guardar los proveedores.")
     }
 
-    this.proveedorListSelected = [];
-    this.proveedoresList = [];
-    this.terminoBusq = '';
-
-    setTimeout(() => {
-      this.getProvCotizacion();
-    }, 100)
   }
 
   getProvCotizacion() {
@@ -264,6 +356,7 @@ export class CotProveedoresComponent implements OnInit {
     this.assignedProvs$.subscribe(
       response => {
         console.log("Conulta exitosa: ", response);
+        this.hasProvs = true;
       },
       error => {
         console.log("Error:", error);
@@ -283,12 +376,24 @@ export class CotProveedoresComponent implements OnInit {
     );
   }
 
+  //guarda el id del proveedor para eliminar
   selectIdDltProv(id: number) {
     this.idDltProv = id;
   }
 
+  //guarda el correo del proveedor para enviar email
+  selectEmailProv(email: string) {
+    this.emailProv = email;
+  }
+
+  //enviar el correo al proveedor seleccionado
   sendMailtoProv() {
 
-    //console.log(this.proveedorListSelected);
+
+  }
+
+  //generar el pdf con los datos de la cotizacion
+  generatePDFCot() {
+
   }
 }

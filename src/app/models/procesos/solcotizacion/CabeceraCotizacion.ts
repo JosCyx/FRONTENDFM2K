@@ -17,6 +17,8 @@ export class CabeceraCotizacion {
   public cabSolCotFechaMaxentrega: string;
   public cabSolCotInspector: number | null;
   public cabSolCotTelefInspector: string;
+  public cabSolCotAprobPresup: string;
+  public cabSolCotMtovioDev: string;
 
   constructor(data: any) {
       this.cabSolCotTipoSolicitud = data.cabSolCotTipoSolicitud;
@@ -37,5 +39,7 @@ export class CabeceraCotizacion {
       this.cabSolCotFechaMaxentrega = data.cabSolCotFechaMaxentrega;
       this.cabSolCotInspector = data.cabSolCotInspector;
       this.cabSolCotTelefInspector = data.cabSolCotTelefInspector;
+      this.cabSolCotAprobPresup = data.cabSolCotAprobPresup;
+      this.cabSolCotMtovioDev = data.cabSolCotMtovioDev;
   }
 }

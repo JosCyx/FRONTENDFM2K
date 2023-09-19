@@ -45,5 +45,19 @@
     margin-right: 10px !important;
 }
 
+.limited-textarea{
+    max-height: 120px;
+}
+
+.presupuestaria{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.form-presupuesto{
+    display: flex;
+    flex-direction: row;
+}
+
 
 
