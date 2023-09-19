@@ -1432,4 +1432,9 @@ export class SoliocComponent implements OnInit {
       console.error('Error al Obtener el RUC del Proveedor:', error);
     }
   }
+  //* Actiones
+  actionEdit:string='edicion';
+  selectEditAction(action:string){
+    this.actionEdit=action;
+  }
 }
