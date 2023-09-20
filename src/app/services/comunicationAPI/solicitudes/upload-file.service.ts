@@ -29,12 +29,12 @@ export class UploadFileService {
 
 
   //
-  uploadFile(bodys:FormData,prefijo:string,tiposol:number):Observable<any>{
-    return this.http.post(`${this.APIUrl}/Documento/upload?prefijo=${prefijo}&tipoSOl=${tiposol}`,bodys);
+  uploadFile(bodys:FormData,prefijo:string,tiposol:number,nolSol:number):Observable<any>{
+    return this.http.post(`${this.APIUrl}/Documento/upload?prefijo=${prefijo}&tipoSOl=${tiposol}&noSol=${nolSol}`,bodys);
 
   }
-  getFile():Observable<any[]>{
-    return new Observable<any[]>();
+  getFile(tipoSol:number,noSol:number):Observable<any[]>{
+    return this.http.get<any>(`${this.APIUrl}/Documento/GetDocumentos?tipoSol=${tipoSol}&noSol=${noSol}`);
   }
 
 }

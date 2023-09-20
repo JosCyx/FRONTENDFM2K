@@ -1,4 +1,4 @@
-import { Component,Input } from '@angular/core';
+import { Component, Input,OnInit } from '@angular/core';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
 
 @Component({
@@ -6,20 +6,28 @@ import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/
   templateUrl: './cot-documentacion.component.html',
   styleUrls: ['./cot-documentacion.component.css'],
 })
-export class CotDocumentacionComponent {
+export class CotDocumentacionComponent  implements OnInit {
   //Variable de archivo
   // filesAll!:any;
   filesAll!: File;
-  
+
   //variables compartidas
   @Input() tipoSol!: number;
   @Input() noSol!: number;
-  
+  public PDFview: string = '';
+  //
   prefijo!: string;
+  //Variable para Obtener el path
+  paths: any[] = [];
+
   constructor(private uploadfile: UploadFileService) {}
-  imprimir(){
-    this.prefijo='COT'+this.noSol+'-';
-    console.log('Imprimir esto ', this.noSol, this.tipoSol,this.prefijo);
+
+  ngOnInit(): void {
+    this.GetfileView();
+  }
+  imprimir() {
+    this.prefijo = 'COT' + this.noSol + '-';
+    console.log('Imprimir esto ', this.noSol, this.tipoSol, this.prefijo);
   }
   getFiles(event: any): void {
     // const [files]=$event.target.files;
@@ -28,10 +36,12 @@ export class CotDocumentacionComponent {
   }
 
   sendfile(): void {
-      const body = new FormData();
-      this.prefijo='COT'+this.noSol+'-';
-      body.append('archivos', this.filesAll);
-      this.uploadfile.uploadFile(body,this.prefijo,this.tipoSol).subscribe({
+    const body = new FormData();
+    this.prefijo = 'COT' + this.noSol + '-';
+    body.append('archivos', this.filesAll);
+    this.uploadfile
+      .uploadFile(body, this.prefijo, this.tipoSol, this.noSol)
+      .subscribe({
         next: (data) => {
           console.log('este es mi data', data);
         },
@@ -42,6 +52,33 @@ export class CotDocumentacionComponent {
           console.log('Proceso completado');
         },
       });
-    
+  }
+
+  GetfileView() {
+    try {
+      this.uploadfile.getFile(this.tipoSol,this.noSol).subscribe({
+        next: (data) => {
+          console.log('este es mi data', data);
+          this.paths = data.map((a) => {
+            return{
+              docUrl:a.docUrl, 
+            docNombre:a.docNombre
+            }
+            
+          });
+          console.log('este son mi pATH ', this.paths);
+        },
+        error(err) {
+          console.error('Error al momento de obtener ', err);
+        },
+        complete: () => {
+          console.log('Proceso completado');
+        },
+      });
+    } catch (error) {
+      console.log('Error en el proceso de GetfileView', error);
+    } finally {
+      console.log('FIN DEL  PROGRAMA');
+    }
   }
 }

@@ -28,7 +28,7 @@ export class SPDocumentacionComponent {
     const body = new FormData();
     this.prefijo='SP'+this.noSol+'-';
     body.append('archivos', this.filesAll);
-    this.uploadfile.uploadFile(body,this.prefijo,this.tipoSol).subscribe({
+    this.uploadfile.uploadFile(body,this.prefijo,this.tipoSol,this.noSol).subscribe({
       next: (data) => {
         console.log('este es mi data', data);
       },

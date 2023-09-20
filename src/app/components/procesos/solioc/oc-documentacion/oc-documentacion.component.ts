@@ -28,7 +28,7 @@ export class OCDocumentacionComponent {
     const body = new FormData();
     this.prefijo='OC'+this.noSol+'-';
     body.append('archivos', this.filesAll);
-    this.uploadfile.uploadFile(body,this.prefijo,this.tipoSol).subscribe({
+    this.uploadfile.uploadFile(body,this.prefijo,this.tipoSol,this.noSol).subscribe({
       next: (data) => {
         console.log('este es mi data', data);
       },
