@@ -152,13 +152,27 @@
                         <a class="btn-prov" data-toggle="modal" data-target="#deleteProvAssigned"
                             (click)="selectIdDltProv(prov.cotProvId)">
                             <i class="bi bi-x-circle-fill text-danger m-3"></i></a>
-                        <a class="btn-prov" data-toggle="modal" data-target="#senMailtoProv"
+                        <!-- <a class="btn-prov" data-toggle="modal" data-target="#senMailtoProv"
                             (click)="selectEmailProv(prov.cotProvCorreo, prov.cotProvNombre)">
-                            <i class="bi bi-envelope-fill text-success  m-3"></i></a>
+                            <i class="bi bi-envelope-fill text-success  m-3"></i></a> -->
                     </td>
                 </tr>
             </tbody>
         </table>
+        <!-- envia los correos a todos los proveedores -->
+        <div class="text-end">
+            <button class="btn btn-primary" data-toggle="modal" data-target="#senMailtoProv" (click)="saveDataProv()">Enviar correos</button>
+        </div>
+    </div>
+    <!-- Mensaje de exito o error de envio de correo -->
+    <div>
+        <div *ngIf="showmsj" class="alert alert-success" role="alert">
+            <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
+        </div>
+        <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+            <span><i class="bi bi-exclamation-triangle-fill">
+                    {{ msjError }}</i></span>
+        </div>
     </div>
 </div>
 
@@ -230,16 +244,11 @@
                         <h3>SOLICITUD DE COTIZACION</h3>
                     </div>
                     <div>
-                        <div class="row mb-3">
-                            <div class="input-group col">
-                                <label class="input-group-text" for="fecha">Fecha:</label>
+                        <div class="input-group text-end mb-2">
+                            <label class="input-group-text" for="fecha">Fecha:</label>
                                 <input class="form-control" type="text" name="fecha"
                                     [value]="mail_cabecera.cabSolCotFecha" disabled>
-                            </div>
-                            <div class="input-group col">
-                                <label class="input-group-text" for="email">Para:</label>
-                                <input class="form-control" type="text" name="email" [value]="nombreProv" disabled>
-                            </div>
+
                         </div>
                         <div class="input-group text-end mb-2">
                             <label class="input-group-text" for="asunto">Descripción:</label>
