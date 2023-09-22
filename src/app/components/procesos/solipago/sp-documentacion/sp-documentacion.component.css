@@ -1,0 +1,22 @@
+
+.input-group{
+    width: 50%;
+}
+.ini{
+    display: grid;
+    grid-gap: .9375rem;
+    grid-template-columns: repeat(5, 1fr);
+}
+.card-title{
+    font-size: 1rem;
+}
+
+.documentos{
+    background-color:#e9ecef ;
+    border-radius: .3125rem;
+    margin: 0 auto;
+    padding:.9375rem 1.5625rem .9375rem 1.5625rem;
+}
+a{
+    color: black;
+}

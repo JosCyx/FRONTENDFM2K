@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders,HttpResponse  } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
@@ -21,20 +21,25 @@ export class UploadFileService {
 
     // Define las cabeceras de la solicitud con el token
     return new HttpHeaders({
-      'Content-Type': 'application/json',
       'Authorization': `Bearer ${authToken}`
     });
   }
 
 
-
   //
   uploadFile(bodys:FormData,prefijo:string,tiposol:number,nolSol:number):Observable<any>{
-    return this.http.post(`${this.APIUrl}/Documento/upload?prefijo=${prefijo}&tipoSOl=${tiposol}&noSol=${nolSol}`,bodys);
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(`${this.APIUrl}/Documento/upload?prefijo=${prefijo}&tipoSOl=${tiposol}&noSol=${nolSol}`,bodys,{headers:headers});
 
   }
   getFile(tipoSol:number,noSol:number):Observable<any[]>{
-    return this.http.get<any>(`${this.APIUrl}/Documento/GetDocumentos?tipoSol=${tipoSol}&noSol=${noSol}`);
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(`${this.APIUrl}/Documento/GetDocumentos?tipoSol=${tipoSol}&noSol=${noSol}`, { headers: headers });
+  }
+
+  viewFile(filesNombres:string):Observable<any>{
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get(`${this.APIUrl}/Documento/visualizeFile?fileName=${filesNombres}`, {responseType:'blob'});
   }
 
 }

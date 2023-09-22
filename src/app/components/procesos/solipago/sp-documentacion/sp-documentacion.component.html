@@ -1,15 +1,42 @@
 <div class="input-group m-2">
-    <label for="inputFile"  class="input-group-text" >
-      <i class="bi bi-upload"></i>
-    </label>
-    <input
+  <label for="inputFile" class="input-group-text">
+    <i class="bi bi-upload"></i>
+  </label>
+  <input
     id="inputFile"
-      type="file"
-      class="form-control"
-      id="inputFile"
-      (change)="getFiles($event)"
-    />
-    <button class="btn btn-success" (click)="sendfile()">
-      <i class="bi bi-check-lg"></i>
-    </button>
+    type="file"
+    class="form-control"
+    id="inputFile"
+    (change)="getFiles($event)"
+  />
+  <button class="btn btn-success" (click)="sendfile()">
+    <i class="bi bi-upload"></i>
+  </button>
+</div>
+<div  >
+  <div *ngIf="showExito" class="alert alert-success text-center" role="alert">
+    <span
+      ><i class="bi bi-upload"> {{ msjExito }}</i></span
+    >
+  </div>
+  <div *ngIf="showError" class="alert alert-danger text-center" role="alert">
+    <span
+      ><i class="bi bi-x-circle"> {{ msjError }}</i></span
+    >
+  </div>
+</div>
+<!--  Visualizar PDF  -->
+<div class="ini text-center m-3">
+  <ng-container *ngFor="let pat of paths">
+    <a href="{{ pat.docUrl }}" target="_blank">
+      <div class="documentos">
+        <img
+          src="../../../../../assets/img/272699_pdf_icon.png"
+          width="100"
+          alt="..."
+        />
+        <h5 class="card-title">{{ pat.docNombre }}</h5>
+      </div>
+    </a>
+  </ng-container>
 </div>

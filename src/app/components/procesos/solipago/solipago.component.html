@@ -370,6 +370,17 @@
     <!-- Fin -->
     <div class="solicitud">
       <div class="cabecera mb-3">
+        <div class="row m-1" >
+          <div class="input-group">
+            <label class="input-group-text">Código:</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="cabecera.cabPagoNumerico"
+              disabled
+            />
+          </div>
+        </div>
         <div class="row">
           <div class="input-group col mb-1">
             <label class="input-group-text">Fecha:</label>
@@ -499,14 +510,6 @@
           </div>
         </div>
         <div class="row">
-          <div class="input-group col">
-            <label class="input-group-text">Motivo Devolucion:</label>
-            <select class="form-select">
-              <option value="">1</option>
-              <option value="">2</option>
-              <option value="">3</option>
-            </select>
-          </div>
           <div class="row col">
             <div class="input-group col">
               <label class="input-group-text">Estado:</label>

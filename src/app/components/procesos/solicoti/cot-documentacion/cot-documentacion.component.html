@@ -10,25 +10,38 @@
     (change)="getFiles($event)"
   />
   <button class="btn btn-success" (click)="sendfile()">
-    <i class="bi bi-check-lg"></i>
+    <i class="bi bi-upload"></i>
   </button>
-  <button (click)="imprimir()">Ft</button>
-  <button (click)="GetfileView()">obtener</button>
+</div>
+<div  >
+  <div *ngIf="showExito" class="alert alert-success text-center" role="alert">
+    <span
+      ><i class="bi bi-upload"> {{ msjExito }}</i></span
+    >
+  </div>
+  <div *ngIf="showError" class="alert alert-danger text-center" role="alert">
+    <span
+      ><i class="bi bi-x-circle"> {{ msjError }}</i></span
+    >
+  </div>
 </div>
 <!--  Visualizar PDF  -->
-<div class="ini text-center m-3" >
-  <ng-container *ngFor="let pat of paths" >
-    <div class="documentos">
-      <div class="contenidoPDF">
-        <img src="../../../../../assets/img/PDF.png" width="100" alt="..." />
-    
-        <h5 class="card-title">{{ pat.docNombre}}</h5>
+<div class="ini text-center m-3">
+  <ng-container *ngFor="let pat of paths">
+    <a href="{{ pat.docUrl }}" target="_blank">
+      <div class="documentos">
+        <img
+          src="../../../../../assets/img/272699_pdf_icon.png"
+          width="100"
+          alt="..."
+        />
+        <h5 class="card-title">{{ pat.docNombre }}</h5>
       </div>
-    </div>
-  </ng-container>
-  <!-- <pdf-viewer [src]="'https://proassetspdlcom.cdnstatics2.com/usuaris/libros_contenido/arxius/40/39307_Inteligencia_artificial.pdf'"
+    </a>
+    <!-- <pdf-viewer [src]="pdfSrc"
     [render-text]="true"
     [original-size]="false"
     style="width: 100px; height: 200px"
 ></pdf-viewer> -->
+  </ng-container>
 </div>
