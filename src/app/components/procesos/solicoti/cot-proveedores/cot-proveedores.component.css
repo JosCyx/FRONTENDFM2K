@@ -40,3 +40,8 @@
     margin: 0 auto;
     padding: 20px;
 }
+
+.alert-message{
+    margin: 0 auto;
+    width: 75%;
+}
