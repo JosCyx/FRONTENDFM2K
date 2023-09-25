@@ -4,40 +4,39 @@
 
     <div class="">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-              <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                    <div class="navbar-nav">
-                        <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
-                        <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
-                        <button class="btn btn-primary m-2" (click)="changeView('editar')">Editar</button>
-                    </div>
-              </div>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
+                    <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
+                    <button class="btn btn-primary m-2" (click)="changeView('editar')">Editar</button>
+                </div>
+            </div>
         </nav>
     </div>
 
 
-    <!--FORMULARIO PARA CREAR LOS ROLES-->
     <div class="formUser" *ngIf="changeview === 'crear'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de usuario</h3>
         <form class="form-rol">
             <div class="form cmp-form">
                 <label class="form-label">Nombre completo:</label>
                 <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control" />
-    
+
             </div>
             <div class="form cmp-form">
                 <label class="form-label">Nombre de usuario:</label>
                 <input [(ngModel)]="user" name="user" type="text" id="form12" class="form-control" />
-    
+
             </div>
 
             <div class="form pass-form row">
                 <div class="col-md-6">
                     <label class="form-label" for="registerPassword">Contraseña</label>
-                    <input type="password" [(ngModel)]="pass" name="pass" class="form-control" required/>
+                    <input type="password" [(ngModel)]="pass" name="pass" class="form-control" required />
                 </div>
                 <div class="col-md-6">
                     <label class="form-label" for="registerPassword">Confirmar contraseña</label>
-                    <input type="password" [(ngModel)]="confirmPass" name="confirmPass" class="form-control" required/>
+                    <input type="password" [(ngModel)]="confirmPass" name="confirmPass" class="form-control" required />
                 </div>
                 <!--
                 <div *ngIf="showMsjPassConfirm">
@@ -53,20 +52,104 @@
             </div>
         </form>
         <div class="text-end mt-5">
-            <button [disabled]="!nombre || !user || !estado" 
-            type="submit" class="btn btn-primary m-2" (click)="agregarUsuario()">Agregar usuario</button>
+            <button [disabled]="!nombre || !user || !estado" type="submit" class="btn btn-primary m-2"
+                (click)="agregarUsuario()">Agregar usuario</button>
             <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
         </div>
-        
+
     </div>
 
-   
+
     <div class="formUser" *ngIf="changeview==='consulta'">
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Usuarios registrados</h3>
+        <h3 class="font-weight-bold" style="padding-bottom: 5pt;">Usuarios registrados</h3>
+        <p>Buscar por:</p>
+        <!-- busqueda de usuarios -->
+        <div class="busqueda d-flex justify-content-between">
+            <div class="input-group mb-3">
+                <select class="form-select" name="buscarOpcion">
+                    <option selected value="id">Identificación</option>
+                    <option value="name">Nombres</option>
+                    <option value="lastname">Apellidos</option>
+                </select>
+                <input type="text" class="form-control" placeholder="Término de busqueda" name="terminoBusqueda">
+                <button class="btn btn-outline-success" type="button">Buscar</button>
+                <button class="btn btn-outline-danger">Cancelar</button>
+            </div>
+            <div class="align-items-center input-group mb-3 justify-content-end">
+                <button class="btn btn-primary"><i class="bi bi-arrow-left"></i></button>
+                <button class="btn btn-primary"><i class="bi bi-arrow-right"></i></button>
+            </div>
+        </div>
+        <!-- tabla de usuarios -->
+        <div>
+            <table class="table table-bordered table-striped text-center">
+                <thead>
+                    <tr>
+                        <th class="col-sm">Identificación</th>
+                        <th class="col-sm">Nombres</th>
+                        <th class="col-sm">Apellidos</th>
+                        <th class="col-sm">Area</th>
+                        <th class="col-sm">Departamento</th>
+                        <th class="col-sm">Correo</th>
+                        <th class="col-sm">Estado</th>
+                        <th class="col-sm">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container
+                        *ngFor="let item of listUsers | paginate: { itemsPerPage: 10, currentPage: currentPage } let i=index">
+                        <tr>
+                            <td class="align-middle">{{ item.empleadoIdentificacion }}</td>
+                            <td class="align-middle">{{ item.empleadoNombres }}</td>
+                            <td class="align-middle">{{ item.empleadoApellidos }}</td>
+                            <td class="align-middle">{{ item.area }}</td>
+                            <td class="align-middle">{{ item.departamento }}</td>
+                            <td class="align-middle">{{ item.empleadoCorreo }}</td>
+                            <td class="align-middle">{{ item.estado }}</td>
+                            <td class="align-middle">
+                                <button class="btn btn-primary">Editar</button>
+                                <button class="btn btn-danger">Eliminar</button>
+                        </tr>
+
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="formUser" *ngIf="changeview==='editar'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar usuario</h3>
+        <form class="form-rol">
+            <div class="form cmp-form">
+                <label class="form-label">Nombre completo:</label>
+                <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control" />
+
+            </div>
+            <div class="form cmp-form">
+                <label class="form-label">Nombre de usuario:</label>
+                <input [(ngModel)]="user" name="user" type="text" id="form12" class="form-control" />
+
+            </div>
+
+            <div class="form pass-form row">
+                <div class="col-md-6">
+                    <label class="form-label" for="registerPassword">Contraseña</label>
+                    <input type="password" [(ngModel)]="pass" name="pass" class="form-control" required />
+                </div>
+            </div>
+            <div class="form pass-form col-md-4">
+                <label class="form-label">Estado:</label>
+                <select class="form-select" name="estado" [(ngModel)]="estado">
+                    <option value="A">Activo</option>
+                    <option value="I">Inactivo</option>
+                </select>
+            </div>
+        </form>
+        <div class="text-end mt-5">
+            <button [disabled]="!nombre || !user || !estado" type="submit" class="btn btn-primary m-2"
+                (click)="agregarUsuario()">Guardar  edicion</button>
+            <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
+        </div>
     </div>
-    
+
 </div>

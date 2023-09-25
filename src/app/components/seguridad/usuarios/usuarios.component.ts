@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { UsuariosService } from 'src/app/services/comunicationAPI/seguridad/usuarios.service';
 
 @Component({
   selector: 'app-usuarios',
@@ -15,11 +17,27 @@ export class UsuariosComponent {
 
   confirmPass: string = '';
   changeview: string = 'consulta'; 
+  currentPage: number = 1;
+  
 
-  listUsers: any [] = [];
+  userList$!: Observable<any[]>;
+  listUsers: any[] = [];
 
+  constructor(private usuarioService: UsuariosService) { }
 
-  //añade un nuevo usuario a la listUsers
+  ngOnInit(): void {
+    //llama los datos de los usuarios desde la api
+    this.userList$ = this.usuarioService.getUsuariosList();
+
+    //guarda los usuarios en una lista local para un manejo mas sencillo
+    this.userList$.subscribe(
+      (data) => {
+        this.listUsers = data;
+      }
+    );
+
+  }
+
   agregarUsuario(){
     const usuario: any = {
       user: this.user,
@@ -30,7 +48,15 @@ export class UsuariosComponent {
       fechaFin: this.fechaFin
     }
 
-    this.listUsers.push(usuario);
+
+    this.usuarioService.addNewUsuario(usuario).subscribe(
+      response => {
+        console.log(response);
+      },
+      error => {
+        console.log(error);
+      }
+    );
   
     //resetea las variables para que no muestren contenido en la vista
     this.user = '';
@@ -44,14 +70,18 @@ export class UsuariosComponent {
     this.changeview= 'consulta';
   }
 
-  //controla la vista de las diferentes partes
-  changeView(view: string): void {
+  clear(): void {
     this.user = '';
     this.pass = '';
     this.nombre = '';
     this.estado = '';
     this.fechaInicio = new Date;
     this.fechaFin = new Date;
+  }
+
+  //controla la vista de las diferentes partes
+  changeView(view: string): void {
+    this.clear();
     
     this.changeview = view;
   }
