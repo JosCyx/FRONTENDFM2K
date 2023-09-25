@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { ModalModule } from 'ngx-bootstrap/modal';
+//Dependencias  Angular PDF View
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -31,6 +32,8 @@ import { BreadcrumbComponent } from './components/templates/breadcrumb/breadcrum
 import { AuthService } from './services/authentication/auth.service';
 import { CotProveedoresComponent } from './components/procesos/solicoti/cot-proveedores/cot-proveedores.component';
 import { CotDocumentacionComponent } from './components/procesos/solicoti/cot-documentacion/cot-documentacion.component';
+import { OCDocumentacionComponent } from './components/procesos/solioc/oc-documentacion/oc-documentacion.component';
+import { SPDocumentacionComponent } from './components/procesos/solipago/sp-documentacion/sp-documentacion.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +58,9 @@ import { CotDocumentacionComponent } from './components/procesos/solicoti/cot-do
     AllrequestComponent,
     BreadcrumbComponent,
     CotProveedoresComponent,
-    CotDocumentacionComponent
+    CotDocumentacionComponent,
+    OCDocumentacionComponent,
+    SPDocumentacionComponent
   ],
   imports: [
     BrowserModule,
@@ -64,8 +69,8 @@ import { CotDocumentacionComponent } from './components/procesos/solicoti/cot-do
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    PdfViewerModule,
     NgxPaginationModule,
-    ModalModule.forRoot()
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

@@ -8,7 +8,7 @@
           <button class="btn btn-primary m-2" (click)="changeView('crear')">
             Crear
           </button>
-          <button class="btn btn-primary m-2"  >Boton</button>
+          <button class="btn btn-primary m-2">Boton</button>
         </div>
       </div>
     </nav>
@@ -72,21 +72,34 @@
               class="form-select"
               style="background-color: #d6d6d6"
               [(ngModel)]="tipobusqProv"
+              (ngModelChange)="limpiarCampos()"
             >
-              <option value="nombre" selected>Nombre</option>
+              <option value="nombre" selected>Proveedor</option>
               <option value="ruc">Ruc</option>
             </select>
 
-            <input  [(ngModel)]="buscarProveedor"  type="text" class="form-control" list="proveedor"  />
-            <datalist id="proveedor">
-              <ng-container *ngFor="let emp of empleados">
-                <option
-                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-                ></option>
+            <input
+            *ngIf="tipobusqProv == 'nombre'"
+              [(ngModel)]="buscarProveedor"
+              type="text"
+              class="form-control"
+              list="proveedor"
+              (keyup)="searchProveedor(buscarProveedor)"
+            />
+            <input
+            *ngIf="tipobusqProv == 'ruc'"
+              [(ngModel)]="buscarProveedor"
+              type="text"
+              class="form-control"
+              list="proveedor"
+            />
+            <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
+              <ng-container *ngFor="let prov of proveedores">
+                <option [value]="prov.prov_nombre"></option>
               </ng-container>
             </datalist>
-            <button class="btn btn-success" (click)="getProveedorByName()" >
-              <i class="bi bi-check-lg" ></i>
+            <button   *ngIf="tipobusqProv=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(buscarProveedor)" >
+              <i class="bi bi-check-lg"></i>
             </button>
           </div>
           <div class="input-group col">
@@ -95,9 +108,16 @@
               <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
             </label>
             <input
+              type="text"
+              class="form-control"
+              *ngIf="tipobusqProv == 'nombre'"
+              [(ngModel)]="cab_ruc_prov"
+            />
+            <input
               type="text "
               class="form-control"
-              [(ngModel)]="cab_ruc_prov"
+              *ngIf="tipobusqProv == 'ruc'"
+              [(ngModel)]="cab_proveedor"
             />
           </div>
         </div>
@@ -321,6 +341,18 @@
   <!-- *Esto es para editar Solicitud de Orden de compra -->
   <div class="formRol" *ngIf="changeview === 'editar'">
     <h3 class="font-weight-bold" style="padding-top: 20pt">Editar solicitud</h3>
+    <!--Inicio tabs   -->
+    <div class="tabs-edit">
+      <ul class="nav nav-tabs">
+          <li class="nav-item">
+              <a class="nav-link" [ngClass]="{'active': actionEdit === 'edicion'}" (click)="selectEditAction('edicion')">Edición</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}" (click)="selectEditAction('documentacion')">Documentación</a>
+          </li>
+      </ul>
+  </div>
+    <!-- Fin -->
     <div class="solicitudEditar">
       <div class="cabecera mb-3">
         <div class="row mb-1">
@@ -377,24 +409,57 @@
         <!-- Nuevos Campos  -->
         <div class="row mb-1">
           <div class="input-group col">
-            <label for="" class="input-group-text">Proveedor</label>
             <select
               name=""
-              id=""
               class="form-select"
-              [(ngModel)]="cabecera.cabSolOCProveedor"
+              style="background-color: #d6d6d6"
+              [(ngModel)]="tipobusqProv"
+              (ngModelChange)="limpiarCampos()"
             >
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
+              <option value="nombre" selected>Proveedor</option>
+              <option value="ruc">Ruc</option>
             </select>
+            <input
+              [(ngModel)]="cabecera.cabSolOCProveedor"
+              *ngIf="tipobusqProv == 'nombre'"
+              type="text"
+              class="form-control"
+              list="proveedor"
+              (keyup)="searchProveedor(cabecera.cabSolOCProveedor)"
+            />
+            <input
+              [(ngModel)]="cabecera.cabSolOCRUCProveedor"
+              *ngIf="tipobusqProv == 'ruc'"
+              type="text"
+              class="form-control"
+              list="proveedor"
+            />
+            <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
+              <ng-container *ngFor="let prov of proveedores">
+                <option [value]="prov.prov_nombre"></option>
+              </ng-container>
+            </datalist>
+            <button   *ngIf="tipobusqProv=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(cabecera.cabSolOCRUCProveedor)" >
+              <i class="bi bi-check-lg"></i>
+            </button>
           </div>
+
           <div class="input-group col">
-            <label class="input-group-text">RUC:</label>
+            <label class="input-group-text">
+              <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
+              <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
+            </label>
             <input
               type="text "
               class="form-control"
+              *ngIf="tipobusqProv == 'nombre'"
               [(ngModel)]="cabecera.cabSolOCRUCProveedor"
+            />
+            <input
+              type="text "
+              class="form-control"
+              *ngIf="tipobusqProv == 'ruc'"
+              [(ngModel)]="cabecera.cabSolOCProveedor"
             />
           </div>
         </div>
@@ -432,8 +497,11 @@
           </div>
         </div>
       </div>
+      <div *ngIf="actionEdit =='documentacion'" >
+        <app-oc-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"></app-oc-documentacion>
+      </div>
       <!-- *EDITAR dentro del tablas -->
-      <div class="detalle">
+      <div class="detalle"  *ngIf="actionEdit =='edicion'" >
         <table class="table table-striped text-center">
           <thead>
             <tr>
@@ -616,8 +684,17 @@
             class="form-control"
             id="busqueda"
             list="inspectores"
-            [(ngModel)]="cabecera.cabSolOCInspector"
+            [(ngModel)]="inspector"
+            (keyup)="searchInspector()"
+            (input)="onInputChanged()"
           />
+          <datalist id="inspectores">
+            <ng-container *ngFor="let empOP of inspectores">
+              <option
+                [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"
+              ></option>
+            </ng-container>
+          </datalist>
           <label class="input-group-text">Teléfono:</label>
           <input
             class="form-control"

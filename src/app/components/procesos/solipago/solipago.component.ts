@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
@@ -12,6 +12,7 @@ import { CabPagoService } from 'src/app/services/comunicationAPI/solicitudes/cab
 import { DetPagoService } from 'src/app/services/comunicationAPI/solicitudes/det-pago.service';
 import { TrackingService } from 'src/app/services/comunicationAPI/seguridad/tracking.service';
 import { DetCotOCService } from 'src/app/services/comunicationAPI/solicitudes/det-cot-oc.service';
+import { ProveedorService } from 'src/app/services/comunicationAPI/seguridad/proveedor.service';
 
 interface DetalleSolPagos {
   itemDesc: string;
@@ -65,7 +66,7 @@ export class SolipagoComponent implements OnInit {
   cab_ordencompra!: string;
   cab_nofactura!: string;
   cab_fechafactura!: Date;
-  cab_proveedor!: number;
+  cab_proveedor!: string;
   cab_rucproveedor!: string;
   cab_observa!: string;
   cab_aplicarmult!: string;
@@ -88,17 +89,26 @@ export class SolipagoComponent implements OnInit {
   //
   Total: number = 0;
   //
+  //TIPO DE BUSQUEDAS
+  tipobusqueda: string = 'nombre';
+  buscarProveedor: string = '';
+  //
   empleadoEdi: any[] = [];
+  proveedores: any[] = [];
+  //variables compartidas con los demas componentes
+  @Input() sharedTipoSol!: number;
+  @Input() sharedNoSol!: number;
 
   constructor(
-    private empService: EmpleadosService, 
-    private areaService: AreasService, 
+    private empService: EmpleadosService,
+    private areaService: AreasService,
     private nivRuteService: NivelRuteoService,
     private cabPagoService: CabPagoService,
     private detPagoService: DetPagoService,
     private solTrckService: TrackingService,
     private detSolService: DetCotOCService,
     private router: Router,
+    private provService: ProveedorService,
     private serviceGlobal: GlobalService
   ) {}
 
@@ -208,8 +218,8 @@ export class SolipagoComponent implements OnInit {
 
     return `${year}-${month}-${day}`;
   }
-  //Limpiar en modulo de crear pago 
-  cancelar():void{
+  //Limpiar en modulo de crear pago
+  cancelar(): void {
     this.clear();
     this.ngOnInit();
   }
@@ -225,7 +235,7 @@ export class SolipagoComponent implements OnInit {
     this.showArea = '';
     this.cab_nofactura = '';
     this.cab_fechafactura = new Date();
-    this.cab_proveedor = 0;
+    this.cab_proveedor = '';
     this.cab_rucproveedor = '';
     this.cab_observa = '';
     this.cab_aplicarmult = '';
@@ -331,7 +341,7 @@ export class SolipagoComponent implements OnInit {
       cabPagoFechaEnvio: this.cab_fecha,
       cabPagoNumFactura: this.cab_nofactura,
       cabPagoFechaFactura: this.cab_fechafactura,
-      cabPagoProveedor: 23,
+      cabPagoProveedor: this.cab_proveedor,
       cabPagoRucProveedor: this.cab_rucproveedor,
       cabpagototal: this.Total,
       cabPagoObservaciones: this.cab_observa,
@@ -365,14 +375,20 @@ export class SolipagoComponent implements OnInit {
   }
   //Guardar el ID DEL QUE RECIBE
   saveReceptor() {
-    for (let emp of this.empleados) {
+    for (let emp of this.empleados) { 
       if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
-        this.cab_recibe = emp.empleadoIdNomina;
+        this.cab_recibe = emp.empleadoIdNomina 
         //console.log("Empleado ID:",this.trIdNomEmp);
       }
     }
+    for (let emp of this.empleadoEdi) { 
+      if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
+        this.cabecera.cabPagoReceptor = emp.empleadoIdNomina;
+      }
+    }
 
-    console.log(`cAMBIOS EN ESTO ${this.cab_recibe}`);
+    console.log(`cAMBIOS EN ESTO ${this.cabecera.cabPagoReceptor}`);
+    console.log("cAMBIOS EddfdN ESTO ",this.cab_recibe);
   }
   async Obtener() {
     const partes = this.valorinput.match(/(\d+)-(\d+)/);
@@ -454,16 +470,18 @@ export class SolipagoComponent implements OnInit {
   //* Obtener los datos de cabecera de solicitud y detalle
   async getSoliPagos() {
     try {
-      const data = await this.cabPagoService.getSolPagobyId(this.SolID).toPromise();
+      const data = await this.cabPagoService
+        .getSolPagobyId(this.SolID)
+        .toPromise();
       this.solicitudEdit = data;
     } catch (error) {
       console.error('Error en la solicitud', error);
     }
   }
   async saveData() {
-    console.log('CABECERA', this.solicitudEdit.cabecera);
-    console.log('DETALLES', this.solicitudEdit.detalles);
     this.cabecera = this.solicitudEdit.cabecera;
+    this.sharedTipoSol=this.cabecera.cabPagoTipoSolicitud;
+    this.sharedNoSol=this.cabecera.cabPagoNoSolicitud;
     for (let det of this.solicitudEdit.detalles) {
       this.detallePago.push(det as DetallePago);
     }
@@ -478,6 +496,11 @@ export class SolipagoComponent implements OnInit {
       parseISO(this.cabecera.cabPagoFechaFactura),
       'yyyy-MM-dd'
     );
+    for (let empl of this.empleadoEdi) {
+      if (empl.empleadoIdNomina == this.cabecera.cabPagoReceptor) {
+        this.receptor = empl.empleadoNombres + ' ' + empl.empleadoApellidos;
+      }
+    }
   }
   //
   get estadoTexto(): string {
@@ -501,12 +524,11 @@ export class SolipagoComponent implements OnInit {
 
       this.showmsj = true;
       this.msjExito = `Solicitud N° ${this.cabecera.cabPagoNumerico},editada exitosamente`;
-      setTimeout(() =>{
-        this.msjExito ='';
-        this.showmsj=false;
+      setTimeout(() => {
+        this.msjExito = '';
+        this.showmsj = false;
         this.router.navigate(['allrequest']);
-
-      },2500)
+      }, 2500);
     } catch (error) {
       console.error('Error: ' + error);
       this.showmsjerror = true;
@@ -541,14 +563,16 @@ export class SolipagoComponent implements OnInit {
       cabPagoEstadoTrack: this.cabecera.cabPagoEstadoTrack,
     };
     console.log('esta guardo editada de cabecera solicitud ', dataCAB);
-    this.cabPagoService.updatecabPago(this.cabecera.cabPagoID, dataCAB).subscribe(
-      (response) => {
-        console.log('Solicitud de Pago Editado');
-      },
-      (error) => {
-        console.log('Error', error);
-      }
-    );
+    this.cabPagoService
+      .updatecabPago(this.cabecera.cabPagoID, dataCAB)
+      .subscribe(
+        (response) => {
+          console.log('Solicitud de Pago Editado');
+        },
+        (error) => {
+          console.log('Error', error);
+        }
+      );
   }
   async saveEditdetPago() {
     for (let Depago of this.detallePago) {
@@ -573,5 +597,85 @@ export class SolipagoComponent implements OnInit {
         }
       );
     }
+  }
+  //Limpiar los campos de Proveedor y Ruc
+  limpiarCampos(): void {
+    this.cab_rucproveedor = '';
+    this.buscarProveedor = '';
+    this.cab_proveedor = '';
+    this.cabecera.cabPagoProveedor = '';
+    this.cabecera.cabPagoRucProveedor = '';
+  }
+  //Buscar  Proveedor
+  searchProveedor(datos: string): void {
+    try {
+      if (datos.length > 2) {
+        console.log('Buscar Proveedor: ', datos);
+        this.provService.getProveedorByNombre(datos).subscribe({
+          next: (data) => {
+            this.proveedores = data;
+            console.log('Proveedor ', this.proveedores);
+            if (this.proveedores.length > 0) {
+              if (this.changeview == 'crear') {
+                this.cab_proveedor = this.proveedores[0].prov_nombre;
+                this.cab_rucproveedor = this.proveedores[0].prov_ruc;
+              } else if (this.changeview == 'editar') {
+                this.cabecera.cabPagoProveedor =
+                  this.proveedores[0].prov_nombre;
+                this.cabecera.cabPagoRucProveedor =
+                  this.proveedores[0].prov_ruc;
+              }
+            }
+          },
+          error: (error) => {
+            console.error('error en buscar proveedor: ', error);
+          },
+          complete: () => console.info('completado'),
+        });
+      }
+    } catch (error) {
+      console.error('error en buscar proveedor: ', error);
+    }
+  }
+  //Buscar proveedor por RUC
+  searchProveedorRuc(datos: string): void {
+    try {
+      console.log('Buscar Proveedor por RUC: ', datos);
+      this.provService.getProveedorByRUC(datos).subscribe({
+        next: (data) => {
+          console.log('mis datos ', data);
+          if (data) {
+            if (this.changeview == 'crear') {
+              this.cab_proveedor = data[0].prov_nombre;
+              this.cab_rucproveedor = data[0].prov_ruc;
+              console.log('Proveedor ', this.cab_proveedor);
+              console.log('RUC ', this.cab_rucproveedor);
+            } else if (this.changeview == 'editar') {
+              this.cabecera.cabPagoProveedor = data[0].prov_nombre;
+              this.cabecera.cabPagoRucProveedor = data[0].prov_ruc;
+              console.log(
+                'Proveedor  de cabecera',
+                this.cabecera.cabPagoProveedor
+              );
+              console.log(
+                'Proveedor  de RUC CABECERA',
+                this.cabecera.cabPagoRucProveedor
+              );
+            }
+          }
+        },
+        error: (error) => {
+          console.error('Error al Obtener el RUC del Proveedor:', error);
+        },
+        complete: () => console.info('completado'),
+      });
+    } catch (error) {
+      console.error('error en buscar proveedor por RUC: ', error);
+    }
+  }
+  //*Actiones  
+  actionEdit:string='edicion';
+  selectEditAction(action:string){
+    this.actionEdit=action;
   }
 }

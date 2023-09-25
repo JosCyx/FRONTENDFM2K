@@ -6,34 +6,30 @@ interface Path {
   docNombre: string;
 }
 @Component({
-  selector: 'app-cot-documentacion',
-  templateUrl: './cot-documentacion.component.html',
-  styleUrls: ['./cot-documentacion.component.css'],
+  selector: 'app-oc-documentacion',
+  templateUrl: './oc-documentacion.component.html',
+  styleUrls: ['./oc-documentacion.component.css'],
 })
-export class CotDocumentacionComponent implements OnInit {
-  //Variable de archivo
-  // filesAll!:any;
+export class OCDocumentacionComponent implements OnInit {
+  //* Variables de archivo
   filesAll!: File;
-  urlfile: string = '';
-
-  //variables compartidas
+  //* Variables compartidas
   @Input() tipoSol!: number;
   @Input() noSol!: number;
   //
   prefijo!: string;
-  //Variable para Obtener el path
+
   paths: Path[] = [];
-  //
+
   showExito: boolean = false;
   showError: boolean = false;
   msjExito: string = '';
   msjError: string = '';
-
   constructor(private uploadfile: UploadFileService) {}
-
   ngOnInit(): void {
     this.GetfileView();
   }
+  //Obtener archivos
   getFiles(event: any): void {
     try {
       this.filesAll = event.target.files[0];
@@ -49,10 +45,10 @@ export class CotDocumentacionComponent implements OnInit {
       console.error('Error al momento de subir ', error);
     }
   }
-
+  //Enviar archivos al servidor y guardar a  la base
   sendfile(): void {
     const body = new FormData();
-    this.prefijo = 'COT' + this.noSol + '-';
+    this.prefijo = 'OC' + this.noSol + '-';
     body.append('archivos', this.filesAll);
     this.uploadfile
       .uploadFile(body, this.prefijo, this.tipoSol, this.noSol)
@@ -92,7 +88,7 @@ export class CotDocumentacionComponent implements OnInit {
         },
       });
   }
-  //Capturar la url del servidor y lo convierte
+  //Capturar la url del servidor y lo convierte 
   getUrlFile(ruta: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.uploadfile.viewFile(ruta).subscribe({
@@ -104,14 +100,12 @@ export class CotDocumentacionComponent implements OnInit {
         },
         error:(error) => {
           reject(error); // Rechaza la Promesa si ocurre un error
-        },
-        complete:()=>{
-          console.log("Finalizacion del SUBSCRIBE");
         }
     });
     });
   }
-
+  //   \\\192.168.1.75\Solicitudes\
+  // Me envia esta url para visualizar Solicitud_Orden_Compra\Nombre del archivo 
   getNombreArchivo(rutaCompleta: string) {
     const partes = rutaCompleta.split('\\'); // Dividir la cadena en función de la barra invertida
     if (partes.length > 1) {
@@ -119,7 +113,7 @@ export class CotDocumentacionComponent implements OnInit {
     }
     return rutaCompleta; // Si no hay barras invertidas, devuelve la ruta original
   }
-  //
+  // Esto me visualiza en el angular de OC  
   GetfileView() {
     this.paths = [];
     try {
@@ -152,7 +146,7 @@ export class CotDocumentacionComponent implements OnInit {
     } catch (error) {
       console.log('Error en el proceso de GetfileView', error);
     } finally {
-      console.log('FIN DEL  PROGRAMA');
+      console.log('FIN DEL  CATCH');
     }
   }
 }

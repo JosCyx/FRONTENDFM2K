@@ -17,7 +17,7 @@ export class CabeceraOrdenCompra {
   public cabSolOCFechaMaxentrega: string;
   public cabSolOCInspector: number | null;
   public cabSolOCTelefInspector: string;
-  public cabSolOCProveedor:number;
+  public cabSolOCProveedor:string
   public cabSolOCRUCProveedor:string;
 
   constructor(data: any) {
