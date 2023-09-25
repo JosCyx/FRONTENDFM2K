@@ -32,6 +32,11 @@ export class UsuariosService {
     return this.http.get<any>(this.APIUrl + '/Usuarios', { headers: headers });
   }
 
+  searchUsuarios(tipoBusq: number, termBusq: string): Observable<any[]> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + `/Usuarios/BuscarUsuario?tipoBusqueda=${tipoBusq}&terminoBusqueda=${termBusq}`, { headers: headers });
+  }
+
   addNewUsuario(data: any) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(this.APIUrl + '/Usuarios', data, { headers: headers });

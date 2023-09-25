@@ -18,43 +18,58 @@
     <div class="formUser" *ngIf="changeview === 'crear'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de usuario</h3>
         <form class="form-rol">
-            <div class="form cmp-form">
-                <label class="form-label">Nombre completo:</label>
-                <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control" />
+            <div class="form row mb-2">
+                <div class="col">
+                    <label class="form-label">Nombre:</label>
+                    <input [(ngModel)]="nombreBusqueda" type="text"  class="form-control" list="empleados" name="nombre"
+                    (keyup)="searchEmpleados()" (input)="onInputChanged()" />
+                    <datalist id="empleados">
+                        <ng-container *ngFor="let emp of empleados">
+                            <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+                        </ng-container>
+                    </datalist>
+                </div>
+                <div class="col">
+                    <label class="form-label">Usuario:</label>
+                    <input [(ngModel)]="newUser" type="text" class="form-control" name="usuario"/>
+
+                </div>
 
             </div>
-            <div class="form cmp-form">
-                <label class="form-label">Nombre de usuario:</label>
-                <input [(ngModel)]="user" name="user" type="text" id="form12" class="form-control" />
-
+            <div class="form row mb-2">
+                <div class="col">
+                    <label class="form-label">Id de Nómina:</label>
+                    <input [(ngModel)]="newNomina" type="text" class="form-control" name="nomina"/>
+                </div>
+                <div class="form col">
+                    <label class="form-label">Estado:</label>
+                    <select class="form-select" name="estado" [(ngModel)]="newEstado">
+                        <option value="A">Activo</option>
+                        <option value="I">Inactivo</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="form pass-form row">
+            <div class="form row mb-2">
                 <div class="col-md-6">
                     <label class="form-label" for="registerPassword">Contraseña</label>
-                    <input type="password" [(ngModel)]="pass" name="pass" class="form-control" required />
+                    <input type="password" [(ngModel)]="newPass" class="form-control" required name="contraseña"/>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label" for="registerPassword">Confirmar contraseña</label>
-                    <input type="password" [(ngModel)]="confirmPass" name="confirmPass" class="form-control" required />
+                    <input type="password" [(ngModel)]="confirmPass"  class="form-control" required />
                 </div>
                 <!--
                 <div *ngIf="showMsjPassConfirm">
                     <p class="text-danger" style="font-size: 8pt;margin-top: 0;">{{ mensajeText }}</p>
                 </div>-->
             </div>
-            <div class="form pass-form col-md-4">
-                <label class="form-label">Estado:</label>
-                <select class="form-select" name="estado" [(ngModel)]="estado">
-                    <option value="A">Activo</option>
-                    <option value="I">Inactivo</option>
-                </select>
-            </div>
+            
         </form>
         <div class="text-end mt-5">
-            <button [disabled]="!nombre || !user || !estado" type="submit" class="btn btn-primary m-2"
+            <button [disabled]="!newNombre || !newUser || !newEstado" type="submit" class="btn btn-primary m-2"
                 (click)="agregarUsuario()">Agregar usuario</button>
-            <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
+            <button class="btn btn-danger m-2" (click)="changeView('consulta')">Cancelar</button>
         </div>
 
     </div>
@@ -66,18 +81,18 @@
         <!-- busqueda de usuarios -->
         <div class="busqueda d-flex justify-content-between">
             <div class="input-group mb-3">
-                <select class="form-select" name="buscarOpcion">
-                    <option selected value="id">Identificación</option>
-                    <option value="name">Nombres</option>
-                    <option value="lastname">Apellidos</option>
+                <select class="form-select" name="buscarOpcion" [(ngModel)]="busqTipo">
+                    <option selected value="1">Usuario</option>
+                    <option value="2">Nombres</option>
                 </select>
-                <input type="text" class="form-control" placeholder="Término de busqueda" name="terminoBusqueda">
-                <button class="btn btn-outline-success" type="button">Buscar</button>
-                <button class="btn btn-outline-danger">Cancelar</button>
+                <input type="text" class="form-control" placeholder="Término de busqueda" name="terminoBusqueda"
+                    [(ngModel)]="busqTerm">
+                <button class="btn btn-outline-success" type="button" (click)="triggerSearch()">Buscar</button>
+                <button class="btn btn-outline-danger" (click)="cancelSearch()">Cancelar</button>
             </div>
             <div class="align-items-center input-group mb-3 justify-content-end">
-                <button class="btn btn-primary"><i class="bi bi-arrow-left"></i></button>
-                <button class="btn btn-primary"><i class="bi bi-arrow-right"></i></button>
+                <button class="btn btn-primary" (click)="prevPage()"><i class="bi bi-arrow-left"></i></button>
+                <button class="btn btn-primary" (click)="nextPage()"><i class="bi bi-arrow-right"></i></button>
             </div>
         </div>
         <!-- tabla de usuarios -->
@@ -85,30 +100,28 @@
             <table class="table table-bordered table-striped text-center">
                 <thead>
                     <tr>
-                        <th class="col-sm">Identificación</th>
-                        <th class="col-sm">Nombres</th>
-                        <th class="col-sm">Apellidos</th>
-                        <th class="col-sm">Area</th>
-                        <th class="col-sm">Departamento</th>
-                        <th class="col-sm">Correo</th>
-                        <th class="col-sm">Estado</th>
-                        <th class="col-sm">Acciones</th>
+                        <th class="">Id Nomina</th>
+                        <th class=" cel-cab">Usuario</th>
+                        <th class=" cel-cab">Nombres</th>
+                        <th class=" cel-cab">Fecha Emisión</th>
+                        <th class="cel-cab">Fecha Vencimiento</th>
+                        <th class="">Estado</th>
+                        <th class="">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <ng-container
                         *ngFor="let item of listUsers | paginate: { itemsPerPage: 10, currentPage: currentPage } let i=index">
                         <tr>
-                            <td class="align-middle">{{ item.empleadoIdentificacion }}</td>
-                            <td class="align-middle">{{ item.empleadoNombres }}</td>
-                            <td class="align-middle">{{ item.empleadoApellidos }}</td>
-                            <td class="align-middle">{{ item.area }}</td>
-                            <td class="align-middle">{{ item.departamento }}</td>
-                            <td class="align-middle">{{ item.empleadoCorreo }}</td>
-                            <td class="align-middle">{{ item.estado }}</td>
+                            <td class="align-middle">{{ item.usIdNomina }}</td>
+                            <td class="align-middle">{{ item.usLogin }}</td>
+                            <td class="align-middle">{{ item.usNombre }}</td>
+                            <td class="align-middle">{{ item.usFechaInicio }}</td>
+                            <td class="align-middle">{{ item.usFechaCaduca }}</td>
+                            <td class="align-middle">{{ item.usEstado }}</td>
                             <td class="align-middle">
-                                <button class="btn btn-primary">Editar</button>
-                                <button class="btn btn-danger">Eliminar</button>
+                                <a class="text-success m-1"><i class="bi bi-pencil-square h6"></i></a>
+                                <a class="text-danger m-1"><i class="bi bi-trash-fill h6"></i></a>
                         </tr>
 
                     </ng-container>
@@ -120,35 +133,48 @@
     <div class="formUser" *ngIf="changeview==='editar'">
         <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar usuario</h3>
         <form class="form-rol">
-            <div class="form cmp-form">
-                <label class="form-label">Nombre completo:</label>
-                <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control" />
+            <div class="form row mb-2">
+                <div class="col">
+                    <label class="form-label">Nombre:</label>
+                    <input [(ngModel)]="newNombre" type="text"  class="form-control" />
+                </div>
+                <div class="col">
+                    <label class="form-label">Usuario:</label>
+                    <input [(ngModel)]="newUser" type="text" class="form-control" />
+
+                </div>
 
             </div>
-            <div class="form cmp-form">
-                <label class="form-label">Nombre de usuario:</label>
-                <input [(ngModel)]="user" name="user" type="text" id="form12" class="form-control" />
-
-            </div>
-
-            <div class="form pass-form row">
-                <div class="col-md-6">
-                    <label class="form-label" for="registerPassword">Contraseña</label>
-                    <input type="password" [(ngModel)]="pass" name="pass" class="form-control" required />
+            <div class="form row mb-2">
+                <div class="col">
+                    <label class="form-label">Id de Nómina:</label>
+                    <input [(ngModel)]="newNomina" type="text" id="form12" class="form-control" />
+                </div>
+                <div class="form col">
+                    <label class="form-label">Estado:</label>
+                    <select class="form-select" name="estado" [(ngModel)]="newEstado">
+                        <option value="A">Activo</option>
+                        <option value="I">Inactivo</option>
+                    </select>
                 </div>
             </div>
-            <div class="form pass-form col-md-4">
-                <label class="form-label">Estado:</label>
-                <select class="form-select" name="estado" [(ngModel)]="estado">
-                    <option value="A">Activo</option>
-                    <option value="I">Inactivo</option>
-                </select>
+
+            <div class="form row mb-2">
+                <div class="col-md-6">
+                    <label class="form-label" for="registerPassword">Contraseña</label>
+                    <input type="password" [(ngModel)]="newPass" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="registerPassword">Confirmar contraseña</label>
+                    <input type="password" [(ngModel)]="confirmPass"class="form-control" required />
+                </div>
             </div>
+            
         </form>
         <div class="text-end mt-5">
-            <button [disabled]="!nombre || !user || !estado" type="submit" class="btn btn-primary m-2"
-                (click)="agregarUsuario()">Guardar  edicion</button>
-            <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
+            <button [disabled]="!newNombre || !newUser || !newEstado" type="submit" class="btn btn-primary m-2"
+                (click)="agregarUsuario()">Agregar usuario</button>
+            <button class="btn btn-danger m-2" (click)="changeView('consulta')">Cancelar</button>
         </div>
     </div>
 
