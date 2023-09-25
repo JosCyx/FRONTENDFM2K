@@ -166,12 +166,11 @@
     </div>
     <!-- Mensaje de exito o error de envio de correo -->
     <div>
-        <div *ngIf="showmsj" class="alert alert-success" role="alert">
+        <div *ngIf="showmsj" class="alert alert-success alert-message" role="alert">
             <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
         </div>
-        <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
-            <span><i class="bi bi-exclamation-triangle-fill">
-                    {{ msjError }}</i></span>
+        <div *ngIf="showmsjerror" class="alert alert-danger alert-message" role="alert">
+            <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
         </div>
     </div>
 </div>
