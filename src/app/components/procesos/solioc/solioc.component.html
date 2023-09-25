@@ -501,7 +501,7 @@
         <app-oc-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"></app-oc-documentacion>
       </div>
       <!-- *EDITAR dentro del tablas -->
-      <div class="detalle">
+      <div class="detalle"  *ngIf="actionEdit =='edicion'" >
         <table class="table table-striped text-center">
           <thead>
             <tr>

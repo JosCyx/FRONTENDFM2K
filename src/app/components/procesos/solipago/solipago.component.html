@@ -370,8 +370,7 @@
     <!-- Fin -->
     <div class="solicitud">
       <div class="cabecera mb-3">
-        <div class="row m-1" >
-          <div class="input-group">
+          <div class="input-group mb-1 ">
             <label class="input-group-text">Código:</label>
             <input
               type="text"
@@ -380,7 +379,7 @@
               disabled
             />
           </div>
-        </div>
+       
         <div class="row">
           <div class="input-group col mb-1">
             <label class="input-group-text">Fecha:</label>
@@ -509,9 +508,8 @@
             />
           </div>
         </div>
-        <div class="row">
-          <div class="row col">
-            <div class="input-group col">
+          <div class="row">
+            <div class="input-group col ">
               <label class="input-group-text">Estado:</label>
               <input
                 type="text"
@@ -533,12 +531,11 @@
               </ng-container>
             </div>
           </div>
-        </div>
       </div>
       <div *ngIf="actionEdit == 'documentacion' " >
         <app-sp-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" ></app-sp-documentacion>
       </div>
-      <div class="detalle">
+      <div class="detalle" *ngIf="actionEdit =='edicion'" >
         <table class="table table-striped text-center">
           <thead>
             <tr>
