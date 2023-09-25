@@ -3,7 +3,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 //Dependencias  Angular PDF View
-import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -69,7 +68,6 @@ import { SPDocumentacionComponent } from './components/procesos/solipago/sp-docu
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    PdfViewerModule,
     NgxPaginationModule,
   ],
   providers: [AuthService],
