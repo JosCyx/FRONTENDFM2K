@@ -136,7 +136,7 @@ export class OCDocumentacionComponent implements OnInit {
           }
           console.log('Lista de documentos: ', this.paths);
         },
-        error(err) {
+        error:(err)=> {
           console.error('Error al momento de obtener ', err);
         },
         complete: () => {

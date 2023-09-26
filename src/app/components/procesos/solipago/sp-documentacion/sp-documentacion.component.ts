@@ -133,7 +133,7 @@ GetfileView() {
         console.log('Lista de documentos: ', this.paths);
       })
     ).subscribe({
-      error(err) {
+      error:(err)=> {
         console.error('Error al momento de obtener ', err);
       },
       complete: () => {
