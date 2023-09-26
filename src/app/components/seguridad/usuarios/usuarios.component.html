@@ -57,12 +57,12 @@
                 </div>
                 <div class="col-md-6">
                     <label class="form-label" for="registerPassword">Confirmar contraseña</label>
-                    <input type="password" [(ngModel)]="confirmPass"  class="form-control" required />
+                    <input type="password" [(ngModel)]="confirmPass"  class="form-control" required (keyup)="confirmPassword()"/>
+                    <div *ngIf="showMsjPassConfirm">
+                        <p class="text-danger" style="font-size: 8pt;margin-top: 0;">{{ mensajeText }}</p>
+                    </div>
                 </div>
-                <!--
-                <div *ngIf="showMsjPassConfirm">
-                    <p class="text-danger" style="font-size: 8pt;margin-top: 0;">{{ mensajeText }}</p>
-                </div>-->
+                
             </div>
             
         </form>
@@ -120,8 +120,7 @@
                             <td class="align-middle">{{ item.usFechaCaduca }}</td>
                             <td class="align-middle">{{ item.usEstado }}</td>
                             <td class="align-middle">
-                                <a class="text-success m-1"><i class="bi bi-pencil-square h6"></i></a>
-                                <a class="text-danger m-1"><i class="bi bi-trash-fill h6"></i></a>
+                                <a class="text-success m-1" (click)="editUsuario(item)"><i class="bi bi-pencil-square h6"></i></a>
                         </tr>
 
                     </ng-container>
@@ -167,6 +166,10 @@
                 <div class="col-md-6">
                     <label class="form-label" for="registerPassword">Confirmar contraseña</label>
                     <input type="password" [(ngModel)]="confirmPass"class="form-control" required />
+                </div>
+                
+                <div *ngIf="showMsjPassConfirm">
+                    <p class="text-danger" style="font-size: 8pt;margin-top: 0;">{{ mensajeText }}</p>
                 </div>
             </div>
             
