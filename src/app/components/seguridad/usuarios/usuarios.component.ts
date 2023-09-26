@@ -10,6 +10,8 @@ import { UsuariosService } from 'src/app/services/comunicationAPI/seguridad/usua
 })
 export class UsuariosComponent {
   nombreBusqueda: string = '';
+  showMsjPassConfirm: boolean = false;
+  mensajeText: string = 'Las contraseñas no coinciden';
 
   newUser: string = '';
   newPass: string = '';
@@ -49,21 +51,22 @@ export class UsuariosComponent {
 
   agregarUsuario() {
     const usuario: any = {
-      user: this.newUser,
-      pass: this.newPass,
-      nombre: this.newNombre,
-      estado: this.newEstado,
-      fechaInicio: this.newFechaInicio,
-      fechaFin: this.newFechaFin
+      usLogin: this.newUser,
+      usContrasenia: this.newPass,
+      usNombre: this.newNombre,
+      usIdNomina: this.newNomina,
+      usEstado: this.newEstado,
+      usFechaInicio: this.newFechaInicio,
+      usFechaFin: this.newFechaFin
     }
 
 
     this.usuarioService.addNewUsuario(usuario).subscribe(
       response => {
-        console.log(response);
+        console.log("Usuario creado con exito",response);
       },
       error => {
-        console.log(error);
+        console.log("Error: ",error);
       }
     );
 
@@ -71,6 +74,7 @@ export class UsuariosComponent {
     this.newUser = '';
     this.newPass = '';
     this.newNombre = '';
+    this.newNomina = 0;
     this.newEstado = '';
     this.newFechaInicio = new Date;
     this.newFechaFin = new Date;
@@ -83,6 +87,7 @@ export class UsuariosComponent {
     this.newUser = '';
     this.newPass = '';
     this.newNombre = '';
+    this.newNomina = 0;
     this.newEstado = '';
     this.newFechaInicio = new Date;
     this.newFechaFin = new Date;
@@ -144,14 +149,14 @@ export class UsuariosComponent {
     this.searchUsuario(1, '');
   }
 
-  //busqueda de empleado
+  //busqueda de empleado para registrar usuario
   private inputTimer: any;
   empleados: any[] = [];
   empleadosList$!: Observable<any[]>;
 
 
   searchEmpleados(): void {
-    if (this.empleados.length > 2) {
+    if (this.nombreBusqueda.length > 2) {
       
       this.empleadoService.getEmpleadosList();
 
@@ -174,14 +179,48 @@ export class UsuariosComponent {
       // Coloca aquí la lógica que deseas ejecutar después de que el usuario haya terminado de modificar el input
       if (this.nombreBusqueda) {
         const empleadoSeleccionado = this.empleados.find(emp => (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.nombreBusqueda);
-        this.newNombre = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : 'No se ha encontrado el inspector';
+        
+        this.newNombre = empleadoSeleccionado ? empleadoSeleccionado.empleadoNombres + empleadoSeleccionado.empleadoApellidos : 'No se ha encontrado al empleado';
         this.newNomina = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : 0;
-        this.newUser = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdentificacion : 'No se ha encontrado el inspector';
+        this.newUser = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdentificacion : 'No se ha encontrado al empleado';
+
         console.log("resultado:", this.newNombre, this.newNomina, this.newUser );
       } else {
+        this.newNombre = '';
         this.newNomina = 0;
+        this.newUser = '';
       }
     }, 500); // Retraso de 1 segundo (ajusta el valor según tus necesidades)
+  }
+
+  confirmPassword(){
+    if(this.newPass != this.confirmPass){
+      this.showMsjPassConfirm = true;
+    }else{
+      this.showMsjPassConfirm = false;
+    }
+  }
+
+  editUsuario(usuario: any){
+    const editUsuario: any = {  
+      usId: usuario.usId,
+      usLogin: usuario.usLogin,
+      usContrasenia: usuario.usContrasenia,
+      usNombre: usuario.usNombre,
+      usIdNomina: usuario.usIdNomina,
+      usEstado: usuario.usEstado,
+      usFechaInicio: usuario.usFechaInicio,
+      usFechaFin: usuario.usFechaFin
+    }
+
+    this.usuarioService.editUsuario(usuario.idNomina, editUsuario).subscribe(
+      response => {
+        console.log("Usuario editado con exito",response);
+      },
+      error => {
+        console.log("Error: ",error);
+      }
+    );
   }
 }
 
