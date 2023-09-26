@@ -138,12 +138,12 @@ GetfileView() {
       },
       complete: () => {
         console.log('Proceso completado');
-        console.log('FIN DEL  CATCH');
       },
     });
   } catch (error) {
     console.log('Error en el proceso de GetfileView', error);
-    console.log('FIN DEL  CATCH');
+  }finally {
+    console.log("Finalizando el bloque try-catch-finally");
   }
 }
 }
