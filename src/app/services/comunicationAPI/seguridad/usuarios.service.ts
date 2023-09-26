@@ -32,13 +32,23 @@ export class UsuariosService {
     return this.http.get<any>(this.APIUrl + '/Usuarios', { headers: headers });
   }
 
+  getUsuariosbyId(idNomina: number): Observable<any[]> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + `/Usuarios/BuscarUsuariobyIdNomina?idNomina=${idNomina}`, { headers: headers });
+  }
+
+  searchUsuarios(tipoBusq: number, termBusq: string): Observable<any[]> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + `/Usuarios/BuscarUsuario?tipoBusqueda=${tipoBusq}&terminoBusqueda=${termBusq}`, { headers: headers });
+  }
+
   addNewUsuario(data: any) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(this.APIUrl + '/Usuarios', data, { headers: headers });
   }
 
-  editUsuario(data: any) {
+  editUsuario(idNomina: number,data: any) {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.put(this.APIUrl + '/Usuarios', data, { headers: headers });
+    return this.http.put(this.APIUrl + `/Usuarios/${idNomina}`, data, { headers: headers });
   }
 }
