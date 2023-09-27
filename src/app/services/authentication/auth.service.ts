@@ -54,4 +54,20 @@ export class AuthService {
     }
     
   }
+
+  //AUTORIZACION DE TRANSACCIONES
+
+  // Almacena las transacciones del usuario autenticado
+  private userTransactions: string[] = []; 
+
+  // Este método se utiliza para establecer las transacciones del usuario después de la autenticación.
+  setUserTransactions(transactions: string[]) {
+    this.userTransactions = transactions;
+  }
+
+  // Este método verifica si el usuario tiene acceso a una transacción específica.
+  checkAccess(transaction: string): boolean {
+    // Verifica si la transacción está en la lista de transacciones del usuario.
+    return this.userTransactions.includes(transaction);
+  }
 }
