@@ -51,4 +51,10 @@ export class CabOrdCompraService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolOrdenCompras/${id}`, data, { headers: headers });
   }
+  //Obtener estado de orden compra  de A Y C 
+  getEstadoOrdenC(states:string){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + `/CabSolOrdenCompras/GetOCEstado?state=${states}`, { headers: headers });
+
+  }
 }

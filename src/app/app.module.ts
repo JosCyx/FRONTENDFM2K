@@ -33,6 +33,8 @@ import { CotProveedoresComponent } from './components/procesos/solicoti/cot-prov
 import { CotDocumentacionComponent } from './components/procesos/solicoti/cot-documentacion/cot-documentacion.component';
 import { OCDocumentacionComponent } from './components/procesos/solioc/oc-documentacion/oc-documentacion.component';
 import { SPDocumentacionComponent } from './components/procesos/solipago/sp-documentacion/sp-documentacion.component';
+import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes-aprobadas/solicitudes-aprobadas.component';
+import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitudes-no-aprobadas/solicitudes-no-aprobadas.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +61,9 @@ import { SPDocumentacionComponent } from './components/procesos/solipago/sp-docu
     CotProveedoresComponent,
     CotDocumentacionComponent,
     OCDocumentacionComponent,
-    SPDocumentacionComponent
+    SPDocumentacionComponent,
+    SolicitudesAprobadasComponent,
+    SolicitudesNoAprobadasComponent
   ],
   imports: [
     BrowserModule,

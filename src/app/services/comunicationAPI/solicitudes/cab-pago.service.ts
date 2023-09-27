@@ -50,4 +50,10 @@ export class CabPagoService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolPago/${id}`, data, { headers: headers });
   }
+  //Obtener estado de pago  de A Y C
+  getEstadoPago(states:string){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + `/CabSolPago/GetSOEstado?state=${states}`, { headers: headers });
+
+  }
 }

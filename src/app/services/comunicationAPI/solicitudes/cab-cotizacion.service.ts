@@ -50,5 +50,11 @@ export class CabCotizacionService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolCotizacions/${id}`,data, { headers: headers });
   }
+  //Obtener estado de Cotizacion  de A Y C
+  getEstadoCotizacion(states:string){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + `/CabSolCotizacions/GetCOTEstado?state=${states}`, { headers: headers });
+
+  }
 }
 
