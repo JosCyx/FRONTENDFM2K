@@ -36,12 +36,7 @@ export class AppAuthorizeTransactionDirective implements OnInit{
     }
   }
 
-  // Este método verifica si el usuario tiene acceso a una transacción específica.
-  /*checkAccess(transaction: string): boolean {
-    return this.cookieService.get('userTransactions').includes(transaction);
-    //return this.authService.userTransactions.includes(transaction);
-  }*/
-
+  //verifica si el numero de transacion ingresado existe en la cookie de transacciones del usuario
   checkAccess(transaction: string): boolean {
     const userTransactionsCookie = this.cookieService.get('userTransactions');
     

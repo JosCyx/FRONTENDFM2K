@@ -48,11 +48,4 @@ export class MainComponent implements OnInit {
     }
     console.log(cookies);
   }
-
-  //lista de numeros del 1 al 5
-  numeros: string[] = ['1', '2', '3', '4', '5'];
-  metodo(num: string){
-    //metodo que verifique si el numero ingresado existe en la lista
-    console.log(this.numeros.includes(num));
-  }
 }

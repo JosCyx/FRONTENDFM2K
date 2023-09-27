@@ -56,23 +56,9 @@ export class AuthService {
 
   }
 
-
-
-  //AUTORIZACION DE TRANSACCIONES
-
-  // Almacena las transacciones del usuario autenticado
-  public userTransactions: string[] = [];
-
-  // Este método se utiliza para establecer las transacciones del usuario después de la autenticación.
-  setUserTransactions(transactions: string[]) {
-    this.userTransactions = transactions;
-    console.log("Transacciones autorizadas: ", this.userTransactions);
-  }
-
-
   //metodo que consulta las transacciones asociadas a los roles del usuario autenticado
   getAuthorization(login: string): Observable<string[]> {
-    const url = `${this.APIurl}/Authorize/GetAuthorization?login=${login}`;
+    const url = `${this.APIurl}/Login/GetAuthorization?login=${login}`;
     return this.http.get<string[]>(url);
-  }
+  } 
 }
