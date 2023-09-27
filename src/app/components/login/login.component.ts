@@ -82,7 +82,8 @@ export class LoginComponent implements OnInit{
           this.cookieService.set('userLogin', response.usuario.usLogin, expirationDate);
           this.cookieService.set('userIdNomina', response.usuario.usIdNomina, expirationDate);
           this.cookieService.set('userName', response.usuario.usNombre, expirationDate);
-          //console.log("Cookie: ", this.cookieService.getAll());
+          this.cookieService.set('userRoles', response.usuario.usRoles.toString(), expirationDate);
+          console.log("Cookie: ", this.cookieService.getAll());
 
           //consulta los roles del usuario autenticado y guarda sus transacciones
           this.checkAuthorization();

@@ -37,6 +37,7 @@ export class MenuAdminComponent {
     this.cookieService.delete('userIdNomina');
     this.cookieService.delete('userName');
     this.cookieService.delete('userTransactions');
+    this.cookieService.delete('userRoles');
     this.router.navigate(['login']);
     //console.log('Token vacio', this.cookieService.get('authToken'))
 

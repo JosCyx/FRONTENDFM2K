@@ -1,5 +1,4 @@
 import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { AuthService } from '../services/authentication/auth.service';
 import { CookieService } from 'ngx-cookie-service';
 
 
@@ -10,7 +9,6 @@ export class AppAuthorizeTransactionDirective implements OnInit{
   private transaction!: string;
 
   constructor(
-    private authService: AuthService,
     private templateRef: TemplateRef<any>,
     private viewContainer: ViewContainerRef,
     private cookieService: CookieService
@@ -28,7 +26,6 @@ export class AppAuthorizeTransactionDirective implements OnInit{
     //console.log("Acceso:", hasAccess);
     //console.log(this.cookieService.get('userTransactions'));
     
-    
     if (hasAccess) {
       this.viewContainer.createEmbeddedView(this.templateRef);
     } else {
@@ -39,13 +36,10 @@ export class AppAuthorizeTransactionDirective implements OnInit{
   //verifica si el numero de transacion ingresado existe en la cookie de transacciones del usuario
   checkAccess(transaction: string): boolean {
     const userTransactionsCookie = this.cookieService.get('userTransactions');
-    
     if (userTransactionsCookie) {
       const userTransactionsArray = userTransactionsCookie.split(',').map(Number);
-
       return userTransactionsArray.includes(Number(transaction));
     }
-  
     return false;
   }
 
