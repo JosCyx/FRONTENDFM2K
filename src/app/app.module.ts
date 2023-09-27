@@ -34,6 +34,7 @@ import { CotDocumentacionComponent } from './components/procesos/solicoti/cot-do
 import { OCDocumentacionComponent } from './components/procesos/solioc/oc-documentacion/oc-documentacion.component';
 import { SPDocumentacionComponent } from './components/procesos/solipago/sp-documentacion/sp-documentacion.component';
 import { AppAuthorizeTransactionDirective } from './directives/app-authorize-transaction.directive';
+import { AppDisableSecureDirective } from './directives/app-disable-secure.directive';
 
 
 @NgModule({
@@ -62,7 +63,8 @@ import { AppAuthorizeTransactionDirective } from './directives/app-authorize-tra
     CotDocumentacionComponent,
     OCDocumentacionComponent,
     SPDocumentacionComponent,
-    AppAuthorizeTransactionDirective
+    AppAuthorizeTransactionDirective,
+    AppDisableSecureDirective
   ],
   imports: [
     BrowserModule,
