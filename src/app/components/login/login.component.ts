@@ -82,9 +82,10 @@ export class LoginComponent implements OnInit{
           this.cookieService.set('userLogin', response.usuario.usLogin, expirationDate);
           this.cookieService.set('userIdNomina', response.usuario.usIdNomina, expirationDate);
           this.cookieService.set('userName', response.usuario.usNombre, expirationDate);
-        
+          console.log("Cookie: ", this.cookieService.getAll());
+
           //consulta los roles del usuario autenticado y guarda sus transacciones
-          //this.checkAuthorization();
+          this.checkAuthorization();
 
           //limpieza del mensaje
           setTimeout(() => {
@@ -126,14 +127,24 @@ export class LoginComponent implements OnInit{
 
   }
 
-  //consulta a la base los roles asociados al usuario autenticado y realiza la autorizacion
+  //consulta a la base los roles asociados al usuario autenticado
   checkAuthorization() {
 
     //consultar roles del usuario autenticado
+    this.authService.getAuthorization(this.cookieService.get('userLogin')).subscribe(
+      response => {
+        
+        //this.authService.setUserTransactions(response);
 
-    //lista de transacciones seguin los roles del usuario autenticado
-    var listaTransacciones: string[] = [];
+        this.cookieService.set('userTransactions', response.toString());
+        console.log("Transacciones obtenidas: ", this.cookieService.get('userTransactions'));
+      },
+      error => {
+        console.log(error);
+      }
+    );
 
-    this.authService.setUserTransactions(listaTransacciones);
+
+    
   }
 }

@@ -33,6 +33,7 @@ import { CotProveedoresComponent } from './components/procesos/solicoti/cot-prov
 import { CotDocumentacionComponent } from './components/procesos/solicoti/cot-documentacion/cot-documentacion.component';
 import { OCDocumentacionComponent } from './components/procesos/solioc/oc-documentacion/oc-documentacion.component';
 import { SPDocumentacionComponent } from './components/procesos/solipago/sp-documentacion/sp-documentacion.component';
+import { AppAuthorizeTransactionDirective } from './directives/app-authorize-transaction.directive';
 
 
 @NgModule({
@@ -61,6 +62,7 @@ import { SPDocumentacionComponent } from './components/procesos/solipago/sp-docu
     CotDocumentacionComponent,
     OCDocumentacionComponent,
     SPDocumentacionComponent,
+    AppAuthorizeTransactionDirective
   ],
   imports: [
     BrowserModule,

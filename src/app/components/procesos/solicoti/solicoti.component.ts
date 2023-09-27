@@ -434,7 +434,7 @@ export class SolicotiComponent implements OnInit {
 
       this.getSolName(this.trLastNoSol);
       this.showmsj = true;
-      this.msjExito = `Solicitud N° ${this.cabecera.cabSolCotNumerico} generada exitosamente.`;
+      this.msjExito = `Solicitud N° ${this.solNumerico} generada exitosamente.`;
 
 
       setTimeout(() => {
@@ -446,6 +446,7 @@ export class SolicotiComponent implements OnInit {
     catch (error) {
       this.showmsjerror = true;
       this.msjError = "No se ha podido generar la solicitud, intente nuevamente.";
+      console.log("Error al generar la solicitud: ", error);
 
       setTimeout(() => {
         this.showmsjerror = false;
