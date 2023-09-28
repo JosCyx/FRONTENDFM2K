@@ -31,6 +31,8 @@ export class CotProveedoresComponent implements OnInit {
   //valores para identificar la solicitud cargada
   @Input() tipoSol: number = 0;
   @Input() noSol: number = 0;
+  @Input() viewElement!: boolean;
+  @Input() estadoSol!: string;
 
   //variables para controlar comportamiento de la pagina
   actionProv: string = 'consultar';

@@ -19,6 +19,7 @@ import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotiza
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 
 interface SolicitudData {
@@ -94,6 +95,9 @@ export class SolicotiComponent implements OnInit {
   fechaSinFormato: Date = new Date();
   detType: boolean = true;
 
+  //guarda el estado de la solicitud para controlar su acceso
+  estadoSol!: string;
+
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
   areaList$!: Observable<any[]>;
@@ -143,7 +147,8 @@ export class SolicotiComponent implements OnInit {
     private cabCotService: CabCotizacionService,
     private detCotService: DetCotOCService,
     private itmSectService: ItemSectorService,
-    private serviceGlobal: GlobalService) { }
+    private serviceGlobal: GlobalService,
+    private cookieService: CookieService) { }
 
   ngOnInit(): void {
     this.empleadosList$ = this.empService.getEmpleadosList();
@@ -792,6 +797,10 @@ export class SolicotiComponent implements OnInit {
     this.sharedNoSol = this.cabecera.cabSolCotNoSolicitud;
     this.checkAprobPrep(this.cabecera.cabSolCotEstadoTracking);
 
+    //asigna el nivel de tracking de la solicitud a una variable para controlar la edicion
+    this.estadoSol = this.cabecera.cabSolCotEstadoTracking.toString();
+    console.log("Estado de la solicitud: ", this.estadoSol);
+
     for (let emp of this.empleadosEdit) {
       if (emp.empleadoIdNomina == this.cabecera.cabSolCotInspector) {
         this.nameInspector = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
@@ -836,6 +845,7 @@ export class SolicotiComponent implements OnInit {
     //ordena los items de la lista segun el id del detalle de menor a mayor
     this.item.sort((a, b) => a.itmIdDetalle - b.itmIdDetalle);
 
+    this.setView();
   }
 
   get estadoTexto(): string {
@@ -1200,5 +1210,19 @@ export class SolicotiComponent implements OnInit {
     } else {
       this.aprobPreps = false;
     }
+  }
+
+    ////////////////////////////////////////////CONTROL DE VISUALIZACION SEGUN ESTADO//////////////////////////////////////////
+  viewElement: boolean = false;
+
+  setView() { 
+    const userNivelesCookie = this.cookieService.get('userRolNiveles');
+    const userNivelesArray = userNivelesCookie.split(',').map(Number);
+    if(userNivelesArray.includes(this.cabecera.cabSolCotEstadoTracking)){
+      this.viewElement = true;
+    } else {
+      this.viewElement = false;
+    }
+    console.log('viewElement: ', this.viewElement);
   }
 }

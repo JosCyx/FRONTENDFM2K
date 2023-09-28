@@ -61,4 +61,9 @@ export class AuthService {
     const url = `${this.APIurl}/Login/GetAuthorization?login=${login}`;
     return this.http.get<string[]>(url);
   } 
+
+  getRolNiveles(login: string): Observable<string[]> {
+    const url = `${this.APIurl}/Login/GetRolesList?login=${login}`;
+    return this.http.get<string[]>(url);
+  }
 }

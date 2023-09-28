@@ -1,29 +1,44 @@
 import { Directive, Input, Renderer2, ElementRef, OnInit } from '@angular/core';
+import { set } from 'date-fns';
+import { CookieService } from 'ngx-cookie-service';
 
 @Directive({
-  selector: '[appAppDisableSecure]'
+  selector: '[appSecureDisable]'
 })
-export class AppDisableSecureDirective implements OnInit{
-
-  @Input('appSecureDisable') transaction!: string;
+export class AppDisableSecureDirective implements OnInit {
+  //private nivel!: string;
 
   constructor(
-    private el: ElementRef,
-    private renderer: Renderer2
+    private element: ElementRef,
+    private renderer: Renderer2,
+    private cookieService: CookieService
   ) { }
 
-  ngOnInit() {
-    const hasAccess = this.checkAccess(this.transaction);
+  @Input('appSecureDisable') nivel!: string;
 
-    if (!hasAccess) {
-      // Deshabilita las interacciones en el elemento.
-      this.renderer.setAttribute(this.el.nativeElement, 'disabled', 'true');
-      // Puedes aplicar estilos adicionales para indicar que está deshabilitado si es necesario.
-      // this.renderer.addClass(this.el.nativeElement, 'disabled-style');
-    }
+  ngOnInit() {
+    setTimeout(() => {
+      const hasAccess = this.checkAccess(this.nivel);
+      
+      if (!hasAccess) {
+        console.log('Deshabilitado: ', hasAccess);
+        //deshabilita el input al que esté asignado esta directiva
+        this.renderer.setAttribute(this.element.nativeElement, 'disabled', 'true');
+      } else {
+        console.log('Habilitado: ', hasAccess);
+        //habilita el input al que esté asignado esta directiva
+        this.renderer.removeAttribute(this.element.nativeElement, 'disabled');
+      }
+    }, 100);
   }
 
-  checkAccess(transaction: string): boolean {
+  checkAccess(nivel: string): boolean {
+    console.log('nivel', nivel);
+    const userNivelesCookie = this.cookieService.get('userRolNiveles');
+    if (userNivelesCookie) {
+      const userNivelesArray = userNivelesCookie.split(',').map(Number);
+      return userNivelesArray.includes(Number(nivel));
+    }
     return false;
   }
 

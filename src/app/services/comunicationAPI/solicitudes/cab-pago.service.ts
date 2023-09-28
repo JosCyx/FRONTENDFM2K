@@ -33,6 +33,18 @@ export class CabPagoService {
     return this.http.get<any>(this.APIUrl + '/CabSolPago', { headers: headers });
   }
 
+  getPagobyArea(area: number): Observable<any[]> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(`${this.APIUrl}/CabSolPago/GetCabecerabyarea?area=${area}`, { headers: headers });
+  }
+
+  getPagobyIdNomina(id: number): Observable<any[]> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(`${this.APIUrl}/CabSolPago/GetCabecerabyNomina?idNomina=${id}`, { headers: headers });
+  }
+
+
+
   //*METODO Cabecera SOLICITUD DE PAGO
   addSolPag(data: any) {
     const headers = this.getHeadersWithAuthToken();

@@ -14,13 +14,9 @@ export class AppAuthorizeTransactionDirective implements OnInit{
     private cookieService: CookieService
   ) { }
 
-  
-
  @Input('appAuthorize') set appAuthorizeTransaction(transaction: string) {
     this.transaction = transaction;
-  }
 
-  ngOnInit() {
     // Verifica si el usuario tiene acceso a la transacción.
     const hasAccess = this.checkAccess(this.transaction);
     //console.log("Acceso:", hasAccess);
@@ -31,6 +27,10 @@ export class AppAuthorizeTransactionDirective implements OnInit{
     } else {
       this.viewContainer.clear();
     }
+  }
+
+  ngOnInit() {
+    
   }
 
   //verifica si el numero de transacion ingresado existe en la cookie de transacciones del usuario

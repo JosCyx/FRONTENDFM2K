@@ -70,6 +70,7 @@ export class LoginComponent implements OnInit{
       //enviar como parametro el valor ingresado en el formulario del usuario y la contraseña
       this.authService.login(this.loginForm.value.username!, this.loginForm.value.password!).subscribe(
         (response: any) => {
+          console.log("RESPUESTA: ", response);
           //mensaje de bienvenida
           this.showmsj = true;
           this.msjExito = `Bienvenido(a) ${response.usuario.usNombre}.`;
@@ -81,12 +82,15 @@ export class LoginComponent implements OnInit{
 
           this.cookieService.set('userLogin', response.usuario.usLogin, expirationDate);
           this.cookieService.set('userIdNomina', response.usuario.usIdNomina, expirationDate);
+          this.cookieService.set('userArea', response.usuario.usArea, expirationDate);
           this.cookieService.set('userName', response.usuario.usNombre, expirationDate);
-          this.cookieService.set('userRoles', response.usuario.usRoles.toString(), expirationDate);
-          console.log("Cookie: ", this.cookieService.getAll());
+          
 
           //consulta los roles del usuario autenticado y guarda sus transacciones
           this.checkAuthorization();
+          this.getNivelRoles();
+
+          
 
           //limpieza del mensaje
           setTimeout(() => {
@@ -94,6 +98,7 @@ export class LoginComponent implements OnInit{
             this.loading = false;
             this.msjExito = '';
             this.router.navigate(['main']);
+            console.log("Cookies: ", this.cookieService.getAll());
           }, 2000);
 
         },
@@ -140,8 +145,17 @@ export class LoginComponent implements OnInit{
         console.log(error);
       }
     );
+  }
 
-
-    
+  //consulta los niveles de las solicitudes a los que tendra acceso el usuario autenticado
+  getNivelRoles(){
+    this.authService.getRolNiveles(this.cookieService.get('userLogin')).subscribe(
+      response => { 
+        this.cookieService.set('userRolNiveles', response.toString());
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 }

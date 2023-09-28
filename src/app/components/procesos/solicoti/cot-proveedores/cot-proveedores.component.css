@@ -45,3 +45,8 @@
     margin: 0 auto;
     width: 75%;
 }
+
+.btn-border{
+    /*bordes que no se muestren*/
+    border: 0px;
+}

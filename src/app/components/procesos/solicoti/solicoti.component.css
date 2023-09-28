@@ -63,5 +63,8 @@
     margin-bottom: 1px;
 }
 
-
+.btn-border{
+    /*bordes que no se muestren*/
+    border: 0px;
+}
 
