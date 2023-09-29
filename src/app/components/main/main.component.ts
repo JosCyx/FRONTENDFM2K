@@ -3,6 +3,7 @@ import { GlobalService } from 'src/app/services/global.service';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from 'src/app/services/authentication/auth.service';
+import { AppAuthorizeTransactionDirective } from 'src/app/directives/app-authorize-transaction.directive';
 
 @Component({
   selector: 'app-main',

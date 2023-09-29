@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CabeceraCotizacion } from 'src/app/models/procesos/solcotizacion/CabeceraCotizacion';
 import { TipoSolService } from 'src/app/services/comunicationAPI/solicitudes/tipo-sol.service';
-import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service'; 
+import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 import { GlobalService } from 'src/app/services/global.service';
@@ -11,6 +11,8 @@ import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/ni
 import { CabCotizacionService } from 'src/app/services/comunicationAPI/solicitudes/cab-cotizacion.service';
 import { CabOrdCompraService } from 'src/app/services/comunicationAPI/solicitudes/cab-ord-compra.service';
 import { CabPagoService } from 'src/app/services/comunicationAPI/solicitudes/cab-pago.service';
+import { CookieService } from 'ngx-cookie-service';
+import { max, parse } from 'date-fns';
 
 
 
@@ -42,6 +44,8 @@ export class AllrequestComponent implements OnInit {
   isSolicitud: boolean = true;
   isConsulta: boolean = false;
 
+  metodoBusq!: number;
+
   changeview: string = 'consultar';
 
   constructor(private router: Router,
@@ -53,7 +57,8 @@ export class AllrequestComponent implements OnInit {
     private nivRuteoService: NivelRuteoService,
     private cabCotService: CabCotizacionService,
     private cabOCService: CabOrdCompraService,
-    private cabPagoService: CabPagoService) { }
+    private cabPagoService: CabPagoService,
+    private cookieService: CookieService) { }
 
   ngOnInit(): void {
     this.tipoSol$ = this.tipoSolService.getTipoSolicitud();
@@ -71,41 +76,19 @@ export class AllrequestComponent implements OnInit {
     this.sectores$ = this.sectService.getSectoresList();
 
     this.trckList$ = this.nivRuteoService.getNivelruteo();
+
+    this.chooseSearchMethod();
   }
 
   consultarSol(): void {
     this.btp = this.bsqTipoSol;
     this.isConsulta = true;
     if (this.bsqTipoSol == 1) {
-      this.allSol$ = this.cabCotService.getAllCotizaciones();
-      this.allSol$.subscribe(
-        response => {
-          console.log("Exito")
-        },
-        error => {
-          console.log("Error:",error)
-        }
-      );
+      this.getAllCotizaciones();
     } else if (this.bsqTipoSol == 2) {
-      this.allSol$ = this.cabOCService.getAllOrdenCmp();
-      this.allSol$.subscribe(
-        response => {
-          console.log("Exito")
-        },
-        error => {
-          console.log("Error:",error)
-        }
-      );
+      this.getAllOrdenCompras();
     } else if (this.bsqTipoSol == 3) {
-      this.allSol$ = this.cabPagoService.getAllPago();
-      this.allSol$.subscribe(
-        response => {
-          console.log("Exito")
-        },
-        error => {
-          console.log("Error:",error)
-        }
-      );
+      this.getAllOrdenPagos();
     }
 
   }
@@ -129,7 +112,7 @@ export class AllrequestComponent implements OnInit {
 
   //guardar el valor del id en una variable y ejecuta los metodos para traer la solicitud y para guardar los datos en los objetos respectivos
   async selectSol(id: number) {
-    
+
     this.serviceGlobal.solView = 'editar';
     this.serviceGlobal.solID = id;
     this.serviceGlobal.changePage = true;
@@ -138,7 +121,7 @@ export class AllrequestComponent implements OnInit {
       this.router.navigate(['solicoti']);
     } else if (this.bsqTipoSol == 2) {
       this.router.navigate(['solioc']);
-    }else if (this.bsqTipoSol == 3) {
+    } else if (this.bsqTipoSol == 3) {
       this.router.navigate(['solipago']);
     }
 
@@ -154,11 +137,128 @@ export class AllrequestComponent implements OnInit {
     this.cabecera = new CabeceraCotizacion(0);
   }
 
-  // clear(): void {
-  //   this.solicitudEdit = { cabecera: {}, detalles: [], items: [] };
-  //   this.cabecera = new CabeceraCotizacion(0);
-  //   this.detalle = [];
-  //   this.item = [];
-  // }
+  //evalua que solicitudes se deben mostrar segun los niveles de los roles de usuario
+  chooseSearchMethod() {
+    //obtiene el nivel maximo que posee el usuario para visualizar las solicitudes
+    let listaRoles = this.cookieService.get('userRolNiveles').split(',').map(Number);
+    var maxNivel = Math.max(...listaRoles);
+
+    if (maxNivel == 10) {
+      this.metodoBusq = 1;
+    } else if (maxNivel >= 20 && maxNivel <= 40) {
+      this.metodoBusq = 2;
+    } else if (maxNivel >= 50 && maxNivel <= 70) {
+      this.metodoBusq = 3;
+    }
+  }
+
+
+  //CONSULTA TODAS LAS SOLICITUDES DEPENDIENDO DEL METODO DE BUSQUEDA DEL USUARIO
+  getAllCotizaciones(): void {
+    if (this.metodoBusq == 1) {
+      this.allSol$ = this.cabCotService.getCotizacionesByIdNomina(parseInt(this.cookieService.get('userNomina')));
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito: ", response);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    } else if (this.metodoBusq == 2) {
+      this.allSol$ = this.cabCotService.getCotizacionesbyArea(parseInt(this.cookieService.get('userArea')));
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito: ", response);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    } else if (this.metodoBusq == 3) {
+      this.allSol$ = this.cabCotService.getAllCotizaciones();
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito: ", response);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    }
+
+  }
+
+  getAllOrdenCompras(): void {
+    if (this.metodoBusq == 1) {
+      this.allSol$ = this.cabOCService.getOrdenCmpbyIdNomina(parseInt(this.cookieService.get('userNomina')));
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito: ", response);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    } else if(this.metodoBusq == 2){
+      this.allSol$ = this.cabOCService.getOrdenCmpbyArea(parseInt(this.cookieService.get('userArea')));
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito: ", response);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+
+    } else if(this.metodoBusq == 3){
+      this.allSol$ = this.cabOCService.getAllOrdenCmp();
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito: ", response);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    }
+
+  }
+
+
+  getAllOrdenPagos(): void {
+    if (this.metodoBusq == 1) {
+      this.allSol$ = this.cabPagoService.getPagobyIdNomina(parseInt(this.cookieService.get('userNomina')));
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito: ", response);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    } else if(this.metodoBusq == 2){
+      this.allSol$ = this.cabPagoService.getPagobyArea(parseInt(this.cookieService.get('userArea')));
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito: ", response);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+
+    } else if(this.metodoBusq == 3){
+      this.allSol$ = this.cabPagoService.getAllPago();
+      this.allSol$.subscribe(
+        response => {
+          console.log("Exito: ", response);
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    }
+  }
 
 }

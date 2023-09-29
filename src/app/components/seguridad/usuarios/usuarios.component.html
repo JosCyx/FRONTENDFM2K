@@ -6,206 +6,212 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
-                    <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>
+                    <button class="btn btn-primary m-2" (click)="changeView('consulta')" *appAuthorize="'6'">Consultar</button>
+                    <button class="btn btn-primary m-2" (click)="changeView('crear')" *appAuthorize="'5'">Crear</button>
                 </div>
             </div>
         </nav>
     </div>
 
 
-    <div class="formUser" *ngIf="changeview === 'crear'">
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de usuario</h3>
-        <form class="form-rol">
-            <div class="form row mb-2">
-                <div class="col">
-                    <label class="form-label">Nombre:</label>
-                    <input [(ngModel)]="nombreBusqueda" type="text"  class="form-control" list="empleados" name="nombre"
-                    (keyup)="searchEmpleados()" (input)="onInputChanged()" />
-                    <datalist id="empleados">
-                        <ng-container *ngFor="let emp of empleados">
-                            <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
-                        </ng-container>
-                    </datalist>
-                </div>
-                <div class="col">
-                    <label class="form-label">Usuario:</label>
-                    <input [(ngModel)]="newUser" type="text" class="form-control" name="usuario"/>
-
-                </div>
-
-            </div>
-            <div class="form row mb-2">
-                <div class="col">
-                    <label class="form-label">Id de Nómina:</label>
-                    <input  disabled [(ngModel)]="newNomina" type="text" class="form-control" name="nomina"/>
-                </div>
-                <div class="form col">
-                    <label class="form-label">Estado:</label>
-                    <select class="form-select" name="estado" [(ngModel)]="newEstado">
-                        <option selected  value="A">Activo</option>
-                        <option value="I">Inactivo</option>
-                    </select>
-                </div>
-                
-            </div>
-
-            <div class="form row mb-2">
-                <div class="col-md-6">
-                    <label class="form-label" for="registerPassword">Contraseña</label>
-                    <input type="password" [(ngModel)]="newPass" class="form-control" required name="contraseña"/>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label" for="registerPassword">Confirmar contraseña</label>
-                    <input type="password" [(ngModel)]="confirmPass" name="confirmPass"  class="form-control" required (input)="confirmPassword()"/>
-                    <div *ngIf="showMsjPassConfirm">
-                        <p class="text-danger" style="font-size: 8pt;margin-top: 0;">{{ mensajeText }}</p>
+    <ng-container *appAuthorize="'5'">
+        <div class="formUser" *ngIf="changeview === 'crear'">
+            <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de usuario</h3>
+            <form class="form-rol">
+                <div class="form row mb-2">
+                    <div class="col">
+                        <label class="form-label">Nombre:</label>
+                        <input [(ngModel)]="nombreBusqueda" type="text"  class="form-control" list="empleados" name="nombre"
+                        (keyup)="searchEmpleados()" (input)="onInputChanged()" />
+                        <datalist id="empleados">
+                            <ng-container *ngFor="let emp of empleados">
+                                <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+                            </ng-container>
+                        </datalist>
                     </div>
+                    <div class="col">
+                        <label class="form-label">Usuario:</label>
+                        <input [(ngModel)]="newUser" type="text" class="form-control" name="usuario"/>
+    
+                    </div>
+    
+                </div>
+                <div class="form row mb-2">
+                    <div class="col">
+                        <label class="form-label">Id de Nómina:</label>
+                        <input  disabled [(ngModel)]="newNomina" type="text" class="form-control" name="nomina"/>
+                    </div>
+                    <div class="form col">
+                        <label class="form-label">Estado:</label>
+                        <select class="form-select" name="estado" [(ngModel)]="newEstado">
+                            <option selected  value="A">Activo</option>
+                            <option value="I">Inactivo</option>
+                        </select>
+                    </div>
+                    
+                </div>
+    
+                <div class="form row mb-2">
+                    <div class="col-md-6">
+                        <label class="form-label" for="registerPassword">Contraseña</label>
+                        <input type="password" [(ngModel)]="newPass" class="form-control" required name="contraseña"/>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="registerPassword">Confirmar contraseña</label>
+                        <input type="password" [(ngModel)]="confirmPass" name="confirmPass"  class="form-control" required (input)="confirmPassword()"/>
+                        <div *ngIf="showMsjPassConfirm">
+                            <p class="text-danger" style="font-size: 8pt;margin-top: 0;">{{ mensajeText }}</p>
+                        </div>
+                    </div>
+                    
                 </div>
                 
+            </form>
+            <div class="text-end mt-5" *appAuthorize="'5'">
+                <button [disabled]="!newNombre || !newUser || !newEstado" type="submit" class="btn btn-primary m-2"
+                    (click)="agregarUsuario()">Agregar usuario</button>
+                <button class="btn btn-danger m-2" (click)="Cancelar()">Cancelar</button>
             </div>
-            
-        </form>
-        <div class="text-end mt-5">
-            <button [disabled]="!newNombre || !newUser || !newEstado" type="submit" class="btn btn-primary m-2"
-                (click)="agregarUsuario()">Agregar usuario</button>
-            <button class="btn btn-danger m-2" (click)="Cancelar()">Cancelar</button>
+            <!-- Mensaje de  creacion -->
+            <div class="col">
+                <div *ngIf="showmsj" class="alert alert-success" role="alert">
+                  <span
+                    ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
+                  >
+                </div>
+                <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+                  <span
+                    ><i class="bi bi-exclamation-triangle-fill">
+                      {{ msjError }}</i
+                    ></span
+                  >
+                </div>
+              </div>
+    
         </div>
-        <!-- Mensaje de  creacion -->
-        <div class="col">
-            <div *ngIf="showmsj" class="alert alert-success" role="alert">
-              <span
-                ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
-              >
-            </div>
-            <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
-              <span
-                ><i class="bi bi-exclamation-triangle-fill">
-                  {{ msjError }}</i
-                ></span
-              >
-            </div>
-          </div>
-
-    </div>
+    </ng-container>
 
 
-    <div class="formUser" *ngIf="changeview==='consulta'">
-        <h3 class="font-weight-bold" style="padding-bottom: 5pt;">Usuarios registrados</h3>
-        <p>Buscar por:</p>
-        <!-- busqueda de usuarios -->
-        <div class="busqueda d-flex justify-content-between">
-            <div class="input-group mb-3">
-                <select class="form-select" name="buscarOpcion" [(ngModel)]="busqTipo">
-                    <option selected value="1">Usuario</option>
-                    <option value="2">Nombres</option>
-                </select>
-                <input type="text" class="form-control" placeholder="Término de busqueda" name="terminoBusqueda"
-                    [(ngModel)]="busqTerm">
-                <button class="btn btn-outline-success" type="button" (click)="triggerSearch()">Buscar</button>
-                <button class="btn btn-outline-danger" (click)="cancelSearch()">Cancelar</button>
+    <ng-container *appAuthorize="'6'">
+        <div class="formUser" *ngIf="changeview==='consulta'">
+            <h3 class="font-weight-bold" style="padding-bottom: 5pt;">Usuarios registrados</h3>
+            <p>Buscar por:</p>
+            <!-- busqueda de usuarios -->
+            <div class="busqueda d-flex justify-content-between">
+                <div class="input-group mb-3">
+                    <select class="form-select" name="buscarOpcion" [(ngModel)]="busqTipo">
+                        <option selected value="1">Usuario</option>
+                        <option value="2">Nombres</option>
+                    </select>
+                    <input type="text" class="form-control" placeholder="Término de busqueda" name="terminoBusqueda"
+                        [(ngModel)]="busqTerm">
+                    <button class="btn btn-outline-success" type="button" (click)="triggerSearch()">Buscar</button>
+                    <button class="btn btn-outline-danger" (click)="cancelSearch()">Cancelar</button>
+                </div>
+                <div class="align-items-center input-group mb-3 justify-content-end">
+                    <button class="btn btn-primary" (click)="prevPage()"><i class="bi bi-arrow-left"></i></button>
+                    <button class="btn btn-primary" (click)="nextPage()"><i class="bi bi-arrow-right"></i></button>
+                </div>
             </div>
-            <div class="align-items-center input-group mb-3 justify-content-end">
-                <button class="btn btn-primary" (click)="prevPage()"><i class="bi bi-arrow-left"></i></button>
-                <button class="btn btn-primary" (click)="nextPage()"><i class="bi bi-arrow-right"></i></button>
-            </div>
-        </div>
-        <!-- tabla de usuarios -->
-        <div>
-            <table class="table table-bordered table-striped text-center">
-                <thead>
-                    <tr>
-                        <th class="">Id Nomina</th>
-                        <th class=" cel-cab">Usuario</th>
-                        <th class=" cel-cab">Nombres</th>
-                        <th class=" cel-cab">Fecha Emisión</th>
-                        <th class="cel-cab">Fecha Vencimiento</th>
-                        <th class="">Estado</th>
-                        <th class="">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container
-                        *ngFor="let item of listUsers | paginate: { itemsPerPage: 10, currentPage: currentPage } let i=index">
+            <!-- tabla de usuarios -->
+            <div>
+                <table class="table table-bordered table-striped text-center">
+                    <thead>
                         <tr>
-                            <td class="align-middle">{{ item.usIdNomina }}</td>
-                            <td class="align-middle">{{ item.usLogin }}</td>
-                            <td class="align-middle">{{ item.usNombre }}</td>
-                            <td class="align-middle">{{ item.usFechaInicio }}</td>
-                            <td class="align-middle">{{ item.usFechaCaduca }}</td>
-                            <td class="align-middle">{{ item.usEstado }}</td>
-                            <td class="align-middle">
-                                <a class="text-success m-1" (click)="changeEditar(item)"><i class="bi bi-pencil-square h6"></i></a>
+                            <th class="">Id Nomina</th>
+                            <th class=" cel-cab">Usuario</th>
+                            <th class=" cel-cab">Nombres</th>
+                            <th class=" cel-cab">Fecha Emisión</th>
+                            <th class="cel-cab">Fecha Vencimiento</th>
+                            <th class="">Estado</th>
+                            <th class="" *appAuthorize="'7'">Acciones</th>
                         </tr>
-
-                    </ng-container>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <ng-container
+                            *ngFor="let item of listUsers | paginate: { itemsPerPage: 10, currentPage: currentPage } let i=index">
+                            <tr>
+                                <td class="align-middle">{{ item.usIdNomina }}</td>
+                                <td class="align-middle">{{ item.usLogin }}</td>
+                                <td class="align-middle">{{ item.usNombre }}</td>
+                                <td class="align-middle">{{ item.usFechaInicio }}</td>
+                                <td class="align-middle">{{ item.usFechaCaduca }}</td>
+                                <td class="align-middle">{{ item.usEstado }}</td>
+                                <td class="align-middle" *appAuthorize="'7'">
+                                    <a class="text-success m-1" (click)="changeEditar(item)"><i class="bi bi-pencil-square h6"></i></a>
+                            </tr>
+    
+                        </ng-container>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    </ng-container>
 
-    <div class="formUser" *ngIf="changeview==='editar'">
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar usuario</h3>
-        <form class="form-rol">
-            <div class="form row mb-2">
-                <div class="col">
-                    <label class="form-label">Nombre:</label>
-                    <input [(ngModel)]="newNombre" disabled type="text" name="newNombre" class="form-control" />
+    <ng-container *appAuthorize="'7'">
+        <div class="formUser" *ngIf="changeview==='editar'">
+            <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar usuario</h3>
+            <form class="form-rol">
+                <div class="form row mb-2">
+                    <div class="col">
+                        <label class="form-label">Nombre:</label>
+                        <input [(ngModel)]="newNombre" disabled type="text" name="newNombre" class="form-control" />
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Usuario:</label>
+                        <input [(ngModel)]="newUser" disabled type="text" name="newUser" class="form-control" />
+    
+                    </div>
+    
                 </div>
-                <div class="col">
-                    <label class="form-label">Usuario:</label>
-                    <input [(ngModel)]="newUser" disabled type="text" name="newUser" class="form-control" />
-
-                </div>
-
-            </div>
-            <div class="form row mb-2">
-                <div class="col">
-                    <label class="form-label">Id de Nómina:</label>
-                    <input [(ngModel)]="newNomina"  disabled type="text" id="form12" name="newNomina" class="form-control" />
-                </div>
-                <div class="form col">
-                    <label class="form-label">Estado:</label>
-                    <select class="form-select" name="estado" [(ngModel)]="newEstado">
-                        <option value="A">Activo</option>
-                        <option value="I">Inactivo</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form row mb-2">
-                <div class="col-md-6">
-                    <label class="form-label" for="registerPassword">Contraseña</label>
-                    <input type="password" [(ngModel)]="newPass"   name="newPass" class="form-control" required />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label" for="registerPassword">Confirmar contraseña</label>
-                    <input type="password" [(ngModel)]="confirmPass"class="form-control" name="confirmPass"  required  (input)="confirmPassword()" />
-                    <div *ngIf="showMsjPassConfirm">
-                        <p class="text-danger" style="font-size: 8pt;margin-top: 0;">{{ mensajeText }}</p>
+                <div class="form row mb-2">
+                    <div class="col">
+                        <label class="form-label">Id de Nómina:</label>
+                        <input [(ngModel)]="newNomina"  disabled type="text" id="form12" name="newNomina" class="form-control" />
+                    </div>
+                    <div class="form col">
+                        <label class="form-label">Estado:</label>
+                        <select class="form-select" name="estado" [(ngModel)]="newEstado">
+                            <option value="A">Activo</option>
+                            <option value="I">Inactivo</option>
+                        </select>
                     </div>
                 </div>
-            </div>            
-        </form>
-        <div class="col">
-            <div *ngIf="showmsj" class="alert alert-success" role="alert">
-              <span
-                ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
-              >
+    
+                <div class="form row mb-2">
+                    <div class="col-md-6">
+                        <label class="form-label" for="registerPassword">Contraseña</label>
+                        <input type="password" [(ngModel)]="newPass"   name="newPass" class="form-control" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="registerPassword">Confirmar contraseña</label>
+                        <input type="password" [(ngModel)]="confirmPass"class="form-control" name="confirmPass"  required  (input)="confirmPassword()" />
+                        <div *ngIf="showMsjPassConfirm">
+                            <p class="text-danger" style="font-size: 8pt;margin-top: 0;">{{ mensajeText }}</p>
+                        </div>
+                    </div>
+                </div>            
+            </form>
+            <div class="col">
+                <div *ngIf="showmsj" class="alert alert-success" role="alert">
+                  <span
+                    ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
+                  >
+                </div>
+                <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+                  <span
+                    ><i class="bi bi-exclamation-triangle-fill">
+                      {{ msjError }}</i
+                    ></span
+                  >
+                </div>
+              </div>
+            <div class="text-end mt-5" *appAuthorize="'7'">
+                <button [disabled]="!newNombre || !newUser || !newEstado" type="submit" class="btn btn-primary m-2"
+                    (click)="editUsuario()">Guardar Ediccion</button>
+                <button class="btn btn-danger m-2" (click)="Cancelar()">Cancelar</button>
             </div>
-            <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
-              <span
-                ><i class="bi bi-exclamation-triangle-fill">
-                  {{ msjError }}</i
-                ></span
-              >
-            </div>
-          </div>
-        <div class="text-end mt-5">
-            <button [disabled]="!newNombre || !newUser || !newEstado" type="submit" class="btn btn-primary m-2"
-                (click)="editUsuario()">Guardar Ediccion</button>
-            <button class="btn btn-danger m-2" (click)="Cancelar()">Cancelar</button>
         </div>
-    </div>
+    </ng-container>
 
 </div>

@@ -19,6 +19,7 @@ export class CotDocumentacionComponent implements OnInit {
   //variables compartidas
   @Input() tipoSol!: number;
   @Input() noSol!: number;
+  @Input() estadoSol!: string;
   //
   prefijo!: string;
   //Variable para Obtener el path

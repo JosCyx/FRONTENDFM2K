@@ -37,6 +37,17 @@ export class CabOrdCompraService {
     return this.http.get<any>(this.APIUrl + '/CabSolOrdenCompras', { headers: headers });
   }
 
+  getOrdenCmpbyArea(area: number): Observable<any[]> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(`${this.APIUrl}/CabSolOrdenCompras/GetCabecerabyarea?area=${area}`, { headers: headers });
+  }
+
+  getOrdenCmpbyIdNomina(id: number): Observable<any[]> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(`${this.APIUrl}/CabSolOrdenCompras/GetCabecerabyNomina?idNomina=${id}`, { headers: headers });
+  }
+
+
   getOrdenOC(tipoSol: number): Observable<any> {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any>(`${this.APIUrl}/CabSolOrdenCompras/${tipoSol}`, { headers: headers });

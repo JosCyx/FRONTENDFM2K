@@ -1,19 +1,21 @@
 <app-menu></app-menu>
 <div class="container">
-  <h2 class="font-weight-bolt ruteo">Todas las solicitudes Abiertas</h2>
+  <h2 class="font-weight-bolt ruteo">CONSULTAR SOLICITUDES POR ESTADO</h2>
 
   <!--  -->
-  <div class="formRol">
+  <div class="formRol" *appAuthorize="'35'">
     <form class="form-tiposol d-flex row mb-5">
-      <label class="form-label">Tipo de solicitud Abiertas</label>
+      
       <div class="form input-group">
+        <label class="form-label" for="tipoSol"> Tipo de Solicitud:</label>
         <select class="form-select" name="tipoSol" [(ngModel)]="AbierTipoSol">
           <option disabled selected value="0">Seleccione una opción...</option>
           <option *ngFor="let tpsol of tipoSol" [value]="tpsol.tipoSolId">
             {{ tpsol.tipoSolNombre }}
           </option>
         </select>
-        <select class="form-select" name="tipoSol" [(ngModel)]="Allstate">
+        <label class="form-label" for="estadoSol"> Tipo de Solicitud:</label>
+        <select class="form-select" name="estadoSol" [(ngModel)]="Allstate">
           <option disabled selected value="0">Seleccione una opción...</option>
           <option value="A" >Activo</option>
           <option value="C" >Cancelado</option>

@@ -1,4 +1,4 @@
-<div class="input-group m-2">
+<div class="input-group m-2" *appAuthorize="'39'">
   <label for="inputFile" class="input-group-text">
     <i class="bi bi-upload"></i>
   </label>
@@ -8,8 +8,9 @@
     class="form-control"
     id="inputFile"
     (change)="getFiles($event)"
+    [appSecureDisable]= "estadoSol"
   />
-  <button class="btn btn-success" (click)="sendfile()">
+  <button class="btn btn-success" (click)="sendfile()" [appSecureDisable]= "estadoSol">
     <i class="bi bi-upload"></i>
   </button>
 </div>

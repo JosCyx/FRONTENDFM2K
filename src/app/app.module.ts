@@ -33,6 +33,9 @@ import { CotProveedoresComponent } from './components/procesos/solicoti/cot-prov
 import { CotDocumentacionComponent } from './components/procesos/solicoti/cot-documentacion/cot-documentacion.component';
 import { OCDocumentacionComponent } from './components/procesos/solioc/oc-documentacion/oc-documentacion.component';
 import { SPDocumentacionComponent } from './components/procesos/solipago/sp-documentacion/sp-documentacion.component';
+import { AppAuthorizeTransactionDirective } from './directives/app-authorize-transaction.directive';
+import { AppDisableSecureDirective } from './directives/app-disable-secure.directive';
+
 import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes-aprobadas/solicitudes-aprobadas.component';
 import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitudes-no-aprobadas/solicitudes-no-aprobadas.component';
 
@@ -62,6 +65,8 @@ import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitud
     CotDocumentacionComponent,
     OCDocumentacionComponent,
     SPDocumentacionComponent,
+    AppAuthorizeTransactionDirective,
+    AppDisableSecureDirective,
     SolicitudesAprobadasComponent,
     SolicitudesNoAprobadasComponent
   ],

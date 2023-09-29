@@ -12,6 +12,7 @@ import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/ni
 import { CabOrdCompraService } from 'src/app/services/comunicationAPI/solicitudes/cab-ord-compra.service';
 import { CabPagoService } from 'src/app/services/comunicationAPI/solicitudes/cab-pago.service';
 import { co } from '@fullcalendar/core/internal-common';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-solicitudes-aprobadas',
@@ -35,6 +36,8 @@ export class SolicitudesAprobadasComponent implements OnInit {
   //Variables utilizar
   btp: number = 0;
 
+  metodoBusq!: number;
+
   constructor(
     private router: Router,
     private tipoSolService: TipoSolService,
@@ -43,8 +46,24 @@ export class SolicitudesAprobadasComponent implements OnInit {
     private empService: EmpleadosService,
     private nivRuteoService: NivelRuteoService,
     private cabOCService: CabOrdCompraService,
-    private cabPagoService: CabPagoService
-  ) {}
+    private cabPagoService: CabPagoService,
+    private cookieService: CookieService
+  ) { }
+
+  //evalua que solicitudes se deben mostrar segun los niveles de los roles de usuario
+  chooseSearchMethod() {
+    //obtiene el nivel maximo que posee el usuario para visualizar las solicitudes
+    let listaRoles = this.cookieService.get('userRolNiveles').split(',').map(Number);
+    var maxNivel = Math.max(...listaRoles);
+    
+    if (maxNivel == 10) {
+      this.metodoBusq = 1;
+    } else if (maxNivel >= 20 && maxNivel <= 40) {
+      this.metodoBusq = 2;
+    } else if ((maxNivel >= 50 && maxNivel <= 70) || maxNivel == 70) {
+      this.metodoBusq = 3;
+    }
+  }
 
   ngOnInit(): void {
     this.tipoSolService.getTipoSolicitud().subscribe((data) => {
@@ -59,6 +78,8 @@ export class SolicitudesAprobadasComponent implements OnInit {
     this.nivRuteoService.getNivelruteo().subscribe((data) => {
       this.trckList = data;
     });
+
+    this.chooseSearchMethod();
   }
 
   //Consultar solicitudes
@@ -68,8 +89,9 @@ export class SolicitudesAprobadasComponent implements OnInit {
     if (this.AbierTipoSol == 1) {
       this.cabCotService.getEstadoCotizacion(this.Allstate).subscribe({
         next: (data) => {
-          console.log('COTIZACIONES', data);
-          this.allSol = data;
+          //console.log('COTIZACIONES', data);
+          this.filterCotbyRol(data);
+          //this.allSol = data;
           this.isConsulta = true;
         },
         error: (error) => {
@@ -82,8 +104,9 @@ export class SolicitudesAprobadasComponent implements OnInit {
     } else if (this.AbierTipoSol == 2) {
       this.cabOCService.getEstadoOrdenC(this.Allstate).subscribe({
         next: (data) => {
-          console.log('ORDENES DE COMPRA', data);
-          this.allSol = data;
+          //console.log('ORDENES DE COMPRA', data);
+          this.filterOCbyRol(data);
+          //this.allSol = data;
           this.isConsulta = true;
         },
         error: (error) => {
@@ -96,8 +119,9 @@ export class SolicitudesAprobadasComponent implements OnInit {
     } else if (this.AbierTipoSol == 3) {
       this.cabPagoService.getEstadoPago(this.Allstate).subscribe({
         next: (data) => {
-          console.log('PAGOS', data);
-          this.allSol = data;
+          //console.log('PAGOS', data);
+          this.filterPagobyRol(data);
+          //this.allSol = data;
           this.isConsulta = true;
         },
         error: (error) => {
@@ -107,6 +131,41 @@ export class SolicitudesAprobadasComponent implements OnInit {
           console.log('subscribe finalizada correctamente');
         },
       });
+    }
+  }
+  //
+  filterCotbyRol(data: any): void {
+    console.log('metodo de busqueda: ', this.metodoBusq);
+    if(this.metodoBusq == 1){
+      
+      this.allSol = data.filter((sol: any) => sol.cabSolCotIdEmisor == parseInt(this.cookieService.get('userIdNomina')));
+      
+    } else if(this.metodoBusq == 2){
+      
+      this.allSol = data.filter((sol: any) => sol.cabSolCotArea == parseInt(this.cookieService.get('userArea')));
+    } else if(this.metodoBusq == 3){
+      
+      this.allSol = data;
+    }
+  }
+  //
+  filterOCbyRol(data: any): void {
+    if(this.metodoBusq == 1){
+      this.allSol = data.filter((sol: any) => sol.cabSolOCIdEmisor == parseInt(this.cookieService.get('userIdNomina')));
+    } else if(this.metodoBusq == 2){
+      this.allSol = data.filter((sol: any) => sol.cabSolOCArea == parseInt(this.cookieService.get('userArea')));
+    } else if(this.metodoBusq == 3){
+      this.allSol = data;
+    }
+  }
+  //
+  filterPagobyRol(data: any): void {
+    if(this.metodoBusq == 1){
+      this.allSol = data.filter((sol: any) => sol.cabPagoAreaSolicitante == parseInt(this.cookieService.get('userIdNomina')));
+    } else if(this.metodoBusq == 2){
+      this.allSol = data.filter((sol: any) => sol.cabPagoIdEmisor == parseInt(this.cookieService.get('userArea')));
+    } else if(this.metodoBusq == 3){
+      this.allSol = data;
     }
   }
   //

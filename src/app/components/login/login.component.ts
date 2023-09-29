@@ -81,9 +81,15 @@ export class LoginComponent implements OnInit{
 
           this.cookieService.set('userLogin', response.usuario.usLogin, expirationDate);
           this.cookieService.set('userIdNomina', response.usuario.usIdNomina, expirationDate);
+          this.cookieService.set('userArea', response.usuario.usArea, expirationDate);
           this.cookieService.set('userName', response.usuario.usNombre, expirationDate);
+          
 
-          //this.checkAuthorization();
+          //consulta los roles del usuario autenticado y guarda sus transacciones
+          this.checkAuthorization();
+          this.getNivelRoles();
+
+          
 
           //limpieza del mensaje
           setTimeout(() => {
@@ -91,6 +97,7 @@ export class LoginComponent implements OnInit{
             this.loading = false;
             this.msjExito = '';
             this.router.navigate(['main']);
+            console.log("Cookies: ", this.cookieService.getAll());
           }, 2000);
 
         },
@@ -98,6 +105,7 @@ export class LoginComponent implements OnInit{
           if (error.status == 404) {
             //console.log("El usuario no existe.");
             console.log("Error 404:", error)
+            this.loading = false;
             this.showmsjerror = true;
             this.msjError = 'El usuario no existe.';
 
@@ -108,6 +116,7 @@ export class LoginComponent implements OnInit{
           } else if (error.status == 400) {
             //console.log("La contraseña no coincide.");
             console.log("Error 400:", error)
+            this.loading = false;
             this.showmsjerror = true;
             this.msjError = 'La contraseña no coincide.';
 
@@ -125,8 +134,29 @@ export class LoginComponent implements OnInit{
 
   }
 
-  //consulta a la base los roles asociados al usuario autenticado y realiza la autorizacion
+  //consulta a la base los roles asociados al usuario autenticado
   checkAuthorization() {
 
+    //consultar roles del usuario autenticado
+    this.authService.getAuthorization(this.cookieService.get('userLogin')).subscribe(
+      response => { 
+        this.cookieService.set('userTransactions', response.toString());
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
+
+  //consulta los niveles de las solicitudes a los que tendra acceso el usuario autenticado
+  getNivelRoles(){
+    this.authService.getRolNiveles(this.cookieService.get('userLogin')).subscribe(
+      response => { 
+        this.cookieService.set('userRolNiveles', response.toString());
+      },
+      error => {
+        console.log(error);
+      }
+    );
   }
 }

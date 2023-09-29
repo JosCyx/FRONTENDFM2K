@@ -18,15 +18,15 @@
 <p class="text-end m-2 user-name" style="font-weight: bold; font-style: italic;">Usted se ha identificado como: {{userName}}</p>
 <div class="container">
     <div class="row justify-content-center">
-        <div class="card m-5 text-center" style="width: 18rem;">
+        <div class="card m-5 text-center" style="width: 18rem;" *appAuthorize="'45'">
             <img src="../../../assets/img/shield.webp" class="card-img-top" alt=".">
             <div class="card-body">
                 <h4 class="card-title font-weight-bold text-center">SEGURIDAD Y ACCESO</h4>
                 <a (click)="goAdmin()" class="btn btn-primary col-md-4 text-light">Ir</a>
             </div>
-        </div>
+        </div>     
 
-        <div class="card m-5 text-center" style="width: 18rem;">
+        <div class="card m-5 text-center" style="width: 18rem;" *appAuthorize="'46'">
             <img src="../../../assets/img/request.webp" class="card-img-top" alt="...">
             <div class="card-body">
                 <h4 class="card-title font-weight-bold text-center">SOLICITUDES</h4>

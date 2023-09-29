@@ -20,18 +20,18 @@
 <p class="text-end m-2 user-name" style="font-weight: bold; font-style: italic;">Usted se ha identificado como: {{userName}}</p>
 <div class="sidebar" [ngClass]="{'show': showSB, 'hide': !showSB}">
   <ul class="nav flex-column">
-    <li class="nav-item dropdown">
+    <li class="nav-item dropdown" *appAuthorize="'41'">
       <a class="nav-link dropdown-toggle btn " href="#" id="configuracionDropdown" role="button"
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Seguridad
       </a>
       <div class="dropdown-menu" aria-labelledby="configuracionDropdown">
-        <a class="dropdown-item" routerLink="/rol">Roles</a>
-        <a class="dropdown-item" routerLink="/users">Usuarios</a>
-        <a class="dropdown-item" routerLink="/empleados">Empleados</a>
-        <a class="dropdown-item" routerLink="/apps">Aplicaciones</a>
-        <a class="dropdown-item" routerLink="/functions">Funciones</a>
-        <a class="dropdown-item" routerLink="/transact">Transacciones</a>
+        <a class="dropdown-item" routerLink="/rol" *appAuthorize="'2'">Roles</a>
+        <a class="dropdown-item" routerLink="/users" *appAuthorize="'6'">Usuarios</a>
+        <a class="dropdown-item" routerLink="/empleados" *appAuthorize="'10'">Empleados</a>
+        <a class="dropdown-item" routerLink="/apps" *appAuthorize="'14'">Aplicaciones</a>
+        <!-- <a class="dropdown-item" routerLink="/functions">Funciones</a> -->
+        <a class="dropdown-item" routerLink="/transact" *appAuthorize="'18'">Transacciones</a>
       </div>
     </li>
   </ul>
