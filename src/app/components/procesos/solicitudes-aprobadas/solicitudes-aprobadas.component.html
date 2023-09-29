@@ -29,14 +29,13 @@
     </form>
 
     <div class="mb-5">
-      <table class="table table-bordered text-center table-hover">
+      <table class="table table-bordered text-center table-hover" id="table-data">
         <thead>
           <tr>
             <th class="align-middle cab-x">Código</th>
             <th class="align-middle cab-z">Area solicitante</th>
             <th class="align-middle cab-x">N° Solicitud</th>
             <th class="align-middle cab-z">Empleado solicitante</th>
-            <th class="align-middle cab-z" *ngIf="btp != 3" >Asunto</th>
             <th class="align-middle cab-x">Fecha</th>
             <th class="align-middle cab-x">Estado</th>
             <th class="align-middle cab-x">Tracking</th>
@@ -75,10 +74,9 @@
                   class="align-middle"
                   *ngIf="emp.empleadoIdNomina === sol.cabSolCotSolicitante"
                 >
-                  {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
+                  {{ emp.empleadoNombres }} {{ emp.empleadoApellidos }}
                 </td>
               </ng-container>
-              <td class="align-middle">{{ sol.cabSolCotAsunto }}</td>
               <td class="align-middle">
                 {{ sol.cabSolCotFecha | date : "yyyy-MM-dd" }}
               </td>
@@ -120,7 +118,6 @@
                   {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
                 </td>
               </ng-container>
-              <td class="align-middle">{{ sol.cabSolOCAsunto }}</td>
               <td class="align-middle">
                 {{ sol.cabSolOCFecha | date : "yyyy-MM-dd" }}
               </td>
@@ -168,5 +165,9 @@
         </tbody>
       </table>
     </div>
+    <div class="text-end">
+      <button  [disabled]="!isConsulta" (click)="exportexcel()" ><img src="../../../../assets/img/272697_excel_icon.png" alt=""></button>
+    </div>
+    
   </div>
 </div>

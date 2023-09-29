@@ -50,3 +50,8 @@
 .navbar-nav{
     height: 40px;
 }
+/* Boton */
+button{
+    border: none;
+    background-color: transparent;
+}
