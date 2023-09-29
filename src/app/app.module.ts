@@ -36,6 +36,8 @@ import { SPDocumentacionComponent } from './components/procesos/solipago/sp-docu
 import { AppAuthorizeTransactionDirective } from './directives/app-authorize-transaction.directive';
 import { AppDisableSecureDirective } from './directives/app-disable-secure.directive';
 
+import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes-aprobadas/solicitudes-aprobadas.component';
+import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitudes-no-aprobadas/solicitudes-no-aprobadas.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +66,9 @@ import { AppDisableSecureDirective } from './directives/app-disable-secure.direc
     OCDocumentacionComponent,
     SPDocumentacionComponent,
     AppAuthorizeTransactionDirective,
-    AppDisableSecureDirective
+    AppDisableSecureDirective,
+    SolicitudesAprobadasComponent,
+    SolicitudesNoAprobadasComponent
   ],
   imports: [
     BrowserModule,

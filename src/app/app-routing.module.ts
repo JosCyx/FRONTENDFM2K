@@ -17,6 +17,8 @@ import { MainSeguridadComponent } from './components/seguridad/main-seguridad.co
 import { EmpleadosComponent } from './components/configuracion/empleados/empleados.component';
 import { AllrequestComponent } from './components/procesos/allrequest/allrequest.component';
 import { AuthGuard } from './auth.guard'; // Importa la guardia de rutas
+import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes-aprobadas/solicitudes-aprobadas.component';
+import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitudes-no-aprobadas/solicitudes-no-aprobadas.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -35,6 +37,8 @@ const routes: Routes = [
   {path: 'mainconfig', component: MainConfiguracionComponent, data: { breadcrumb: 'Solicitudes' }, canActivate: [AuthGuard] },
   {path: 'mainsec', component: MainSeguridadComponent, data: { breadcrumb: 'Seguridad' }, canActivate: [AuthGuard] },
   {path: 'empleados', component: EmpleadosComponent, data: { breadcrumb: 'Empleados' }, canActivate: [AuthGuard] },
+  {path: 'solAprob', component: SolicitudesAprobadasComponent, data: { breadcrumb: 'Solicitudes Aprobadas' }, canActivate: [AuthGuard] },
+  {path: 'solNoAprob', component: SolicitudesNoAprobadasComponent, data: { breadcrumb: 'Solicitudes No Aprobadas' }, canActivate: [AuthGuard] },
   {path: 'allrequest', component: AllrequestComponent, data: { breadcrumb: 'Todas las solicitudes' }, canActivate: [AuthGuard] }
 
 ];
