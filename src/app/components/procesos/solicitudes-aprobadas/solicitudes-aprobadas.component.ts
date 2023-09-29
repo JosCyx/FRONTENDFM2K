@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import * as XLSX from 'xlsx';
-// import * as ExcelJS from 'exceljs';
+// import * as XLSX from 'xlsx';
+import * as XLSX from 'xlsx-js-style';
 
 //Services
 import { TipoSolService } from 'src/app/services/comunicationAPI/solicitudes/tipo-sol.service';
@@ -155,14 +155,15 @@ export class SolicitudesAprobadasComponent implements OnInit {
   //Metodo para Excel
   exportexcel(): void {
     let data = document.getElementById('table-data');
-    const ws : XLSX.WorkSheet = XLSX.utils.table_to_sheet(data);
+    const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(data);
     //Obtener el rango de las celda
-    const ref:any = ws['!ref']; // Almacenar el valor en una variable
+    console.log('sw ref', ws['!ref']);
+    const ref: any = ws['!ref']; // Almacenar el valor en una variable
     console.log('ref', ref);
-  const range = XLSX.utils.decode_range(ref);
-  ws['!autofilter'] = {
-    ref: XLSX.utils.encode_range(range)
-  };
+    const range = XLSX.utils.decode_range(ref);
+    ws['!autofilter'] = {
+      ref: XLSX.utils.encode_range(range),
+    };
 
     ws['!cols'] = [
       { wch: 20 },
@@ -171,9 +172,31 @@ export class SolicitudesAprobadasComponent implements OnInit {
       { wch: 20 },
       { wch: 20 },
       { wch: 20 },
+      { wch: 20 },
     ];
-    const wb : XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,'Sheet1');
-    XLSX.writeFile(wb, this.GenerarNombre()+'.xlsx');
+    //formato a las celdas a la primera fila
+    for (let row = range.s.r; row <= range.e.r; ++row) {
+      const rowAddress = XLSX.utils.encode_row(row);
+      console.log('rowAddress', rowAddress);
+      for (let col = range.s.r; col <= range.e.c; ++col) {
+        const colAddress = XLSX.utils.encode_col(col);
+        const cellAddress = colAddress + rowAddress;
+        //
+        if (row === range.s.r + 0) {
+          ws[cellAddress].s = { fill: { fgColor: { rgb: '4f81bd' } } };
+        } else {
+          // Para las filas restantes, aplica otro color
+          ws[cellAddress].s = { fill: { fgColor: { rgb: 'dce6f1' } } };
+        }
+      }
+      const cellA = 'A' + rowAddress;
+      const cellB = 'B' + rowAddress;
+    }
+    // ws['A1'].s = { fill: { fgColor: { rgb: '4f81bd' } } };
+    // ws['B2'].s = { fill: { fgColor: { rgb: '4f81bd' } } };
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    XLSX.writeFile(wb, this.GenerarNombre() + '.xlsx');
   }
 }
