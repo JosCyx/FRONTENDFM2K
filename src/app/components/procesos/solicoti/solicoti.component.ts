@@ -1223,6 +1223,6 @@ export class SolicotiComponent implements OnInit {
     } else {
       this.viewElement = false;
     }
-    console.log('viewElement: ', this.viewElement);
+    //console.log('viewElement: ', this.viewElement);
   }
 }

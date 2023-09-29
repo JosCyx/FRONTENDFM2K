@@ -2,744 +2,752 @@
 <div class="container">
   <h2 class="font-weight-bolt ruteo">Solicitud de Orden de Compra</h2>
   <div class="">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 30px;">
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <button class="btn btn-primary m-2" (click)="changeView('crear')">
+          <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">
             Crear
-          </button>
-          <button class="btn btn-primary m-2">Boton</button>
+          </button> -->
         </div>
       </div>
     </nav>
   </div>
 
-  <div class="form-cot" *ngIf="changeview == 'crear'">
-    <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
-    <h3 class="font-weight-bold" style="padding-top: 20pt">
-      Registrar nueva Orden de Compra
-    </h3>
-
-    <div class="solicitud">
-      <div class="cabecera mb-3">
-        <div class="input-group mb-1">
-          <label class="input-group-text">Fecha:</label>
-          <input
-            type="text"
-            class="form-control"
-            disabled
-            [(ngModel)]="fechaFormat"
-          />
-        </div>
-        <div class="row mb-1">
-          <div class="input-group col">
-            <label class="input-group-text">Solicitado por*:</label>
-            <input
-              type="text"
-              class="form-control"
-              id="busqueda"
-              list="sugerencias"
-              [(ngModel)]="empleado"
-              (keyup)="searchEmpleado()"
-              placeholder="Ingrese el nombre del empleado"
-            />
-            <datalist id="sugerencias">
-              <ng-container *ngFor="let emp of empleados">
-                <option
-                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-                ></option>
-              </ng-container>
-            </datalist>
-            <button class="btn btn-success" (click)="selectEmpleado()">
-              <i class="bi bi-check-lg"></i>
-            </button>
-          </div>
-          <div class="input-group col">
-            <label class="input-group-text">Area:</label>
-            <input
-              type="text"
-              class="form-control"
-              [value]="showArea"
-              placeholder="Area del empleado solicitante"
-              disabled
-            />
-          </div>
-        </div>
-        <div class="row mb-1">
-          <div class="input-group col">
-            <select
-              name=""
-              class="form-select"
-              style="background-color: #d6d6d6"
-              [(ngModel)]="tipobusqProv"
-              (ngModelChange)="limpiarCampos()"
-            >
-              <option value="nombre" selected>Proveedor</option>
-              <option value="ruc">Ruc</option>
-            </select>
-
-            <input
-            *ngIf="tipobusqProv == 'nombre'"
-              [(ngModel)]="buscarProveedor"
-              type="text"
-              class="form-control"
-              list="proveedor"
-              (keyup)="searchProveedor(buscarProveedor)"
-            />
-            <input
-            *ngIf="tipobusqProv == 'ruc'"
-              [(ngModel)]="buscarProveedor"
-              type="text"
-              class="form-control"
-              list="proveedor"
-            />
-            <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
-              <ng-container *ngFor="let prov of proveedores">
-                <option [value]="prov.prov_nombre"></option>
-              </ng-container>
-            </datalist>
-            <button   *ngIf="tipobusqProv=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(buscarProveedor)" >
-              <i class="bi bi-check-lg"></i>
-            </button>
-          </div>
-          <div class="input-group col">
-            <label class="input-group-text">
-              <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
-              <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
-            </label>
-            <input
-              type="text"
-              class="form-control"
-              *ngIf="tipobusqProv == 'nombre'"
-              [(ngModel)]="cab_ruc_prov"
-            />
-            <input
-              type="text "
-              class="form-control"
-              *ngIf="tipobusqProv == 'ruc'"
-              [(ngModel)]="cab_proveedor"
-            />
-          </div>
-        </div>
-        <div class="input-group mb-1">
-          <label class="input-group-text">Asunto*:</label>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Ingrese el asunto"
-            [(ngModel)]="cab_asunto"
-          />
-        </div>
-      </div>
-      <!-- *Esto es la tabla -->
-      <div class="detalle">
-        <table class="table table-striped text-center">
-          <thead>
-            <tr>
-              <th scope="col">Item</th>
-              <th scope="col">Descripción*</th>
-              <th scope="col">Presupuesto*</th>
-              <th scope="col">Unidad</th>
-              <th scope="col">Cantidad Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let det of detalleList">
-              <td class="align-middle">{{ det.det_id }}</td>
-              <td class="align-middle">{{ det.det_descp }}</td>
-              <td class="align-middle">Asignado</td>
-              <td class="align-middle">{{ det.det_unidad }}</td>
-              <td class="align-middle">
-                {{ det.det_cantidad }}
-                <button
-                  class="btn text-danger"
-                  (click)="deleteDetalle(det.det_id)"
-                >
-                  <i class="bi bi-x-circle"></i>
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <th class="align-middle">{{ det_id }}</th>
-              <td class="align-middle">
-                <textarea
-                  name="descripcion"
-                  class="form-control"
-                  rows="2"
-                  cols="50"
-                  placeholder="Descripción"
-                  [(ngModel)]="det_descp"
-                ></textarea>
-              </td>
-              <td class="align-middle">
-                <button
-                  class="btn btn-outline-primary"
-                  data-toggle="modal"
-                  data-target="#itemsector"
-                  [disabled]="!det_descp"
-                >
-                  Desglose
-                </button>
-              </td>
-              <td class="align-middle" style="width: 150px">
-                <select class="form-control" [(ngModel)]="det_unidad">
-                  <option value="Unidad" selected>Unidad</option>
-                  <option value="Sacos">Sacos</option>
-                  <option value="Paquete">Paquete</option>
-                  <option value="Avance de Obra">Avance de Obra</option>
-                  <option value="Millar">Millar</option>
-                  <option value="Metros">Metros</option>
-                  <option value="Kilos">Kilos</option>
-                  <option value="Gramos">Gramos</option>
-                  <option value="Caneca">Caneca</option>
-                </select>
-              </td>
-              <td class="align-middle cel-prep">
-                <input
-                  type="text"
-                  class="form-control text-center"
-                  [(ngModel)]="det_cantidad"
-                  disabled
-                />
-              </td>
-            </tr>
-            <tr>
-              <td colspan="5" class="align-middle text-end">
-                <button
-                  class="btn btn-success"
-                  [disabled]="!det_descp || tmpItemSect.length === 0"
-                  (click)="addDetalle()"
-                >
-                  <i class="bi bi-check"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <!-- * -->
-      <div class="foot-cabecera">
-        <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control"
-            id="floatingInput"
-            [(ngModel)]="cab_proc"
-            placeholder="Materiales y procedimientos a seguir:"
-          />
-          <label for="floatingInput"
-            >Materiales y procedimientos a seguir:</label
-          >
-        </div>
-        <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control"
-            id="floatingInput"
-            [(ngModel)]="cab_obsrv"
-            placeholder="Materiales y procedimientos a seguir:"
-          />
-          <label for="floatingInput">Observaciones:</label>
-        </div>
-        <div class="input-group mb-3">
-          <label class="input-group-text">Adjunto cotizaciones:</label>
-          <select class="form-select" [(ngModel)]="cab_adjCot">
-            <option value="SI">Sí</option>
-            <option value="NO" selected>No</option>
-          </select>
-          <label class="input-group-text">Número de cotizaciones:</label>
-          <input
-            class="form-control"
-            type="number"
-            placeholder="Cantidad"
-            [(ngModel)]="cab_ncot"
-          />
-        </div>
-        <div class="input-group mb-3">
-          <label class="input-group-text">Plazo de entrega*:</label>
-          <input
-            class="form-control"
-            type="date"
-            for="plazoentrega"
-            [(ngModel)]="cab_plazo"
-          />
-          <label class="input-group-text">Fecha máxima de entrega*:</label>
-          <input
-            class="form-control"
-            type="date"
-            for="fechamaxima"
-            [(ngModel)]="cab_fechaMax"
-          />
-        </div>
-        <div class="input-group">
-          <label class="input-group-text">Inspector:</label>
-          <input
-            type="text"
-            class="form-control"
-            id="busqueda"
-            list="inspectores"
-            [(ngModel)]="inspector"
-            (keyup)="searchInspector()"
-            (input)="onInputChanged()"
-            placeholder="Ingrese el nombre del inspector"
-          />
-          <datalist id="inspectores">
-            <ng-container *ngFor="let empOP of inspectores">
-              <option
-                [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"
-              ></option>
-            </ng-container>
-          </datalist>
-          <label class="input-group-text">Teléfono:</label>
-          <input
-            class="form-control"
-            type="text"
-            placeholder="Ingrese el teléfono del inspector"
-            [(ngModel)]="cab_telef_insp"
-          />
-        </div>
-        <div class="text-end">
-          <p class="tip">*Campos obligatorios</p>
-        </div>
-      </div>
-    </div>
-    <div class="d-flex row">
-      <div class="col">
-        <div *ngIf="showmsj" class="alert alert-success" role="alert">
-          <span
-            ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
-          >
-        </div>
-        <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
-          <span
-            ><i class="bi bi-exclamation-triangle-fill">
-              {{ msjError }}</i
-            ></span
-          >
-        </div>
-      </div>
-
-      <div class="col text-end">
-        <button
-          class="btn btn-primary m-2"
-          (click)="check()"
-          [disabled]="
-            !empleado ||
-            !cab_asunto ||
-            detalleList.length === 0 ||
-            itemSectorList.length === 0
-          "
-        >
-          Guardar
-        </button>
-        <button class="btn btn-danger m-2" (click)="cancelarAll()">
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </div>
-  <!-- *Esto es para editar Solicitud de Orden de compra -->
-  <div class="formRol" *ngIf="changeview === 'editar'">
-    <h3 class="font-weight-bold" style="padding-top: 20pt">Editar solicitud</h3>
-    <!--Inicio tabs   -->
-    <div class="tabs-edit">
-      <ul class="nav nav-tabs">
-          <li class="nav-item">
-              <a class="nav-link" [ngClass]="{'active': actionEdit === 'edicion'}" (click)="selectEditAction('edicion')">Edición</a>
-          </li>
-          <li class="nav-item">
-              <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}" (click)="selectEditAction('documentacion')">Documentación</a>
-          </li>
-      </ul>
-  </div>
-    <!-- Fin -->
-    <div class="solicitudEditar">
-      <div class="cabecera mb-3">
-        <div class="row mb-1">
-          <div class="input-group col">
-            <label class="input-group-text">Código:</label>
-            <input
-              type="text"
-              class="form-control"
-              [(ngModel)]="cabecera.cabSolOCNumerico"
-              disabled
-            />
-          </div>
-          <div class="input-group col">
+  <ng-container *appAuthorize="'28'">
+    <div class="form-cot" *ngIf="changeview == 'crear'">
+      <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
+      <h3 class="font-weight-bold" style="padding-top: 20pt">
+        Registrar nueva Orden de Compra
+      </h3>
+  
+      <div class="solicitud">
+        <div class="cabecera mb-3">
+          <div class="input-group mb-1">
             <label class="input-group-text">Fecha:</label>
             <input
               type="text"
               class="form-control"
-              [(ngModel)]="cabecera.cabSolOCFecha"
               disabled
+              [(ngModel)]="fechaFormat"
             />
           </div>
-        </div>
-
-        <div class="row mb-1">
-          <div class="input-group col">
-            <label class="input-group-text">Solicitado por:</label>
-            <ng-container *ngFor="let emp of empleadoedit">
+          <div class="row mb-1">
+            <div class="input-group col">
+              <label class="input-group-text">Solicitado por*:</label>
               <input
-                *ngIf="emp.empleadoIdNomina == cabecera.cabSolOCSolicitante"
                 type="text"
                 class="form-control"
                 id="busqueda"
                 list="sugerencias"
-                [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-                disabled
+                [(ngModel)]="empleado"
+                (keyup)="searchEmpleado()"
+                placeholder="Ingrese el nombre del empleado"
               />
-            </ng-container>
-          </div>
-          <div class="input-group col">
-            <label class="input-group-text">Area:</label>
-            <ng-container *ngFor="let are of areas">
+              <datalist id="sugerencias">
+                <ng-container *ngFor="let emp of empleados">
+                  <option
+                    [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+                  ></option>
+                </ng-container>
+              </datalist>
+              <button class="btn btn-success" (click)="selectEmpleado()">
+                <i class="bi bi-check-lg"></i>
+              </button>
+            </div>
+            <div class="input-group col">
+              <label class="input-group-text">Area:</label>
               <input
-                *ngIf="are.areaIdNomina == cabecera.cabSolOCArea"
                 type="text"
                 class="form-control"
-                id="busqueda"
-                list="sugerencias"
-                [value]="are.areaDecp"
+                [value]="showArea"
+                placeholder="Area del empleado solicitante"
                 disabled
               />
-            </ng-container>
+            </div>
           </div>
-        </div>
-        <!-- Nuevos Campos  -->
-        <div class="row mb-1">
-          <div class="input-group col">
-            <select
-              name=""
-              class="form-select"
-              style="background-color: #d6d6d6"
-              [(ngModel)]="tipobusqProv"
-              (ngModelChange)="limpiarCampos()"
-            >
-              <option value="nombre" selected>Proveedor</option>
-              <option value="ruc">Ruc</option>
-            </select>
-            <input
-              [(ngModel)]="cabecera.cabSolOCProveedor"
+          <div class="row mb-1">
+            <div class="input-group col">
+              <select
+                name=""
+                class="form-select"
+                style="background-color: #d6d6d6"
+                [(ngModel)]="tipobusqProv"
+                (ngModelChange)="limpiarCampos()"
+              >
+                <option value="nombre" selected>Proveedor</option>
+                <option value="ruc">Ruc</option>
+              </select>
+  
+              <input
               *ngIf="tipobusqProv == 'nombre'"
-              type="text"
-              class="form-control"
-              list="proveedor"
-              (keyup)="searchProveedor(cabecera.cabSolOCProveedor)"
-            />
-            <input
-              [(ngModel)]="cabecera.cabSolOCRUCProveedor"
+                [(ngModel)]="buscarProveedor"
+                type="text"
+                class="form-control"
+                list="proveedor"
+                (keyup)="searchProveedor(buscarProveedor)"
+              />
+              <input
               *ngIf="tipobusqProv == 'ruc'"
+                [(ngModel)]="buscarProveedor"
+                type="text"
+                class="form-control"
+                list="proveedor"
+              />
+              <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
+                <ng-container *ngFor="let prov of proveedores">
+                  <option [value]="prov.prov_nombre"></option>
+                </ng-container>
+              </datalist>
+              <button   *ngIf="tipobusqProv=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(buscarProveedor)" >
+                <i class="bi bi-check-lg"></i>
+              </button>
+            </div>
+            <div class="input-group col">
+              <label class="input-group-text">
+                <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
+                <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                *ngIf="tipobusqProv == 'nombre'"
+                [(ngModel)]="cab_ruc_prov"
+              />
+              <input
+                type="text "
+                class="form-control"
+                *ngIf="tipobusqProv == 'ruc'"
+                [(ngModel)]="cab_proveedor"
+              />
+            </div>
+          </div>
+          <div class="input-group mb-1">
+            <label class="input-group-text">Asunto*:</label>
+            <input
               type="text"
               class="form-control"
-              list="proveedor"
+              placeholder="Ingrese el asunto"
+              [(ngModel)]="cab_asunto"
             />
-            <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
-              <ng-container *ngFor="let prov of proveedores">
-                <option [value]="prov.prov_nombre"></option>
+          </div>
+        </div>
+        <!-- *Esto es la tabla -->
+        <div class="detalle">
+          <table class="table table-striped text-center">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Descripción*</th>
+                <th scope="col">Presupuesto*</th>
+                <th scope="col">Unidad</th>
+                <th scope="col">Cantidad Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let det of detalleList">
+                <td class="align-middle">{{ det.det_id }}</td>
+                <td class="align-middle">{{ det.det_descp }}</td>
+                <td class="align-middle">Asignado</td>
+                <td class="align-middle">{{ det.det_unidad }}</td>
+                <td class="align-middle">
+                  {{ det.det_cantidad }}
+                  <button
+                    class="btn text-danger"
+                    (click)="deleteDetalle(det.det_id)"
+                  >
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <th class="align-middle">{{ det_id }}</th>
+                <td class="align-middle">
+                  <textarea
+                    name="descripcion"
+                    class="form-control"
+                    rows="2"
+                    cols="50"
+                    placeholder="Descripción"
+                    [(ngModel)]="det_descp"
+                  ></textarea>
+                </td>
+                <td class="align-middle">
+                  <button
+                    class="btn btn-outline-primary"
+                    data-toggle="modal"
+                    data-target="#itemsector"
+                    [disabled]="!det_descp"
+                  >
+                    Desglose
+                  </button>
+                </td>
+                <td class="align-middle" style="width: 150px">
+                  <select class="form-control" [(ngModel)]="det_unidad">
+                    <option value="Unidad" selected>Unidad</option>
+                    <option value="Sacos">Sacos</option>
+                    <option value="Paquete">Paquete</option>
+                    <option value="Avance de Obra">Avance de Obra</option>
+                    <option value="Millar">Millar</option>
+                    <option value="Metros">Metros</option>
+                    <option value="Kilos">Kilos</option>
+                    <option value="Gramos">Gramos</option>
+                    <option value="Caneca">Caneca</option>
+                  </select>
+                </td>
+                <td class="align-middle cel-prep">
+                  <input
+                    type="text"
+                    class="form-control text-center"
+                    [(ngModel)]="det_cantidad"
+                    disabled
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="5" class="align-middle text-end">
+                  <button
+                    class="btn btn-success"
+                    [disabled]="!det_descp || tmpItemSect.length === 0"
+                    (click)="addDetalle()"
+                  >
+                    <i class="bi bi-check"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- * -->
+        <div class="foot-cabecera">
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              [(ngModel)]="cab_proc"
+              placeholder="Materiales y procedimientos a seguir:"
+            />
+            <label for="floatingInput"
+              >Materiales y procedimientos a seguir:</label
+            >
+          </div>
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              [(ngModel)]="cab_obsrv"
+              placeholder="Materiales y procedimientos a seguir:"
+            />
+            <label for="floatingInput">Observaciones:</label>
+          </div>
+          <div class="input-group mb-3">
+            <label class="input-group-text">Adjunto cotizaciones:</label>
+            <select class="form-select" [(ngModel)]="cab_adjCot">
+              <option value="SI">Sí</option>
+              <option value="NO" selected>No</option>
+            </select>
+            <label class="input-group-text">Número de cotizaciones:</label>
+            <input
+              class="form-control"
+              type="number"
+              placeholder="Cantidad"
+              [(ngModel)]="cab_ncot"
+            />
+          </div>
+          <div class="input-group mb-3">
+            <label class="input-group-text">Plazo de entrega*:</label>
+            <input
+              class="form-control"
+              type="date"
+              for="plazoentrega"
+              [(ngModel)]="cab_plazo"
+            />
+            <label class="input-group-text">Fecha máxima de entrega*:</label>
+            <input
+              class="form-control"
+              type="date"
+              for="fechamaxima"
+              [(ngModel)]="cab_fechaMax"
+            />
+          </div>
+          <div class="input-group">
+            <label class="input-group-text">Inspector:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="busqueda"
+              list="inspectores"
+              [(ngModel)]="inspector"
+              (keyup)="searchInspector()"
+              (input)="onInputChanged()"
+              placeholder="Ingrese el nombre del inspector"
+            />
+            <datalist id="inspectores">
+              <ng-container *ngFor="let empOP of inspectores">
+                <option
+                  [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"
+                ></option>
               </ng-container>
             </datalist>
-            <button   *ngIf="tipobusqProv=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(cabecera.cabSolOCRUCProveedor)" >
-              <i class="bi bi-check-lg"></i>
-            </button>
+            <label class="input-group-text">Teléfono:</label>
+            <input
+              class="form-control"
+              type="text"
+              placeholder="Ingrese el teléfono del inspector"
+              [(ngModel)]="cab_telef_insp"
+            />
           </div>
-
-          <div class="input-group col">
-            <label class="input-group-text">
-              <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
-              <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
-            </label>
-            <input
-              type="text "
-              class="form-control"
-              *ngIf="tipobusqProv == 'nombre'"
-              [(ngModel)]="cabecera.cabSolOCRUCProveedor"
-            />
-            <input
-              type="text "
-              class="form-control"
-              *ngIf="tipobusqProv == 'ruc'"
-              [(ngModel)]="cabecera.cabSolOCProveedor"
-            />
+          <div class="text-end">
+            <p class="tip">*Campos obligatorios</p>
           </div>
         </div>
-        <div class="row mb-1">
-          <div class="input-group col">
-            <label class="input-group-text">Asunto:</label>
-            <input
-              type="text"
-              class="form-control mr-3"
-              [(ngModel)]="cabecera.cabSolOCAsunto"
-            />
+      </div>
+      <div class="d-flex row">
+        <div class="col">
+          <div *ngIf="showmsj" class="alert alert-success" role="alert">
+            <span
+              ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
+            >
           </div>
-          <div class="row col">
-            <div class="input-group col std">
-              <label class="input-group-text">Estado:</label>
+          <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+            <span
+              ><i class="bi bi-exclamation-triangle-fill">
+                {{ msjError }}</i
+              ></span
+            >
+          </div>
+        </div>
+  
+        <div class="col text-end">
+          <button
+            class="btn btn-primary m-2"
+            (click)="check()"
+            [disabled]="
+              !empleado ||
+              !cab_asunto ||
+              detalleList.length === 0 ||
+              itemSectorList.length === 0
+            " *appAuthorize="'28'"
+          >
+            Guardar
+          </button>
+          <button class="btn btn-danger m-2" (click)="cancelarAll()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+
+  <ng-container *appAuthorize="'29'">
+    <!-- *Esto es para editar Solicitud de Orden de compra -->
+    <div class="formRol" *ngIf="changeview === 'editar'">
+      <h3 class="font-weight-bold" style="padding-top: 20pt">Editar solicitud</h3>
+      <!--Inicio tabs   -->
+      <div class="tabs-edit">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" [ngClass]="{'active': actionEdit === 'edicion'}" (click)="selectEditAction('edicion')">Edición</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}" (click)="selectEditAction('documentacion')">Documentación</a>
+            </li>
+        </ul>
+    </div>
+      <!-- Fin -->
+      <div class="solicitudEditar">
+        <div class="cabecera mb-3">
+          <div class="row mb-1">
+            <div class="input-group col">
+              <label class="input-group-text">Código:</label>
               <input
                 type="text"
                 class="form-control"
-                [value]="estadoTexto"
+                [(ngModel)]="cabecera.cabSolOCNumerico"
                 disabled
               />
             </div>
-            <div class="input-group col std">
-              <label class="input-group-text">Tracking:</label>
-              <ng-container *ngFor="let nvTRK of nivelRut$ | async">
+            <div class="input-group col">
+              <label class="input-group-text">Fecha:</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="cabecera.cabSolOCFecha"
+                disabled
+              />
+            </div>
+          </div>
+  
+          <div class="row mb-1">
+            <div class="input-group col">
+              <label class="input-group-text">Solicitado por:</label>
+              <ng-container *ngFor="let emp of empleadoedit">
                 <input
-                  *ngIf="nvTRK.nivel === cabecera.cabSolOCEstadoTracking"
+                  *ngIf="emp.empleadoIdNomina == cabecera.cabSolOCSolicitante"
                   type="text"
                   class="form-control"
-                  [value]="nvTRK.descRuteo"
+                  id="busqueda"
+                  list="sugerencias"
+                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+                  disabled
+                />
+              </ng-container>
+            </div>
+            <div class="input-group col">
+              <label class="input-group-text">Area:</label>
+              <ng-container *ngFor="let are of areas">
+                <input
+                  *ngIf="are.areaIdNomina == cabecera.cabSolOCArea"
+                  type="text"
+                  class="form-control"
+                  id="busqueda"
+                  list="sugerencias"
+                  [value]="are.areaDecp"
                   disabled
                 />
               </ng-container>
             </div>
           </div>
-        </div>
-      </div>
-      <div *ngIf="actionEdit =='documentacion'" >
-        <app-oc-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"></app-oc-documentacion>
-      </div>
-      <!-- *EDITAR dentro del tablas -->
-      <div class="detalle"  *ngIf="actionEdit =='edicion'" >
-        <table class="table table-striped text-center">
-          <thead>
-            <tr>
-              <th scope="col">Item</th>
-              <th scope="col">Descripción*</th>
-              <th scope="col">Presupuesto*</th>
-              <th scope="col">Unidad</th>
-              <th scope="col">Cantidad Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngIf="detalle.length == 0">
-              <td class="text-danger" colspan="6">
-                No se han registrado items para esta solicitud
-              </td>
-            </tr>
-            <!-- * tabla Principal-->
-            <tr *ngFor="let det of detalle; let i = index">
-              <td class="align-middle">{{ i + 1 }}</td>
-              <td class="align-middle">
-                <textarea
-                  name="descripcion"
-                  class="form-control"
-                  rows="2"
-                  cols="10"
-                  placeholder="Descripción"
-                  [(ngModel)]="det.solCotDescripcion"
-                ></textarea>
-              </td>
-
-              <td class="align-middle">
-                <button
-                  class="btn btn-outline-primary"
-                  (click)="selectDet(det)"
-                  data-toggle="modal"
-                  data-target="#itemsectorEdit"
-                >
-                  Editar
-                </button>
-              </td>
-              <td class="align-middle">
-                <select class="form-control" [(ngModel)]="det.solCotUnidad">
-                  <option value="Unidad">Unidad</option>
-                  <option value="Sacos">Sacos</option>
-                  <option value="Paquete">Paquete</option>
-                  <option value="Avance de Obra">Avance de Obra</option>
-                  <option value="Millar">Millar</option>
-                  <option value="Metros">Metros</option>
-                  <option value="Kilos">Kilos</option>
-                  <option value="Gramos">Gramos</option>
-                  <option value="Caneca">Caneca</option>
-                </select>
-              </td>
-              <td class="align-middle">
-                {{ det.solCotCantidadTotal }}
-                <button
-                  class="btn text-danger"
-                  (click)="confDeleteDet(det.solCotID, det.solCotIdDetalle)"
-                  data-toggle="modal"
-                  data-target="#dltDetSaved"
-                >
-                  <i class="bi bi-x-circle"></i>
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <th class="align-middle">{{ det_id }}</th>
-              <td class="align-middle">
-                <textarea
-                  name="descripcion"
-                  class="form-control"
-                  rows="2"
-                  cols="10"
-                  placeholder="Descripción"
-                  [(ngModel)]="det_descp"
-                ></textarea>
-              </td>
-              <td class="align-middle">
-                <button
-                  class="btn btn-outline-primary"
-                  data-toggle="modal"
-                  data-target="#itemsector"
-                  [disabled]="!det_descp"
-                  (click)="openModalItem()"
-                >
-                  Desglose
-                </button>
-              </td>
-              <td class="align-middle" style="width: 150px">
-                <select class="form-control" [(ngModel)]="det_unidad">
-                  <option value="Unidad" selected>Unidad</option>
-                  <option value="Sacos">Sacos</option>
-                  <option value="Paquete">Paquete</option>
-                  <option value="Avance de Obra">Avance de Obra</option>
-                  <option value="Millar">Millar</option>
-                  <option value="Metros">Metros</option>
-                  <option value="Kilos">Kilos</option>
-                  <option value="Gramos">Gramos</option>
-                  <option value="Caneca">Caneca</option>
-                </select>
-              </td>
-              <td class="align-middle cel-prep">
+          <!-- Nuevos Campos  -->
+          <div class="row mb-1">
+            <div class="input-group col">
+              <select
+                name=""
+                class="form-select"
+                style="background-color: #d6d6d6"
+                [(ngModel)]="tipobusqProv"
+                (ngModelChange)="limpiarCampos()"
+              >
+                <option value="nombre" selected>Proveedor</option>
+                <option value="ruc">Ruc</option>
+              </select>
+              <input
+                [(ngModel)]="cabecera.cabSolOCProveedor"
+                *ngIf="tipobusqProv == 'nombre'"
+                type="text"
+                class="form-control"
+                list="proveedor"
+                (keyup)="searchProveedor(cabecera.cabSolOCProveedor)"
+              />
+              <input
+                [(ngModel)]="cabecera.cabSolOCRUCProveedor"
+                *ngIf="tipobusqProv == 'ruc'"
+                type="text"
+                class="form-control"
+                list="proveedor"
+              />
+              <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
+                <ng-container *ngFor="let prov of proveedores">
+                  <option [value]="prov.prov_nombre"></option>
+                </ng-container>
+              </datalist>
+              <button   *ngIf="tipobusqProv=='ruc'"  class="btn btn-success"  (click)="searchProveedorRuc(cabecera.cabSolOCRUCProveedor)" >
+                <i class="bi bi-check-lg"></i>
+              </button>
+            </div>
+  
+            <div class="input-group col">
+              <label class="input-group-text">
+                <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
+                <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
+              </label>
+              <input
+                type="text "
+                class="form-control"
+                *ngIf="tipobusqProv == 'nombre'"
+                [(ngModel)]="cabecera.cabSolOCRUCProveedor"
+              />
+              <input
+                type="text "
+                class="form-control"
+                *ngIf="tipobusqProv == 'ruc'"
+                [(ngModel)]="cabecera.cabSolOCProveedor"
+              />
+            </div>
+          </div>
+          <div class="row mb-1">
+            <div class="input-group col">
+              <label class="input-group-text">Asunto:</label>
+              <input
+                type="text"
+                class="form-control mr-3"
+                [(ngModel)]="cabecera.cabSolOCAsunto"
+              />
+            </div>
+            <div class="row col">
+              <div class="input-group col std">
+                <label class="input-group-text">Estado:</label>
                 <input
                   type="text"
-                  class="form-control text-center"
-                  [(ngModel)]="det_cantidad"
+                  class="form-control"
+                  [value]="estadoTexto"
                   disabled
                 />
-              </td>
-            </tr>
-            <tr>
-              <td colspan="5" class="align-middle text-end">
-                <button
-                  class="btn btn-success"
-                  [disabled]="!det_descp || tmpItemSect.length === 0"
-                  (click)="addDetalle()"
-                >
-                  <i class="bi bi-check"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+              </div>
+              <div class="input-group col std">
+                <label class="input-group-text">Tracking:</label>
+                <ng-container *ngFor="let nvTRK of nivelRut$ | async">
+                  <input
+                    *ngIf="nvTRK.nivel === cabecera.cabSolOCEstadoTracking"
+                    type="text"
+                    class="form-control"
+                    [value]="nvTRK.descRuteo"
+                    disabled
+                  />
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="actionEdit =='documentacion'" >
+          <app-oc-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"></app-oc-documentacion>
+        </div>
+        <!-- *EDITAR dentro del tablas -->
+        <div class="detalle"  *ngIf="actionEdit =='edicion'" >
+          <table class="table table-striped text-center">
+            <thead>
+              <tr>
+                <th scope="col">Item</th>
+                <th scope="col">Descripción*</th>
+                <th scope="col">Presupuesto*</th>
+                <th scope="col">Unidad</th>
+                <th scope="col">Cantidad Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="detalle.length == 0">
+                <td class="text-danger" colspan="6">
+                  No se han registrado items para esta solicitud
+                </td>
+              </tr>
+              <!-- * tabla Principal-->
+              <tr *ngFor="let det of detalle; let i = index">
+                <td class="align-middle">{{ i + 1 }}</td>
+                <td class="align-middle">
+                  <textarea
+                    name="descripcion"
+                    class="form-control"
+                    rows="2"
+                    cols="10"
+                    placeholder="Descripción"
+                    [(ngModel)]="det.solCotDescripcion"
+                  ></textarea>
+                </td>
+  
+                <td class="align-middle">
+                  <button
+                    class="btn btn-outline-primary"
+                    (click)="selectDet(det)"
+                    data-toggle="modal"
+                    data-target="#itemsectorEdit"
+                  >
+                    Editar
+                  </button>
+                </td>
+                <td class="align-middle">
+                  <select class="form-control" [(ngModel)]="det.solCotUnidad">
+                    <option value="Unidad">Unidad</option>
+                    <option value="Sacos">Sacos</option>
+                    <option value="Paquete">Paquete</option>
+                    <option value="Avance de Obra">Avance de Obra</option>
+                    <option value="Millar">Millar</option>
+                    <option value="Metros">Metros</option>
+                    <option value="Kilos">Kilos</option>
+                    <option value="Gramos">Gramos</option>
+                    <option value="Caneca">Caneca</option>
+                  </select>
+                </td>
+                <td class="align-middle">
+                  {{ det.solCotCantidadTotal }}
+                  <button
+                    class="btn text-danger"
+                    (click)="confDeleteDet(det.solCotID, det.solCotIdDetalle)"
+                    data-toggle="modal"
+                    data-target="#dltDetSaved"
+                  >
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <th class="align-middle">{{ det_id }}</th>
+                <td class="align-middle">
+                  <textarea
+                    name="descripcion"
+                    class="form-control"
+                    rows="2"
+                    cols="10"
+                    placeholder="Descripción"
+                    [(ngModel)]="det_descp"
+                  ></textarea>
+                </td>
+                <td class="align-middle">
+                  <button
+                    class="btn btn-outline-primary"
+                    data-toggle="modal"
+                    data-target="#itemsector"
+                    [disabled]="!det_descp"
+                    (click)="openModalItem()"
+                  >
+                    Desglose
+                  </button>
+                </td>
+                <td class="align-middle" style="width: 150px">
+                  <select class="form-control" [(ngModel)]="det_unidad">
+                    <option value="Unidad" selected>Unidad</option>
+                    <option value="Sacos">Sacos</option>
+                    <option value="Paquete">Paquete</option>
+                    <option value="Avance de Obra">Avance de Obra</option>
+                    <option value="Millar">Millar</option>
+                    <option value="Metros">Metros</option>
+                    <option value="Kilos">Kilos</option>
+                    <option value="Gramos">Gramos</option>
+                    <option value="Caneca">Caneca</option>
+                  </select>
+                </td>
+                <td class="align-middle cel-prep">
+                  <input
+                    type="text"
+                    class="form-control text-center"
+                    [(ngModel)]="det_cantidad"
+                    disabled
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td colspan="5" class="align-middle text-end">
+                  <button
+                    class="btn btn-success"
+                    [disabled]="!det_descp || tmpItemSect.length === 0"
+                    (click)="addDetalle()"
+                  >
+                    <i class="bi bi-check"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- * -->
+        <div class="foot-cabecera">
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              [(ngModel)]="cabecera.cabSolOCProcedimiento"
+            />
+            <label for="floatingInput"
+              >Materiales y procedimientos a seguir:</label
+            >
+          </div>
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control"
+              id="floatingInput"
+              [(ngModel)]="cabecera.cabSolOCObervaciones"
+            />
+            <label for="floatingInput">Observaciones:</label>
+          </div>
+          <div class="input-group mb-3">
+            <label class="input-group-text">Adjunto cotizaciones:</label>
+            <select class="form-control" [(ngModel)]="cabecera.cabSolOCAdjCot">
+              <option value="SI">Sí</option>
+              <option value="NO" selected>No</option>
+            </select>
+            <label class="input-group-text">Número de cotizaciones:</label>
+            <input
+              class="form-control"
+              type="number"
+              [(ngModel)]="cabecera.cabSolOCNumCotizacion"
+            />
+          </div>
+          <div class="input-group mb-3">
+            <label class="input-group-text">Plazo de entrega:</label>
+            <input
+              class="form-control"
+              type="text"
+              for="plazoentrega"
+              [(ngModel)]="cabecera.cabSolOCPlazoEntrega"
+            />
+            <label class="input-group-text">Fecha máxima de entrega:</label>
+            <input
+              class="form-control"
+              type="text"
+              for="fechamaxima"
+              [(ngModel)]="cabecera.cabSolOCFechaMaxentrega"
+            />
+          </div>
+          <div class="input-group mb-3">
+            <label class="input-group-text">Inspector:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="busqueda"
+              list="inspectores"
+              [(ngModel)]="inspector"
+              (keyup)="searchInspector()"
+              (input)="onInputChanged()"
+            />
+            <datalist id="inspectores">
+              <ng-container *ngFor="let empOP of inspectores">
+                <option
+                  [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"
+                ></option>
+              </ng-container>
+            </datalist>
+            <label class="input-group-text">Teléfono:</label>
+            <input
+              class="form-control"
+              type="text"
+              [(ngModel)]="cabecera.cabSolOCTelefInspector"
+            />
+          </div>
+        </div>
       </div>
-      <!-- * -->
-      <div class="foot-cabecera">
-        <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control"
-            id="floatingInput"
-            [(ngModel)]="cabecera.cabSolOCProcedimiento"
-          />
-          <label for="floatingInput"
-            >Materiales y procedimientos a seguir:</label
+      <div class="d-flex row mt-2">
+        <div class="col">
+          <div *ngIf="showmsj" class="alert alert-success" role="alert">
+            <span
+              ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
+            >
+          </div>
+          <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+            <span
+              ><i class="bi bi-exclamation-triangle-fill">
+                {{ msjError }}</i
+              ></span
+            >
+          </div>
+        </div>
+        <div class="col text-end">
+          <button
+            class="btn btn-primary m-2"
+            data-toggle="modal"
+            data-target="#GuardarEdicion"
           >
-        </div>
-        <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control"
-            id="floatingInput"
-            [(ngModel)]="cabecera.cabSolOCObervaciones"
-          />
-          <label for="floatingInput">Observaciones:</label>
-        </div>
-        <div class="input-group mb-3">
-          <label class="input-group-text">Adjunto cotizaciones:</label>
-          <select class="form-control" [(ngModel)]="cabecera.cabSolOCAdjCot">
-            <option value="SI">Sí</option>
-            <option value="NO" selected>No</option>
-          </select>
-          <label class="input-group-text">Número de cotizaciones:</label>
-          <input
-            class="form-control"
-            type="number"
-            [(ngModel)]="cabecera.cabSolOCNumCotizacion"
-          />
-        </div>
-        <div class="input-group mb-3">
-          <label class="input-group-text">Plazo de entrega:</label>
-          <input
-            class="form-control"
-            type="text"
-            for="plazoentrega"
-            [(ngModel)]="cabecera.cabSolOCPlazoEntrega"
-          />
-          <label class="input-group-text">Fecha máxima de entrega:</label>
-          <input
-            class="form-control"
-            type="text"
-            for="fechamaxima"
-            [(ngModel)]="cabecera.cabSolOCFechaMaxentrega"
-          />
-        </div>
-        <div class="input-group mb-3">
-          <label class="input-group-text">Inspector:</label>
-          <input
-            type="text"
-            class="form-control"
-            id="busqueda"
-            list="inspectores"
-            [(ngModel)]="inspector"
-            (keyup)="searchInspector()"
-            (input)="onInputChanged()"
-          />
-          <datalist id="inspectores">
-            <ng-container *ngFor="let empOP of inspectores">
-              <option
-                [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"
-              ></option>
-            </ng-container>
-          </datalist>
-          <label class="input-group-text">Teléfono:</label>
-          <input
-            class="form-control"
-            type="text"
-            [(ngModel)]="cabecera.cabSolOCTelefInspector"
-          />
+            Guardar
+          </button>
+          <button
+            class="btn btn-success m-2"
+            data-toggle="modal"
+            data-target="#enviarSolicitud"
+            *appAuthorize="'30'"
+          >
+            Enviar
+          </button>
+          <button class="btn btn-danger m-2" (click)="cancelar()">
+            Cancelar
+          </button>
         </div>
       </div>
     </div>
-    <div class="d-flex row mt-2">
-      <div class="col">
-        <div *ngIf="showmsj" class="alert alert-success" role="alert">
-          <span
-            ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
-          >
-        </div>
-        <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
-          <span
-            ><i class="bi bi-exclamation-triangle-fill">
-              {{ msjError }}</i
-            ></span
-          >
-        </div>
-      </div>
-      <div class="col text-end">
-        <button
-          class="btn btn-primary m-2"
-          data-toggle="modal"
-          data-target="#GuardarEdicion"
-        >
-          Guardar
-        </button>
-        <button
-          class="btn btn-success m-2"
-          data-toggle="modal"
-          data-target="#enviarSolicitud"
-        >
-          Enviar
-        </button>
-        <button class="btn btn-danger m-2" (click)="cancelar()">
-          Cancelar
-        </button>
-      </div>
-    </div>
-  </div>
+  </ng-container>
+  
+  
   <!-- * -->
   <!-- Modal para los items por sector-->
   <div

@@ -1,4 +1,4 @@
-<div class="input-group m-2">
+<div class="input-group m-2" *appAuthorize="'38'">
   <label for="inputFile" class="input-group-text">
     <i class="bi bi-upload"></i>
   </label>
@@ -25,6 +25,8 @@
     >
   </div>
 </div>
+
+
 <!--  Visualizar PDF  -->
 <div class="ini text-center m-3">
   <ng-container *ngFor="let pat of paths">

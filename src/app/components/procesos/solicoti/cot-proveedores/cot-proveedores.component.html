@@ -5,7 +5,8 @@
                 <a class="nav-link" [ngClass]="{'active': actionProv === 'consultar'}"
                     (click)="selectAction('consultar')" (click)="getProvCotizacion()">Proveedores asignados</a>
             </li>
-            <li class="nav-item" *ngIf="viewElement">
+
+            <li class="nav-item" *appAuthorize="'37'">
                 <a class="nav-link" [ngClass]="{'active': actionProv === 'agregar'}"
                     (click)="selectAction('agregar')">Asignar proveedores</a>
             </li>
@@ -14,7 +15,7 @@
     </div>
 </div>
 
-<ng-container *ngIf="viewElement">
+<ng-container *appAuthorize="'37'">
     <div class="proveedores mb-2 " *ngIf="actionProv == 'agregar'">
         <div class="row p-3">
             <div class="busqProveedor row col">
@@ -154,7 +155,7 @@
                     <td class="align-middle">{{prov.cotProvDireccion}}</td>
                     <td class="align-middle">
                         <button class="btn btn-border btn-prov" data-toggle="modal" data-target="#deleteProvAssigned"
-                            (click)="selectIdDltProv(prov.cotProvId)" [appSecureDisable]= "estadoSol">
+                            (click)="selectIdDltProv(prov.cotProvId)" [appSecureDisable]="estadoSol">
                             <i class="bi bi-x-circle-fill text-danger m-3"></i></button>
                         <!-- <a class="btn-prov" data-toggle="modal" data-target="#senMailtoProv"
                             (click)="selectEmailProv(prov.cotProvCorreo, prov.cotProvNombre)">
@@ -165,8 +166,8 @@
         </table>
         <!-- envia los correos a todos los proveedores -->
         <div class="text-end">
-            <button class="btn btn-primary" data-toggle="modal" data-target="#senMailtoProv"
-                (click)="saveDataProv()" [appSecureDisable]= "estadoSol">Enviar correos</button>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#senMailtoProv" (click)="saveDataProv()"
+                [appSecureDisable]="estadoSol">Enviar correos</button>
         </div>
     </div>
     <!-- Mensaje de exito o error de envio de correo -->

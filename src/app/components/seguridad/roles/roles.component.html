@@ -6,150 +6,159 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
-                    <button class="btn btn-primary m-2" (click)="editar('consulta')">Editar</button>
-                    <button class="btn btn-primary m-2" (click)="changeView('crear')">Crear</button>                    
+                    <button class="btn btn-primary m-2" (click)="changeView('consulta')" *appAuthorize="'2'">Consultar</button>
+                    <button class="btn btn-primary m-2" (click)="changeView('crear')" *appAuthorize="'1'">Crear</button>                    
                 </div>
             </div>
         </nav>
     </div>
 
     <!--FORMULARIO PARA CREAR LOS ROLES-->
-    <div class="formRol" *ngIf="changeview === 'crear'">
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de roles</h3>
-        <form class="form-rol">
-            <div class="form cmp-form">
-                <label class="form-label">Nombre de rol:</label>
-                <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control" 
-                placeholder="Ingrese el nombre del rol"/>
-
+    <ng-container *appAuthorize="'1'">
+        <div class="formRol" *ngIf="changeview === 'crear'">
+            <h3 class="font-weight-bold" style="padding-top: 20pt;">Ingreso de roles</h3>
+            <form class="form-rol">
+                <div class="form cmp-form">
+                    <label class="form-label">Nombre de rol:</label>
+                    <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control" 
+                    placeholder="Ingrese el nombre del rol"/>
+    
+                </div>
+                <div class="form cmp-form">
+                    <label class="form-label">Aplicacion:</label>
+                    <select class="form-control" name="aplicacion" id="aplicacion" [(ngModel)]="idAplicacion">
+                        <option disabled selected value=0>Selecciona una aplicación...</option>
+                        <option *ngFor="let app of appsList$|async" [value]="app.apCodigo">{{app.apNombre}}</option>
+                    </select> 
+                </div>
+    
+                <div class="form cmp-form">
+                    <label class="form-label">Estado:</label>
+                    <select class="form-select" name="estado" [(ngModel)]="estado">
+                        <option disabled selected value="">Selecciona un estado...</option>
+                        <option value="A">Activo</option>
+                        <option value="I">Inactivo</option>
+                    </select>
+                </div>
+                <div class="form cmp-form">
+                    <span class="text-success">{{ mensajeExito }}</span>
+                </div>
+            </form>
+            <div class="text-end" *appAuthorize="'1'">
+                <button [disabled]="!nombre || !idAplicacion || !estado" type="submit" class="btn btn-primary m-2"
+                    (click)="agregarRol()">Agregar rol</button>
+                <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
             </div>
-            <div class="form cmp-form">
-                <label class="form-label">Aplicacion:</label>
-                <select class="form-control" name="aplicacion" id="aplicacion" [(ngModel)]="idAplicacion">
-                    <option disabled selected value=0>Selecciona una aplicación...</option>
-                    <option *ngFor="let app of appsList$|async" [value]="app.apCodigo">{{app.apNombre}}</option>
-                </select> 
-            </div>
-
-            <div class="form cmp-form">
-                <label class="form-label">Estado:</label>
-                <select class="form-select" name="estado" [(ngModel)]="estado">
-                    <option disabled selected value="">Selecciona un estado...</option>
-                    <option value="A">Activo</option>
-                    <option value="I">Inactivo</option>
-                </select>
-            </div>
-            <div class="form cmp-form">
-                <span class="text-success">{{ mensajeExito }}</span>
-            </div>
-        </form>
-        <div class="text-end">
-            <button [disabled]="!nombre || !idAplicacion || !estado" type="submit" class="btn btn-primary m-2"
-                (click)="agregarRol()">Agregar rol</button>
-            <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
+    
         </div>
-
-    </div>
+    </ng-container>
 
     <!--LISTA DE LOS ROLES-->
-    <div class="listRol" *ngIf="changeview === 'consulta'">
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Roles registrados</h3>
-        <p class="text-danger no-rol text-center" *ngIf="(rolList$ | async)?.length === 0">No hay roles registrados.</p>
-
-        <table class="table table-bordered table-striped text-center" *ngIf="(rolList$ | async)?.length != 0">
-            <thead>
-                <tr>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Aplicacion</th>
-                    <th scope="col">Estado</th>
-                    <th *ngIf="edicion" scope="col">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngFor="let item of rolList$|async let i=index">
-                    <tr *ngIf="!edicion; else showAllItems">
-                        <ng-container *ngIf="item.roEstado === 'A'">
-                            <td>{{ item.roNombre }}</td>
-                            <td [ngSwitch]="item.roAplicacion">
-                                <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
-                                <span *ngSwitchCase="'2'">SOLICITUDES</span>
-                            </td>
-                            <td [ngSwitch]="item.roEstado">
-                                <span *ngSwitchCase="'A'">Activo</span>
-                                <span *ngSwitchCase="'I'">Inactivo</span>
-                            </td>
+    <ng-container *appAuthorize="'2'">
+        <div class="listRol" *ngIf="changeview === 'consulta'">
+            <h3 class="font-weight-bold" style="padding-top: 20pt;">Roles registrados</h3>
+            <p class="text-danger no-rol text-center" *ngIf="(rolList$ | async)?.length === 0">No hay roles registrados.</p>
+    
+            <table class="table table-bordered table-striped text-center" *ngIf="(rolList$ | async)?.length != 0">
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Aplicacion</th>
+                        <th scope="col">Estado</th>
+                        <ng-container *appAuthorize="'3'">
+                            <th *ngIf="edicion" scope="col">Acciones</th>
                         </ng-container>
                     </tr>
-                    <ng-template #showAllItems>
-                        <tr>
-                            <td>{{ item.roNombre }}</td>
+                </thead>
+                <tbody>
+                    <ng-container *ngFor="let item of rolList$|async let i=index">
+                        <tr *ngIf="!edicion; else showAllItems">
+                            <ng-container *ngIf="item.roEstado === 'A'">
+                                <td>{{ item.roNombre }}</td>
+                                <td [ngSwitch]="item.roAplicacion">
+                                    <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
+                                    <span *ngSwitchCase="'2'">SOLICITUDES</span>
+                                </td>
+                                <td [ngSwitch]="item.roEstado">
+                                    <span *ngSwitchCase="'A'">Activo</span>
+                                    <span *ngSwitchCase="'I'">Inactivo</span>
+                                </td>
+                            </ng-container>
+                        </tr>
+                        <ng-template #showAllItems>
+                            <tr>
+                                <td>{{ item.roNombre }}</td>
+                                <td [ngSwitch]="item.roAplicacion">
+                                    <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
+                                    <span *ngSwitchCase="'2'">SOLICITUDES</span>
+                                </td>
+                                <td [ngSwitch]="item.roEstado">
+                                    <span *ngSwitchCase="'A'">Activo</span>
+                                    <span *ngSwitchCase="'I'">Inactivo</span>
+                                </td>
+                                <ng-container *appAuthorize="'3'">
+                                    <td *ngIf="edicion">
+                                        <a class="text-success m-3" (click)="editarRol(item.roCodigo)">
+                                            <i class="bi bi-pencil-square h5"></i>
+                                        </a>
+                                    </td>
+                                </ng-container>
+                            </tr>
+                        </ng-template>
+                        <!-- <tr *ngIf="item.roEstado === 'A'">
+                            <td>{{i+1}}</td>
+                            <td>{{item.roNombre}}</td>
                             <td [ngSwitch]="item.roAplicacion">
                                 <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
-                                <span *ngSwitchCase="'2'">SOLICITUDES</span>
-                            </td>
+                                <span *ngSwitchCase="'2'">SOLICITUDES</span></td>
                             <td [ngSwitch]="item.roEstado">
                                 <span *ngSwitchCase="'A'">Activo</span>
-                                <span *ngSwitchCase="'I'">Inactivo</span>
+                                <span *ngSwitchCase="'I'">Inactivo</span></td>
+                            <td *ngIf="edicion"><a class="text-success m-3" (click)="editarRol(item,i)"><i class="bi bi-pencil-square h5"></i></a>
+                                <a class="text-danger m-3" (click)="eliminarRol(i)"><i class="bi bi-trash3-fill h5"></i></a>
                             </td>
-                            <td *ngIf="edicion">
-                                <a class="text-success m-3" (click)="editarRol(item.roCodigo)">
-                                    <i class="bi bi-pencil-square h5"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    </ng-template>
-                    <!-- <tr *ngIf="item.roEstado === 'A'">
-                        <td>{{i+1}}</td>
-                        <td>{{item.roNombre}}</td>
-                        <td [ngSwitch]="item.roAplicacion">
-                            <span *ngSwitchCase="'1'">SEGURIDAD Y ACCESO</span>
-                            <span *ngSwitchCase="'2'">SOLICITUDES</span></td>
-                        <td [ngSwitch]="item.roEstado">
-                            <span *ngSwitchCase="'A'">Activo</span>
-                            <span *ngSwitchCase="'I'">Inactivo</span></td>
-                        <td *ngIf="edicion"><a class="text-success m-3" (click)="editarRol(item,i)"><i class="bi bi-pencil-square h5"></i></a>
-                            <a class="text-danger m-3" (click)="eliminarRol(i)"><i class="bi bi-trash3-fill h5"></i></a>
-                        </td>
-                    </tr> -->
-                </ng-container>
-            </tbody>
-        </table>
-    </div>
+                        </tr> -->
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </ng-container>
 
     <!--FORMULARIO PARA EDITAR LOS ROLES-->
-    <div class="formRol" *ngIf="changeview === 'editar'">
-        <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar rol</h3>
-        <form class="form-rol">
-            <div class="form cmp-form">
-                <label class="form-label">Nombre de rol:</label>
-                <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control" />
+    <ng-container *appAuthorize="'3'">
+        <div class="formRol" *ngIf="changeview === 'editar'">
+            <h3 class="font-weight-bold" style="padding-top: 20pt;">Editar rol</h3>
+            <form class="form-rol">
+                <div class="form cmp-form">
+                    <label class="form-label">Nombre de rol:</label>
+                    <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control" />
+                </div>
+                <div class="form cmp-form">
+                    <label class="form-label">Aplicacion:</label>
+                    <select class="form-control" name="idAplicacion" [(ngModel)]="idAplicacion">
+                        <option selected disabled value=0>Selecciona una aplicación...</option>
+                        <option *ngFor="let app of appsList$|async" [value]="app.apCodigo">{{app.apNombre}}</option>
+                    </select>
+                </div>
+                <div class="form cmp-form">
+                    <label class="form-label">Estado:</label>
+                    <select class="form-select" name="estado" [(ngModel)]="estado">
+                        <option disabled selected value="">Selecciona un estado...</option>
+                        <option value="A">Activo</option>
+                        <option value="I">Inactivo</option>
+                    </select>
+                </div>
+            </form>
+            <div>
+                <span class="text-success">{{ mensajeExito }}</span>
             </div>
-            <div class="form cmp-form">
-                <label class="form-label">Aplicacion:</label>
-                <select class="form-control" name="idAplicacion" [(ngModel)]="idAplicacion">
-                    <option selected disabled value=0>Selecciona una aplicación...</option>
-                    <option *ngFor="let app of appsList$|async" [value]="app.apCodigo">{{app.apNombre}}</option>
-                </select>
+            <div class="text-end" *appAuthorize="'3'">
+                <button [disabled]="!nombre || !idAplicacion || !estado" type="submit" class="btn btn-primary m-2"
+                    (click)="guardarEdicion()">Guardar cambios</button>
+                <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
             </div>
-            <div class="form cmp-form">
-                <label class="form-label">Estado:</label>
-                <select class="form-select" name="estado" [(ngModel)]="estado">
-                    <option disabled selected value="">Selecciona un estado...</option>
-                    <option value="A">Activo</option>
-                    <option value="I">Inactivo</option>
-                </select>
-            </div>
-        </form>
-        <div>
-            <span class="text-success">{{ mensajeExito }}</span>
         </div>
-        <div class="text-end">
-            <button [disabled]="!nombre || !idAplicacion || !estado" type="submit" class="btn btn-primary m-2"
-                (click)="guardarEdicion()">Guardar cambios</button>
-            <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
-        </div>
-    </div>
+    </ng-container>
 
 
 

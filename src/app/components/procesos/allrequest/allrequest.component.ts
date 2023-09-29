@@ -137,14 +137,6 @@ export class AllrequestComponent implements OnInit {
     this.cabecera = new CabeceraCotizacion(0);
   }
 
-  // clear(): void {
-  //   this.solicitudEdit = { cabecera: {}, detalles: [], items: [] };
-  //   this.cabecera = new CabeceraCotizacion(0);
-  //   this.detalle = [];
-  //   this.item = [];
-  // }
-
-
   //evalua que solicitudes se deben mostrar segun los niveles de los roles de usuario
   chooseSearchMethod() {
     //obtiene el nivel maximo que posee el usuario para visualizar las solicitudes
@@ -160,6 +152,8 @@ export class AllrequestComponent implements OnInit {
     }
   }
 
+
+  //CONSULTA TODAS LAS SOLICITUDES DEPENDIENDO DEL METODO DE BUSQUEDA DEL USUARIO
   getAllCotizaciones(): void {
     if (this.metodoBusq == 1) {
       this.allSol$ = this.cabCotService.getCotizacionesByIdNomina(parseInt(this.cookieService.get('userNomina')));

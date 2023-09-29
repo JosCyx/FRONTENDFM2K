@@ -70,7 +70,6 @@ export class LoginComponent implements OnInit{
       //enviar como parametro el valor ingresado en el formulario del usuario y la contraseña
       this.authService.login(this.loginForm.value.username!, this.loginForm.value.password!).subscribe(
         (response: any) => {
-          console.log("RESPUESTA: ", response);
           //mensaje de bienvenida
           this.showmsj = true;
           this.msjExito = `Bienvenido(a) ${response.usuario.usNombre}.`;
@@ -98,7 +97,7 @@ export class LoginComponent implements OnInit{
             this.loading = false;
             this.msjExito = '';
             this.router.navigate(['main']);
-            console.log("Cookies: ", this.cookieService.getAll());
+            //console.log("Cookies: ", this.cookieService.getAll());
           }, 2000);
 
         },

@@ -20,32 +20,32 @@
 <p class="text-end m-2 user-name" style="font-weight: bold; font-style: italic;">Usted se ha identificado como: {{userName}}</p>
 <div class="sidebar" [ngClass]="{'show': showSB, 'hide': !showSB}">
   <ul class="nav flex-column">
-    <li class="nav-item dropdown">
+    <li class="nav-item dropdown" *appAuthorize="'42'">
       <a class="nav-link dropdown-toggle btn " href="#" id="configuracionDropdown" role="button"
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Configuración
       </a>
       <div class="dropdown-menu" aria-labelledby="configuracionDropdown">
         
-        <a class="dropdown-item" routerLink="/ruteo">Ruteo</a>
+        <a class="dropdown-item" routerLink="/ruteo" *appAuthorize="'21'">Ruteo</a>
         <!-- <a class="dropdown-item" routerLink="/documentos">Documentos</a> -->
       </div>
     </li>
-    <li class="nav-item dropdown">
+    <li class="nav-item dropdown" *appAuthorize="'43'">
       <a class="nav-link dropdown-toggle btn " href="#" id="configuracionDropdown" role="button"
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Procesos
       </a>
       <div class="dropdown-menu" aria-labelledby="configuracionDropdown">
-        <a class="dropdown-item" (click)="routToCot()">Solicitud de cotizacion</a>
-        <a class="dropdown-item" (click)="routToOC()">Solicitud de O/C</a>
-        <a class="dropdown-item" (click)="routToPago()">Solicitud de pago</a>
-        <a class="dropdown-item" routerLink="/allrequest">Todas las solicitudes</a>
+        <a class="dropdown-item" (click)="routToCot()" *appAuthorize="'25'">Solicitud de cotizacion</a>
+        <a class="dropdown-item" (click)="routToOC()" *appAuthorize="'28'">Solicitud de O/C</a>
+        <a class="dropdown-item" (click)="routToPago()" *appAuthorize="'31'">Solicitud de pago</a>
+        <a class="dropdown-item" routerLink="/allrequest" *appAuthorize="'34'">Todas las solicitudes</a>
         <a class="dropdown-item" routerLink="norute">Solicitudes abiertas</a>
         <a class="dropdown-item" routerLink="norute">Solicitudes no aprobadas</a>
       </div>
     </li>
-    <li class="nav-item dropdown">
+    <li class="nav-item dropdown" *appAuthorize="'44'">
       <a class="nav-link dropdown-toggle btn " href="#" id="configuracionDropdown" role="button"
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Consultas

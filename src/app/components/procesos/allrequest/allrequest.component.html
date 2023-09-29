@@ -5,7 +5,7 @@
 
 
 
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 30px;" >
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
         <!-- <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar</button> -->
@@ -15,7 +15,7 @@
   </nav>
 
 
-  <div class="formRol">
+  <div class="formRol" *appAuthorize="'34'">
     <h3 class="font-weight-bold" style="padding-top: 20pt;">Consultar todas las solicitudes registradas</h3>
 
     <form class="form-tiposol d-flex row mb-5">
@@ -28,7 +28,7 @@
         <button class="btn btn-outline-success" (click)="consultarSol()">Consultar</button>
       </div>
     </form>
-    <div><button class="btn btn-danger" (click)="chooseSearchMethod()">probar</button></div>
+    
     <div class="mb-5">
 
       <table class="table table-bordered text-center table-hover">
