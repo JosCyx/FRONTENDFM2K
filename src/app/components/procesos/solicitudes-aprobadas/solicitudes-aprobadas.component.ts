@@ -194,7 +194,6 @@ export class SolicitudesAprobadasComponent implements OnInit {
     }
     // ws['A1'].s = { fill: { fgColor: { rgb: '4f81bd' } } };
     // ws['B2'].s = { fill: { fgColor: { rgb: '4f81bd' } } };
-
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
     XLSX.writeFile(wb, this.GenerarNombre() + '.xlsx');
