@@ -183,7 +183,7 @@ export class SolicitudesAprobadasComponent implements OnInit {
         const cellAddress = colAddress + rowAddress;
         //
         if (row === range.s.r + 0) {
-          ws[cellAddress].s = { fill: { fgColor: { rgb: '4f81bd' } } };
+          ws[cellAddress].s = { fill: { fgColor: { rgb: '4f81bd' } }, font: { bold: true } };
         } else {
           // Para las filas restantes, aplica otro color
           ws[cellAddress].s = { fill: { fgColor: { rgb: 'dce6f1' } } };
