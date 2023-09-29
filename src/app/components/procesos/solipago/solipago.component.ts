@@ -98,6 +98,7 @@ export class SolipagoComponent implements OnInit {
   //variables compartidas con los demas componentes
   @Input() sharedTipoSol!: number;
   @Input() sharedNoSol!: number;
+  estadoSol!: string;
 
   constructor(
     private empService: EmpleadosService,
@@ -392,22 +393,22 @@ export class SolipagoComponent implements OnInit {
   }
   async Obtener() {
     const partes = this.valorinput.match(/(\d+)-(\d+)/);
-    console.log(partes);
+    //console.log(partes);
     if (partes && partes.length === 3) {
       this.tipoSolinput = parseInt(partes[1], 10);
       this.noSolicinput = parseInt(partes[2], 10);
-      console.log('Tipo de solicitus', this.tipoSolinput);
-      console.log('Numero de solicitud', this.noSolicinput);
+      //console.log('Tipo de solicitus', this.tipoSolinput);
+      //console.log('Numero de solicitud', this.noSolicinput);
     } else {
       console.log('No tiene ningun formato realizado');
     }
-    console.log('el valor de la de los input', this.valorinput);
+    //console.log('VALOR INGRESADO:', this.valorinput);
     try {
       this.detSolService
         .getDetalle_solicitud(this.tipoSolinput, this.noSolicinput)
         .subscribe(
           (response) => {
-            console.log('esto hay en el response', response);
+            //console.log('response', response);
             this.detalleSolPagos = response.map((ini: any) => ({
               idDetalle: ini.solCotIdDetalle,
               itemDesc: ini.solCotDescripcion,
@@ -480,6 +481,7 @@ export class SolipagoComponent implements OnInit {
   }
   async saveData() {
     this.cabecera = this.solicitudEdit.cabecera;
+    this.estadoSol = this.cabecera.cabPagoEstadoTrack.toString();
     this.sharedTipoSol=this.cabecera.cabPagoTipoSolicitud;
     this.sharedNoSol=this.cabecera.cabPagoNoSolicitud;
     for (let det of this.solicitudEdit.detalles) {

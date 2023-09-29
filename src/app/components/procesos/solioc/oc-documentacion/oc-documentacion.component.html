@@ -8,8 +8,9 @@
     class="form-control"
     id="inputFile"
     (change)="getFiles($event)"
+    [appSecureDisable]= "estadoSol"
   />
-  <button class="btn btn-success" (click)="sendfile()">
+  <button class="btn btn-success" (click)="sendfile()" [appSecureDisable]= "estadoSol">
     <i class="bi bi-upload"></i>
   </button>
 </div>

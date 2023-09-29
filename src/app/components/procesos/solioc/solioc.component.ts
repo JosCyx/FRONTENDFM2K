@@ -20,6 +20,7 @@ import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/Detalle
 import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotizacion';
 import { GlobalService } from 'src/app/services/global.service';
 import { CabeceraOrdenCompra } from 'src/app/models/procesos/solcotizacion/CabeceraOrdenCompra';
+import { CookieService } from 'ngx-cookie-service';
 
 interface SolicitudData {
   cabecera: any;
@@ -136,6 +137,7 @@ export class SoliocComponent implements OnInit {
   //variables compartidas con los demas componentes
   @Input() sharedTipoSol!: number;
   @Input() sharedNoSol!: number;
+  estadoSol!: string;
 
   constructor(
     private empService: EmpleadosService,
@@ -148,7 +150,8 @@ export class SoliocComponent implements OnInit {
     private itmSectService: ItemSectorService,
     private router: Router,
     private provService: ProveedorService,
-    private serviceGlobal: GlobalService
+    private serviceGlobal: GlobalService,
+    private cookieService: CookieService
   ) {}
 
   ngOnInit(): void {
@@ -783,6 +786,8 @@ export class SoliocComponent implements OnInit {
     this.cabecera = this.solicitudEdit.cabecera;
     this.sharedTipoSol=this.cabecera.cabSolOCTipoSolicitud;
     this.sharedNoSol=this.cabecera.cabSolOCNoSolicitud;
+
+    this.estadoSol = this.cabecera.cabSolOCEstadoTracking.toString();
 
     for (let det of this.solicitudEdit.detalles) {
       this.detalle.push(det as DetalleCotizacion);
@@ -1442,4 +1447,18 @@ export class SoliocComponent implements OnInit {
   selectEditAction(action:string){
     this.actionEdit=action;
   }
+
+    ////////////////////////////////////////////CONTROL DE VISUALIZACION SEGUN ESTADO//////////////////////////////////////////
+    viewElement: boolean = false;
+
+    setView() { 
+      const userNivelesCookie = this.cookieService.get('userRolNiveles');
+      const userNivelesArray = userNivelesCookie.split(',').map(Number);
+      if(userNivelesArray.includes(this.cabecera.cabSolOCEstadoTracking)){
+        this.viewElement = true;
+      } else {
+        this.viewElement = false;
+      }
+      //console.log('viewElement: ', this.viewElement);
+    }
 }

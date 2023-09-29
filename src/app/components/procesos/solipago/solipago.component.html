@@ -114,6 +114,7 @@
                 type="text"
                 class="form-control"
                 list="proveedor"
+                placeholder="Ingrese el nombre del proveedor"
                 (keyup)="searchProveedor(buscarProveedor)"
               />
               <input
@@ -122,6 +123,7 @@
                 type="text"
                 class="form-control"
                 list="proveedor"
+                placeholder="Ingrese el RUC del proveedor"
               />
               <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'">
                 <ng-container *ngFor="let prov of proveedores">
@@ -161,7 +163,7 @@
               [(ngModel)]="valorinput"
               type="text"
               class="form-control mr-1"
-              placeholder="Ingrese la Solicitud Asociada..."
+              placeholder="Ejemplo: OC OB 2-0012"
             />
             <button class="btn btn-success" (click)="Obtener()">
               <i class="bi bi-search"></i>
@@ -225,16 +227,13 @@
                 </td>
               </tr>
               <tr>
-                <td class="align-middle text-end"></td>
-                <td class="align-middle text-end"></td>
-                <td class="align-middle text-end"></td>
-                <td class="align-middle text-end"></td>
-                <td class="align-middle text-end">Total</td>
+                <td class="align-middle text-end" colspan="5">Total</td>
                 <td class="align-middle text-end">
                   <input
                     type="number"
                     class="form-control text-center"
                     [(ngModel)]="Total"
+                    disabled
                   />
                 </td>
               </tr>
@@ -403,6 +402,7 @@
                 class="form-control"
                 placeholder="Ingrese el numero de compra"
                 [(ngModel)]="cabecera.cabPagoNoOrdenCompra"
+                [appSecureDisable]= "estadoSol"
               />
             </div>
           </div>
@@ -443,6 +443,7 @@
                 class="form-control"
                 placeholder="Ingrese el numero Factura"
                 [(ngModel)]="cabecera.cabPagoNumFactura"
+                [appSecureDisable]= "estadoSol"
               />
             </div>
             <div class="input-group col mb-1">
@@ -451,6 +452,7 @@
                 type="text"
                 class="form-control"
                 [(ngModel)]="cabecera.cabPagoFechaFactura"
+                [appSecureDisable]= "estadoSol"
               />
             </div>
           </div>
@@ -462,6 +464,7 @@
                 style="background-color: #d6d6d6"
                 [(ngModel)]="tipobusqueda"
                 (ngModelChange)="limpiarCampos()"
+                [appSecureDisable]= "estadoSol"
               >
                 <option value="nombre" selected>Proveedor</option>
                 <option value="ruc">Ruc</option>
@@ -473,6 +476,7 @@
                 class="form-control"
                 list="proveedor"
                 (keyup)="searchProveedor(cabecera.cabPagoProveedor)"
+                [appSecureDisable]= "estadoSol"
               />
               <input
                 [(ngModel)]="cabecera.cabPagoRucProveedor"
@@ -480,6 +484,7 @@
                 type="text"
                 class="form-control"
                 list="proveedor"
+                [appSecureDisable]= "estadoSol"
               />
               <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'">
                 <ng-container *ngFor="let prov of proveedores">
@@ -490,6 +495,7 @@
                 *ngIf="tipobusqueda == 'ruc'"
                 class="btn btn-success"
                 (click)="searchProveedorRuc(cabecera.cabPagoRucProveedor)"
+                [appSecureDisable]= "estadoSol"
               >
                 <i class="bi bi-check-lg"></i>
               </button>
@@ -504,12 +510,14 @@
                 class="form-control"
                 *ngIf="tipobusqueda == 'nombre'"
                 [(ngModel)]="cabecera.cabPagoRucProveedor"
+                [appSecureDisable]= "estadoSol"
               />
               <input
                 type="text "
                 class="form-control"
                 *ngIf="tipobusqueda == 'ruc'"
                 [(ngModel)]="cabecera.cabPagoProveedor"
+                [appSecureDisable]= "estadoSol"
               />
             </div>
           </div>
@@ -538,7 +546,7 @@
             </div>
         </div>
         <div *ngIf="actionEdit == 'documentacion' " >
-          <app-sp-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" ></app-sp-documentacion>
+          <app-sp-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-sp-documentacion>
         </div>
         <div class="detalle" *ngIf="actionEdit =='edicion'" >
           <table class="table table-striped text-center">
@@ -570,6 +578,7 @@
                     type="number"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoCantContratada"
+                    [appSecureDisable]= "estadoSol"
                   />
                 </td>
                 <td class="align-middle" style="width: 150px">
@@ -577,6 +586,7 @@
                     type="number"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoCantRecibida"
+                    [appSecureDisable]= "estadoSol"
                   />
                 </td>
                 <td class="align-middle cel-prep">
@@ -584,6 +594,7 @@
                     type="number"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoValUnitario"
+                    [appSecureDisable]= "estadoSol"
                   />
                 </td>
                 <td class="align-middle">
@@ -592,6 +603,7 @@
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoSubtotal"
                     (input)="calculoEditotal()"
+                    [appSecureDisable]= "estadoSol"
                   />
                 </td>
               </tr>
@@ -606,6 +618,7 @@
                     type="number"
                     class="form-control text-center"
                     [(ngModel)]="cabecera.cabpagototal"
+                    [appSecureDisable]= "estadoSol"
                   />
                 </td>
               </tr>
@@ -620,6 +633,7 @@
               class="form-control"
               id="floatingInput"
               [(ngModel)]="cabecera.cabPagoObservaciones"
+              [appSecureDisable]= "estadoSol"
             />
             <label for="floatingInput">Observaciones:</label>
           </div>
@@ -629,6 +643,7 @@
               class="form-control"
               id="floatingInput"
               [(ngModel)]="cabecera.cabPagoAplicarMulta"
+              [appSecureDisable]= "estadoSol"
             />
             <label for="floatingInput">Aplicar multa:</label>
           </div>
@@ -639,6 +654,7 @@
               type="number"
               placeholder="Ingrese el valor a descontar"
               [(ngModel)]="cabecera.cabPagoValorMulta"
+              [appSecureDisable]= "estadoSol"
             />
             <label class="input-group-text">Pago total autorizado:</label>
             <input
@@ -646,6 +662,7 @@
               type="number"
               placeholder="Ingrese el valor Total"
               [(ngModel)]="cabecera.cabPagoValorTotalAut"
+              [appSecureDisable]= "estadoSol"
             />
           </div>
           <div class="input-group mb-3">
@@ -656,6 +673,7 @@
               list="sugerenciasEdit"
               [(ngModel)]="receptor"
               (keyup)="searchEmpleado()"
+              [appSecureDisable]= "estadoSol"
             />
             <datalist id="sugerenciasEdit">
               <ng-container *ngFor="let emp of empleadoEdi">
@@ -670,6 +688,7 @@
               type="text"
               for="fechamaxima"
               [(ngModel)]="cabecera.cabPagoFechaInspeccion"
+              [appSecureDisable]= "estadoSol"
             />
           </div>
           <div class="input-group mb-3">
@@ -677,6 +696,7 @@
             <select
               class="form-select"
               [(ngModel)]="cabecera.cabPagoCancelacionOrden"
+              [appSecureDisable]= "estadoSol"
             >
               <option disabled selected>Seleccione un opcion....</option>
               <option value="TTL">TOTAL</option>
@@ -710,10 +730,11 @@
             data-toggle="modal"
             data-target="#GuardarPagoEdit"
             (click)="saveReceptor()"
+            [appSecureDisable]= "estadoSol"
           >
             Guardar
           </button>
-          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" *appAuthorize="'33'">
+          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" *appAuthorize="'33'" [appSecureDisable]= "estadoSol">
             Enviar
         </button>
           <button class="btn btn-danger m-2" (click)="cancelarEdi()">

@@ -16,6 +16,7 @@ export class OCDocumentacionComponent implements OnInit {
   //* Variables compartidas
   @Input() tipoSol!: number;
   @Input() noSol!: number;
+  @Input() estadoSol!: string;
   //
   prefijo!: string;
 

@@ -419,6 +419,7 @@
                 style="background-color: #d6d6d6"
                 [(ngModel)]="tipobusqProv"
                 (ngModelChange)="limpiarCampos()"
+                [appSecureDisable]= "estadoSol"
               >
                 <option value="nombre" selected>Proveedor</option>
                 <option value="ruc">Ruc</option>
@@ -430,6 +431,7 @@
                 class="form-control"
                 list="proveedor"
                 (keyup)="searchProveedor(cabecera.cabSolOCProveedor)"
+                [appSecureDisable]= "estadoSol"
               />
               <input
                 [(ngModel)]="cabecera.cabSolOCRUCProveedor"
@@ -437,6 +439,7 @@
                 type="text"
                 class="form-control"
                 list="proveedor"
+                [appSecureDisable]= "estadoSol"
               />
               <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
                 <ng-container *ngFor="let prov of proveedores">
@@ -458,12 +461,14 @@
                 class="form-control"
                 *ngIf="tipobusqProv == 'nombre'"
                 [(ngModel)]="cabecera.cabSolOCRUCProveedor"
+                [appSecureDisable]= "estadoSol"
               />
               <input
                 type="text "
                 class="form-control"
                 *ngIf="tipobusqProv == 'ruc'"
                 [(ngModel)]="cabecera.cabSolOCProveedor"
+                [appSecureDisable]= "estadoSol"
               />
             </div>
           </div>
@@ -474,6 +479,7 @@
                 type="text"
                 class="form-control mr-3"
                 [(ngModel)]="cabecera.cabSolOCAsunto"
+                [appSecureDisable]= "estadoSol"
               />
             </div>
             <div class="row col">
@@ -502,7 +508,7 @@
           </div>
         </div>
         <div *ngIf="actionEdit =='documentacion'" >
-          <app-oc-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"></app-oc-documentacion>
+          <app-oc-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-oc-documentacion>
         </div>
         <!-- *EDITAR dentro del tablas -->
         <div class="detalle"  *ngIf="actionEdit =='edicion'" >
@@ -533,6 +539,7 @@
                     cols="10"
                     placeholder="Descripción"
                     [(ngModel)]="det.solCotDescripcion"
+                    [appSecureDisable]= "estadoSol"
                   ></textarea>
                 </td>
   
@@ -542,12 +549,13 @@
                     (click)="selectDet(det)"
                     data-toggle="modal"
                     data-target="#itemsectorEdit"
+                    [appSecureDisable]= "estadoSol"
                   >
                     Editar
                   </button>
                 </td>
                 <td class="align-middle">
-                  <select class="form-control" [(ngModel)]="det.solCotUnidad">
+                  <select class="form-control" [(ngModel)]="det.solCotUnidad" [appSecureDisable]= "estadoSol">
                     <option value="Unidad">Unidad</option>
                     <option value="Sacos">Sacos</option>
                     <option value="Paquete">Paquete</option>
@@ -566,12 +574,13 @@
                     (click)="confDeleteDet(det.solCotID, det.solCotIdDetalle)"
                     data-toggle="modal"
                     data-target="#dltDetSaved"
+                    [appSecureDisable]= "estadoSol"
                   >
                     <i class="bi bi-x-circle"></i>
                   </button>
                 </td>
               </tr>
-              <tr>
+              <tr *ngIf="viewElement">
                 <th class="align-middle">{{ det_id }}</th>
                 <td class="align-middle">
                   <textarea
@@ -616,7 +625,7 @@
                   />
                 </td>
               </tr>
-              <tr>
+              <tr *ngIf="viewElement">
                 <td colspan="5" class="align-middle text-end">
                   <button
                     class="btn btn-success"
@@ -638,6 +647,7 @@
               class="form-control"
               id="floatingInput"
               [(ngModel)]="cabecera.cabSolOCProcedimiento"
+              [appSecureDisable]= "estadoSol"
             />
             <label for="floatingInput"
               >Materiales y procedimientos a seguir:</label
@@ -649,12 +659,13 @@
               class="form-control"
               id="floatingInput"
               [(ngModel)]="cabecera.cabSolOCObervaciones"
+              [appSecureDisable]= "estadoSol"
             />
             <label for="floatingInput">Observaciones:</label>
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Adjunto cotizaciones:</label>
-            <select class="form-control" [(ngModel)]="cabecera.cabSolOCAdjCot">
+            <select class="form-control" [(ngModel)]="cabecera.cabSolOCAdjCot" [appSecureDisable]= "estadoSol">
               <option value="SI">Sí</option>
               <option value="NO" selected>No</option>
             </select>
@@ -663,6 +674,7 @@
               class="form-control"
               type="number"
               [(ngModel)]="cabecera.cabSolOCNumCotizacion"
+              [appSecureDisable]= "estadoSol"
             />
           </div>
           <div class="input-group mb-3">
@@ -672,6 +684,7 @@
               type="text"
               for="plazoentrega"
               [(ngModel)]="cabecera.cabSolOCPlazoEntrega"
+              [appSecureDisable]= "estadoSol"
             />
             <label class="input-group-text">Fecha máxima de entrega:</label>
             <input
@@ -679,6 +692,7 @@
               type="text"
               for="fechamaxima"
               [(ngModel)]="cabecera.cabSolOCFechaMaxentrega"
+              [appSecureDisable]= "estadoSol"
             />
           </div>
           <div class="input-group mb-3">
@@ -691,6 +705,7 @@
               [(ngModel)]="inspector"
               (keyup)="searchInspector()"
               (input)="onInputChanged()"
+              [appSecureDisable]= "estadoSol"
             />
             <datalist id="inspectores">
               <ng-container *ngFor="let empOP of inspectores">
@@ -704,6 +719,7 @@
               class="form-control"
               type="text"
               [(ngModel)]="cabecera.cabSolOCTelefInspector"
+              [appSecureDisable]= "estadoSol"
             />
           </div>
         </div>
@@ -728,6 +744,7 @@
             class="btn btn-primary m-2"
             data-toggle="modal"
             data-target="#GuardarEdicion"
+            [appSecureDisable]= "estadoSol"
           >
             Guardar
           </button>
@@ -736,6 +753,7 @@
             data-toggle="modal"
             data-target="#enviarSolicitud"
             *appAuthorize="'30'"
+            [appSecureDisable]= "estadoSol"
           >
             Enviar
           </button>

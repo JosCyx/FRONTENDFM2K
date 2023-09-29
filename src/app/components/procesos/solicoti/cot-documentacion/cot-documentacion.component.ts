@@ -19,7 +19,6 @@ export class CotDocumentacionComponent implements OnInit {
   //variables compartidas
   @Input() tipoSol!: number;
   @Input() noSol!: number;
-  @Input() viewElement!: boolean;
   @Input() estadoSol!: string;
   //
   prefijo!: string;

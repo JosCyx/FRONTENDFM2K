@@ -167,7 +167,7 @@
         <!-- envia los correos a todos los proveedores -->
         <div class="text-end">
             <button class="btn btn-primary" data-toggle="modal" data-target="#senMailtoProv" (click)="saveDataProv()"
-                [appSecureDisable]="estadoSol">Enviar correos</button>
+                [appSecureDisable]="estadoSol" *appAuthorize="'37'">Enviar correos</button>
         </div>
     </div>
     <!-- Mensaje de exito o error de envio de correo -->

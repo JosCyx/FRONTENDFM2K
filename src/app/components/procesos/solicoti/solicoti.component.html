@@ -388,11 +388,11 @@
     
                 <div *ngIf="actionEdit == 'proveedores'">
                     <app-cot-proveedores [mail_cabecera]="sharedCabecera" [mail_detalles]="sharedDetalle"
-                        [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [viewElement]="viewElement" [estadoSol]="estadoSol"></app-cot-proveedores>
+                        [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"  [estadoSol]="estadoSol"></app-cot-proveedores>
                 </div>
     
                 <div *ngIf="actionEdit == 'documentacion'">
-                    <app-cot-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [viewElement]="viewElement" [estadoSol]="estadoSol"></app-cot-documentacion>
+                    <app-cot-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-cot-documentacion>
                 </div>
     
                 <div class="foot-cabecera">
