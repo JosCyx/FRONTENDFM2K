@@ -14,12 +14,10 @@ export class AppDisableSecureDirective implements OnInit {
     private cookieService: CookieService
   ) { }
 
-  @Input('appSecureDisable') nivel!: string;
-
-  ngOnInit() {
+  @Input('appSecureDisable') set AppDisableSecureDirective(nivel: string) {
     setTimeout(() => {
-      const hasAccess = this.checkAccess(this.nivel);
-      
+      const hasAccess = this.checkAccess(nivel);
+
       if (!hasAccess) {
         console.log('Deshabilitado: ', hasAccess);
         //deshabilita el input al que esté asignado esta directiva
@@ -29,8 +27,30 @@ export class AppDisableSecureDirective implements OnInit {
         //habilita el input al que esté asignado esta directiva
         this.renderer.removeAttribute(this.element.nativeElement, 'disabled');
       }
-    }, 100);
+    }, 400);
+
   }
+
+  ngOnInit(): void {
+
+  }
+  // private nivel!: string;
+
+  // ngOnInit() {
+  //   setTimeout(() => {
+  //     const hasAccess = this.checkAccess(this.nivel);
+
+  //     if (!hasAccess) {
+  //       console.log('Deshabilitado: ', hasAccess);
+  //       //deshabilita el input al que esté asignado esta directiva
+  //       this.renderer.setAttribute(this.element.nativeElement, 'disabled', 'true');
+  //     } else {
+  //       console.log('Habilitado: ', hasAccess);
+  //       //habilita el input al que esté asignado esta directiva
+  //       this.renderer.removeAttribute(this.element.nativeElement, 'disabled');
+  //     }
+  //   }, 400);
+  // }
 
   checkAccess(nivel: string): boolean {
     console.log('nivel', nivel);

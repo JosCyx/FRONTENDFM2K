@@ -105,6 +105,7 @@ export class LoginComponent implements OnInit{
           if (error.status == 404) {
             //console.log("El usuario no existe.");
             console.log("Error 404:", error)
+            this.loading = false;
             this.showmsjerror = true;
             this.msjError = 'El usuario no existe.';
 
@@ -115,6 +116,7 @@ export class LoginComponent implements OnInit{
           } else if (error.status == 400) {
             //console.log("La contraseña no coincide.");
             console.log("Error 400:", error)
+            this.loading = false;
             this.showmsjerror = true;
             this.msjError = 'La contraseña no coincide.';
 
