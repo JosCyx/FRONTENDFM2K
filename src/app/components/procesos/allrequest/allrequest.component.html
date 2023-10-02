@@ -3,34 +3,46 @@
   <h2 class="font-weight-bolt ruteo">Todas las solicitudes</h2>
   <!-- <app-breadcrumb></app-breadcrumb> -->
 
-
-
-  <nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 30px;" >
+  <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 30px;" >
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <!-- <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar</button> -->
-        <!-- <button class="btn btn-primary m-2" (click)="changeView('editar')">Editar</button> -->
+         <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar</button> 
+         <button class="btn btn-primary m-2" (click)="changeView('editar')">Editar</button> 
       </div>
     </div>
-  </nav>
-
+  </nav> -->
 
   <div class="formRol" *appAuthorize="'34'">
-    <h3 class="font-weight-bold" style="padding-top: 20pt;">Consultar todas las solicitudes registradas</h3>
+    <h3 class="font-weight-bold" style="padding-top: 20pt">
+      Consultar todas las solicitudes registradas
+    </h3>
 
     <form class="form-tiposol d-flex row mb-5">
-      <label class="form-label">Tipo de solicitud</label>
+      <!-- <label class="form-label">Tipo de solicitud</label> -->
       <div class="form input-group">
         <select class="form-select" name="tipoSol" [(ngModel)]="bsqTipoSol">
-          <option disabled selected value=0>Seleccione una opción...</option>
-          <option *ngFor="let tpsol of tipoSol$ | async" [value]="tpsol.tipoSolId">{{tpsol.tipoSolNombre}}</option>
+          <option disabled selected value="0">Seleccione una opción...</option>
+          <option
+            *ngFor="let tpsol of tipoSol$ | async"
+            [value]="tpsol.tipoSolId"
+          >
+            {{ tpsol.tipoSolNombre }}
+          </option>
         </select>
-        <button class="btn btn-outline-success" (click)="consultarSol()">Consultar</button>
+        <button class="btn btn-outline-success" (click)="consultarSol()">
+          Consultar
+        </button>
       </div>
     </form>
-    
+    <div class="align-items-center input-group mb-3 justify-content-end">
+      <button class="btn btn-primary" (click)="prevPage()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <button class="btn btn-primary" (click)="nextPage()">
+        <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
     <div class="mb-5">
-
       <table class="table table-bordered text-center table-hover">
         <thead>
           <tr>
@@ -38,7 +50,7 @@
             <th class="align-middle cab-z">Area solicitante</th>
             <th class="align-middle cab-x">N° Solicitud</th>
             <th class="align-middle cab-z">Empleado solicitante</th>
-            <th class="align-middle cab-z" *ngIf="btp != 3" >Asunto</th>
+            <th class="align-middle cab-z" *ngIf="btp != 3">Asunto</th>
             <th class="align-middle cab-x">Fecha</th>
             <th class="align-middle cab-x">Estado</th>
             <th class="align-middle cab-x">Tracking</th>
@@ -46,95 +58,154 @@
         </thead>
         <tbody>
           <tr *ngIf="!isConsulta">
-            <td class="text-danger" colspan="8">Aún no se han consultado solicitudes</td>
+            <td class="text-danger" colspan="8">
+              Aún no se han consultado solicitudes
+            </td>
           </tr>
           <tr *ngIf="!isSolicitud">
-            <td class="text-danger" colspan="8">No se han registrado items para esta solicitud</td>
+            <td class="text-danger" colspan="8">
+              No se han registrado items para esta solicitud
+            </td>
           </tr>
           <ng-container *ngIf="btp == 1">
-            <tr *ngFor="let sol of allSol$ | async" (click)="selectSol(sol.cabSolCotID)">
-              <td class="align-middle">{{sol.cabSolCotNumerico}}</td>
-              <ng-container *ngFor="let area of areaList$|async">
-                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolCotArea">
-                  {{ area.areaDecp }}</td>
+            <tr
+              *ngFor="
+                let sol of allSol
+                  | paginate : { itemsPerPage: 10, currentPage: currentPage }
+              "
+              (click)="selectSol(sol.cabSolCotID)"
+            >
+              <td class="align-middle">{{ sol.cabSolCotNumerico }}</td>
+              <ng-container *ngFor="let area of areaList$ | async">
+                <td
+                  class="align-middle"
+                  *ngIf="area.areaIdNomina === sol.cabSolCotArea"
+                >
+                  {{ area.areaDecp }}
+                </td>
               </ng-container>
-              <td class="align-middle">{{sol.cabSolCotNoSolicitud}}</td>
-              <ng-container *ngFor="let emp of empleadoList$|async">
-                <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolCotSolicitante">
-                  {{ emp.empleadoNombres }}<br>{{ emp.empleadoApellidos }}</td>
+              <td class="align-middle">{{ sol.cabSolCotNoSolicitud }}</td>
+              <ng-container *ngFor="let emp of empleadoList$ | async">
+                <td
+                  class="align-middle"
+                  *ngIf="emp.empleadoIdNomina === sol.cabSolCotSolicitante"
+                >
+                  {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
+                </td>
               </ng-container>
-              <td class="align-middle">{{sol.cabSolCotAsunto}}</td>
-              <td class="align-middle">{{sol.cabSolCotFecha | date:'yyyy-MM-dd'}}</td>
+              <td class="align-middle">{{ sol.cabSolCotAsunto }}</td>
+              <td class="align-middle">
+                {{ sol.cabSolCotFecha | date : "yyyy-MM-dd" }}
+              </td>
               <td class="align-middle" [ngSwitch]="sol.cabSolCotEstado">
                 <span *ngSwitchCase="'A'">Activo</span>
                 <span *ngSwitchCase="'F'">Finalizado</span>
                 <span *ngSwitchCase="'C'">Cancelado</span>
               </td>
-              <ng-container *ngFor="let trck of trckList$|async">
-                <td class="align-middle" *ngIf="trck.nivel === sol.cabSolCotEstadoTracking">
-                  {{ trck.descRuteo }}</td>
+              <ng-container *ngFor="let trck of trckList$ | async">
+                <td
+                  class="align-middle"
+                  *ngIf="trck.nivel === sol.cabSolCotEstadoTracking"
+                >
+                  {{ trck.descRuteo }}
+                </td>
               </ng-container>
             </tr>
           </ng-container>
 
           <ng-container *ngIf="btp == 2">
-            <tr *ngFor="let sol of allSol$ | async" (click)="selectSol(sol.cabSolOCID)">
-              <td class="align-middle">{{sol.cabSolOCNumerico}}</td>
-              <ng-container *ngFor="let area of areaList$|async">
-                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolOCArea">
-                  {{ area.areaDecp }}</td>
+            <tr
+              *ngFor="
+                let sol of allSol
+                  | paginate : { itemsPerPage: 10, currentPage: currentPage }
+              "
+              (click)="selectSol(sol.cabSolOCID)"
+            >
+              <td class="align-middle">{{ sol.cabSolOCNumerico }}</td>
+              <ng-container *ngFor="let area of areaList$ | async">
+                <td
+                  class="align-middle"
+                  *ngIf="area.areaIdNomina === sol.cabSolOCArea"
+                >
+                  {{ area.areaDecp }}
+                </td>
               </ng-container>
-              <td class="align-middle">{{sol.cabSolOCNoSolicitud}}</td>
-              <ng-container *ngFor="let emp of empleadoList$|async">
-                <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolOCSolicitante">
-                  {{ emp.empleadoNombres }}<br>{{ emp.empleadoApellidos }}</td>
+              <td class="align-middle">{{ sol.cabSolOCNoSolicitud }}</td>
+              <ng-container *ngFor="let emp of empleadoList$ | async">
+                <td
+                  class="align-middle"
+                  *ngIf="emp.empleadoIdNomina === sol.cabSolOCSolicitante"
+                >
+                  {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
+                </td>
               </ng-container>
-              <td class="align-middle">{{sol.cabSolOCAsunto}}</td>
-              <td class="align-middle">{{sol.cabSolOCFecha | date:'yyyy-MM-dd'}}</td>
+              <td class="align-middle">{{ sol.cabSolOCAsunto }}</td>
+              <td class="align-middle">
+                {{ sol.cabSolOCFecha | date : "yyyy-MM-dd" }}
+              </td>
               <td class="align-middle" [ngSwitch]="sol.cabSolOCEstado">
                 <span *ngSwitchCase="'A'">Activo</span>
                 <span *ngSwitchCase="'F'">Finalizado</span>
                 <span *ngSwitchCase="'C'">Cancelado</span>
               </td>
-              <ng-container *ngFor="let trck of trckList$|async">
-                <td class="align-middle" *ngIf="trck.nivel === sol.cabSolOCEstadoTracking">
-                  {{ trck.descRuteo }}</td>
+              <ng-container *ngFor="let trck of trckList$ | async">
+                <td
+                  class="align-middle"
+                  *ngIf="trck.nivel === sol.cabSolOCEstadoTracking"
+                >
+                  {{ trck.descRuteo }}
+                </td>
               </ng-container>
             </tr>
           </ng-container>
 
           <ng-container *ngIf="btp == 3">
-            <tr *ngFor="let sol of allSol$ | async" (click)="selectSol(sol.cabPagoID)">
-              <td class="align-middle">{{sol.cabPagoNumerico}}</td>
-              <ng-container *ngFor="let area of areaList$|async">
-                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabPagoAreaSolicitante">
-                  {{ area.areaDecp }}</td>
+            <tr
+              *ngFor="
+                let sol of allSol
+                  | paginate : { itemsPerPage: 10, currentPage: currentPage }
+              "
+              (click)="selectSol(sol.cabPagoID)"
+            >
+              <td class="align-middle">{{ sol.cabPagoNumerico }}</td>
+              <ng-container *ngFor="let area of areaList$ | async">
+                <td
+                  class="align-middle"
+                  *ngIf="area.areaIdNomina === sol.cabPagoAreaSolicitante"
+                >
+                  {{ area.areaDecp }}
+                </td>
               </ng-container>
-              <td class="align-middle">{{sol.cabPagoNoSolicitud}}</td>
-              <ng-container *ngFor="let emp of empleadoList$|async">
-                <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabPagoSolicitante">
-                  {{ emp.empleadoNombres }}<br>{{ emp.empleadoApellidos }}</td>
+              <td class="align-middle">{{ sol.cabPagoNoSolicitud }}</td>
+              <ng-container *ngFor="let emp of empleadoList$ | async">
+                <td
+                  class="align-middle"
+                  *ngIf="emp.empleadoIdNomina === sol.cabPagoSolicitante"
+                >
+                  {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
+                </td>
               </ng-container>
-              
-              <td class="align-middle">{{sol.cabPagoFechaEmision | date:'yyyy-MM-dd'}}</td>
+
+              <td class="align-middle">
+                {{ sol.cabPagoFechaEmision | date : "yyyy-MM-dd" }}
+              </td>
               <td class="align-middle" [ngSwitch]="sol.cabPagoEstado">
                 <span *ngSwitchCase="'A'">Activo</span>
                 <span *ngSwitchCase="'F'">Finalizado</span>
                 <span *ngSwitchCase="'C'">Cancelado</span>
               </td>
-              <ng-container *ngFor="let trck of trckList$|async">
-                <td class="align-middle" *ngIf="trck.nivel === sol.cabPagoEstadoTrack">
-                  {{ trck.descRuteo }}</td>
+              <ng-container *ngFor="let trck of trckList$ | async">
+                <td
+                  class="align-middle"
+                  *ngIf="trck.nivel === sol.cabPagoEstadoTrack"
+                >
+                  {{ trck.descRuteo }}
+                </td>
               </ng-container>
             </tr>
           </ng-container>
-
         </tbody>
       </table>
     </div>
   </div>
-
-
- 
 </div>
-

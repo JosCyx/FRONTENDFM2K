@@ -30,12 +30,13 @@ export class AllrequestComponent implements OnInit {
 
   //listas para mostrar las solicitudes
   tipoSol$!: Observable<any[]>;
-  allSol$!: Observable<any[]>;
+  allSol:any[]=[];
   empleadoList$!: Observable<any[]>;
   areaList$!: Observable<any[]>;
   sectores$!: Observable<any[]>;
   trckList$!: Observable<any[]>;
   solicitud$!: Observable<any[]>;
+
 
 
   bsqTipoSol: number = 0;
@@ -47,6 +48,9 @@ export class AllrequestComponent implements OnInit {
   metodoBusq!: number;
 
   changeview: string = 'consultar';
+
+  currentPage: number = 1;
+
 
   constructor(private router: Router,
     private serviceGlobal: GlobalService,
@@ -80,8 +84,30 @@ export class AllrequestComponent implements OnInit {
     this.chooseSearchMethod();
   }
 
+  nextPage(): void {
+    console.log("nextPage",this.currentPage);
+    if(  this.allSol.length/10 <=10 ){
+      console.log("nextPage",this.currentPage," ",this.allSol.length/10,"",this.allSol);
+      this.currentPage=1;
+    }else if(this.currentPage >= this.allSol.length/10){
+      this.currentPage=this.currentPage;
+    }else{
+      this.currentPage++
+    }
+    
+  }
+
+  //decrementa el valor de la variable que controla la pagina actual que se muestra
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      console.log("prevPage",this.currentPage);
+      this.currentPage--; // Disminuir currentPage en uno si no está en la primera página
+    }
+  }
+
   consultarSol(): void {
     this.btp = this.bsqTipoSol;
+    this.currentPage = 1;
     this.isConsulta = true;
     if (this.bsqTipoSol == 1) {
       this.getAllCotizaciones();
@@ -156,30 +182,30 @@ export class AllrequestComponent implements OnInit {
   //CONSULTA TODAS LAS SOLICITUDES DEPENDIENDO DEL METODO DE BUSQUEDA DEL USUARIO
   getAllCotizaciones(): void {
     if (this.metodoBusq == 1) {
-      this.allSol$ = this.cabCotService.getCotizacionesByIdNomina(parseInt(this.cookieService.get('userNomina')));
-      this.allSol$.subscribe(
+      this.cabCotService.getCotizacionesByIdNomina(parseInt(this.cookieService.get('userNomina'))).subscribe(
         response => {
-          console.log("Exito: ", response);
+          // console.log("Exito: ", response);
+          this.allSol = response;
         },
         error => {
           console.log(error);
         }
       );
     } else if (this.metodoBusq == 2) {
-      this.allSol$ = this.cabCotService.getCotizacionesbyArea(parseInt(this.cookieService.get('userArea')));
-      this.allSol$.subscribe(
+      this.cabCotService.getCotizacionesbyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
           console.log("Exito: ", response);
+          this.allSol = response;
         },
         error => {
           console.log(error);
         }
       );
     } else if (this.metodoBusq == 3) {
-      this.allSol$ = this.cabCotService.getAllCotizaciones();
-      this.allSol$.subscribe(
+      this.cabCotService.getAllCotizaciones().subscribe(
         response => {
           console.log("Exito: ", response);
+          this.allSol = response;
         },
         error => {
           console.log(error);
@@ -191,20 +217,20 @@ export class AllrequestComponent implements OnInit {
 
   getAllOrdenCompras(): void {
     if (this.metodoBusq == 1) {
-      this.allSol$ = this.cabOCService.getOrdenCmpbyIdNomina(parseInt(this.cookieService.get('userNomina')));
-      this.allSol$.subscribe(
+       this.cabOCService.getOrdenCmpbyIdNomina(parseInt(this.cookieService.get('userNomina'))).subscribe(
         response => {
           console.log("Exito: ", response);
+          this.allSol = response;
         },
         error => {
           console.log(error);
         }
       );
     } else if(this.metodoBusq == 2){
-      this.allSol$ = this.cabOCService.getOrdenCmpbyArea(parseInt(this.cookieService.get('userArea')));
-      this.allSol$.subscribe(
+      this.cabOCService.getOrdenCmpbyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
           console.log("Exito: ", response);
+          this.allSol = response;
         },
         error => {
           console.log(error);
@@ -212,10 +238,10 @@ export class AllrequestComponent implements OnInit {
       );
 
     } else if(this.metodoBusq == 3){
-      this.allSol$ = this.cabOCService.getAllOrdenCmp();
-      this.allSol$.subscribe(
+       this.cabOCService.getAllOrdenCmp().subscribe(
         response => {
           console.log("Exito: ", response);
+          this.allSol = response;
         },
         error => {
           console.log(error);
@@ -228,20 +254,20 @@ export class AllrequestComponent implements OnInit {
 
   getAllOrdenPagos(): void {
     if (this.metodoBusq == 1) {
-      this.allSol$ = this.cabPagoService.getPagobyIdNomina(parseInt(this.cookieService.get('userNomina')));
-      this.allSol$.subscribe(
+      this.cabPagoService.getPagobyIdNomina(parseInt(this.cookieService.get('userNomina'))).subscribe(
         response => {
           console.log("Exito: ", response);
+          this.allSol=response;
         },
         error => {
           console.log(error);
         }
       );
     } else if(this.metodoBusq == 2){
-      this.allSol$ = this.cabPagoService.getPagobyArea(parseInt(this.cookieService.get('userArea')));
-      this.allSol$.subscribe(
+      this.cabPagoService.getPagobyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
           console.log("Exito: ", response);
+          this.allSol=response;
         },
         error => {
           console.log(error);
@@ -249,10 +275,10 @@ export class AllrequestComponent implements OnInit {
       );
 
     } else if(this.metodoBusq == 3){
-      this.allSol$ = this.cabPagoService.getAllPago();
-      this.allSol$.subscribe(
+      this.cabPagoService.getAllPago().subscribe(
         response => {
           console.log("Exito: ", response);
+          this.allSol=response;
         },
         error => {
           console.log(error);

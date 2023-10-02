@@ -112,7 +112,16 @@ export class EmpleadosComponent implements OnInit {
 
   //incrementa el valor d la variable que controla la pagina actual que se muestra
   nextPage(): void {
-    this.currentPage++;
+    console.log("nextPage",this.currentPage);
+    if(this.empleados.length/10 <=10 ){
+      console.log("nextPage",this.currentPage);
+      this.currentPage=1;
+    }else if(this.currentPage >= this.empleados.length/10){
+      this.currentPage=this.currentPage;
+    }else{
+      this.currentPage++
+    }
+    
   }
 
   //decrementa el valor de la variable que controla la pagina actual que se muestra

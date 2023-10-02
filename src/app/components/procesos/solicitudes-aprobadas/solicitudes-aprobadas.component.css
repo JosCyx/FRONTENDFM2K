@@ -50,8 +50,17 @@
 .navbar-nav{
     height: 40px;
 }
-/* Boton */
-button{
-    border: none;
-    background-color: transparent;
+.form-label{
+    display: flex;
+    align-items: flex-end;  
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+.botones{
+    display: flex;
+    align-items: flex-end;
+}
+.text-end button{
+    border: none  !important;
+    background: transparent !important;
 }

@@ -5,33 +5,48 @@
   <!--  -->
   <div class="formRol" *appAuthorize="'35'">
     <form class="form-tiposol d-flex row mb-5">
-      
       <div class="form input-group">
-        <label class="form-label" for="tipoSol"> Tipo de Solicitud:</label>
-        <select class="form-select" name="tipoSol" [(ngModel)]="AbierTipoSol">
-          <option disabled selected value="0">Seleccione una opción...</option>
-          <option *ngFor="let tpsol of tipoSol" [value]="tpsol.tipoSolId">
-            {{ tpsol.tipoSolNombre }}
-          </option>
-        </select>
-        <label class="form-label" for="estadoSol"> Tipo de Solicitud:</label>
-        <select class="form-select" name="estadoSol" [(ngModel)]="Allstate">
-          <option disabled selected value="0">Seleccione una opción...</option>
-          <option value="A" >Activo</option>
-          <option value="C" >Cancelado</option>
-          <option  value="F" >Finalizado</option>
-        </select>
-        <button
-          class="btn btn-outline-success"
-          (click)="consultarSolicitudes()"
-        >
-          Consultar
-        </button>
+       <div class="col" >
+         <label class="form-label" for="tipoSol"> Tipo de Solicitud:</label>
+         <select class="form-select" name="tipoSol" [(ngModel)]="AbierTipoSol">
+           <option disabled selected value="0">Seleccione una opción...</option>
+           <option *ngFor="let tpsol of tipoSol" [value]="tpsol.tipoSolId">
+             {{ tpsol.tipoSolNombre }}
+           </option>
+         </select>
+       </div>
+        <div class="col" >
+          <label class="form-label" for="estadoSol"> Estados:</label>
+          <select class="form-select" name="estadoSol" [(ngModel)]="Allstate">
+            <option disabled selected value="0">Seleccione una opción...</option>
+            <option value="A">Activo</option>
+            <option value="C">Cancelado</option>
+            <option value="F">Finalizado</option>
+          </select>
+        </div>
+        <div class="botones" >
+          <button
+            class="btn btn-outline-success"
+            (click)="consultarSolicitudes()"
+          >
+            Consultar
+          </button>
+        </div>
       </div>
     </form>
-
+    <div class="align-items-center input-group mb-3 justify-content-end">
+      <button class="btn btn-primary" (click)="prevPage()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <button class="btn btn-primary" (click)="nextPage()">
+        <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
     <div class="mb-5">
-      <table class="table table-bordered text-center table-hover" id="table-data">
+      <table
+        class="table table-bordered text-center table-hover"
+        id="table-data"
+      >
         <thead>
           <tr>
             <th class="align-middle cab-x">Código</th>
@@ -60,7 +75,7 @@
             </td>
           </tr>
           <ng-container *ngIf="btp == 1">
-            <tr *ngFor="let sol of allSol" >
+            <tr *ngFor="let sol of allSol | paginate: { itemsPerPage: 10, currentPage: currentPage } ">
               <td class="align-middle">{{ sol.cabSolCotNumerico }}</td>
               <ng-container *ngFor="let area of areaList">
                 <td
@@ -99,11 +114,9 @@
           </ng-container>
 
           <ng-container *ngIf="btp == 2">
-            <tr
-              *ngFor="let sol of allSol "
-            >
+            <tr *ngFor="let sol of allSol | paginate: { itemsPerPage: 10, currentPage: currentPage } ">
               <td class="align-middle">{{ sol.cabSolOCNumerico }}</td>
-              <ng-container *ngFor="let area of areaList ">
+              <ng-container *ngFor="let area of areaList">
                 <td
                   class="align-middle"
                   *ngIf="area.areaIdNomina === sol.cabSolOCArea"
@@ -112,7 +125,7 @@
                 </td>
               </ng-container>
               <td class="align-middle">{{ sol.cabSolOCNoSolicitud }}</td>
-              <ng-container *ngFor="let emp of empleadoList ">
+              <ng-container *ngFor="let emp of empleadoList">
                 <td
                   class="align-middle"
                   *ngIf="emp.empleadoIdNomina === sol.cabSolOCSolicitante"
@@ -139,37 +152,52 @@
             </tr>
           </ng-container>
 
-           <ng-container *ngIf="btp == 3">
-                <tr *ngFor="let sol of allSol" >
-                  <td class="align-middle">{{sol.cabPagoNumerico}}</td>
-                  <ng-container *ngFor="let area of areaList">
-                    <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabPagoAreaSolicitante">
-                      {{ area.areaDecp }}</td>
-                  </ng-container>
-                  <td class="align-middle">{{sol.cabPagoNoSolicitud}}</td>
-                  <ng-container *ngFor="let emp of empleadoList">
-                    <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabPagoSolicitante">
-                      {{ emp.empleadoNombres }}<br>{{ emp.empleadoApellidos }}</td>
-                  </ng-container>
-                  
-                  <td class="align-middle">{{sol.cabPagoFechaEmision | date:'yyyy-MM-dd'}}</td>
-                  <td class="align-middle" [ngSwitch]="sol.cabPagoEstado">
-                    <span *ngSwitchCase="'A'">Activo</span>
-                    <span *ngSwitchCase="'F'">Finalizado</span>
-                    <span *ngSwitchCase="'C'">Cancelado</span>
-                  </td>
-                  <ng-container *ngFor="let trck of trckList">
-                    <td class="align-middle" *ngIf="trck.nivel === sol.cabPagoEstadoTrack">
-                      {{ trck.descRuteo }}</td>
-                  </ng-container>
-                </tr>
-              </ng-container> 
+          <ng-container *ngIf="btp == 3 ">
+            <tr *ngFor="let sol of allSol | paginate: { itemsPerPage: 10, currentPage: currentPage } ">
+              <td class="align-middle">{{ sol.cabPagoNumerico }}</td>
+              <ng-container *ngFor="let area of areaList">
+                <td
+                  class="align-middle"
+                  *ngIf="area.areaIdNomina === sol.cabPagoAreaSolicitante"
+                >
+                  {{ area.areaDecp }}
+                </td>
+              </ng-container>
+              <td class="align-middle">{{ sol.cabPagoNoSolicitud }}</td>
+              <ng-container *ngFor="let emp of empleadoList">
+                <td
+                  class="align-middle"
+                  *ngIf="emp.empleadoIdNomina === sol.cabPagoSolicitante"
+                >
+                  {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
+                </td>
+              </ng-container>
+
+              <td class="align-middle">
+                {{ sol.cabPagoFechaEmision | date : "yyyy-MM-dd" }}
+              </td>
+              <td class="align-middle" [ngSwitch]="sol.cabPagoEstado">
+                <span *ngSwitchCase="'A'">Activo</span>
+                <span *ngSwitchCase="'F'">Finalizado</span>
+                <span *ngSwitchCase="'C'">Cancelado</span>
+              </td>
+              <ng-container *ngFor="let trck of trckList">
+                <td
+                  class="align-middle"
+                  *ngIf="trck.nivel === sol.cabPagoEstadoTrack"
+                >
+                  {{ trck.descRuteo }}
+                </td>
+              </ng-container>
+            </tr>
+          </ng-container>
         </tbody>
       </table>
     </div>
     <div class="text-end">
-      <button  [disabled]="!isConsulta" (click)="exportexcel()" ><img src="../../../../assets/img/272697_excel_icon.png" alt=""></button>
+      <button [disabled]="!isConsulta" (click)="exportexcel()">
+        <img src="../../../../assets/img/272697_excel_icon.png" alt="" />
+      </button>
     </div>
-    
   </div>
 </div>

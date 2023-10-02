@@ -37,6 +37,8 @@ export class SolicitudesAprobadasComponent implements OnInit {
   btp: number = 0;
 
   metodoBusq!: number;
+  currentPage: number = 1;
+
 
   constructor(
     private router: Router,
@@ -81,11 +83,30 @@ export class SolicitudesAprobadasComponent implements OnInit {
 
     this.chooseSearchMethod();
   }
+  //Paginacion 
+  nextPage(): void {
+    console.log("nextPage",this.currentPage);
+    if(  this.allSol.length/10 <=10 ){
+      console.log("nextPage",this.currentPage," ",this.allSol.length/10,"",this.allSol);
+      this.currentPage=1;
+    }else if(this.currentPage >= this.allSol.length/10){
+      this.currentPage=this.currentPage;
+    }else{
+      this.currentPage++
+    }
+  }
+  //decrementa el valor de la variable que controla la pagina actual que se muestra
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      console.log("prevPage",this.currentPage);
+      this.currentPage--; // Disminuir currentPage en uno si no está en la primera página
+    }
+  }
 
   //Consultar solicitudes
   consultarSolicitudes(): void {
     this.btp = this.AbierTipoSol;
-    console.log('dfgdfgr', this.Allstate);
+    this.currentPage = 1;
     if (this.AbierTipoSol == 1) {
       this.cabCotService.getEstadoCotizacion(this.Allstate).subscribe({
         next: (data) => {
