@@ -8,6 +8,7 @@
                     <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">
                         Crear
                     </button> -->
+                    <button class="btn btn-danger" (click)="enviarSolicitud()">Boton</button>
                 </div>
             </div>
         </nav>
@@ -173,13 +174,18 @@
                 </div>
     
                 <div class="col text-end">
-                    <button class="btn btn-primary m-2" (click)="check()" [disabled]="
+                    <button class="btn btn-primary m-2" [disabled]="
                 !empleado ||
                 !cab_asunto ||
                 detalleList.length === 0 ||
-                itemSectorList.length === 0
-              " *appAuthorize="'25'">
+                itemSectorList.length === 0"
+                data-toggle="modal" 
+                data-target="#guardarCotizacion"
+               *appAuthorize="'25'">
                         Guardar
+                    </button>
+                    <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" [appSecureDisable]= "estadoSol" *appAuthorize="'27'">
+                        Guardar y enviar
                     </button>
                     <button class="btn btn-danger m-2" (click)="cancelarAll()">
                         Cancelar
@@ -448,11 +454,13 @@
                     </div>
                 </div>
                 <div class="col text-end">
-                    <button class="btn btn-primary m-2" data-toggle="modal" data-target="#guardarEdicion"
-                        (click)="saveIdInspector()" [appSecureDisable]= "estadoSol">Guardar</button>
-                    <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" [appSecureDisable]= "estadoSol" *appAuthorize="'27'">
-                        Enviar
-                    </button>
+                    <ng-container *ngIf="cabecera.cabSolCotEstadoTracking!= 0">
+                        <button class="btn btn-primary m-2" data-toggle="modal" data-target="#guardarEdicion"
+                            (click)="saveIdInspector()" [appSecureDisable]= "estadoSol">Guardar</button>
+                        <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitudGuardada" [appSecureDisable]= "estadoSol" *appAuthorize="'27'">
+                            Guardar y enviar
+                        </button>
+                    </ng-container>
                     <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
                 </div>
             </div>
@@ -653,20 +661,20 @@
 </div>
 
 <!--Modal para guardar edicion de solicitud  -->
-<div class="modal fade" #exampleModal id="guardarEdicion" data-backdrop="static" tabindex="-1" role="dialog"
+<div class="modal fade" #exampleModal id="guardarCotizacion" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
-                    Guardar cambios
+                    ¿Está seguro que desea guardar esta solicitud?
                 </h3>
             </div>
             <div class="modal-body">
-                <p>¿Está seguro que desea guardar los cambios realizados en la solicitud?</p>
+                <p>Esta acción guardará los datos ingresados en la solicitud pero no la enviará para su revisón.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveEdit()">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="check()" >
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -676,24 +684,22 @@
         </div>
     </div>
 </div>
-<!-- Modal para verificar el envío-->
-<div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+
+<!--Modal para guardar edicion de solicitud  -->
+<div class="modal fade" #exampleModal id="guardarEdicion" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea enviar la Solicitud?
+                    ¿Está seguro que desea guardar los cambios realizados en la solicitud?
                 </h3>
             </div>
             <div class="modal-body">
-                <p>
-                    Al enviar la solicitud no podrá volver a editarla y pasará al estado
-                    de revisión.
-                </p>
+                <p>Esta acción guardará los cambios hechos en la solicitud pero no enviará la solicitud.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="saveEdit()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -753,3 +759,55 @@
         </div>
     </div>
 </div>
+
+
+<!-- Modal para verificar el envío de la soliitud recien registrada-->
+<div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea guardar la solicitud y enviarla para su revisón?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al enviar la solicitud no podrá volver a editarla y pasará al estado de Revisión 1.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolNueva()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para verificar el envío de la solcitud guardada-->
+<div class="modal fade" #exampleModal id="enviarSolicitudGuardada" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea guardar los cambios realizados en la solicitud y enviarla para su revisón?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

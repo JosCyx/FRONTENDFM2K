@@ -124,8 +124,17 @@ export class LoginComponent implements OnInit{
               this.showmsjerror = false;
               this.msjError = '';
             }, 3000);
+          } else {
+            console.log("Error:", error);
+            this.loading = false;
+            this.showmsjerror = true;
+            this.msjError = 'Error, intente nuevamente.';
+
+            setTimeout(() => {
+              this.showmsjerror = false;
+              this.msjError = '';
+            }, 3000);
           }
-          console.log("Error:", error)
         } 
       );
     } else {
