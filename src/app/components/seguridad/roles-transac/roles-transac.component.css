@@ -3,3 +3,19 @@
     margin: 0 auto;
     padding-top: 25px;
 }
+
+.trsc-table{
+    width: 50%;
+    margin: 0 auto;
+    padding-top: 25px;
+}
+
+.form-rol {
+    width: 40%;
+    margin: 0 auto;
+    padding-top: 15px;
+}
+
+.tr-trsc:hover{
+    cursor: pointer;
+}

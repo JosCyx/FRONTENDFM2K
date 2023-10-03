@@ -6,18 +6,51 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <button class="btn btn-primary m-2" >Consultar</button>
-                    <button class="btn btn-primary m-2" >Asignar</button>                    
+                    <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
+                    <button class="btn btn-primary m-2" (click)="changeView('asignar')">Asignar</button>
                 </div>
             </div>
         </nav>
     </div>
-    <div>
-        CONTENIDO
+    <div *ngIf="changeview == 'asignar'">
+        <div class="m-4">
+            <form class="form-rol d-flex row mb-5">
+                <!-- <label class="form-label">Tipo de solicitud</label> -->
+                <div class="form input-group">
+                    <label class="input-group-text">Rol:</label>
+                    <select class="form-select" name="tipoSol" [(ngModel)]="rolAsign">
+                        <option disabled selected value="0">Seleccione un rol...</option>
+                        <option *ngFor="let rol of rolList" [value]="rol.roCodigo">
+                            {{ rol.roNombre }}
+                        </option>
+                    </select>
+                </div>
+            </form>
+            <table class="table table-bordered table-centered text-center table-hover trsc-table">
+                <thead>
+                    <tr>
+                        <th colspan="2">Transacciones disponibles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let trsc of transacList" class="tr-trsc">
+                        <td class="align-middle"><input type="checkbox"></td>
+                        <td class="align-middle">{{trsc.trNombre}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="m-3 text-end">
+                <button class="btn btn-primary">Guardar autorización</button>
+            </div>
+        </div>
+
+    </div>
+    <div *ngIf="changeview == 'consulta'">
+
     </div>
 
-    
-    
+
+
 
 
 
