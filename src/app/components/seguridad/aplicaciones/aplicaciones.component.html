@@ -1,2 +1,226 @@
 <app-menu-admin></app-menu-admin>
-<p>aplicaciones works!</p>
+<div class="container">
+  <h1 class="font-weight-bold">Aplicaciones</h1>
+
+  <div class="">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <button
+            class="btn btn-primary m-2"
+            (click)="changeView('consulta')"
+            *appAuthorize="'2'"
+          >
+            Consultar
+          </button>
+          <button
+            class="btn btn-primary m-2"
+            (click)="changeView('crear')"
+            *appAuthorize="'1'"
+          >
+            Crear
+          </button>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <!-- Creacion de aplicaciones -->
+  <ng-container *appAuthorize="'1'">
+    <div class="formRol" *ngIf="changeview === 'crear'">
+      <h3 class="font-weight-bold" style="padding-top: 20pt">
+        Ingreso de Aplicaciones
+      </h3>
+      <form class="form-rol">
+        <div class="form cmp-form">
+          <label class="form-label">Nombre de Aplicacion:</label>
+          <input
+            [(ngModel)]="nombre"
+            name="nombre"
+            type="text"
+            id="form12"
+            class="form-control"
+            placeholder="Ingrese el nombre de la Aplicacion"
+          />
+        </div>
+        <div class="form cmp-form">
+          <label class="form-label">Nemonico:</label>
+          <input
+            [(ngModel)]="nemonico"
+            name="nemonico"
+            type="text"
+            id="form12"
+            class="form-control"
+            placeholder="Ingrese el nombre del Nemonico"
+          />
+        </div>
+        <div class="form cmp-form">
+          <label class="form-label">Version:</label>
+          <input
+            [(ngModel)]="version"
+            name="version"
+            type="text"
+            id="form12"
+            class="form-control"
+            placeholder="Ingrese la Version"
+          />
+        </div>
+
+        <div class="form cmp-form">
+          <label class="form-label">Estado:</label>
+          <select class="form-select" name="estado" [(ngModel)]="estado">
+            <option disabled selected value="">Selecciona un estado...</option>
+            <option value="A">Activo</option>
+            <option value="I">Inactivo</option>
+          </select>
+        </div>
+        <div *ngIf="showmsj" class="alert alert-success" role="alert">
+            <span
+              ><i class="bi bi-check-circle-fill"> {{ mensajeExito }}</i></span
+            >
+          </div>
+          <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+            <span
+              ><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span
+            >
+          </div>
+      </form>
+      <div class="text-end" *appAuthorize="'1'">
+        <button
+          [disabled]="!nombre || !nemonico || !estado"
+          type="submit"
+          class="btn btn-primary m-2"
+          (click)="agregarAplic()"
+        >
+          Agregar Aplicacion
+        </button>
+        <button class="btn btn-danger m-2" (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+ <!-- Lista de aplicaciones-->
+ <ng-container *appAuthorize="'2'">
+  <div class="listRol" *ngIf="changeview === 'consulta'">
+    <h3 class="font-weight-bold" style="padding-top: 20pt">
+      Registro de aplicaciones
+    </h3>
+    <p
+      class="text-danger no-rol text-center"
+      *ngIf="aplicacionesList.length === 0"
+    >
+      No hay roles registrados.
+    </p>
+    <div class="align-items-center input-group mb-3 justify-content-end">
+      <button class="btn btn-primary" (click)="prevPage()">
+        <i class="bi bi-arrow-left"></i>
+      </button>
+      <button class="btn btn-primary" (click)="nextPage()">
+        <i class="bi bi-arrow-right"></i>
+      </button>
+    </div>
+    <table
+      class="table table-bordered text-center table-hover"
+      *ngIf="aplicacionesList.length != 0"
+    >
+      <thead>
+        <tr>
+          <th scope="col">Nombre</th>
+          <th scope="col">Nemonico</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Version</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let item of aplicacionesList | paginate: { itemsPerPage: 5, currentPage: currentPage } ; let i = index  ">
+          <tr (click)="editarRol(item)">
+            <td>{{ item.apNombre }}</td>
+            <td>{{item.apNemonico}}</td>
+            <td [ngSwitch]="item.apEstado">
+              <span *ngSwitchCase="'A'">Activo</span>
+              <span *ngSwitchCase="'I'">Inactivo</span>
+            </td>
+            <td>{{item.apVersion}}</td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</ng-container>
+<!-- Editar  -->
+<ng-container *appAuthorize="'3'">
+  <div class="formRol" *ngIf="changeview === 'editar'">
+    <h3 class="font-weight-bold" style="padding-top: 20pt">
+      Editar  Aplicacion
+    </h3>
+    <form class="form-rol">
+      <div class="form cmp-form">
+        <label class="form-label">Nombre de Aplicacion:</label>
+        <input
+          [(ngModel)]="nombre"
+          name="nombre"
+          type="text"
+          id="form12"
+          class="form-control"
+          placeholder="Ingrese el nombre de la Aplicacion"
+        />
+      </div>
+      <div class="form cmp-form">
+        <label class="form-label">Nemonico:</label>
+        <input
+          [(ngModel)]="nemonico"
+          name="nemonico"
+          type="text"
+          id="form12"
+          class="form-control"
+          placeholder="Ingrese el nombre del Nemonico"
+        />
+      </div>
+      <div class="form cmp-form">
+        <label class="form-label">Version:</label>
+        <input
+          [(ngModel)]="version"
+          name="version"
+          type="text"
+          id="form12"
+          class="form-control"
+          placeholder="Ingrese la Version"
+        />
+      </div>
+
+      <div class="form cmp-form">
+        <label class="form-label">Estado:</label>
+        <select class="form-select" name="estado" [(ngModel)]="estado">
+          <option disabled selected value="">Selecciona un estado...</option>
+          <option value="A">Activo</option>
+          <option value="I">Inactivo</option>
+        </select>
+      </div>
+      <div *ngIf="showmsj" class="alert alert-success" role="alert">
+          <span
+            ><i class="bi bi-check-circle-fill"> {{ mensajeExito }}</i></span
+          >
+        </div>
+        <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+          <span
+            ><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span
+          >
+        </div>
+    </form>
+    <div class="text-end" *appAuthorize="'3'">
+      <button
+        [disabled]="!nombre || !nemonico || !estado"
+        type="submit"
+        class="btn btn-primary m-2"
+        (click)="guardarEdicion()"
+      >
+        Guardar Cambios
+      </button>
+      <button class="btn btn-danger m-2" (click)="cancelar()">
+        Cancelar
+      </button>
+    </div>
+  </div>
+</ng-container>
+</div>

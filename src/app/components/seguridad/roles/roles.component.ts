@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AplicacionesService } from 'src/app/services/comunicationAPI/seguridad/aplicaciones.service';
+import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
 import { RolesService } from 'src/app/services/comunicationAPI/seguridad/roles.service';
 
 
@@ -14,27 +14,48 @@ export class RolesComponent implements OnInit {
   //variables para guardar los datos del rol nuevo
   roCodigo: number = 0;//almacena el id del rol que se seleccione
   nombre: string = '';
-  idAplicacion: number = 0;
+  NivelRuteo: number = 0;
   estado: string = '';
 
   //VARIABLE USADA PARA CONTROLAR FUNCIONES DE LA PAGINA
   changeview: string = 'consulta';
-  edicion: boolean = false;
   mensajeExito: string = '';
+  msjError: string='';
+  showmsj: boolean = false;
+  showmsjerror: boolean = false;
+
+  currentPage: number = 1;
+
 
   //listas
-  rolList$!: Observable<any[]>;
+  rolList:any[]=[];
   appsList$!: Observable<any[]>;
+  NivelesRuteo:any[] = [];
 
   // Map to display data associate with foreign keys
   //rolsMap: Map<number, string> = new Map()
 
   constructor(private rolService: RolesService,
-    private appService: AplicacionesService) { }
+     private nivelservice:NivelRuteoService) { }
 
   ngOnInit() {
-    this.rolList$ = this.rolService.getRolsList();
-    this.appsList$ = this.appService.getAplicacionesList();
+    this.rolService.getRolsList().subscribe({
+      next: rols => {
+        this.rolList= rols;
+        console.log("esto son mis roles ",this.rolList);
+      },
+      error:(err)=> {
+          console.log ("error",err)
+      }
+    });
+    this.nivelservice.getNivelruteo().subscribe({
+      next: niveles => {
+        this.NivelesRuteo = niveles;
+        console.log("esto son los niveles",this.NivelesRuteo);
+      },error:(err)=> {
+        console.log ("error",err)
+    }
+    });
   }
 
   agregarRol(): void {
@@ -43,26 +64,35 @@ export class RolesComponent implements OnInit {
       roEmpresa: 1, // define el valor por defecto de la empresa 
       roNombre: this.nombre,
       roEstado: this.estado,
-      roAplicacion: this.idAplicacion
+      roNivelRt: this.NivelRuteo
     };
+    console.log("Agregamos esto ",data);
 
-    // Llamar al método addRols() del servicio para enviar los datos a la API
+    //Llamar al método addRols() del servicio para enviar los datos a la API
     this.rolService.addRols(data).subscribe(
       response => {
         // Manejar la respuesta de la API aquí si es necesario
         console.log('Rol agregado exitosamente:', response);
+        this.showmsj=true;
+        this.mensajeExito = 'Rol registrado exitosamente.';
+
       },
       error => {
         // Manejar cualquier error que ocurra durante la llamada a la API aquí
         console.error('Error al agregar el rol:', error);
+        this.showmsjerror=true;
+        this.msjError="Error al agregar el rol";
       }
     );
 
     //muestra mensaje de exito y redirige a la otra vista luego de 1 segundo
-    this.mensajeExito = 'Rol registrado exitosamente.';
     setTimeout(() => {
+      this.showmsj=false;
       this.mensajeExito = '';
+      this.showmsjerror=false;
+      this.msjError='';
       this.changeview = 'consulta';
+      this.ngOnInit();
       }, 1000);
   }
 
@@ -70,48 +100,27 @@ export class RolesComponent implements OnInit {
   changeView(view: string): void {
     //vacía las variables antes de cambiar de vista para que no muestren datos
     this.nombre = '';
-    this.idAplicacion = 0;
+    this.NivelRuteo = 0;
     this.estado = '';
 
     this.changeview = view;
-    this.edicion = false;
 
   }
-
-  //cambia la vista a "consulta" para listar los roles registrados y define la variable edicion como true para mostrar la columna de edicion
-  editar(view: string): void {
-    this.changeview = view;
-    this.edicion = true;
-  }
-
   //resetea las variables a valores vacios y cambia la variable de vista para mostrar la lista de roles 
   cancelar(): void {
     this.nombre = '';
-    this.idAplicacion = 0;
+    this.NivelRuteo = 0;
     this.estado = '';
-
     this.changeview = 'consulta';
   }
 
   //recibe el id del rol y lo guarda en una variable local y trae los datos de dicho rol desde la API para cargarlos en las variables locales
-  editarRol(index: number): void {
-    // Guardar el valor de la posición del elemento a editar
-    this.roCodigo = index;
-  
-    // Llamar al método getRolById() del servicio para obtener el rol por su código
-    this.rolService.getRolById(this.roCodigo).subscribe(
-      response => {
+  editarRol(rol: any): void {
         // Asignar los valores del rol obtenido a las variables locales
-        this.nombre = response.roNombre;
-        this.idAplicacion = response.roAplicacion;
-        this.estado = response.roEstado;
-  
-      },
-      error => {
-        // Manejar cualquier error que ocurra durante la llamada a la API aquí
-        console.error('Error al obtener el rol:', error);
-      }
-    );
+        this.roCodigo=rol.roCodigo;
+        this.nombre = rol.roNombre;
+        this.NivelRuteo = rol.roNivelRt;
+        this.estado = rol.roEstado;   
     // Cambiar la variable de vista para mostrar la pantalla de edición
     this.changeview = 'editar';
   }
@@ -123,29 +132,35 @@ export class RolesComponent implements OnInit {
       roCodigo:this.roCodigo,
       roNombre: this.nombre,
       roEstado: this.estado,
-      roAplicacion: this.idAplicacion // Ajusta el valor según tus requisitos
+      roNivelRt: this.NivelRuteo // Ajusta el valor según tus requisitos
     };
-  
+    console.log("ediciopnsdsd",data)
     // Llamar al método updateRols() del servicio para enviar los datos actualizados a la API
     this.rolService.updateRols(this.roCodigo, data).subscribe(
       response => {
         // Manejar la respuesta de la API aquí si es necesario
         console.log('Rol actualizado exitosamente:', response);
+        this.showmsj=true;
+        this.mensajeExito="Edicion exitosa";
       },
       error => {
         // Manejar cualquier error que ocurra durante la llamada a la API aquí
         console.error('Error al actualizar el rol:', error);
+        this.showmsjerror=true;
+        this.msjError="Error al editar";
       }
     );
-    //muestra mensaje de exito y redirige a la otra vista luego de 1 segundo
-    this.mensajeExito = 'Rol editado exitosamente.';
     setTimeout(() => {
       // Restablecer las variables locales a sus valores iniciales
       this.nombre = '';
-      this.idAplicacion = 0;
+      this.NivelRuteo = 0;
       this.estado = '';
       this.mensajeExito = '';
+      this.showmsj=false;
+      this.showmsjerror=false;
+      this.msjError='';
       this.changeview = 'consulta';
+      this.ngOnInit();
       }, 1000);
   }
   
@@ -162,5 +177,24 @@ export class RolesComponent implements OnInit {
         console.error('Error al eliminar el rol:', error);
       }
     );
+  }
+  //
+  nextPage(): void {
+    console.log("nextPage",this.currentPage);
+    if(  this.rolList.length <=10 ){
+      console.log("nextPage",this.currentPage," ",this.rolList.length/10,"",this.rolList);
+      this.currentPage=1;
+    }else if(this.currentPage >= this.rolList.length/10){
+      this.currentPage=this.currentPage;
+    }else{
+      this.currentPage++
+    }
+  }
+  //decrementa el valor de la variable que controla la pagina actual que se muestra
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      console.log("prevPage",this.currentPage);
+      this.currentPage--; // Disminuir currentPage en uno si no está en la primera página
+    }
   }
 }
