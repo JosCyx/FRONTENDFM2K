@@ -70,6 +70,7 @@ export class CabCotizacionService {
 
   }
 
+  //metodos para cambiar de estado el tracking
   updateEstadoTRKCotizacion(tipoSol: number, noSol: number, estado: number) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolCotizacions/UpdateEstadoTracking?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`,null, { headers: headers });

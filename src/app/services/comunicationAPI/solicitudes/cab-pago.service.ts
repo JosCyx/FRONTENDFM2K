@@ -68,4 +68,16 @@ export class CabPagoService {
     return this.http.get<any>(this.APIUrl + `/CabSolPago/GetSOEstado?state=${states}`, { headers: headers });
 
   }
+
+
+  //metodos para cambiar de estado el tracking
+  updateEstadoTRKCotizacion(tipoSol: number, noSol: number, estado: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/CabSolPago/UpdateEstadoTracking?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`,null, { headers: headers });
+  }
+
+  updateEstadoCotizacion(tipoSol: number, noSol: number, estado: string) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/CabSolPago/UpdateEstado?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`,null, { headers: headers });
+  }
 }

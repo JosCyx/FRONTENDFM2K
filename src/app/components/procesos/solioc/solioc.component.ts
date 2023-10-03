@@ -21,6 +21,12 @@ import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotiza
 import { GlobalService } from 'src/app/services/global.service';
 import { CabeceraOrdenCompra } from 'src/app/models/procesos/solcotizacion/CabeceraOrdenCompra';
 import { CookieService } from 'ngx-cookie-service';
+import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/ruteo-area.service';
+
+interface RuteoArea {
+  rutareaNivel: number;
+  // Otras propiedades si es necesario
+}
 
 interface SolicitudData {
   cabecera: any;
@@ -151,7 +157,8 @@ export class SoliocComponent implements OnInit {
     private router: Router,
     private provService: ProveedorService,
     private serviceGlobal: GlobalService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private ruteoService: RuteoAreaService
   ) {}
 
   ngOnInit(): void {
@@ -252,6 +259,7 @@ export class SoliocComponent implements OnInit {
         ) {
           this.trIdNomEmp = emp.empleadoIdNomina;
           //console.log("Empleado ID:",this.trIdNomEmp);
+          this.areaSolTmp = emp.empleadoIdArea;
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
               this.cab_area = area.areaIdNomina;
@@ -406,6 +414,7 @@ export class SoliocComponent implements OnInit {
     return new Promise<void>(async (resolve, reject) => {
       try {
         this.trLastNoSol = await this.getLastSol();
+        this.noSolTmp = this.trLastNoSol;
 
         const dataTRK = {
           solTrTipoSol: this.trTipoSolicitud,
@@ -786,6 +795,9 @@ export class SoliocComponent implements OnInit {
     this.cabecera = this.solicitudEdit.cabecera;
     this.sharedTipoSol=this.cabecera.cabSolOCTipoSolicitud;
     this.sharedNoSol=this.cabecera.cabSolOCNoSolicitud;
+    this.noSolTmp = this.cabecera.cabSolOCNoSolicitud;
+    this.estadoTrkTmp = this.cabecera.cabSolOCEstadoTracking;
+    this.areaSolTmp = this.cabecera.cabSolOCArea;
 
     this.estadoSol = this.cabecera.cabSolOCEstadoTracking.toString();
 
@@ -879,35 +891,7 @@ export class SoliocComponent implements OnInit {
       this.calcularIdItem();
     }
   }
-  //
-  // async saveItemDB() {
-  //   try {
-  //     await this.deleteAllItems();
-  //     setTimeout(() => {
-  //       this.reorderAndSaveItems();
-  //       this.checkAndDeleteDetails();
-  //     }, 200);
-  //     console.log('Proceso completado exitosamente.');
-  //   } catch (error) {
-  //     console.error('Error durante el proceso:', error);
-  //   }
-  // }
-  // async deleteAllItems() {
-  //   try {
-  //     await this.service
-  //       .deleteAllItemBySol(this.trTipoSolicitud, this.idNSolDlt)
-  //       .subscribe(
-  //         (response) => {
-  //           console.log('todos los Item eliminados');
-  //         },
-  //         (error) => {
-  //           console.log('Error: ', error);
-  //         }
-  //       );
-  //   } catch (error) {
-  //     console.error('Error durante la eliminación:', error);
-  //   }
-  // }
+
   async reorderAndSaveItems() {
     const detailItemMap: { [key: number]: number } = {};
 
@@ -940,46 +924,6 @@ export class SoliocComponent implements OnInit {
       );
     }
   }
-  // async checkAndDeleteDetails() {
-  //   //verificar si algun detalle no tiene items y eliminarlo
-  //   for (let det of this.detalle) {
-  //     console.log(this.trTipoSolicitud, this.idNSolDlt, det.solCotIdDetalle);
-
-  //     this.service
-  //       .getItemsbyDet(
-  //         this.trTipoSolicitud,
-  //         this.idNSolDlt,
-  //         det.solCotIdDetalle
-  //       )
-  //       .subscribe(
-  //         (response) => {
-  //           if (response === 0) {
-  //             console.log(
-  //               'NO existen items para el detalle: ',
-  //               det.solCotIdDetalle
-  //             );
-  //             //eliminar el detalle
-  //             this.service.deleteDetallebyId(det.solCotID).subscribe(
-  //               (response) => {
-  //                 console.log('Se ha eliminado el detalle.');
-  //               },
-  //               (error) => {
-  //                 console.log('No se pudo eliminar el detalle, error: ', error);
-  //               }
-  //             );
-  //           } else {
-  //             console.log(
-  //               'SI existen items para el detalle: ',
-  //               det.solCotIdDetalle
-  //             );
-  //           }
-  //         },
-  //         (error) => {
-  //           console.log('Error: ', error);
-  //         }
-  //       );
-  //   }
-  // }
   //* convertir de tipo String a  new DATE
   convertirStringAFecha(fechaStr: string): Date {
     const fechaConvertida = new Date(fechaStr);
@@ -1461,4 +1405,133 @@ export class SoliocComponent implements OnInit {
       }
       //console.log('viewElement: ', this.viewElement);
     }
+
+
+    ////////////////////////////////////////////ENVIO DE SOLICITUD DE COTIZACION//////////////////////////////////////////
+
+    guardarEnviarSolNueva() {
+      try {
+        this.check();
+        this.enviarSolicitud();
+      } catch (error) {
+        console.log('Error:', error);
+        this.showmsjerror = true;
+        this.msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
+  
+        setTimeout(() => {
+          this.showmsjerror = false;
+          this.msjError = "";
+        }, 2500);
+      }
+    }
+  
+    guardarEnviarSolEditada() {
+      try {
+        this.saveEdit();
+        this.enviarSolicitud();      
+      } catch (error) {
+        console.log('Error:', error);
+        this.showmsjerror = true;
+        this.msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
+  
+        setTimeout(() => {
+          this.showmsjerror = false;
+          this.msjError = "";
+        }, 2500);
+      }
+    }
+
+    noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui
+  estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
+  areaSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
+
+  // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
+  async enviarSolicitud() {
+    try {
+      // Espera a que se complete getNivelRuteoArea
+      await this.getNivelRuteoArea();
+
+      var newEstado: number = 0;
+      //si la solicitud ya eta en el nivel 70 se cambia su estado a FINALIZADO
+      if (this.estadoTrkTmp == 70) {
+        //console.log("FINALIZADO");
+        this.cabOCService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'F').subscribe(
+          (response) => {
+            //console.log('Estado actualizado exitosamente');
+            setTimeout(() => {
+              this.clear();
+              this.serviceGlobal.solView = 'crear';
+              this.router.navigate(['allrequest']);
+            }, 2500);
+          },
+          (error) => {
+            console.log('Error al actualizar el estado: ', error);
+          }
+        );
+
+        this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
+          (response) => {
+            //console.log('Estado actualizado exitosamente');
+            setTimeout(() => {
+              this.clear();
+              this.serviceGlobal.solView = 'crear';
+              this.router.navigate(['allrequest']);
+            }, 2500);
+          },
+          (error) => {
+            console.log('Error al actualizar el estado: ', error);
+          }
+        );
+      } else {
+        //Si el area no tiene niveles asignados a ese tipo de solicitud se setea el nuevo nivel a 20 
+        if (this.nivelSolAsignado.length == 0) {
+          newEstado = 20;
+        } else {
+          for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+            var nivel = this.nivelSolAsignado[i];
+            console.log('Nivel: ', nivel);
+            if (this.nivelSolAsignado[0].rutareaNivel != 10) {
+              newEstado = 20;
+              break;
+            }
+            if (nivel.rutareaNivel == this.estadoTrkTmp) {
+              newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
+              break;
+            }
+          }
+        }
+        console.log('Nuevo estado: ', this.trTipoSolicitud, this.noSolTmp, newEstado);
+
+        this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+          (response) => {
+            //console.log('Estado actualizado exitosamente');
+            setTimeout(() => {
+              this.clear();
+              this.serviceGlobal.solView = 'crear';
+              this.router.navigate(['allrequest']);
+            }, 2500);
+          },
+          (error) => {
+            console.log('Error al actualizar el estado: ', error);
+          }
+        );
+      }
+
+    } catch (error) {
+      console.error('Error al obtener los niveles de ruteo asignados: ', error);
+    }
+  }
+
+  // Método que consulta los niveles que tiene asignado el tipo de solicitud según el área
+  nivelSolAsignado: RuteoArea[] = [];
+  async getNivelRuteoArea() {
+    try {
+      const response = await this.ruteoService.getRuteosByArea(this.areaSolTmp).toPromise();
+      this.nivelSolAsignado = response.filter((res: any) => res.rutareaTipoSol == this.trTipoSolicitud);
+      this.nivelSolAsignado.sort((a, b) => a.rutareaNivel - b.rutareaNivel);
+      //console.log('Niveles de ruteo asignados: ', this.nivelSolAsignado);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

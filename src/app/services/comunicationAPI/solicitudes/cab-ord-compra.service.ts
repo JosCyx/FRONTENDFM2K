@@ -68,4 +68,15 @@ export class CabOrdCompraService {
     return this.http.get<any>(this.APIUrl + `/CabSolOrdenCompras/GetOCEstado?state=${states}`, { headers: headers });
 
   }
+
+  //metodos para cambiar de estado el tracking
+  updateEstadoTRKCotizacion(tipoSol: number, noSol: number, estado: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/CabSolOrdenCompras/UpdateEstadoTracking?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`,null, { headers: headers });
+  }
+
+  updateEstadoCotizacion(tipoSol: number, noSol: number, estado: string) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/CabSolOrdenCompras/UpdateEstado?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`,null, { headers: headers });
+  }
 }

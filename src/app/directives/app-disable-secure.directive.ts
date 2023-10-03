@@ -19,11 +19,11 @@ export class AppDisableSecureDirective implements OnInit {
       const hasAccess = this.checkAccess(nivel);
 
       if (!hasAccess) {
-        console.log('Deshabilitado: ', hasAccess);
+        //console.log('Deshabilitado: ', hasAccess);
         //deshabilita el input al que esté asignado esta directiva
         this.renderer.setAttribute(this.element.nativeElement, 'disabled', 'true');
       } else {
-        console.log('Habilitado: ', hasAccess);
+        //console.log('Habilitado: ', hasAccess);
         //habilita el input al que esté asignado esta directiva
         this.renderer.removeAttribute(this.element.nativeElement, 'disabled');
       }
@@ -53,7 +53,7 @@ export class AppDisableSecureDirective implements OnInit {
   // }
 
   checkAccess(nivel: string): boolean {
-    console.log('nivel', nivel);
+    //console.log('nivel', nivel);
     const userNivelesCookie = this.cookieService.get('userRolNiveles');
     if (userNivelesCookie) {
       const userNivelesArray = userNivelesCookie.split(',').map(Number);

@@ -13,6 +13,13 @@ import { DetPagoService } from 'src/app/services/comunicationAPI/solicitudes/det
 import { TrackingService } from 'src/app/services/comunicationAPI/seguridad/tracking.service';
 import { DetCotOCService } from 'src/app/services/comunicationAPI/solicitudes/det-cot-oc.service';
 import { ProveedorService } from 'src/app/services/comunicationAPI/seguridad/proveedor.service';
+import { CookieService } from 'ngx-cookie-service';
+import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/ruteo-area.service';
+
+interface RuteoArea {
+  rutareaNivel: number;
+  // Otras propiedades si es necesario
+}
 
 interface DetalleSolPagos {
   itemDesc: string;
@@ -53,6 +60,7 @@ export class SolipagoComponent implements OnInit {
   detalleSolPagos: any[] = [];
 
   changeview: string = this.serviceGlobal.solView;
+  //changeview: string = 'editar';
   //Mensaje
   msjExito!: string;
   msjError!: string;
@@ -110,7 +118,9 @@ export class SolipagoComponent implements OnInit {
     private detSolService: DetCotOCService,
     private router: Router,
     private provService: ProveedorService,
-    private serviceGlobal: GlobalService
+    private serviceGlobal: GlobalService,
+    private cookieService: CookieService,
+    private ruteoService: RuteoAreaService
   ) {}
 
   ngOnInit(): void {
@@ -158,6 +168,7 @@ export class SolipagoComponent implements OnInit {
         ) {
           this.trIdNomEmp = emp.empleadoIdNomina;
           //console.log("Empleado ID:",this.trIdNomEmp);
+          this.areaSolTmp = emp.empleadoIdArea;
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
               this.cab_area = area.areaIdNomina;
@@ -302,6 +313,7 @@ export class SolipagoComponent implements OnInit {
     return new Promise<void>(async (resolve, reject) => {
       try {
         this.trLastNoSol = await this.getLastSol();
+        this.noSolTmp = this.trLastNoSol;
 
         const dataTRK = {
           solTrTipoSol: this.trTipoSolicitud,
@@ -387,9 +399,6 @@ export class SolipagoComponent implements OnInit {
         this.cabecera.cabPagoReceptor = emp.empleadoIdNomina;
       }
     }
-
-    console.log(`cAMBIOS EN ESTO ${this.cabecera.cabPagoReceptor}`);
-    console.log("cAMBIOS EddfdN ESTO ",this.cab_recibe);
   }
   async Obtener() {
     const partes = this.valorinput.match(/(\d+)-(\d+)/);
@@ -413,7 +422,7 @@ export class SolipagoComponent implements OnInit {
               idDetalle: ini.solCotIdDetalle,
               itemDesc: ini.solCotDescripcion,
             }));
-            console.log('cambios en el map ', this.detalleSolPagos);
+            //console.log('cambios en el map ', this.detalleSolPagos);
           },
           (error) => {
             console.log('error al guardar la cabecera: ', error);
@@ -481,6 +490,10 @@ export class SolipagoComponent implements OnInit {
   }
   async saveData() {
     this.cabecera = this.solicitudEdit.cabecera;
+    this.noSolTmp = this.cabecera.cabPagoNoSolicitud;
+    this.estadoTrkTmp = this.cabecera.cabPagoEstadoTrack;
+    this.areaSolTmp = this.cabecera.cabPagoAreaSolicitante;
+
     this.estadoSol = this.cabecera.cabPagoEstadoTrack.toString();
     this.sharedTipoSol=this.cabecera.cabPagoTipoSolicitud;
     this.sharedNoSol=this.cabecera.cabPagoNoSolicitud;
@@ -680,4 +693,135 @@ export class SolipagoComponent implements OnInit {
   selectEditAction(action:string){
     this.actionEdit=action;
   }
+
+
+  ////////////////////////////////////////////ENVIO DE SOLICITUD DE COTIZACION//////////////////////////////////////////
+
+  guardarEnviarSolNueva() {
+    try {
+      this.generarSolicitud();
+      this.enviarSolicitud();
+    } catch (error) {
+      console.log('Error:', error);
+      this.showmsjerror = true;
+      this.msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
+
+      setTimeout(() => {
+        this.showmsjerror = false;
+        this.msjError = "";
+      }, 2500);
+    }
+  }
+
+  guardarEnviarSolEditada() {
+    try {
+      this.savePagoEdit();
+      this.enviarSolicitud();      
+    } catch (error) {
+      console.log('Error:', error);
+      this.showmsjerror = true;
+      this.msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
+
+      setTimeout(() => {
+        this.showmsjerror = false;
+        this.msjError = "";
+      }, 2500);
+    }
+  }
+
+  noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui
+estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
+areaSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
+
+// Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
+async enviarSolicitud() {
+  try {
+    // Espera a que se complete getNivelRuteoArea
+    await this.getNivelRuteoArea();
+
+    var newEstado: number = 0;
+    //si la solicitud ya eta en el nivel 70 se cambia su estado a FINALIZADO
+    if (this.estadoTrkTmp == 70) {
+      //console.log("FINALIZADO");
+      this.cabPagoService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'F').subscribe(
+        (response) => {
+          //console.log('Estado actualizado exitosamente');
+          setTimeout(() => {
+            this.clear();
+            this.serviceGlobal.solView = 'crear';
+            this.router.navigate(['allrequest']);
+          }, 2500);
+        },
+        (error) => {
+          console.log('Error al actualizar el estado: ', error);
+        }
+      );
+
+      this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
+        (response) => {
+          //console.log('Estado actualizado exitosamente');
+          setTimeout(() => {
+            this.clear();
+            this.serviceGlobal.solView = 'crear';
+            this.router.navigate(['allrequest']);
+          }, 2500);
+        },
+        (error) => {
+          console.log('Error al actualizar el estado: ', error);
+        }
+      );
+    } else {
+      //Si el area no tiene niveles asignados a ese tipo de solicitud se setea el nuevo nivel a 20 
+      if (this.nivelSolAsignado.length == 0) {
+        newEstado = 20;
+      } else {
+        for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+          var nivel = this.nivelSolAsignado[i];
+          console.log('Nivel: ', nivel);
+          if (this.nivelSolAsignado[0].rutareaNivel != 10) {
+            newEstado = 20;
+            break;
+          }
+          if (nivel.rutareaNivel == this.estadoTrkTmp) {
+            newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
+            break;
+          }
+        }
+      }
+      console.log('Nuevo estado: ', this.trTipoSolicitud, this.noSolTmp, newEstado);
+
+      this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+        (response) => {
+          //console.log('Estado actualizado exitosamente');
+          setTimeout(() => {
+            this.clear();
+            this.serviceGlobal.solView = 'crear';
+            this.router.navigate(['allrequest']);
+          }, 2500);
+        },
+        (error) => {
+          console.log('Error al actualizar el estado: ', error);
+        }
+      );
+    }
+
+  } catch (error) {
+    console.error('Error al obtener los niveles de ruteo asignados: ', error);
+  }
+}
+
+// Método que consulta los niveles que tiene asignado el tipo de solicitud según el área
+nivelSolAsignado: RuteoArea[] = [];
+async getNivelRuteoArea() {
+  try {
+    const response = await this.ruteoService.getRuteosByArea(this.areaSolTmp).toPromise();
+    this.nivelSolAsignado = response.filter((res: any) => res.rutareaTipoSol == this.trTipoSolicitud);
+    this.nivelSolAsignado.sort((a, b) => a.rutareaNivel - b.rutareaNivel);
+    //console.log('Niveles de ruteo asignados: ', this.nivelSolAsignado);
+  } catch (error) {
+    throw error;
+  }
+}
+
+
 }
