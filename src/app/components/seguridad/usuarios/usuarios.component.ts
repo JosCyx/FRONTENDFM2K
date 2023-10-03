@@ -135,7 +135,7 @@ export class UsuariosComponent {
   //incrementa el valor d la variable que controla la pagina actual que se muestra
   nextPage(): void {
     console.log("nextPage",this.currentPage);
-    if(  this.listUsers.length/10 <=10 ){
+    if(  this.listUsers.length <=10 ){
       console.log("nextPage",this.currentPage," ",this.listUsers.length/10,"",this.listUsers);
       this.currentPage=1;
     }else if(this.currentPage >= this.listUsers.length/10){

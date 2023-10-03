@@ -181,7 +181,7 @@ export class RolesComponent implements OnInit {
   //
   nextPage(): void {
     console.log("nextPage",this.currentPage);
-    if(  this.rolList.length/10 <=10 ){
+    if(  this.rolList.length <=10 ){
       console.log("nextPage",this.currentPage," ",this.rolList.length/10,"",this.rolList);
       this.currentPage=1;
     }else if(this.currentPage >= this.rolList.length/10){

@@ -26,6 +26,19 @@ export class TransaccionesService {
       'Authorization': `Bearer ${authToken}`
     });
   }
-
-  
+  //obtener lista de transacciones
+  getTransaccionesList(): Observable<any[]> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + '/Transacciones' , { headers: headers });
+  }
+  //agregar transacciones
+  addtransacciones(val: any) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(this.APIUrl + '/Transacciones', val, { headers: headers });    
+  }
+  //actualizar transacciones
+  updatetransacciones(codi:number,val: any) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/Transacciones/${codi}`, val, { headers: headers });    
+  }
 }

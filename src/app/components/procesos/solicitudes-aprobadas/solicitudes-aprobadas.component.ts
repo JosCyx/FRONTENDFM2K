@@ -86,7 +86,7 @@ export class SolicitudesAprobadasComponent implements OnInit {
   //Paginacion 
   nextPage(): void {
     console.log("nextPage",this.currentPage);
-    if(  this.allSol.length/10 <=10 ){
+    if(  this.allSol.length <=10 ){
       console.log("nextPage",this.currentPage," ",this.allSol.length/10,"",this.allSol);
       this.currentPage=1;
     }else if(this.currentPage >= this.allSol.length/10){

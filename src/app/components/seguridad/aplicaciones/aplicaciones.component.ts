@@ -60,7 +60,7 @@ export class AplicacionesComponent implements OnInit {
   //Paginacion de navegacion
   nextPage(): void {
     console.log('nextPage', this.currentPage);
-    if (this.aplicacionesList.length / 5 <= 5) {
+    if (this.aplicacionesList.length  <= 5) {
       this.currentPage = 1;
     } else if (this.currentPage >= this.aplicacionesList.length / 5) {
       this.currentPage = this.currentPage;
@@ -85,7 +85,6 @@ export class AplicacionesComponent implements OnInit {
       apVersion: this.version.trim(),
 
     }
-    console.log(data);
     this.appService.addAplicaciones(data).subscribe({
       next: (response) => {
         console.log('Aplicacion agregada exitosamente:', response);
