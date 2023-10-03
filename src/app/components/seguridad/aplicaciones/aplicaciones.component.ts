@@ -48,6 +48,7 @@ export class AplicacionesComponent implements OnInit {
      this.nombre = '';
     this.nemonico = '';
      this.estado = '';
+     this.version = '';
      this.changeview = view;
   }
   cancelar(): void {
