@@ -101,7 +101,7 @@
       </h3>
       <p
         class="text-danger no-rol text-center"
-        *ngIf="(rolList)?.length === 0"
+        *ngIf="rolList.length === 0"
       >
         No hay roles registrados.
       </p>
@@ -115,16 +115,13 @@
       </div>
       <table
         class="table table-bordered text-center table-hover"
-        *ngIf="(rolList )?.length != 0"
+        *ngIf="rolList.length != 0"
       >
         <thead>
           <tr>
             <th scope="col">Nombre</th>
             <th scope="col">Nivel de ruteo</th>
             <th scope="col">Estado</th>
-            <ng-container *appAuthorize="'3'">
-              <th *ngIf="edicion" scope="col">Acciones</th>
-            </ng-container>
           </tr>
         </thead>
         <tbody>
@@ -191,7 +188,6 @@
         </div>
       </form>
       <div>
-        <span class="text-success">{{ mensajeExito }}</span>
       </div>
       <div class="text-end" *appAuthorize="'3'">
         <button

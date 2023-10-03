@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AplicacionesService } from 'src/app/services/comunicationAPI/seguridad/aplicaciones.service';
 import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
 import { RolesService } from 'src/app/services/comunicationAPI/seguridad/roles.service';
 
@@ -20,7 +19,6 @@ export class RolesComponent implements OnInit {
 
   //VARIABLE USADA PARA CONTROLAR FUNCIONES DE LA PAGINA
   changeview: string = 'consulta';
-  edicion: boolean = false;
   mensajeExito: string = '';
   msjError: string='';
   showmsj: boolean = false;
@@ -38,7 +36,7 @@ export class RolesComponent implements OnInit {
   //rolsMap: Map<number, string> = new Map()
 
   constructor(private rolService: RolesService,
-    private appService: AplicacionesService, private nivelservice:NivelRuteoService) { }
+     private nivelservice:NivelRuteoService) { }
 
   ngOnInit() {
     this.rolService.getRolsList().subscribe({
@@ -50,7 +48,6 @@ export class RolesComponent implements OnInit {
           console.log ("error",err)
       }
     });
-    this.appsList$ = this.appService.getAplicacionesList();
     this.nivelservice.getNivelruteo().subscribe({
       next: niveles => {
         this.NivelesRuteo = niveles;
@@ -95,6 +92,7 @@ export class RolesComponent implements OnInit {
       this.showmsjerror=false;
       this.msjError='';
       this.changeview = 'consulta';
+      this.ngOnInit();
       }, 1000);
   }
 
@@ -106,16 +104,8 @@ export class RolesComponent implements OnInit {
     this.estado = '';
 
     this.changeview = view;
-    this.edicion = false;
 
   }
-
-  //cambia la vista a "consulta" para listar los roles registrados y define la variable edicion como true para mostrar la columna de edicion
-  editar(view: string): void {
-    this.changeview = view;
-    this.edicion = true;
-  }
-
   //resetea las variables a valores vacios y cambia la variable de vista para mostrar la lista de roles 
   cancelar(): void {
     this.nombre = '';

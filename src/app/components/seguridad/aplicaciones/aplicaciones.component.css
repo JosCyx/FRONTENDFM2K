@@ -1,0 +1,34 @@
+.container {
+    width: 70%;
+    margin: 0 auto;
+    padding-top: 25px;
+}
+
+.cmp-form {
+    margin: 15px;
+}
+
+.form-label {
+    padding-top: 5px;
+}
+
+.listRol,
+.formRol {
+    padding-top: 30pt;
+    padding-bottom: 100px;
+    width: 65%;
+    margin: 0 auto;
+}
+
+.no-rol {
+    border: 1px red solid;
+    border-radius: 5px;
+    padding: 8pt;
+}
+
+a:hover {
+    cursor: pointer;
+}
+.table-hover tbody tr:hover {
+    cursor: pointer;
+}

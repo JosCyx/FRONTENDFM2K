@@ -31,5 +31,16 @@ export class AplicacionesService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any>(this.APIUrl + '/Aplicaciones' , { headers: headers });
   }
+  //ADD Aplicaciones
+  addAplicaciones(val: any) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(this.APIUrl + '/Aplicaciones', val, { headers: headers });
+  }
+  //UPDATE Aplicaciones
+  updateAplicaciones(appcodigo:number,val: any) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/Aplicaciones/${appcodigo}`, val, { headers: headers });
+  }
+
 }
 
