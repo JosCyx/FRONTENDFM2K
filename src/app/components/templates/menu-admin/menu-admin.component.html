@@ -23,7 +23,7 @@
     <li class="nav-item dropdown" *appAuthorize="'41'">
       <a class="nav-link dropdown-toggle btn " href="#" id="configuracionDropdown" role="button"
         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Seguridad
+        Mantenimiento
       </a>
       <div class="dropdown-menu" aria-labelledby="configuracionDropdown">
         <a class="dropdown-item" routerLink="/rol" *appAuthorize="'2'">Roles</a>
@@ -32,6 +32,16 @@
         <a class="dropdown-item" routerLink="/apps" *appAuthorize="'14'">Aplicaciones</a>
         <!-- <a class="dropdown-item" routerLink="/functions">Funciones</a> -->
         <a class="dropdown-item" routerLink="/transact" *appAuthorize="'18'">Transacciones</a>
+      </div>
+    </li>
+    <li class="nav-item dropdown" *appAuthorize="'51'">
+      <a class="nav-link dropdown-toggle btn " href="#" id="configuracionDropdown" role="button"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Autorización
+      </a>
+      <div class="dropdown-menu" aria-labelledby="configuracionDropdown">
+        <a class="dropdown-item" routerLink="/rolTransc" *appAuthorize="'49'">Roles-Transacciones</a>
+        <a class="dropdown-item" routerLink="/rolUser" *appAuthorize="'48'">Roles-Usuarios</a>
       </div>
     </li>
   </ul>

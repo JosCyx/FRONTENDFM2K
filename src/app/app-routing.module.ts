@@ -19,6 +19,8 @@ import { AllrequestComponent } from './components/procesos/allrequest/allrequest
 import { AuthGuard } from './auth.guard'; // Importa la guardia de rutas
 import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes-aprobadas/solicitudes-aprobadas.component';
 import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitudes-no-aprobadas/solicitudes-no-aprobadas.component';
+import { RolesTransacComponent } from './components/seguridad/roles-transac/roles-transac.component';
+import { RolesUsersComponent } from './components/seguridad/roles-users/roles-users.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -39,7 +41,9 @@ const routes: Routes = [
   {path: 'empleados', component: EmpleadosComponent, data: { breadcrumb: 'Empleados' }, canActivate: [AuthGuard] },
   {path: 'solAprob', component: SolicitudesAprobadasComponent, data: { breadcrumb: 'Solicitudes Aprobadas' }, canActivate: [AuthGuard] },
   {path: 'solNoAprob', component: SolicitudesNoAprobadasComponent, data: { breadcrumb: 'Solicitudes No Aprobadas' }, canActivate: [AuthGuard] },
-  {path: 'allrequest', component: AllrequestComponent, data: { breadcrumb: 'Todas las solicitudes' }, canActivate: [AuthGuard] }
+  {path: 'allrequest', component: AllrequestComponent, data: { breadcrumb: 'Todas las solicitudes' }, canActivate: [AuthGuard] },
+  {path: 'rolTransc', component: RolesTransacComponent, data: { breadcrumb: 'Roles-Transacciones' }, canActivate: [AuthGuard] },
+  {path: 'rolUser', component: RolesUsersComponent, data: { breadcrumb: 'Roles-Usuarios' }, canActivate: [AuthGuard] }
 
 ];
 

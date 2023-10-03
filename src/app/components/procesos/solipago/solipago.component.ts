@@ -124,10 +124,7 @@ export class SolipagoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.empleadosList$ = this.empService.getEmpleadosList();
-    this.empleadosList$.subscribe((data) => {
-      this.empleadoEdi = data;
-    });
+
 
     this.areaList$ = this.areaService.getAreaList();
 
@@ -145,11 +142,11 @@ export class SolipagoComponent implements OnInit {
 
   searchEmpleado(): void {
     if (this.empleado.length > 2) {
-      this.empleadosList$.subscribe((data) => {
+      this.empService.getEmpleadobyArea(parseInt(this.cookieService.get('userArea'))).subscribe((data) => {
         this.empleados = data;
       });
     } else if (this.receptor.length > 2) {
-      this.empleadosList$.subscribe((data) => {
+      this.empService.getEmpleadobyArea(parseInt(this.cookieService.get('userArea'))).subscribe((data) => {
         this.empleados = data;
       });
     } else {

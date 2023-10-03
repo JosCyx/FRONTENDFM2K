@@ -162,10 +162,6 @@ export class SoliocComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.empleadosList$ = this.empService.getEmpleadosList();
-    this.empleadosList$.subscribe((data) => {
-      this.empleadoedit = data;
-    });
 
     this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
     this.inspectores$.subscribe((data) => {
@@ -195,7 +191,7 @@ export class SoliocComponent implements OnInit {
   //guarda los datos de los empleados en una lista local dependiendo del tamaño de la variable de busqueda, esto se controla con un keyup
   searchEmpleado(): void {
     if (this.empleado.length > 2) {
-      this.empleadosList$.subscribe((data) => {
+      this.empService.getEmpleadobyArea(parseInt(this.cookieService.get('userArea'))).subscribe((data) => {
         this.empleados = data;
       });
     } else {

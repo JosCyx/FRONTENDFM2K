@@ -5,22 +5,36 @@
     <div>
         <form>
             <div class="row">
-                <div class="mb-2 col">
-                    <label class="col-form-label">Entregado a:</label>
-                    <input type="text" class="form-control">
+                <div class="input-group mb-2 col">
+                    <label class="input-group-text">Entregado a:</label>
+                    <input type="text" class="form-control" [(ngModel)]="empleadoBusq" name="empleadoDestino" 
+                    (keyup)="searchEmpleado()" (input)="onInputChanged()" list="empleados" >
+                    <datalist id="empleados">
+                        <ng-container *ngFor="let empOP of empleados">
+                            <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>
+                        </ng-container>
+                    </datalist>
                 </div>
-                <div class="mb-2 col">
-                    <label class="col-form-label">Sector:</label>
-                    <input type="text" class="form-control">
+                <div class="input-group mb-2 col">
+                    <label class="input-group-text">Sector:</label>
+                    <select class="form-select" [(ngModel)]="sectorDestino" name="sectorDestino">
+                        <option disabled selected value = 9999>Seleccione un sector...</option>
+                        <option *ngFor="let sect of sectores" [value]="sect.sectIdNomina">{{sect.sectNombre}}</option>
+                    </select>
                 </div>
             </div>
-            <div class="mb-2">
-                <label class="form-label">Observaciones:</label>
-                <textarea class="form-control" rows="4"></textarea>
+            <div class="form-floating mb-2">
+                <input type="text" class="form-control" id="floatingInput" [(ngModel)]="observacionesDestino" name="observacionesDestino"/>
+                <label for="floatingInput">Observaciones:</label>
             </div>
             <div>
-                <input id="inputFile" type="file" class="form-control" id="inputFile" accept-language="es" [appSecureDisable]="estadoSol" />
+                <label class="form-label">Evidencias:</label>
+                <input class="form-control" type="file"/>
             </div>
         </form>
+    </div>
+    <!-- iterar la lista de evidencias y mostrar su contenido -->
+    <div class="galeria-evidencias text-center m-3">        
+
     </div>
 </div>

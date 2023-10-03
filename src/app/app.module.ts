@@ -39,6 +39,8 @@ import { AppDisableSecureDirective } from './directives/app-disable-secure.direc
 import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes-aprobadas/solicitudes-aprobadas.component';
 import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitudes-no-aprobadas/solicitudes-no-aprobadas.component';
 import { SpDestinoComponent } from './components/procesos/solipago/sp-destino/sp-destino.component';
+import { RolesTransacComponent } from './components/seguridad/roles-transac/roles-transac.component';
+import { RolesUsersComponent } from './components/seguridad/roles-users/roles-users.component';
 
 @NgModule({
   declarations: [
@@ -70,7 +72,9 @@ import { SpDestinoComponent } from './components/procesos/solipago/sp-destino/sp
     AppDisableSecureDirective,
     SolicitudesAprobadasComponent,
     SolicitudesNoAprobadasComponent,
-    SpDestinoComponent
+    SpDestinoComponent,
+    RolesTransacComponent,
+    RolesUsersComponent
   ],
   imports: [
     BrowserModule,
