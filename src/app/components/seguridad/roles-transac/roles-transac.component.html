@@ -1,57 +1,210 @@
 <app-menu-admin></app-menu-admin>
 <div class="container">
-    <h1 class="font-weight-bold">Asignar transacciones a roles</h1>
+  <h1 class="font-weight-bold">Asignar transacciones a roles</h1>
 
-    <div class="">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <button class="btn btn-primary m-2" (click)="changeView('consulta')">Consultar</button>
-                    <button class="btn btn-primary m-2" (click)="changeView('asignar')">Asignar</button>
-                </div>
-            </div>
-        </nav>
+  <div class="">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <button class="btn btn-primary m-2" (click)="changeView('consulta')">
+            Consultar
+          </button>
+          <button class="btn btn-primary m-2" (click)="changeView('asignar')">
+            Asignar
+          </button>
+        </div>
+      </div>
+    </nav>
+  </div>
+  <div *ngIf="changeview == 'asignar'">
+    <div class="m-4">
+      <form class="form-rol d-flex row mb-5">
+        <!-- <label class="form-label">Tipo de solicitud</label> -->
+        <div class="form input-group">
+          <label class="input-group-text">Rol:</label>
+          <select class="form-select" name="tipoSol" [(ngModel)]="rolAsign">
+            <option disabled selected value="0">Seleccione un rol...</option>
+            <option *ngFor="let rol of rolList" [value]="rol.roCodigo">
+              {{ rol.roNombre }}
+            </option>
+          </select>
+        </div>
+      </form>
+      <div class="align-items-center input-group mb-3 justify-content-end">
+        <button class="btn btn-primary" (click)="prevPage()">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <button class="btn btn-primary" (click)="nextPage()">
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+      <table
+        class="table table-bordered table-centered text-center table-hover trsc-table"
+      >
+        <thead>
+          <tr>
+            <th colspan="2">Transacciones disponibles</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="
+              let trsc of transacList
+                | paginate : { itemsPerPage: 10, currentPage: currentPage }
+            "
+            class="tr-trsc"
+          >
+            <td class="align-middle">
+              <input type="checkbox" [(ngModel)]="trsc.trCheck" />
+            </td>
+            <td class="align-middle">{{ trsc.trNombre }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="m-3 text-end">
+        <button
+          class="btn btn-primary"
+          data-toggle="modal"
+          data-target="#enviarTransacGuardada"
+          (click)="seleccionarTrans()"
+        >
+          Guardar autorización
+        </button>
+      </div>
     </div>
-    <div *ngIf="changeview == 'asignar'">
-        <div class="m-4">
-            <form class="form-rol d-flex row mb-5">
-                <!-- <label class="form-label">Tipo de solicitud</label> -->
-                <div class="form input-group">
-                    <label class="input-group-text">Rol:</label>
-                    <select class="form-select" name="tipoSol" [(ngModel)]="rolAsign">
-                        <option disabled selected value="0">Seleccione un rol...</option>
-                        <option *ngFor="let rol of rolList" [value]="rol.roCodigo">
-                            {{ rol.roNombre }}
-                        </option>
-                    </select>
-                </div>
-            </form>
-            <table class="table table-bordered table-centered text-center table-hover trsc-table">
-                <thead>
-                    <tr>
-                        <th colspan="2">Transacciones disponibles</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let trsc of transacList" class="tr-trsc">
-                        <td class="align-middle"><input type="checkbox"></td>
-                        <td class="align-middle">{{trsc.trNombre}}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="m-3 text-end">
-                <button class="btn btn-primary">Guardar autorización</button>
+  </div>
+  <div *ngIf="changeview == 'consulta'">
+    <div class="m-4">
+      <h3 class="font-weight-bold" style="padding-top: 20pt">
+        Transacciones asignadas
+      </h3>
+      <form class="form-rol d-flex row mb-5">
+        <!-- <label class="form-label">Tipo de solicitud</label> -->
+        <div class="form input-group">
+          <label class="input-group-text">Rol:</label>
+          <select
+            class="form-select"
+            name="tipoSol"
+            [(ngModel)]="rolAsignConsu"
+          >
+            <option disabled selected value="0">Seleccione un rol...</option>
+            <option *ngFor="let rol of rolList" [value]="rol.roCodigo">
+              {{ rol.roNombre }}
+            </option>
+          </select>
+          <button class="btn btn-success" type="button">
+            <i class="bi bi-search" (click)="Buscar()"> Buscar</i>
+          </button>
+        </div>
+      </form>
+      <div *ngIf="isMensaje" class="alert alert-primary text-center " role="alert" colspan="2"  >
+        <span><i class="bi bi-info-circle">Seleccione un rol</i></span>
+    </div>
+      <div *ngIf="!isMensaje" >
+        <div class="align-items-center input-group mb-3 justify-content-end">
+          <button class="btn btn-primary" (click)="prevPage()">
+            <i class="bi bi-arrow-left"></i>
+          </button>
+          <button class="btn btn-primary" (click)="nextPage()">
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+        <table
+          class="table table-bordered table-centered text-center table-hover trsc-table"
+        >
+          <thead>
+            <tr>
+              <th>Rol</th>
+              <th>Transacciones</th>
+            </tr>
+          </thead>
+          <tbody>
+              
+            <tr
+              *ngFor="
+                let trsc of rolConsuList
+                  | paginate : { itemsPerPage: 10, currentPage: currentPage }
+              "
+              class="tr-trsc"
+            >
+              <ng-container *ngFor="let tem of rolList">
+                <td class="align-middle" *ngIf="tem.roCodigo == trsc.rtRol" >
+                  {{ tem.roNombre }}
+                </td>
+              </ng-container>
+              <ng-container *ngFor="let tra of transacList">
+                <td
+                  class="align-middle"
+                  *ngIf="tra.trCodigo == trsc.rtTransaccion"
+                >
+                  {{ tra.trNombre }}
+                  <button class="btn text-danger text-end" data-toggle="modal" data-target="#Eliminar" (click)="selectIdDelete(trsc.rtId)"  >
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                </td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- *Modal de envio  -->
+<div
+  class="modal fade"
+  #exampleModal
+  id="enviarTransacGuardada"
+  data-backdrop="static"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea guardar este Autorizacion?
+        </h3>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-dismiss="modal"
+          (click)="guardarAutorizacion()"
+        >
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal para eliminar -->
+<div class="modal fade" #exampleModal id="Eliminar" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea eliminar este Autorizacion?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="eliminarAutorizacion()" >
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
             </div>
         </div>
-
     </div>
-    <div *ngIf="changeview == 'consulta'">
-
-    </div>
-
-
-
-
-
-
 </div>

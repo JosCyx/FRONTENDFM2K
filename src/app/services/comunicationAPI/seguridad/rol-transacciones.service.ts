@@ -25,9 +25,20 @@ export class RolTransaccionesService {
       'Authorization': `Bearer ${authToken}`
     });
   }
-
-  getTransaccionesbyRol(rol: string): Observable<any[]>{
+  //Obtener id de RolTransaccion
+  getTransaccionesbyRol(rol: number): Observable<any[]>{
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get<any>(this.APIUrl + `/RolTransacciones/${rol}`, { headers: headers });
+    return this.http.get<any>(this.APIUrl + `/RolTransaccions/GetTransaccionbyRol?rtRol=${rol}`, { headers: headers });
   }
+  //agregar transaccion a rol
+  addTransaccionRol(val: any){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(this.APIUrl + '/RolTransaccions', val, { headers: headers });
+  }
+  //Eliminiar transaccion de rol
+  deleteTransaccionRol(id:number){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(this.APIUrl + `/RolTransaccions/${id}`, { headers: headers });
+  }
+
 }

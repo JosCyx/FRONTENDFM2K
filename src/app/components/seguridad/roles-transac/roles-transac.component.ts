@@ -1,7 +1,18 @@
 import { Component, OnInit } from '@angular/core';
+import { RolTransaccionesService } from 'src/app/services/comunicationAPI/seguridad/rol-transacciones.service';
 import { RolesService } from 'src/app/services/comunicationAPI/seguridad/roles.service';
 import { TransaccionesService } from 'src/app/services/comunicationAPI/seguridad/transacciones.service';
-
+interface Transac{
+  trCodigo: number;
+  trNombre: string;
+  trCheck: boolean;
+}
+interface RolTransac{
+  rtEmpresa: number;
+  rtRol: number;
+  rtTransaccion: number;
+  rtEstado: string;
+}
 @Component({
   selector: 'app-roles-transac',
   templateUrl: './roles-transac.component.html',
@@ -9,19 +20,35 @@ import { TransaccionesService } from 'src/app/services/comunicationAPI/seguridad
 })
 export class RolesTransacComponent implements OnInit{
 
-  transacList!: any[];
+  transacList: Transac[]=[];
+  rolTransacList: RolTransac[]=[];
+  rolConsuList: any[]=[];
+  filteredRolConsuList: any[] = [];
+
   rolList!: any[];
   rolAsign: number =0;
+  rolAsignConsu: number =0;
 
-  changeview:string = 'asignar';
+  changeview:string = 'consulta';
+  currentPage: number = 1;
+  idAuthDele: number =0;
+
+  isMensaje: boolean = true;
 
   constructor(private transacService: TransaccionesService,
-              private rolService: RolesService) { }
+              private rolService: RolesService,
+              private rolTservice:RolTransaccionesService) { }
 
   ngOnInit(): void {
     this.transacService.getTransaccionesList().subscribe(
       response => {
-        this.transacList = response;
+        this.transacList = response.map((item: any) => {
+          return {
+            trCodigo: item.trCodigo,
+            trNombre: item.trNombre,
+            trCheck: false
+          };
+        });
       },
       error => {
         console.log(error);
@@ -37,12 +64,92 @@ export class RolesTransacComponent implements OnInit{
       }
     );
   }
+  //incrementa el valor d la variable que controla la pagina actual que se muestra
+  nextPage(): void {
+    console.log("nextPage",this.currentPage);
+    if(  this.transacList.length <=10 ){
+      console.log("nextPage",this.currentPage);
+      this.currentPage=1;
+    }else if(this.currentPage >= this.transacList.length/10){
+      this.currentPage=this.currentPage;
+    }else{
+      this.currentPage++
+    }
+    
+  }
 
+  //decrementa el valor de la variable que controla la pagina actual que se muestra
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--; // Disminuir currentPage en uno si no está en la primera página
+    }
+  }
   changeView(view: string){
     this.changeview = view;
   }
+  //metodo para enviar 
+  seleccionarTrans(){
+//for de this.transacList y solo cuando sea un true  genero un elememto de la lista de roltransac
+    this.transacList.forEach(element => {
+      if(element.trCheck){
+        let rolTransac: RolTransac={
+          rtEmpresa: 1,
+          rtRol: this.rolAsign,
+          rtTransaccion: element.trCodigo,
+          rtEstado: 'A'
+        }
+        this.rolTransacList.push(rolTransac);
+      }
+    });
+    console.log("rolTransacList",this.rolTransacList);
+  }
+  //enviar
+  guardarAutorizacion(){
+    this.rolTransacList.forEach(element => {
+      this.rolTservice.addTransaccionRol(element).subscribe({
+         next: response => {
+          console.log("response",response);
+          this.rolTransacList=[];
+          this.transacList.forEach(element => {
+            element.trCheck=false;
+          });
+          this.rolAsign=0;
+        },
+        error:error => {
+          console.log(error);
+        }
+    });
+    })
+  }
+    Buscar() {
+      this.isMensaje = false;
+        // Filtra rolConsuList para mostrar solo los datos del rol seleccionado
+        this.rolTservice.getTransaccionesbyRol(this.rolAsignConsu).subscribe({
+          next: response => {
+            this.rolConsuList=response;
+            console.log("rolConsuList",this.rolConsuList);
+          },
+          error: error => {
+            console.log(error);
+          },
+          complete: () => {}
+        });
+    }
+    selectIdDelete(id: number){
+      this.idAuthDele=id;
+    }
+    eliminarAutorizacion(){
+      this.rolTservice.deleteTransaccionRol(this.idAuthDele).subscribe({
+        next: response => {
+          console.log("response",response);
+          this.rolConsuList=[];
+          this.rolAsignConsu=0;
+        },
+        error:error => {
+          console.log(error);
+        }
+    });
 
-  
-
-
+    }
+    
 }
