@@ -107,6 +107,9 @@ export class SolipagoComponent implements OnInit {
   @Input() sharedTipoSol!: number;
   @Input() sharedNoSol!: number;
   estadoSol!: string;
+  numericoSol!: string;
+
+  detallesToDestino: any[] = [];
 
   constructor(
     private empService: EmpleadosService,
@@ -490,6 +493,7 @@ export class SolipagoComponent implements OnInit {
     this.noSolTmp = this.cabecera.cabPagoNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabPagoEstadoTrack;
     this.areaSolTmp = this.cabecera.cabPagoAreaSolicitante;
+    this.numericoSol = this.cabecera.cabPagoNumerico;
 
     this.estadoSol = this.cabecera.cabPagoEstadoTrack.toString();
     this.sharedTipoSol=this.cabecera.cabPagoTipoSolicitud;
@@ -499,6 +503,15 @@ export class SolipagoComponent implements OnInit {
     }
     //ordenamiento de detalle de solicitud pago
     this.detallePago.sort((a, b) => a.detPagoIdDetalle - b.detPagoIdDetalle);
+
+    //lista de detalles para el destino
+    this.detallesToDestino = this.detallePago.map((detalle: any)=>{
+      return{
+        idDetalle: detalle.detPagoIdDetalle,
+        descpDetalle: detalle.detPagoItemDesc,
+        destinoDetalle: false
+      };
+    });
     //formatear la fecha de la solicitud de pago
     this.cabecera.cabPagoFechaInspeccion = format(
       parseISO(this.cabecera.cabPagoFechaInspeccion),

@@ -32,6 +32,13 @@ export class UploadFileService {
     return this.http.post(`${this.APIUrl}/Documento/upload?prefijo=${prefijo}&tipoSOl=${tiposol}&noSol=${nolSol}`,bodys,{headers:headers});
 
   }
+
+  uploadPagoDocs(bodys:FormData,prefijo:string):Observable<any>{
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(`${this.APIUrl}/Documento/UploadSolPagoDocs?prefijo=${prefijo}`,bodys,{headers:headers});
+
+  }
+
   getFile(tipoSol:number,noSol:number):Observable<any[]>{
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any>(`${this.APIUrl}/Documento/GetDocumentos?tipoSol=${tipoSol}&noSol=${noSol}`, { headers: headers });
