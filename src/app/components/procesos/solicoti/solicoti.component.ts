@@ -102,7 +102,7 @@ export class SolicotiComponent implements OnInit {
   detType: boolean = true;
 
   //guarda el estado de la solicitud para controlar su acceso
-  estadoSol!: string;
+  estadoSol: string = '10';
 
   //listas con datos de la DB
   empleadosList$!: Observable<any[]>;
@@ -139,7 +139,7 @@ export class SolicotiComponent implements OnInit {
   // lastIDDet!: number;
 
   //variables compartidas con los demas componentes
-  @Input() sharedTipoSol!: number;
+  @Input() sharedTipoSol: number = 1;
   @Input() sharedNoSol!: number;
   @Input() sharedCabecera!: CabeceraCotizacion;
   @Input() sharedDetalle: DetalleCotizacion[] = [];
@@ -332,6 +332,12 @@ export class SolicotiComponent implements OnInit {
     } else if (noSolString.length == 4) {
       this.solNumerico = "COT " + this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
     }
+  }
+
+  showDoc: boolean = false;
+  async setNoSolDocumentacion(){
+    this.sharedNoSol = await this.getLastSol();
+    this.showDoc = this.showDoc ? false : true;
   }
 
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
@@ -1203,8 +1209,12 @@ export class SolicotiComponent implements OnInit {
 
   //////////////////////////////////////////////////EDICION DE PROVEEDORES///////////////////////////////////////////////////
 
-
+  actionCreate: string = 'creacion';
   actionEdit: string = 'edicion';
+
+  selectCreateAction(action: string) {
+    this.actionCreate = action;
+  }
 
   selectEditAction(action: string) {
     this.actionEdit = action;

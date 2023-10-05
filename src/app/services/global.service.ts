@@ -9,5 +9,7 @@ export class GlobalService {
   changePage: boolean = false; 
   solID: number = 0;
 
+  setDestino: boolean = false;
+
   constructor() { }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
@@ -110,6 +110,7 @@ export class SolipagoComponent implements OnInit {
   numericoSol!: string;
 
   detallesToDestino: any[] = [];
+  setDestino: boolean = this.globalService.setDestino;
 
   constructor(
     private empService: EmpleadosService,
@@ -123,8 +124,9 @@ export class SolipagoComponent implements OnInit {
     private provService: ProveedorService,
     private serviceGlobal: GlobalService,
     private cookieService: CookieService,
-    private ruteoService: RuteoAreaService
-  ) {}
+    private ruteoService: RuteoAreaService,
+    private globalService: GlobalService
+  ) { }
 
   ngOnInit(): void {
 
@@ -141,6 +143,8 @@ export class SolipagoComponent implements OnInit {
     if (this.changeview == 'editar') {
       this.editSolicitud();
     }
+
+
   }
 
   searchEmpleado(): void {
@@ -175,6 +179,15 @@ export class SolipagoComponent implements OnInit {
               this.showArea = area.areaDecp;
 
               this.areaNmco = area.areaNemonico;
+
+              //busca el nuevo nombre de la solicitud y lo asigna a las variables para poder usarlo en el destino
+              setTimeout(async () => {
+                this.trLastNoSol = await this.getLastSol();
+                this.getSolName(this.trLastNoSol);
+                console.log(this.solNumerico);
+                console.log(this.numericoSol);
+              }, 1000);
+
               //console.log("Empleado area ID:",this.cab_area);
             } else if (emp.empleadoIdArea === 0) {
               this.showArea = 'El empleado no posee un area asignada.';
@@ -268,6 +281,7 @@ export class SolipagoComponent implements OnInit {
         this.trTipoSolicitud +
         '-000' +
         noSolString;
+      this.numericoSol = this.solNumerico;
     } else if (noSolString.length == 2) {
       this.solNumerico =
         'SP ' +
@@ -276,12 +290,15 @@ export class SolipagoComponent implements OnInit {
         this.trTipoSolicitud +
         '-00' +
         noSolString;
+      this.numericoSol = this.solNumerico;
     } else if (noSolString.length == 3) {
       this.solNumerico =
         'SP ' + this.areaNmco + ' ' + this.trTipoSolicitud + '-0' + noSolString;
+      this.numericoSol = this.solNumerico;
     } else if (noSolString.length == 4) {
       this.solNumerico =
         'SP ' + this.areaNmco + ' ' + this.trTipoSolicitud + '-' + noSolString;
+      this.numericoSol = this.solNumerico;
     }
   }
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
@@ -341,7 +358,7 @@ export class SolipagoComponent implements OnInit {
   //Guarda la solicitud con  estado emitido
   async generarSolicitud() {
     await this.guardarTrancking();
-    this.getSolName(this.trLastNoSol);
+    await this.getSolName(this.trLastNoSol);
 
     const dataCAB = {
       cabPagoNumerico: this.solNumerico,
@@ -388,48 +405,73 @@ export class SolipagoComponent implements OnInit {
   }
   //Guardar el ID DEL QUE RECIBE
   saveReceptor() {
-    for (let emp of this.empleados) { 
+    for (let emp of this.empleados) {
       if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
-        this.cab_recibe = emp.empleadoIdNomina 
+        this.cab_recibe = emp.empleadoIdNomina
         //console.log("Empleado ID:",this.trIdNomEmp);
       }
     }
-    for (let emp of this.empleadoEdi) { 
+    for (let emp of this.empleadoEdi) {
       if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
         this.cabecera.cabPagoReceptor = emp.empleadoIdNomina;
       }
     }
   }
+
+  destinoIO: boolean = false;
+  showItDt: string = 'items';
+
+  setID(valor: string) {
+    this.showItDt = valor;
+  }
+
   async Obtener() {
-    const partes = this.valorinput.match(/(\d+)-(\d+)/);
-    //console.log(partes);
-    if (partes && partes.length === 3) {
-      this.tipoSolinput = parseInt(partes[1], 10);
-      this.noSolicinput = parseInt(partes[2], 10);
-      //console.log('Tipo de solicitus', this.tipoSolinput);
-      //console.log('Numero de solicitud', this.noSolicinput);
+    if (this.valorinput == '') {
+      this.detalleSolPagos = [];
+      this.destinoIO = false;
+      this.detallesToDestino = [];
     } else {
-      console.log('No tiene ningun formato realizado');
-    }
-    //console.log('VALOR INGRESADO:', this.valorinput);
-    try {
-      this.detSolService
-        .getDetalle_solicitud(this.tipoSolinput, this.noSolicinput)
-        .subscribe(
-          (response) => {
-            //console.log('response', response);
-            this.detalleSolPagos = response.map((ini: any) => ({
-              idDetalle: ini.solCotIdDetalle,
-              itemDesc: ini.solCotDescripcion,
-            }));
-            //console.log('cambios en el map ', this.detalleSolPagos);
-          },
-          (error) => {
-            console.log('error al guardar la cabecera: ', error);
-          }
-        );
-    } catch (error) {
-      console.log('error', error);
+      const partes = this.valorinput.match(/(\d+)-(\d+)/);
+      //console.log(partes);
+      if (partes && partes.length === 3) {
+        this.tipoSolinput = parseInt(partes[1], 10);
+        this.noSolicinput = parseInt(partes[2], 10);
+        //console.log('Tipo de solicitus', this.tipoSolinput);
+        //console.log('Numero de solicitud', this.noSolicinput);
+      } else {
+        console.log('No tiene ningun formato realizado');
+      }
+      //console.log('VALOR INGRESADO:', this.valorinput);
+      try {
+        this.detSolService
+          .getDetalle_solicitud(this.tipoSolinput, this.noSolicinput)
+          .subscribe(
+            (response) => {
+
+              //console.log('response', response);
+              this.detalleSolPagos = response.map((ini: any) => ({
+                idDetalle: ini.solCotIdDetalle,
+                itemDesc: ini.solCotDescripcion,
+              }));
+
+              //variables para controlar los datos ue se le pasan a destino
+              this.destinoIO = true;
+              this.detallesToDestino = response.map((detalle: any) => {
+                return {
+                  idDetalle: detalle.solCotIdDetalle,
+                  descpDetalle: detalle.solCotDescripcion,
+                  destinoDetalle: false
+                };
+              });
+              //console.log('cambios en el map ', this.detalleSolPagos);
+            },
+            (error) => {
+              console.log('error al guardar la cabecera: ', error);
+            }
+          );
+      } catch (error) {
+        console.log('error', error);
+      }
     }
   }
   //* Agregamos los detalles de pago a base
@@ -496,8 +538,8 @@ export class SolipagoComponent implements OnInit {
     this.numericoSol = this.cabecera.cabPagoNumerico;
 
     this.estadoSol = this.cabecera.cabPagoEstadoTrack.toString();
-    this.sharedTipoSol=this.cabecera.cabPagoTipoSolicitud;
-    this.sharedNoSol=this.cabecera.cabPagoNoSolicitud;
+    this.sharedTipoSol = this.cabecera.cabPagoTipoSolicitud;
+    this.sharedNoSol = this.cabecera.cabPagoNoSolicitud;
     for (let det of this.solicitudEdit.detalles) {
       this.detallePago.push(det as DetallePago);
     }
@@ -505,11 +547,11 @@ export class SolipagoComponent implements OnInit {
     this.detallePago.sort((a, b) => a.detPagoIdDetalle - b.detPagoIdDetalle);
 
     //lista de detalles para el destino
-    this.detallesToDestino = this.detallePago.map((detalle: any)=>{
-      return{
+    this.detallesToDestino = this.detallePago.map((detalle: any) => {
+      return {
         idDetalle: detalle.detPagoIdDetalle,
         descpDetalle: detalle.detPagoItemDesc,
-        destinoDetalle: false
+        destinoDetalle: true
       };
     });
     //formatear la fecha de la solicitud de pago
@@ -699,9 +741,9 @@ export class SolipagoComponent implements OnInit {
     }
   }
   //*Actiones  
-  actionEdit:string='edicion';
-  selectEditAction(action:string){
-    this.actionEdit=action;
+  actionEdit: string = 'edicion';
+  selectEditAction(action: string) {
+    this.actionEdit = action;
   }
 
 
@@ -726,7 +768,7 @@ export class SolipagoComponent implements OnInit {
   guardarEnviarSolEditada() {
     try {
       this.savePagoEdit();
-      this.enviarSolicitud();      
+      this.enviarSolicitud();
     } catch (error) {
       console.log('Error:', error);
       this.showmsjerror = true;
@@ -740,98 +782,98 @@ export class SolipagoComponent implements OnInit {
   }
 
   noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui
-estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
-areaSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
+  estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
+  areaSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
-// Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
-async enviarSolicitud() {
-  try {
-    // Espera a que se complete getNivelRuteoArea
-    await this.getNivelRuteoArea();
+  // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
+  async enviarSolicitud() {
+    try {
+      // Espera a que se complete getNivelRuteoArea
+      await this.getNivelRuteoArea();
 
-    var newEstado: number = 0;
-    //si la solicitud ya eta en el nivel 70 se cambia su estado a FINALIZADO
-    if (this.estadoTrkTmp == 70) {
-      //console.log("FINALIZADO");
-      this.cabPagoService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'F').subscribe(
-        (response) => {
-          //console.log('Estado actualizado exitosamente');
-          setTimeout(() => {
-            this.clear();
-            this.serviceGlobal.solView = 'crear';
-            this.router.navigate(['allrequest']);
-          }, 2500);
-        },
-        (error) => {
-          console.log('Error al actualizar el estado: ', error);
-        }
-      );
+      var newEstado: number = 0;
+      //si la solicitud ya eta en el nivel 70 se cambia su estado a FINALIZADO
+      if (this.estadoTrkTmp == 70) {
+        //console.log("FINALIZADO");
+        this.cabPagoService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'F').subscribe(
+          (response) => {
+            //console.log('Estado actualizado exitosamente');
+            setTimeout(() => {
+              this.clear();
+              this.serviceGlobal.solView = 'crear';
+              this.router.navigate(['allrequest']);
+            }, 2500);
+          },
+          (error) => {
+            console.log('Error al actualizar el estado: ', error);
+          }
+        );
 
-      this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
-        (response) => {
-          //console.log('Estado actualizado exitosamente');
-          setTimeout(() => {
-            this.clear();
-            this.serviceGlobal.solView = 'crear';
-            this.router.navigate(['allrequest']);
-          }, 2500);
-        },
-        (error) => {
-          console.log('Error al actualizar el estado: ', error);
-        }
-      );
-    } else {
-      //Si el area no tiene niveles asignados a ese tipo de solicitud se setea el nuevo nivel a 20 
-      if (this.nivelSolAsignado.length == 0) {
-        newEstado = 20;
+        this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
+          (response) => {
+            //console.log('Estado actualizado exitosamente');
+            setTimeout(() => {
+              this.clear();
+              this.serviceGlobal.solView = 'crear';
+              this.router.navigate(['allrequest']);
+            }, 2500);
+          },
+          (error) => {
+            console.log('Error al actualizar el estado: ', error);
+          }
+        );
       } else {
-        for (let i = 0; i < this.nivelSolAsignado.length; i++) {
-          var nivel = this.nivelSolAsignado[i];
-          console.log('Nivel: ', nivel);
-          if (this.nivelSolAsignado[0].rutareaNivel != 10) {
-            newEstado = 20;
-            break;
-          }
-          if (nivel.rutareaNivel == this.estadoTrkTmp) {
-            newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
-            break;
+        //Si el area no tiene niveles asignados a ese tipo de solicitud se setea el nuevo nivel a 20 
+        if (this.nivelSolAsignado.length == 0) {
+          newEstado = 20;
+        } else {
+          for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+            var nivel = this.nivelSolAsignado[i];
+            console.log('Nivel: ', nivel);
+            if (this.nivelSolAsignado[0].rutareaNivel != 10) {
+              newEstado = 20;
+              break;
+            }
+            if (nivel.rutareaNivel == this.estadoTrkTmp) {
+              newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
+              break;
+            }
           }
         }
+        console.log('Nuevo estado: ', this.trTipoSolicitud, this.noSolTmp, newEstado);
+
+        this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+          (response) => {
+            //console.log('Estado actualizado exitosamente');
+            setTimeout(() => {
+              this.clear();
+              this.serviceGlobal.solView = 'crear';
+              this.router.navigate(['allrequest']);
+            }, 2500);
+          },
+          (error) => {
+            console.log('Error al actualizar el estado: ', error);
+          }
+        );
       }
-      console.log('Nuevo estado: ', this.trTipoSolicitud, this.noSolTmp, newEstado);
 
-      this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
-        (response) => {
-          //console.log('Estado actualizado exitosamente');
-          setTimeout(() => {
-            this.clear();
-            this.serviceGlobal.solView = 'crear';
-            this.router.navigate(['allrequest']);
-          }, 2500);
-        },
-        (error) => {
-          console.log('Error al actualizar el estado: ', error);
-        }
-      );
+    } catch (error) {
+      console.error('Error al obtener los niveles de ruteo asignados: ', error);
     }
-
-  } catch (error) {
-    console.error('Error al obtener los niveles de ruteo asignados: ', error);
   }
-}
 
-// Método que consulta los niveles que tiene asignado el tipo de solicitud según el área
-nivelSolAsignado: RuteoArea[] = [];
-async getNivelRuteoArea() {
-  try {
-    const response = await this.ruteoService.getRuteosByArea(this.areaSolTmp).toPromise();
-    this.nivelSolAsignado = response.filter((res: any) => res.rutareaTipoSol == this.trTipoSolicitud);
-    this.nivelSolAsignado.sort((a, b) => a.rutareaNivel - b.rutareaNivel);
-    //console.log('Niveles de ruteo asignados: ', this.nivelSolAsignado);
-  } catch (error) {
-    throw error;
+  // Método que consulta los niveles que tiene asignado el tipo de solicitud según el área
+  nivelSolAsignado: RuteoArea[] = [];
+  async getNivelRuteoArea() {
+    try {
+      const response = await this.ruteoService.getRuteosByArea(this.areaSolTmp).toPromise();
+      this.nivelSolAsignado = response.filter((res: any) => res.rutareaTipoSol == this.trTipoSolicitud);
+      this.nivelSolAsignado.sort((a, b) => a.rutareaNivel - b.rutareaNivel);
+      //console.log('Niveles de ruteo asignados: ', this.nivelSolAsignado);
+    } catch (error) {
+      throw error;
+    }
   }
-}
 
 
 }

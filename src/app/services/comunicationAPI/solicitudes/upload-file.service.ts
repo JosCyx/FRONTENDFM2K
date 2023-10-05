@@ -33,9 +33,9 @@ export class UploadFileService {
 
   }
 
-  uploadPagoDocs(bodys:FormData,prefijo:string):Observable<any>{
+  uploadPagoDocs(bodys:FormData,prefijo:string, item: string):Observable<any>{
     const headers = this.getHeadersWithAuthToken();
-    return this.http.post(`${this.APIUrl}/Documento/UploadSolPagoDocs?prefijo=${prefijo}`,bodys,{headers:headers});
+    return this.http.post(`${this.APIUrl}/Documento/UploadSolPagoDocs?prefijo=${prefijo}&item=${item}`,bodys,{headers:headers});
 
   }
 

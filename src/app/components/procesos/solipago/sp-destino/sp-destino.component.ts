@@ -1,9 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { I } from '@fullcalendar/core/internal-common';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
+import { DestinoPagoServiceService } from 'src/app/services/comunicationAPI/seguridad/destino-pago-service.service';
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
+import { GlobalService } from 'src/app/services/global.service';
 
 interface Detalle {
   idDetalle: number;
@@ -50,6 +52,7 @@ export class SpDestinoComponent implements OnInit {
   idItem: number = 0;
   itemDestino: ItemDestino[] = [];
   checkdestino: boolean = false;
+  urlArchivo!: string;
 
   //variables para guardar los datos del destino
   sectorDestino: number = 9999;
@@ -58,7 +61,9 @@ export class SpDestinoComponent implements OnInit {
 
   constructor(private sectoresService: SectoresService,
     private empleadoService: EmpleadosService,
-    private uploadService: UploadFileService) { }
+    private uploadService: UploadFileService,
+    private destinoService: DestinoPagoServiceService,
+    private globalService: GlobalService) { }
 
 
   ngOnInit(): void {
@@ -161,6 +166,23 @@ export class SpDestinoComponent implements OnInit {
     this.checkdestino = this.detalles.every(det => det.destinoDetalle === true);
   }
 
+  cancelarDestino(){
+
+    //limpiar las variables usadas en el modal del destino y la variable idItem
+    this.sectorDestino = 9999;
+    this.empleadoDestino = 0;
+    this.observacionesDestino = '';
+    this.empleadoBusq = '';
+    this.idItem = 0;
+    this.archivo = null as any;
+    this.resetInputFile(); 
+  }
+
+  deleteArchivo(index: number){
+    console.log(this.archivos);
+    this.archivos.splice(index,1);
+  }
+
 
   //SUBIR LOS ARCHIVOS AL SERVIDOR
 
@@ -179,6 +201,8 @@ export class SpDestinoComponent implements OnInit {
     this.resetInputFile();
   }
 
+
+
   //envía los destinos a la API para ser guardados
   registrar() {
     // console.log(this.itemDestino);
@@ -187,43 +211,51 @@ export class SpDestinoComponent implements OnInit {
       this.archivos.forEach(arch => {
         if (arch.evIdDetalle === item.dtIdItem) {
           //guardar el archivo en el servidor
-          const ruta = this.sendfile(arch.evArchivo);
 
-          const data: any = {
-            dtTipoSol: item.dtTipoSol,
-            dtNoSol: item.dtNoSol,
-            dtIdItem: item.dtIdItem,
-            dtEmpleado: item.dtEmpleado,
-            dtSector: item.dtEmpleado,
-            dtObservaciones: item.dtObservaciones,
-            dtEvidencia: ruta
-          }
+          this.sendfile(arch.evArchivo, item.dtIdItem.toString()).subscribe((url) => {
+            
+            this.urlArchivo = url;
 
-          //enviar data a la API para guardar el destino del item
+            const data: any = {
+              destPagTipoSol: item.dtTipoSol,
+              destPagNoSol: item.dtNoSol,
+              destPagIdDetalle: item.dtIdItem,
+              destPagEmpleado: item.dtEmpleado,
+              destPagSector: item.dtSector,
+              destPagObervacion: item.dtObservaciones,
+              destPagEvidencia: this.urlArchivo
+            }
+            
+            this.destinoService.agregarEvidenciaPago(data).subscribe(
+              res => {
+                console.log("Exito: ",res);
+              },
+              error => {
+                console.log("Error: ",error);
+              }
+            );
+  
+            this.urlArchivo = '';
+          });
 
         }
       });
     });
+    this.globalService.setDestino = true;
   }
 
   //Enviar archivos al servidor
-  sendfile(file: File): Observable<string> {
+  sendfile(file: File, idItem: string): Observable<string> {
     const body = new FormData();
     body.append('archivos', file);
-  
-    // Devolver un Observable que maneje el resultado de la carga del archivo
-    return new Observable<string>((observer) => {
-      this.uploadService.uploadPagoDocs(body, this.numericoSol+'-').subscribe({
-        next: (data) => {
-          const ruta = data;
-          observer.next(ruta); // Emitir la ruta al observador
-          observer.complete(); // Completar el observable
-        },
-        error: (error) => {
-          observer.error(error); // Emitir el error al observador
-        },
-      });
-    });
+
+    // Utilizamos el operador map para transformar la respuesta en la URL
+    return this.uploadService.uploadPagoDocs(body, this.numericoSol, idItem)
+      .pipe(
+        map((data) => {
+          return data.url;
+        })
+      );
   }
 
 }

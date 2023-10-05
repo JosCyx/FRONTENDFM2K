@@ -20,6 +20,19 @@
       <h3 class="font-weight-bold" style="padding-top: 20pt">
         Registrar nueva Orden de Compra
       </h3>
+
+      <div class="tabs-edit">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" [ngClass]="{'active': actionCreate === 'creacion'}"
+                    (click)="selectCreateAction('creacion')">Creación</a>
+            </li>
+            <li class="nav-item" *ngIf="showDoc">
+                <a class="nav-link" [ngClass]="{'active': actionCreate === 'documentacion'}"
+                    (click)="selectCreateAction('documentacion')">Documentación</a>
+            </li>
+        </ul>
+    </div>
   
       <div class="solicitud">
         <div class="cabecera mb-3">
@@ -113,12 +126,14 @@
                 class="form-control"
                 *ngIf="tipobusqProv == 'nombre'"
                 [(ngModel)]="cab_ruc_prov"
+                disabled
               />
               <input
                 type="text "
                 class="form-control"
                 *ngIf="tipobusqProv == 'ruc'"
                 [(ngModel)]="cab_proveedor"
+                disabled
               />
             </div>
           </div>
@@ -133,13 +148,13 @@
           </div>
         </div>
         <!-- *Esto es la tabla -->
-        <div class="detalle">
+        <div class="detalle" *ngIf="actionCreate == 'creacion'">
           <table class="table table-striped text-center">
             <thead>
               <tr>
                 <th scope="col">Item</th>
                 <th scope="col">Descripción*</th>
-                <th scope="col">Presupuesto*</th>
+                <th scope="col">Sector*</th>
                 <th scope="col">Unidad</th>
                 <th scope="col">Cantidad Total</th>
               </tr>
@@ -219,6 +234,12 @@
           </table>
         </div>
         <!-- * -->
+
+        <div *ngIf="actionCreate == 'documentacion'">
+          <app-oc-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+              [estadoSol]="estadoSol"></app-oc-documentacion>
+      </div>
+
         <div class="foot-cabecera">
           <div class="form-floating mb-3">
             <input
@@ -244,7 +265,7 @@
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Adjunto cotizaciones:</label>
-            <select class="form-select" [(ngModel)]="cab_adjCot">
+            <select class="form-select" [(ngModel)]="cab_adjCot"  (change)="setNoSolDocumentacion()">
               <option value="SI">Sí</option>
               <option value="NO" selected>No</option>
             </select>
@@ -335,7 +356,8 @@
           >
             Guardar
           </button>
-          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" [appSecureDisable]= "estadoSol" *appAuthorize="'27'">
+          <button class="btn btn-success m-2" [disabled]="!empleado || !cab_asunto || detalleList.length === 0 || itemSectorList.length === 0"
+          data-toggle="modal" data-target="#enviarSolicitud"  *appAuthorize="'27'">
             Guardar y enviar
         </button>
           <button class="btn btn-danger m-2" (click)="cancelarAll()">
@@ -523,7 +545,7 @@
               <tr>
                 <th scope="col">Item</th>
                 <th scope="col">Descripción*</th>
-                <th scope="col">Presupuesto*</th>
+                <th scope="col">Sector*</th>
                 <th scope="col">Unidad</th>
                 <th scope="col">Cantidad Total</th>
               </tr>
