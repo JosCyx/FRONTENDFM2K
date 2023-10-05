@@ -5,16 +5,12 @@ import { HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RolUsuarioService {
+  readonly APIUrl = 'https://localhost:7086/api';
 
-  readonly APIUrl = "https://localhost:7086/api";
-
-  constructor(
-    private http: HttpClient,
-    private cookieService: CookieService
-  ) { }
+  constructor(private http: HttpClient, private cookieService: CookieService) {}
 
   private getHeadersWithAuthToken(): HttpHeaders {
     // Obtiene el token de la cookie
@@ -23,13 +19,27 @@ export class RolUsuarioService {
     // Define las cabeceras de la solicitud con el token
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${authToken}`
+      Authorization: `Bearer ${authToken}`,
     });
   }
-
-  getRolbyUsuario(): Observable<any[]>{
+  //agregar
+  addRolUsuario(val: any) {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get<any>(this.APIUrl + '/RolUsuarios', { headers: headers });
+    return this.http.post(this.APIUrl + '/RolUsuarios', val, { headers: headers });
   }
-  
+  //Obtener id 
+  getUsuarioNombrebyRol(rol: number): Observable<any[]> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(
+      this.APIUrl + `/RolUsuarios/GetUsuariobyNom?usuario=${rol}`,
+      { headers: headers }
+    );
+  }
+  //eliminar
+  deleteRolUsuario(id: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(this.APIUrl + `/RolUsuarios/${id}`, {
+      headers: headers,
+    });
+  }
 }

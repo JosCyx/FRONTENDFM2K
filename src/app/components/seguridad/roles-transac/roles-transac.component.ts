@@ -23,7 +23,6 @@ export class RolesTransacComponent implements OnInit{
   transacList: Transac[]=[];
   rolTransacList: RolTransac[]=[];
   rolConsuList: any[]=[];
-  filteredRolConsuList: any[] = [];
 
   rolList!: any[];
   rolAsign: number =0;
@@ -41,7 +40,7 @@ export class RolesTransacComponent implements OnInit{
 
   ngOnInit(): void {
     this.transacService.getTransaccionesList().subscribe(
-      response => {
+      response => {  
         this.transacList = response.map((item: any) => {
           return {
             trCodigo: item.trCodigo,
@@ -141,7 +140,6 @@ export class RolesTransacComponent implements OnInit{
     eliminarAutorizacion(){
       this.rolTservice.deleteTransaccionRol(this.idAuthDele).subscribe({
         next: response => {
-          console.log("response",response);
           this.rolConsuList=[];
           this.rolAsignConsu=0;
         },

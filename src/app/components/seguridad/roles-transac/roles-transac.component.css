@@ -20,3 +20,8 @@
 .tr-trsc:hover{
     cursor: pointer;
 }
+ div .alert {
+        margin: 0 auto ;
+        width:25rem  ;
+    
+}
