@@ -134,7 +134,7 @@ export class UsuariosComponent {
     this.clear();
     this.changeView('consulta');
     this.mensajeText = '';
-    this.showMsjPassConfirm = true;
+    this.showMsjPassConfirm = false;
   }
 
   //incrementa el valor d la variable que controla la pagina actual que se muestra
@@ -275,6 +275,7 @@ export class UsuariosComponent {
     if (this.newPass != this.confirmPass) {
       this.showMsjPassConfirm = true;
       this.boolenanPass = false;
+      this.mensajeText='Las contraseñas no coinciden';
     } else if (this.confirmPass == this.newPass || this.confirmPass == '') {
       this.boolenanPass = true;
       this.showMsjPassConfirm = false;
