@@ -67,6 +67,7 @@
           data-toggle="modal"
           data-target="#enviarTransacGuardada"
           (click)="seleccionarTrans()"
+          [disabled]="!ElementoSeleccionado()"
         >
           Guardar autorización
         </button>
@@ -94,10 +95,15 @@
           </button>
         </div>
       </form>
-      <div *ngIf="isMensaje" class="alert alert-primary text-center " role="alert" colspan="2"  >
+      <div
+        *ngIf="isMensaje"
+        class="alert alert-primary text-center"
+        role="alert"
+        colspan="2"
+      >
         <span><i class="bi bi-info-circle">Seleccione un rol</i></span>
-    </div>
-      <div *ngIf="!isMensaje" >
+      </div>
+      <div *ngIf="!isMensaje">
         <div class="align-items-center input-group mb-3 justify-content-end">
           <button class="btn btn-primary" (click)="prevPage()">
             <i class="bi bi-arrow-left"></i>
@@ -116,7 +122,6 @@
             </tr>
           </thead>
           <tbody>
-              
             <tr
               *ngFor="
                 let trsc of rolConsuList
@@ -125,7 +130,7 @@
               class="tr-trsc"
             >
               <ng-container *ngFor="let tem of rolList">
-                <td class="align-middle" *ngIf="tem.roCodigo == trsc.rtRol" >
+                <td class="align-middle" *ngIf="tem.roCodigo == trsc.rtRol">
                   {{ tem.roNombre }}
                 </td>
               </ng-container>
@@ -135,7 +140,12 @@
                   *ngIf="tra.trCodigo == trsc.rtTransaccion"
                 >
                   {{ tra.trNombre }}
-                  <button class="btn text-danger text-end" data-toggle="modal" data-target="#Eliminar" (click)="selectIdDelete(trsc.rtId)"  >
+                  <button
+                    class="btn text-danger text-end"
+                    data-toggle="modal"
+                    data-target="#Eliminar"
+                    (click)="selectIdDelete(trsc.rtId)"
+                  >
                     <i class="bi bi-x-circle"></i>
                   </button>
                 </td>
@@ -144,6 +154,19 @@
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+  <div class="col text-center">
+    <div *ngIf="showmsj" class="alert alert-success" role="alert">
+      <div class="msg">{{ msjExito }}</div>
+    </div>
+    <!-- <div *ngIf="loading" class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+        </div> -->
+    <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+      <span class="msg"
+        ><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span
+      >
     </div>
   </div>
 </div>
@@ -182,26 +205,39 @@
   </div>
 </div>
 <!--* Modal para eliminar -->
-<div class="modal fade" #exampleModal id="Eliminar" data-backdrop="static" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header justify-content-center">
-                <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea eliminar este Autorizacion?
-                </h3>
-            </div>
-            <div class="modal-body">
-                <p>Esta acción no se puede deshacer.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="eliminarAutorizacion()" >
-                    Confirmar
-                </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                    Cancelar
-                </button>
-            </div>
-        </div>
+<div
+  class="modal fade"
+  #exampleModal
+  id="Eliminar"
+  data-backdrop="static"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea eliminar este Autorizacion?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-dismiss="modal"
+          (click)="eliminarAutorizacion()"
+        >
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
     </div>
+  </div>
 </div>

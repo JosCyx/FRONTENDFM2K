@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { s } from '@fullcalendar/core/internal-common';
 import { RolUsuarioService } from 'src/app/services/comunicationAPI/seguridad/rol-usuario.service';
 import { RolesService } from 'src/app/services/comunicationAPI/seguridad/roles.service';
 import { UsuariosService } from 'src/app/services/comunicationAPI/seguridad/usuarios.service';
@@ -24,6 +25,7 @@ export class RolesUsersComponent implements OnInit {
   isMensaje: boolean = true;
   currentPage: number = 1;
 
+
   // Rol y usuario rol
   usuariosign: number = 0;
   usuarioList: any[] = [];
@@ -33,8 +35,12 @@ export class RolesUsersComponent implements OnInit {
   rolAsignConsu: number = 0;
   rolConsuList: any[] = [];
   //
-  idAuthDele: number =0;
-
+  idAuthDele: number = 0;
+  //mensajes
+  showmsj: boolean = false;
+  msjExito: string = '';
+  msjError: string = '';
+  showmsjerror: boolean = false;
 
   constructor(
     private rolService: RolesService,
@@ -73,6 +79,7 @@ export class RolesUsersComponent implements OnInit {
   //
   changeView(view: string) {
     this.changeview = view;
+    this.clear();
   }
 
   nextPage(): void {
@@ -110,18 +117,30 @@ export class RolesUsersComponent implements OnInit {
     this.rolUsuario.forEach((item) => {
       this.RolUsuarioservice.addRolUsuario(item).subscribe({
         next: (response) => {
-          this.rolUsuario = [];
-          this.RolList.forEach((item) => {
-            item.RCheck = false;
-          });
-          this.usuariosign = 0;
+          this.showmsj = true;
+          this.msjExito = 'Se guardo correctamente';
+          setTimeout(() => {
+            this.clear();
+            this.changeview = 'consulta';
+            this.ngOnInit();
+          }, 1000);
+          
+         
         },
         error: (error) => {
           console.error(error);
+          this.showmsjerror = true;
+          this.msjError = 'Error el Rol ya existe';
+          setTimeout(() => {
+            this.showmsjerror = false;
+            this.msjError = '';
+            this.changeview = 'consulta';
+          }, 2000);
         },
         complete: () => {},
       });
     });
+
   }
 
   Buscar() {
@@ -143,15 +162,43 @@ export class RolesUsersComponent implements OnInit {
   selectIdDelete(id: number) {
     this.idAuthDele = id;
   }
-  eliminarAutorizacion(){
+  eliminarAutorizacion() {
     this.RolUsuarioservice.deleteRolUsuario(this.idAuthDele).subscribe({
       next: (response) => {
-        this.rolAsignConsu=0;
-        this.rolConsuList=[];
+        this.showmsj = true;
+          this.msjExito = 'Se Elimino correctamente';
+          setTimeout(() => {
+            this.clear();
+            this.changeview = 'consulta';
+            this.ngOnInit();
+          }, 1000);
+        this.rolConsuList = [];
       },
       error: (error) => {
         console.error(error);
+        this.showmsjerror = true;
+        this.msjError = 'Error al Eliminar';
       },
+    });
+  }
+  clear() {
+    //mensajes
+    this.msjExito = '';
+    this.showmsj = false;
+    this.showmsjerror = false;
+    this.msjError = '';
+    //variables
+    this.usuariosign = 0;
+    this.rolAsignConsu = 0;
+    this.isMensaje=true;
+    // Cuando carge el programa se deseleccionan todos los checkbox
+    this.RolList.forEach((item) => {
+      item.RCheck = false;
     })
+
+  }
+  ElementoSeleccionado():boolean {
+    return this.RolList.some((item) => item.RCheck=== true);
+
   }
 }
