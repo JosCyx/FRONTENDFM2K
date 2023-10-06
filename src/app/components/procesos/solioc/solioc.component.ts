@@ -141,7 +141,7 @@ export class SoliocComponent implements OnInit {
   // lastIDItem!: number;
   // lastIDDet!: number;
   //variables compartidas con los demas componentes
-  @Input() sharedTipoSol: number = 1;
+  @Input() sharedTipoSol: number = 2;
   @Input() sharedNoSol!: number;
   estadoSol: string = '10';
 

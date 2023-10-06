@@ -46,7 +46,12 @@ export class UploadFileService {
 
   viewFile(filesNombres:string):Observable<any>{
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get(`${this.APIUrl}/Documento/visualizeFile?fileName=${filesNombres}`, {responseType:'blob'});
+    return this.http.get(`${this.APIUrl}/Documento/ViewFile?fileName=${filesNombres}`, {responseType:'blob'});
+  }
+
+  deleteFile(filesNombres:string):Observable<any>{
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(`${this.APIUrl}/Documento/DeleteFile?fileName=${filesNombres}`, { headers: headers });
   }
 
 }

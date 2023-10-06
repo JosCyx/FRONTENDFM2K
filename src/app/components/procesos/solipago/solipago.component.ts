@@ -104,9 +104,9 @@ export class SolipagoComponent implements OnInit {
   empleadoEdi: any[] = [];
   proveedores: any[] = [];
   //variables compartidas con los demas componentes
-  @Input() sharedTipoSol!: number;
+  @Input() sharedTipoSol: number = 3;
   @Input() sharedNoSol!: number;
-  estadoSol!: string;
+  estadoSol: string = '10';
   numericoSol!: string;
 
   detallesToDestino: any[] = [];
@@ -129,7 +129,7 @@ export class SolipagoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-
+    console.log(this.sharedNoSol);
 
     this.areaList$ = this.areaService.getAreaList();
 
@@ -875,5 +875,16 @@ export class SolipagoComponent implements OnInit {
     }
   }
 
+  ////////////////////////////////////////////////DOCUMENTACION DE CREACION DE PAGO//////////////////////////////////////////////////////////////
+  showDoc: boolean = false;
+  async setNoSolDocumentacion(){
+    this.sharedNoSol = await this.getLastSol();
+    this.showDoc = this.showDoc ? false : true;
+  }
 
+  actionCreate: string = 'creacion';
+
+  selectCreateAction(action: string) {
+    this.actionCreate = action;
+  }
 }

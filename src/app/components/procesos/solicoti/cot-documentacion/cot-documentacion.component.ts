@@ -34,6 +34,7 @@ export class CotDocumentacionComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(this.noSol);
+    
     this.GetfileView();
   }
   getFiles(event: any): void {
