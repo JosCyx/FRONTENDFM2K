@@ -32,6 +32,13 @@ export class UploadFileService {
     return this.http.post(`${this.APIUrl}/Documento/upload?prefijo=${prefijo}&tipoSOl=${tiposol}&noSol=${nolSol}`,bodys,{headers:headers});
 
   }
+
+  uploadPagoDocs(bodys:FormData,prefijo:string, item: string):Observable<any>{
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(`${this.APIUrl}/Documento/UploadSolPagoDocs?prefijo=${prefijo}&item=${item}`,bodys,{headers:headers});
+
+  }
+
   getFile(tipoSol:number,noSol:number):Observable<any[]>{
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any>(`${this.APIUrl}/Documento/GetDocumentos?tipoSol=${tipoSol}&noSol=${noSol}`, { headers: headers });
@@ -39,7 +46,12 @@ export class UploadFileService {
 
   viewFile(filesNombres:string):Observable<any>{
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get(`${this.APIUrl}/Documento/visualizeFile?fileName=${filesNombres}`, {responseType:'blob'});
+    return this.http.get(`${this.APIUrl}/Documento/ViewFile?fileName=${filesNombres}`, {responseType:'blob'});
+  }
+
+  deleteFile(filesNombres:string):Observable<any>{
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(`${this.APIUrl}/Documento/DeleteFile?fileName=${filesNombres}`, { headers: headers });
   }
 
 }

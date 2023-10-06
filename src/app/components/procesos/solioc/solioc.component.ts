@@ -141,9 +141,9 @@ export class SoliocComponent implements OnInit {
   // lastIDItem!: number;
   // lastIDDet!: number;
   //variables compartidas con los demas componentes
-  @Input() sharedTipoSol!: number;
+  @Input() sharedTipoSol: number = 2;
   @Input() sharedNoSol!: number;
-  estadoSol!: string;
+  estadoSol: string = '10';
 
   constructor(
     private empService: EmpleadosService,
@@ -186,6 +186,12 @@ export class SoliocComponent implements OnInit {
     if (this.changeview == 'editar') {
       this.editSolicitud();
     }
+  }
+
+  showDoc: boolean = false;
+  async setNoSolDocumentacion(){
+    this.sharedNoSol = await this.getLastSol();
+    this.showDoc = this.showDoc ? false : true;
   }
 
   //guarda los datos de los empleados en una lista local dependiendo del tamaño de la variable de busqueda, esto se controla con un keyup
@@ -1386,6 +1392,12 @@ export class SoliocComponent implements OnInit {
   actionEdit:string='edicion';
   selectEditAction(action:string){
     this.actionEdit=action;
+  }
+
+  actionCreate: string = 'creacion';
+
+  selectCreateAction(action: string) {
+    this.actionCreate = action;
   }
 
     ////////////////////////////////////////////CONTROL DE VISUALIZACION SEGUN ESTADO//////////////////////////////////////////

@@ -3,38 +3,101 @@
         <h3 class="strong">Destino de la solicitud</h3>
     </div>
     <div>
-        <form>
-            <div class="row">
-                <div class="input-group mb-2 col">
-                    <label class="input-group-text">Entregado a:</label>
-                    <input type="text" class="form-control" [(ngModel)]="empleadoBusq" name="empleadoDestino" 
-                    (keyup)="searchEmpleado()" (input)="onInputChanged()" list="empleados" >
-                    <datalist id="empleados">
-                        <ng-container *ngFor="let empOP of empleados">
-                            <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>
-                        </ng-container>
-                    </datalist>
-                </div>
-                <div class="input-group mb-2 col">
-                    <label class="input-group-text">Sector:</label>
-                    <select class="form-select" [(ngModel)]="sectorDestino" name="sectorDestino">
-                        <option disabled selected value = 9999>Seleccione un sector...</option>
-                        <option *ngFor="let sect of sectores" [value]="sect.sectIdNomina">{{sect.sectNombre}}</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-floating mb-2">
-                <input type="text" class="form-control" id="floatingInput" [(ngModel)]="observacionesDestino" name="observacionesDestino"/>
-                <label for="floatingInput">Observaciones:</label>
-            </div>
-            <div>
-                <label class="form-label">Evidencias:</label>
-                <input class="form-control" type="file"/>
-            </div>
-        </form>
+        <table class="table table-hover table-bordered table-rounded text-center">
+            <thead>
+                <tr>
+                    <th class="align-middle">Item</th>
+                    <th class="align-middle">Destino</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let det of detalles" data-toggle="modal" data-target="#asignarDestino" id="tr-item" (click)="saveIdItem(det)">
+                    <td>{{det.descpDetalle}}</td>
+                    <td class="align-middle" [ngSwitch]="det.destinoDetalle">
+                        <span *ngSwitchCase="true">Asignado</span>
+                        <span *ngSwitchCase="false">No asignado</span></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-end">
+            <button class="btn btn-primary" (click)="registrar()" [disabled]="!checkdestino">Guardar evidencias</button>
+        </div>
     </div>
     <!-- iterar la lista de evidencias y mostrar su contenido -->
-    <div class="galeria-evidencias text-center m-3">        
+    <div>
+        <div>
+            <h3 class="strong">Evidencias registradas</h3>
+        </div>
+        <div class="galeria-evidencias text-center">        
+            
+        </div>
+    </div>
+</div>
 
+<!-- Modal para verificar el envío de la solcitud guardada-->
+<div class="modal fade" #exampleModal id="asignarDestino" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    Destino del item
+                </h3>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <form>
+                        <div class="row">
+                            <div class="input-group mb-2 col">
+                                <label class="input-group-text">Entregado a:</label>
+                                <input type="text" class="form-control" [(ngModel)]="empleadoBusq" name="empleadoDestino" 
+                                (keyup)="searchEmpleado()" (input)="onInputChanged()" list="empleados" placeholder="Ingrese el nombre del empleado">
+                                <datalist id="empleados">
+                                    <ng-container *ngFor="let empOP of empleados">
+                                        <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>
+                                    </ng-container>
+                                </datalist>
+                            </div>
+                            <div class="input-group mb-2 col">
+                                <label class="input-group-text">Sector:</label>
+                                <select class="form-select" [(ngModel)]="sectorDestino" name="sectorDestino">
+                                    <option disabled selected value = 9999>Seleccione un sector...</option>
+                                    <option *ngFor="let sect of sectores" [value]="sect.sectIdNomina">{{sect.sectNombre}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div  class="mb-2">
+                            <label class="form-label">Observaciones:</label>
+                            <textarea type="text" class="form-control" [(ngModel)]="observacionesDestino" rows="4" name="observacionesDestino" 
+                                      placeholder="Ingrese las observaciones acerca el destino de la solicitud de pago"></textarea>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Evidencias:</label>
+                            <input class="form-control" type="file" id="archivoInput" (change)="getFiles($event)" />
+                        </div>
+                        <div>
+                            <!-- mostrar una lista con los archivos que esten subidos a la lista -->
+                            <label class="form-label">Archivos subidos:</label>
+                            <table class="table table-striped table-bordered table" >
+                                <tr *ngFor="let files of archivos let i=index">
+                                    <ng-container *ngIf="files.evIdDetalle == idItem">
+                                        <td >{{files.evNombre}}</td>
+                                        <td ><a class="text-danger " (click)="deleteArchivo(i)"><i class="bi bi-x-circle h5"></i></a></td>
+                                    </ng-container>
+                                </tr>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="setItemDestino()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="cancelarDestino()">
+                    Cancelar
+                </button>
+            </div>
+        </div>
     </div>
 </div>

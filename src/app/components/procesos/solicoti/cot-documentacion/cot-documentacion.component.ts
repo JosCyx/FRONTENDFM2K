@@ -33,6 +33,8 @@ export class CotDocumentacionComponent implements OnInit {
   constructor(private uploadfile: UploadFileService) {}
 
   ngOnInit(): void {
+    console.log(this.noSol);
+    
     this.GetfileView();
   }
   getFiles(event: any): void {
@@ -130,7 +132,7 @@ export class CotDocumentacionComponent implements OnInit {
           for (let i = 0; i < data.length; i++) {
             try {
               const ruta = this.getNombreArchivo(data[i].docUrl);
-              console.log(ruta);
+              console.log("Ruta:",ruta);
               const docUrl = await this.getUrlFile(ruta); // Espera a que se resuelva getUrlFile
               const pat: Path = {
                 docNombre: data[i].docNombre,

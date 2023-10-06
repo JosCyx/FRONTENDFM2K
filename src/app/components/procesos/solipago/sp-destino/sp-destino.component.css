@@ -1,15 +1,26 @@
-.destino{
+.destino {
     background-color: rgb(202, 202, 202);
     border-radius: 5pt;
     padding: 20px;
 }
 
-.strong{
+.strong {
     font-weight: bold;
 }
 
-.galeria-evidencias{
+.galeria-evidencias {
     display: grid;
     grid-gap: 20px;
     grid-template-columns: repeat(3, 1fr);
+}
+
+.table-rounded {
+    border-radius: 5pt;
+    /* Ajusta el valor según el grado de redondeo deseado */
+    overflow: hidden;
+    /* Para evitar que el contenido se salga del borde redondeado */
+}
+
+#tr-item:hover {
+    cursor: pointer;
 }

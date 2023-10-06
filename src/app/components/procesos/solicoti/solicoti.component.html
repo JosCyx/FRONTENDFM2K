@@ -8,7 +8,7 @@
                     <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">
                         Crear
                     </button> -->
-                    <button class="btn btn-danger" (click)="enviarSolicitud()">Boton</button>
+                    <!-- <button class="btn btn-danger" (click)="enviarSolicitud()">Boton</button> -->
                 </div>
             </div>
         </nav>
@@ -19,7 +19,21 @@
             <h3 class="font-weight-bold" style="padding-top: 20pt">
                 Registrar nueva solicitud de cotización
             </h3>
-    
+
+            <div class="tabs-edit">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" [ngClass]="{'active': actionCreate === 'creacion'}"
+                            (click)="selectCreateAction('creacion')">Creación</a>
+                    </li>
+                    <li class="nav-item" *ngIf="showDoc">
+                        <a class="nav-link" [ngClass]="{'active': actionCreate === 'documentacion'}"
+                            (click)="selectCreateAction('documentacion')">Documentación</a>
+                    </li>
+                </ul>
+            </div>
+
+
             <div class="solicitud">
                 <div class="cabecera mb-3">
                     <div class="input-group mb-1">
@@ -29,8 +43,9 @@
                     <div class="row mb-1">
                         <div class="input-group col">
                             <label class="input-group-text">Solicitado por*:</label>
-                            <input type="text" class="form-control" id="busqueda" list="sugerencias" [(ngModel)]="empleado"
-                                (keyup)="searchEmpleado()" placeholder="Ingrese el nombre del empleado" />
+                            <input type="text" class="form-control" id="busqueda" list="sugerencias"
+                                [(ngModel)]="empleado" (keyup)="searchEmpleado()"
+                                placeholder="Ingrese el nombre del empleado" />
                             <datalist id="sugerencias">
                                 <ng-container *ngFor="let emp of empleados">
                                     <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
@@ -48,17 +63,18 @@
                     </div>
                     <div class="input-group mb-1">
                         <label class="input-group-text">Asunto*:</label>
-                        <input type="text" class="form-control" placeholder="Ingrese el asunto" [(ngModel)]="cab_asunto" />
+                        <input type="text" class="form-control" placeholder="Ingrese el asunto"
+                            [(ngModel)]="cab_asunto" />
                     </div>
                 </div>
-    
-                <div class="detalle">
+
+                <div class="detalle" *ngIf="actionCreate == 'creacion'">
                     <table class="table table-striped text-center">
                         <thead>
                             <tr>
                                 <th scope="col">Item</th>
                                 <th scope="col">Descripción*</th>
-                                <th scope="col">Presupuesto*</th>
+                                <th scope="col">Sector*</th>
                                 <th scope="col">Unidad</th>
                                 <th scope="col">Cantidad Total</th>
                             </tr>
@@ -79,12 +95,12 @@
                             <tr>
                                 <th class="align-middle">{{ det_id }}</th>
                                 <td class="align-middle">
-                                    <textarea name="descripcion" class="form-control  limited-textarea" rows="2" cols="50"
-                                        placeholder="Descripción" [(ngModel)]="det_descp"></textarea>
+                                    <textarea name="descripcion" class="form-control  limited-textarea" rows="2"
+                                        cols="50" placeholder="Descripción" [(ngModel)]="det_descp"></textarea>
                                 </td>
                                 <td class="align-middle">
-                                    <button class="btn btn-outline-primary" data-toggle="modal" data-target="#itemsector"
-                                        [disabled]="!det_descp">
+                                    <button class="btn btn-outline-primary" data-toggle="modal"
+                                        data-target="#itemsector" [disabled]="!det_descp">
                                         Desglose
                                     </button>
                                 </td>
@@ -117,7 +133,12 @@
                         </tbody>
                     </table>
                 </div>
-    
+
+                <div *ngIf="actionCreate == 'documentacion'">
+                    <app-cot-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+                        [estadoSol]="estadoSol"></app-cot-documentacion>
+                </div>
+
                 <div class="foot-cabecera">
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cab_proc"
@@ -131,7 +152,7 @@
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text">Adjunto cotizaciones:</label>
-                        <select class="form-select" [(ngModel)]="cab_adjCot">
+                        <select class="form-select" [(ngModel)]="cab_adjCot" (change)="setNoSolDocumentacion()">
                             <option value="SI">Sí</option>
                             <option value="NO" selected>No</option>
                         </select>
@@ -172,19 +193,20 @@
                         <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
                     </div>
                 </div>
-    
+
                 <div class="col text-end">
                     <button class="btn btn-primary m-2" [disabled]="
                 !empleado ||
                 !cab_asunto ||
                 detalleList.length === 0 ||
-                itemSectorList.length === 0"
-                data-toggle="modal" 
-                data-target="#guardarCotizacion"
-               *appAuthorize="'25'">
+                itemSectorList.length === 0" data-toggle="modal" data-target="#guardarCotizacion" *appAuthorize="'25'">
                         Guardar
                     </button>
-                    <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" [appSecureDisable]= "estadoSol" *appAuthorize="'27'">
+                    <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" [disabled]="
+                !empleado ||
+                !cab_asunto ||
+                detalleList.length === 0 ||
+                itemSectorList.length === 0" *appAuthorize="'27'">
                         Guardar y enviar
                     </button>
                     <button class="btn btn-danger m-2" (click)="cancelarAll()">
@@ -199,7 +221,7 @@
         <!-- Editar solicitud de cotizacion -->
         <div class="formRol" *ngIf="changeview === 'editar'">
             <h3 class="font-weight-bold" style="padding-top: 20pt">Editar solicitud</h3>
-    
+
             <div class="tabs-edit">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
@@ -216,8 +238,8 @@
                     </li>
                 </ul>
             </div>
-    
-            <div class="solicitudEdit" >
+
+            <div class="solicitudEdit">
                 <div class="cabecera mb-3">
                     <div class="row mb-1">
                         <div class="input-group col">
@@ -229,7 +251,7 @@
                             <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotFecha" disabled />
                         </div>
                     </div>
-    
+
                     <div class="row mb-1">
                         <div class="input-group col">
                             <label class="input-group-text">Solicitado por:</label>
@@ -242,15 +264,17 @@
                         <div class="input-group col">
                             <label class="input-group-text">Area:</label>
                             <ng-container *ngFor="let are of areas">
-                                <input *ngIf="are.areaIdNomina == cabecera.cabSolCotArea" type="text" class="form-control"
-                                    id="busqueda" list="sugerencias" [value]="are.areaDecp" disabled />
+                                <input *ngIf="are.areaIdNomina == cabecera.cabSolCotArea" type="text"
+                                    class="form-control" id="busqueda" list="sugerencias" [value]="are.areaDecp"
+                                    disabled />
                             </ng-container>
                         </div>
                     </div>
                     <div class="row mb-1">
                         <div class="input-group col">
                             <label class="input-group-text">Asunto:</label>
-                            <input type="text" class="form-control mr-3" [(ngModel)]="cabecera.cabSolCotAsunto" [appSecureDisable]= "estadoSol"/>
+                            <input type="text" class="form-control mr-3" [(ngModel)]="cabecera.cabSolCotAsunto"
+                                [appSecureDisable]="estadoSol" />
                         </div>
                         <div class="row col">
                             <div class="input-group col std">
@@ -265,9 +289,9 @@
                                 </ng-container>
                             </div>
                         </div>
-    
+
                     </div>
-    
+
                     <div class="presupuestaria" *ngIf="aprobPreps">
                         <div class="tabs-edit">
                             <ul class="nav nav-tabs">
@@ -281,7 +305,8 @@
                             <div class="col-md-4">
                                 <div class="input-group">
                                     <label class="input-group-text">Aprobación presupuestaria:</label>
-                                    <select class="form-select" [(ngModel)]="cabecera.cabSolCotAprobPresup" [appSecureDisable]= "estadoSol">
+                                    <select class="form-select" [(ngModel)]="cabecera.cabSolCotAprobPresup"
+                                        [appSecureDisable]="estadoSol">
                                         <option value="SI">Sí</option>
                                         <option value="NO">No</option>
                                     </select>
@@ -292,22 +317,23 @@
                                     <label class="input-group-text">Motivo de devolución:</label>
                                     <textarea class="form-control limited-textarea" rows="1"
                                         placeholder="Ingrese el motivo de devolución"
-                                        [(ngModel)]="cabecera.cabSolCotMtovioDev" [appSecureDisable]= "estadoSol"></textarea>
+                                        [(ngModel)]="cabecera.cabSolCotMtovioDev"
+                                        [appSecureDisable]="estadoSol"></textarea>
                                 </div>
                             </div>
                         </div>
-    
-    
+
+
                     </div>
                 </div>
-    
+
                 <div class="detalle" *ngIf="actionEdit == 'edicion'">
                     <table class="table table-striped text-center">
                         <thead>
                             <tr>
                                 <th scope="col">Item</th>
                                 <th scope="col">Descripción*</th>
-                                <th scope="col">Presupuesto*</th>
+                                <th scope="col">Sector*</th>
                                 <th scope="col">Unidad</th>
                                 <th scope="col">Cantidad Total</th>
                             </tr>
@@ -322,12 +348,15 @@
                                 <td class="align-middle">{{ i+1 }}</td>
                                 <td class="align-middle">
                                     <!-- <input type="text" class="form-control" [(ngModel)]="det.solCotDescripcion"></td> -->
-                                    <textarea name="descripcion" class="form-control  limited-textarea" rows="2" cols="15"
-                                        placeholder="Descripción" [(ngModel)]="det.solCotDescripcion" [appSecureDisable]= "estadoSol"></textarea>
-                                <td class="align-middle"><button class="btn btn-outline-primary" (click)="selectDet(det)"
-                                        data-toggle="modal" data-target="#itemsectorEdit" [appSecureDisable]= "estadoSol">Editar</button></td>
+                                    <textarea name="descripcion" class="form-control  limited-textarea" rows="2"
+                                        cols="15" placeholder="Descripción" [(ngModel)]="det.solCotDescripcion"
+                                        [appSecureDisable]="estadoSol"></textarea>
+                                <td class="align-middle"><button class="btn btn-outline-primary"
+                                        (click)="selectDet(det)" data-toggle="modal" data-target="#itemsectorEdit"
+                                        [appSecureDisable]="estadoSol">Editar</button></td>
                                 <td class="align-middle">
-                                    <select class="form-control" [(ngModel)]="det.solCotUnidad" [appSecureDisable]= "estadoSol">
+                                    <select class="form-control" [(ngModel)]="det.solCotUnidad"
+                                        [appSecureDisable]="estadoSol">
                                         <option value="Unidad">Unidad</option>
                                         <option value="Sacos">Sacos</option>
                                         <option value="Paquete">Paquete</option>
@@ -343,27 +372,30 @@
                                     {{ det.solCotCantidadTotal }}
                                     <button class="btn text-danger btn-border"
                                         (click)="confDeleteDet(det.solCotID, det.solCotIdDetalle)" data-toggle="modal"
-                                        data-target="#dltDetSaved" [appSecureDisable]= "estadoSol">
+                                        data-target="#dltDetSaved" [appSecureDisable]="estadoSol">
                                         <i class="bi bi-x-circle"></i>
                                     </button>
                                 </td>
                             </tr>
-    
+
                             <tr *ngIf="viewElement">
                                 <th class="align-middle">{{ det_id }}</th>
                                 <td class="align-middle">
-                                    <textarea name="descripcion" class="form-control  limited-textarea" rows="2" cols="10"
-                                        placeholder="Descripción" [(ngModel)]="det_descp" [appSecureDisable]= "estadoSol"></textarea>
+                                    <textarea name="descripcion" class="form-control  limited-textarea" rows="2"
+                                        cols="10" placeholder="Descripción" [(ngModel)]="det_descp"
+                                        [appSecureDisable]="estadoSol"></textarea>
                                 </td>
-    
+
                                 <td class="align-middle">
-                                    <button class="btn btn-outline-primary" data-toggle="modal" data-target="#itemsector"
-                                        [disabled]="!det_descp" (click)="openModalItem()" [appSecureDisable]= "estadoSol">
+                                    <button class="btn btn-outline-primary" data-toggle="modal"
+                                        data-target="#itemsector" [disabled]="!det_descp" (click)="openModalItem()"
+                                        [appSecureDisable]="estadoSol">
                                         Desglose
                                     </button>
                                 </td>
                                 <td class="align-middle" style="width: 150px">
-                                    <select class="form-control" [(ngModel)]="det_unidad" [appSecureDisable]= "estadoSol">
+                                    <select class="form-control" [(ngModel)]="det_unidad"
+                                        [appSecureDisable]="estadoSol">
                                         <option value="Unidad" selected>Unidad</option>
                                         <option value="Sacos">Sacos</option>
                                         <option value="Paquete">Paquete</option>
@@ -377,13 +409,13 @@
                                 </td>
                                 <td class="align-middle cel-prep">
                                     <input type="text" class="form-control text-center" [(ngModel)]="det_cantidad"
-                                        disabled [appSecureDisable]= "estadoSol"/>
+                                        disabled [appSecureDisable]="estadoSol" />
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="5" class="align-middle text-end">
                                     <button class="btn btn-success" [disabled]="!det_descp || tmpItemSect.length === 0"
-                                        (click)="addDetalle()" [appSecureDisable]= "estadoSol">
+                                        (click)="addDetalle()" [appSecureDisable]="estadoSol">
                                         <i class="bi bi-check"></i>
                                     </button>
                                 </td>
@@ -391,55 +423,60 @@
                         </tbody>
                     </table>
                 </div>
-    
+
                 <div *ngIf="actionEdit == 'proveedores'">
                     <app-cot-proveedores [mail_cabecera]="sharedCabecera" [mail_detalles]="sharedDetalle"
-                        [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"  [estadoSol]="estadoSol"></app-cot-proveedores>
+                        [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-cot-proveedores>
                 </div>
-    
+
                 <div *ngIf="actionEdit == 'documentacion'">
-                    <app-cot-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-cot-documentacion>
+                    <app-cot-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+                        [estadoSol]="estadoSol"></app-cot-documentacion>
                 </div>
-    
+
                 <div class="foot-cabecera">
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="floatingInput"
-                            [(ngModel)]="cabecera.cabSolCotProcedimiento" [appSecureDisable]= "estadoSol"/>
+                            [(ngModel)]="cabecera.cabSolCotProcedimiento" [appSecureDisable]="estadoSol" />
                         <label for="floatingInput">Materiales y procedimientos a seguir:</label>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="floatingInput"
-                            [(ngModel)]="cabecera.cabSolCotObervaciones" [appSecureDisable]= "estadoSol"/>
+                            [(ngModel)]="cabecera.cabSolCotObervaciones" [appSecureDisable]="estadoSol" />
                         <label for="floatingInput">Observaciones:</label>
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text">Adjunto cotizaciones:</label>
-                        <select class="form-control" [(ngModel)]="cabecera.cabSolCotAdjCot" [appSecureDisable]= "estadoSol">
+                        <select class="form-control" [(ngModel)]="cabecera.cabSolCotAdjCot"
+                            [appSecureDisable]="estadoSol">
                             <option value="SI">Sí</option>
                             <option value="NO" selected>No</option>
                         </select>
                         <label class="input-group-text">Número de cotizaciones:</label>
-                        <input class="form-control" type="number" [(ngModel)]="cabecera.cabSolCotNumCotizacion" [appSecureDisable]= "estadoSol"/>
+                        <input class="form-control" type="number" [(ngModel)]="cabecera.cabSolCotNumCotizacion"
+                            [appSecureDisable]="estadoSol" />
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text">Plazo de entrega:</label>
                         <input class="form-control" type="text" for="plazoentrega"
-                            [(ngModel)]="cabecera.cabSolCotPlazoEntrega" [appSecureDisable]= "estadoSol"/>
+                            [(ngModel)]="cabecera.cabSolCotPlazoEntrega" [appSecureDisable]="estadoSol" />
                         <label class="input-group-text">Fecha máxima de entrega:</label>
                         <input class="form-control" type="text" for="fechamaxima"
-                            [(ngModel)]="cabecera.cabSolCotFechaMaxentrega" [appSecureDisable]= "estadoSol"/>
+                            [(ngModel)]="cabecera.cabSolCotFechaMaxentrega" [appSecureDisable]="estadoSol" />
                     </div>
                     <div class="input-group mb-1">
                         <label class="input-group-text">Inspector:</label>
-                        <input type="text" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="nameInspector"
-                            (keyup)="searchInspectorEdit()" [appSecureDisable]= "estadoSol"/>
+                        <input type="text" class="form-control" id="busqueda" list="inspectores"
+                            [(ngModel)]="nameInspector" (keyup)="searchInspectorEdit()"
+                            [appSecureDisable]="estadoSol" />
                         <datalist id="inspectores">
                             <ng-container *ngFor="let empOP of inspectoresEdit">
                                 <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>
                             </ng-container>
                         </datalist>
                         <label class="input-group-text">Teléfono:</label>
-                        <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolCotTelefInspector" [appSecureDisable]= "estadoSol"/>
+                        <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolCotTelefInspector"
+                            [appSecureDisable]="estadoSol" />
                     </div>
                 </div>
             </div>
@@ -456,16 +493,17 @@
                 <div class="col text-end">
                     <ng-container *ngIf="cabecera.cabSolCotEstadoTracking!= 0">
                         <button class="btn btn-primary m-2" data-toggle="modal" data-target="#guardarEdicion"
-                            (click)="saveIdInspector()" [appSecureDisable]= "estadoSol">Guardar</button>
-                        <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitudGuardada" [appSecureDisable]= "estadoSol" *appAuthorize="'27'">
+                            (click)="saveIdInspector()" [appSecureDisable]="estadoSol">Guardar</button>
+                        <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitudGuardada"
+                            [appSecureDisable]="estadoSol" *appAuthorize="'27'">
                             Guardar y enviar
                         </button>
                     </ng-container>
                     <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
                 </div>
             </div>
-            
-    
+
+
         </div>
     </ng-container>
 </div>
@@ -674,7 +712,7 @@
                 <p>Esta acción guardará los datos ingresados en la solicitud pero no la enviará para su revisón.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="check()" >
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="check()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -797,7 +835,8 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.</p>
+                <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.
+                </p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
@@ -810,4 +849,3 @@
         </div>
     </div>
 </div>
-

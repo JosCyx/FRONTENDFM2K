@@ -19,6 +19,19 @@
       <h3 class="font-weight-bold" style="padding-top: 20pt">
         Registrar nueva solicitud de pago
       </h3>
+
+      <div class="tabs-edit">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" [ngClass]="{'active': actionCreate === 'creacion'}"
+                    (click)="selectCreateAction('creacion')">Creación</a>
+            </li>
+            <li class="nav-item" >
+                <a class="nav-link" [ngClass]="{'active': actionCreate === 'documentacion'}"
+                    (click)="selectCreateAction('documentacion')" (click)="setNoSolDocumentacion()">Documentación</a>
+            </li>
+        </ul>
+    </div>
   
       <div class="solicitud">
         <div class="cabecera mb-3">
@@ -170,75 +183,97 @@
             </button>
           </div>
         </div>
+        <div *ngIf="actionCreate == 'creacion'">
+          <div class="tabs-edit" *ngIf="destinoIO">
+            <ul class="nav nav-tabs">
+                <li class="nav-item nav-items">
+                    <a class="nav-link" [ngClass]="{'active': showItDt === 'items'}" (click)="setID('items')">Items</a>
+                </li>
+                <li class="nav-item nav-items">
+                  <a class="nav-link" [ngClass]="{'active': showItDt === 'destino'}" (click)="setID('destino')">Destino</a>
+              </li>
+            </ul>
+          </div>
+    
+          <div class="detalle" *ngIf="showItDt == 'items'">
+            <table class="table table-striped text-center">
+              <thead>
+                <tr>
+                  <th scope="col">N°</th>
+                  <th scope="col">Item a Cancelar*</th>
+                  <th scope="col">Cantidad contratada</th>
+                  <th scope="col">Cantidad recibida</th>
+                  <th scope="col">Valor unitario</th>
+                  <th scope="col">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let det of detalleSolPagos; let i = index">
+                  <th class="align-middle">{{ i + 1 }}</th>
+                  <td class="align-middle">
+                    <textarea
+                      name="descripcion"
+                      class="form-control"
+                      rows="2"
+                      cols="50"
+                      disabled
+                      >{{ det.itemDesc }}</textarea
+                    >
+                  </td>
+                  <td class="align-middle">
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      [(ngModel)]="det.cantidadContrat"
+                    />
+                  </td>
+                  <td class="align-middle" style="width: 150px">
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      [(ngModel)]="det.cantidadRecibid"
+                    />
+                  </td>
+                  <td class="align-middle cel-prep">
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      [(ngModel)]="det.valorUnitario"
+                    />
+                  </td>
+                  <td class="align-middle">
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      [(ngModel)]="det.subTotal"
+                      (input)="calculoTotal()"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="align-middle text-end" colspan="5">Total</td>
+                  <td class="align-middle text-end">
+                    <input
+                      type="number"
+                      class="form-control text-center"
+                      [(ngModel)]="Total"
+                      disabled
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
   
-        <div class="detalle">
-          <table class="table table-striped text-center">
-            <thead>
-              <tr>
-                <th scope="col"></th>
-                <th scope="col">Item a Cancelar*</th>
-                <th scope="col">Cantidad contratada</th>
-                <th scope="col">Cantidad recibida</th>
-                <th scope="col">Valor unitario</th>
-                <th scope="col">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let det of detalleSolPagos; let i = index">
-                <th class="align-middle">{{ i + 1 }}</th>
-                <td class="align-middle">
-                  <textarea
-                    name="descripcion"
-                    class="form-control"
-                    rows="2"
-                    cols="50"
-                    disabled
-                    >{{ det.itemDesc }}</textarea
-                  >
-                </td>
-                <td class="align-middle">
-                  <input
-                    type="number"
-                    class="form-control text-center"
-                    [(ngModel)]="det.cantidadContrat"
-                  />
-                </td>
-                <td class="align-middle" style="width: 150px">
-                  <input
-                    type="number"
-                    class="form-control text-center"
-                    [(ngModel)]="det.cantidadRecibid"
-                  />
-                </td>
-                <td class="align-middle cel-prep">
-                  <input
-                    type="number"
-                    class="form-control text-center"
-                    [(ngModel)]="det.valorUnitario"
-                  />
-                </td>
-                <td class="align-middle">
-                  <input
-                    type="number"
-                    class="form-control text-center"
-                    [(ngModel)]="det.subTotal"
-                    (input)="calculoTotal()"
-                  />
-                </td>
-              </tr>
-              <tr>
-                <td class="align-middle text-end" colspan="5">Total</td>
-                <td class="align-middle text-end">
-                  <input
-                    type="number"
-                    class="form-control text-center"
-                    [(ngModel)]="Total"
-                    disabled
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div *ngIf="showItDt == 'destino'">
+            <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol" 
+                            [areaSol]="areaSolTmp" [detalles]="detallesToDestino" [numericoSol]="numericoSol"></app-sp-destino>
+          </div>
+        </div>
+        
+        <div *ngIf="actionCreate == 'documentacion'">
+          <app-sp-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+              [estadoSol]="estadoSol"></app-sp-documentacion>
         </div>
   
         <div class="foot-cabecera">
@@ -341,10 +376,11 @@
             data-target="#guardarOrdenPago"
             (click)="saveReceptor()"
             *appAuthorize="'31'"
+            [disabled]="!setDestino"
           >
             Guardar
           </button>
-          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" [appSecureDisable]= "estadoSol" *appAuthorize="'27'">
+          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" *appAuthorize="'27'" [disabled]="!setDestino">
             Guardar y enviar
         </button>
           <button class="btn btn-danger m-2" (click)="cancelar()">
@@ -555,7 +591,8 @@
           <app-sp-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-sp-documentacion>
         </div>
         <div *ngIf="actionEdit == 'destino'">
-          <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol" [areaSol]="areaSolTmp"></app-sp-destino>
+          <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol" 
+                          [areaSol]="areaSolTmp" [detalles]="detallesToDestino" [numericoSol]="numericoSol"></app-sp-destino>
         </div>
         <div class="detalle" *ngIf="actionEdit =='edicion'" >
           <table class="table table-striped text-center">
@@ -740,6 +777,7 @@
             data-target="#guardarEdicion"
             (click)="saveReceptor()"
             [appSecureDisable]= "estadoSol"
+            [disabled]="!setDestino"
           >
             Guardar
           </button>

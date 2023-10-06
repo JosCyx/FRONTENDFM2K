@@ -29,14 +29,16 @@
 <!--  Visualizar PDF  -->
 <div class="ini text-center m-3">
   <ng-container *ngFor="let pat of paths">
-    <a href="{{ pat.docUrl }}" target="_blank">
-      <div class="documentos">
+    <div class="documentos">
+      <div class="text-end"><a (click)="deleteFile(pat.docUrlComleta)"><i class="bi bi-x-lg"></i></a></div>
+      
+      <a href="{{ pat.docUrl }}" target="_blank">
         <img
           src="../../../../../assets/img/272699_pdf_icon.png"
           width="100"
           alt="..."/>
         <h5 class="card-title">{{ pat.docNombre }}</h5>
+      </a>
       </div>
-    </a>
   </ng-container>
 </div>
