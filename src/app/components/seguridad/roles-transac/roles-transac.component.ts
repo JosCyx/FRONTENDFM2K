@@ -154,13 +154,21 @@ export class RolesTransacComponent implements OnInit {
   eliminarAutorizacion() {
     this.rolTservice.deleteTransaccionRol(this.idAuthDele).subscribe({
       next: (response) => {
-        this.rolConsuList = [];
-        this.rolAsignConsu = 0;
+        this.showmsj = true;
+          this.msjExito = 'Se Elimino correctamente';
+          setTimeout(() => {
+            this.clear();
+            this.changeview = 'consulta';
+            this.ngOnInit();
+          }, 1000);
       },
       error: (error) => {
         console.log(error);
       },
     });
+  }
+  cancelar(): void {
+    this.changeview = 'consulta';
   }
   clear() {
     //variables de mensajes

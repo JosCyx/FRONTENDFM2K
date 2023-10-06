@@ -181,6 +181,9 @@ export class RolesUsersComponent implements OnInit {
       },
     });
   }
+  cancelar(): void {
+    this.changeview = 'consulta';
+  }
   clear() {
     //mensajes
     this.msjExito = '';
