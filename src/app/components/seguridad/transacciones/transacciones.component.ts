@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { set } from 'date-fns';
+import { th } from 'date-fns/locale';
 import { AplicacionesService } from 'src/app/services/comunicationAPI/seguridad/aplicaciones.service';
 import { TransaccionesService } from 'src/app/services/comunicationAPI/seguridad/transacciones.service';
 
@@ -75,8 +77,8 @@ export class TransaccionesComponent implements OnInit {
   changeView(view: string): void {
     //vacía las variables antes de cambiar de vista para que no muestren datos
     this.nombre = '';
-    this.aplicacion =0;
-     this.estado = '';
+    this.aplicacion = 0;
+    this.estado = '';
     this.changeview = view;
   }
   cancelar(): void {
@@ -95,29 +97,41 @@ export class TransaccionesComponent implements OnInit {
       trEstado: this.estado,
     };
     console.log(data);
-     this.transService.addtransacciones(data).subscribe({
-      next:(data)=>{
-        console.log("Transaccion agregada",data);
-        this.showmsj=true;
-        this.mensajeExito="Transaccion agregada exitosamente";
+    this.transService.addtransacciones(data).subscribe({
+      next: (data) => {
+        console.log('Transaccion agregada', data);
+        this.showmsj = true;
+        this.mensajeExito = 'Transaccion agregada exitosamente';
+        setTimeout(() => {
+          this.nombre = '';
+          this.aplicacion = 0;
+          this.estado = '';
+          this.showmsj = false;
+          this.mensajeExito = '';
+          this.showmsjerror = false;
+          this.msjError = '';
+          this.changeview = 'consulta';
+          this.ngOnInit();
+        }, 1000);
       },
-      error:(err)=>{
+      error: (err) => {
         console.error(err);
-        this.showmsjerror=true;
-        this.msjError="Error al agregar";
+        this.showmsjerror = true;
+        this.msjError = 'Error al agregar';
+        setTimeout(() => {
+          this.showmsj = false;
+          this.mensajeExito = '';
+          this.showmsjerror = false;
+          this.msjError = '';
+          this.changeview = 'consulta';
+          this.ngOnInit();
+        }, 2000);
       },
-      complete:()=>{
+      complete: () => {
         console.log('proceso completado');
-      }
-     });
-    setTimeout(() => {
-      this.showmsj = false;
-      this.mensajeExito = '';
-      this.showmsjerror = false;
-      this.msjError = '';
-      this.changeview = 'consulta';
-      this.ngOnInit();
-    }, 1000);
+      },
+    });
+    
   }
   editarTran(rol: any): void {
     this.roCodigo = rol.trCodigo;
@@ -128,38 +142,43 @@ export class TransaccionesComponent implements OnInit {
   }
   guardarEdicion() {
     const data = {
-  trEmpresa: 1,
-  trAplicacion: this.aplicacion,
-  trFuncion: 1,
-  trCodigo: this.roCodigo,
-  trNombre: this.nombre.trim(),
-  trEstado: this.estado,
-    }
-    console.log("dattos editadps",data);
-    this.transService.updatetransacciones(this.roCodigo,data).subscribe({
+      trEmpresa: 1,
+      trAplicacion: this.aplicacion,
+      trFuncion: 1,
+      trCodigo: this.roCodigo,
+      trNombre: this.nombre.trim(),
+      trEstado: this.estado,
+    };
+    console.log('dattos editadps', data);
+    this.transService.updatetransacciones(this.roCodigo, data).subscribe({
       next: (response) => {
         this.showmsj = true;
         this.mensajeExito = 'Transaccion editada exitosamente';
+        setTimeout(() => {
+          this.showmsj = false;
+          this.mensajeExito = '';
+          this.showmsjerror = false;
+          this.msjError = '';
+          this.changeview = 'consulta';
+          this.ngOnInit();
+        }, 1000);
       },
       error: (err) => {
         console.error(err);
         this.showmsjerror = true;
         this.msjError = 'Error al editar';
+        setTimeout(() => {
+          this.showmsj = false;
+          this.mensajeExito = '';
+          this.showmsjerror = false;
+          this.msjError = '';
+          this.changeview = 'consulta';
+          this.ngOnInit();
+        }, 2000);
       },
       complete: () => {
         console.log('proceso completado');
       },
     });
-    setTimeout(() => {
-      this.nombre = '';
-      this.aplicacion = 0;
-      this.estado = '';
-      this.showmsj=false;
-      this.mensajeExito = '';
-      this.showmsjerror=false;
-      this.msjError='';
-      this.changeview = 'consulta';
-      this.ngOnInit();
-      }, 1000);
   }
 }

@@ -207,7 +207,7 @@
                 </div>
               </div>
             <div class="text-end mt-5" *appAuthorize="'7'">
-                <button [disabled]="!newNombre || !newUser || !newEstado" type="submit" class="btn btn-primary m-2"
+                <button [disabled]="!boolenanPass" type="submit" class="btn btn-primary m-2"
                     (click)="editUsuario()">Guardar Ediccion</button>
                 <button class="btn btn-danger m-2" (click)="Cancelar()">Cancelar</button>
             </div>

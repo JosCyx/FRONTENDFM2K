@@ -2,6 +2,7 @@
     width: 70%;
     margin: 0 auto;
     padding-top: 25px;
+    padding-bottom: 50px;
 }
 
 .trsc-table{
@@ -18,4 +19,9 @@
 
 .tr-trsc:hover{
     cursor: pointer;
+}
+ div .alert {
+        margin: 0 auto ;
+        width:25rem  ;
+    
 }

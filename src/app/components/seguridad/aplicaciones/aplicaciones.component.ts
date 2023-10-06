@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { set } from 'date-fns';
 import { AplicacionesService } from 'src/app/services/comunicationAPI/seguridad/aplicaciones.service';
 
 @Component({
@@ -91,17 +92,7 @@ export class AplicacionesComponent implements OnInit {
         console.log('Aplicacion agregada exitosamente:', response);
         this.showmsj = true;
         this.mensajeExito = 'Aplicacion agregada exitosamente';
-
-    },
-    error: (err) => {console.error(err);
-      this.showmsjerror=true;
-      this.msjError="Error al agregar Apliacion";
-    },
-    complete: () => {
-      console.log('proceso completado');
-    },
-    });
-    //  tiempo de  de espera 
+         //  tiempo de  de espera 
     setTimeout(() => {
       this.showmsj=false;
       this.mensajeExito = '';
@@ -110,6 +101,23 @@ export class AplicacionesComponent implements OnInit {
       this.changeview = 'consulta';
       this.ngOnInit();
       }, 1000);
+    },
+    error: (err) => {console.error(err);
+      this.showmsjerror=true;
+      this.msjError="Error al agregar Apliacion";
+      setTimeout(() => {
+        this.showmsj=false;
+        this.mensajeExito = '';
+        this.showmsjerror=false;
+        this.msjError='';
+        this.changeview = 'consulta';
+        this.ngOnInit();
+      }, 2000);
+    },
+    complete: () => {
+      console.log('proceso completado');
+    },
+    });
   }
   //Al momento de presionar el boton me  diriga a la vista de edicion y vacia los campo
   editarRol(rol: any): void {
@@ -125,23 +133,38 @@ export class AplicacionesComponent implements OnInit {
     const data={
   apEmpresa: 1,
   apCodigo: this.roCodigo,
-  apNombre: this.nombre,
-  apNemonico: this.nemonico,
+  apNombre: this.nombre.trim(),
+  apNemonico: this.nemonico.trim(),
   apFuncion: 1,
   apEstado: this.estado,
-  apVersion: this.version
+  apVersion: this.version.trim(),
     }
     console.log("dattos editadps",data);
     this.appService.updateAplicaciones(this.roCodigo,data).subscribe({
       next: (response) => {
-        console.log('Aplicacion editada exitosamente:', response);
         this.showmsj = true;
         this.mensajeExito = 'Aplicacion editada exitosamente';
+        setTimeout(() => {
+          this.showmsj=false;
+          this.mensajeExito = '';
+          this.showmsjerror=false;
+          this.msjError='';
+          this.changeview = 'consulta';
+          this.ngOnInit();
+        }, 1000);
     },
     error: (err) => {
       console.error(err)
       this.showmsjerror=true;
       this.msjError="Error al editar Apliacion";
+      setTimeout(() => {
+        this.showmsj=false;
+        this.mensajeExito = '';
+        this.showmsjerror=false;
+        this.msjError='';
+        this.changeview = 'consulta';
+        this.ngOnInit();
+      }, 2000);
     },
     complete: () => {console.log('proceso completado');}
     }); 

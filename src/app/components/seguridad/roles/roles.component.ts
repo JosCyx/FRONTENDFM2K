@@ -42,7 +42,6 @@ export class RolesComponent implements OnInit {
     this.rolService.getRolsList().subscribe({
       next: rols => {
         this.rolList= rols;
-        console.log("esto son mis roles ",this.rolList);
       },
       error:(err)=> {
           console.log ("error",err)
@@ -51,7 +50,6 @@ export class RolesComponent implements OnInit {
     this.nivelservice.getNivelruteo().subscribe({
       next: niveles => {
         this.NivelesRuteo = niveles;
-        console.log("esto son los niveles",this.NivelesRuteo);
       },error:(err)=> {
         console.log ("error",err)
     }
@@ -62,19 +60,24 @@ export class RolesComponent implements OnInit {
     // Crear el objeto JSON con los datos del rol
     const data = {
       roEmpresa: 1, // define el valor por defecto de la empresa 
-      roNombre: this.nombre,
+      roNombre: this.nombre.trim(),
       roEstado: this.estado,
       roNivelRt: this.NivelRuteo
     };
-    console.log("Agregamos esto ",data);
-
     //Llamar al método addRols() del servicio para enviar los datos a la API
     this.rolService.addRols(data).subscribe(
       response => {
         // Manejar la respuesta de la API aquí si es necesario
-        console.log('Rol agregado exitosamente:', response);
         this.showmsj=true;
         this.mensajeExito = 'Rol registrado exitosamente.';
+        setTimeout(() => {
+          this.showmsj=false;
+          this.mensajeExito = '';
+          this.showmsjerror=false;
+          this.msjError='';
+          this.changeview = 'consulta';
+          this.ngOnInit();
+          }, 1000);
 
       },
       error => {
@@ -86,14 +89,7 @@ export class RolesComponent implements OnInit {
     );
 
     //muestra mensaje de exito y redirige a la otra vista luego de 1 segundo
-    setTimeout(() => {
-      this.showmsj=false;
-      this.mensajeExito = '';
-      this.showmsjerror=false;
-      this.msjError='';
-      this.changeview = 'consulta';
-      this.ngOnInit();
-      }, 1000);
+    
   }
 
   //controla la vista de las diferentes partes
@@ -142,6 +138,7 @@ export class RolesComponent implements OnInit {
         console.log('Rol actualizado exitosamente:', response);
         this.showmsj=true;
         this.mensajeExito="Edicion exitosa";
+
       },
       error => {
         // Manejar cualquier error que ocurra durante la llamada a la API aquí
@@ -182,7 +179,6 @@ export class RolesComponent implements OnInit {
   nextPage(): void {
     console.log("nextPage",this.currentPage);
     if(  this.rolList.length <=10 ){
-      console.log("nextPage",this.currentPage," ",this.rolList.length/10,"",this.rolList);
       this.currentPage=1;
     }else if(this.currentPage >= this.rolList.length/10){
       this.currentPage=this.currentPage;
@@ -196,5 +192,8 @@ export class RolesComponent implements OnInit {
       console.log("prevPage",this.currentPage);
       this.currentPage--; // Disminuir currentPage en uno si no está en la primera página
     }
+  }
+  clear(){
+
   }
 }
