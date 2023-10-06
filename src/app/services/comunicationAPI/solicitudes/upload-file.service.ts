@@ -51,7 +51,7 @@ export class UploadFileService {
 
   deleteFile(filesNombres:string):Observable<any>{
     const headers = this.getHeadersWithAuthToken();
-    return this.http.delete(`${this.APIUrl}/Documento/DeleteFile?fileName=${filesNombres}`, { headers: headers });
+    return this.http.delete(`${this.APIUrl}/Documento/DeleteFile?url=${filesNombres}`, { headers: headers });
   }
 
 }

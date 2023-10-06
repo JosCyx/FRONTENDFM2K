@@ -1,4 +1,4 @@
-import { Component, OnInit,Input } from '@angular/core';
+import { Component, OnInit,Input, ViewChild } from '@angular/core';
 
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -22,6 +22,7 @@ import { GlobalService } from 'src/app/services/global.service';
 import { CabeceraOrdenCompra } from 'src/app/models/procesos/solcotizacion/CabeceraOrdenCompra';
 import { CookieService } from 'ngx-cookie-service';
 import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/ruteo-area.service';
+import { OCDocumentacionComponent } from './oc-documentacion/oc-documentacion.component';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -141,6 +142,7 @@ export class SoliocComponent implements OnInit {
   // lastIDItem!: number;
   // lastIDDet!: number;
   //variables compartidas con los demas componentes
+  @ViewChild(OCDocumentacionComponent) socDocumentacion!: OCDocumentacionComponent;
   @Input() sharedTipoSol: number = 2;
   @Input() sharedNoSol!: number;
   estadoSol: string = '10';
@@ -162,6 +164,9 @@ export class SoliocComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.empService.getEmpleadosList().subscribe((data) => {
+      this.empleadoedit = data;
+    });
 
     this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
     this.inspectores$.subscribe((data) => {
@@ -328,6 +333,7 @@ export class SoliocComponent implements OnInit {
   cancelarAll(): void {
     this.clear();
     this.ngOnInit();
+    this.socDocumentacion.deleteAllDocs();
   }
 
   cancelarItem(): void {
@@ -851,6 +857,8 @@ export class SoliocComponent implements OnInit {
 
     //ordena los items de la lista segun el id del detalle de menor a mayor
     this.item.sort((a, b) => a.itmIdDetalle - b.itmIdDetalle);
+
+    this.setView();
   }
 
   get estadoTexto(): string {

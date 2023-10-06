@@ -153,9 +153,17 @@ export class SPDocumentacionComponent implements OnInit {
     }
   }
 
-  deleteFile(ruta: string) {  
-    console.log(ruta);
-    /*
+  //recorre toda la lista de documentos y los elimina
+  deleteAllDocs(){
+    this.paths.forEach((item) => {
+      this.deleteFile(item.docUrlComleta);
+    });
+    this.paths = [];
+  }
+
+  //emilima de la base de datos y del servidor el archivo que coincida con la url ingesada como parametro
+  deleteFile(ruta: string) { 
+    
     this.uploadfile.deleteFile(ruta).subscribe({
       next: (data) => {
         this.showExito = true;
@@ -178,7 +186,7 @@ export class SPDocumentacionComponent implements OnInit {
       complete: () => {
         console.log('Proceso completado');
       },
-    });*/
+    });
 
   }
 }

@@ -4,6 +4,7 @@ import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/
 interface Path {
   docUrl: any;
   docNombre: string;
+  docUrlComleta: string;
 }
 @Component({
   selector: 'app-cot-documentacion',
@@ -137,6 +138,7 @@ export class CotDocumentacionComponent implements OnInit {
               const pat: Path = {
                 docNombre: data[i].docNombre,
                 docUrl: docUrl, // Usa la URL resuelta
+                docUrlComleta: data[i].docUrl,
               };
               this.paths.push(pat);
             } catch (error) {
@@ -157,5 +159,42 @@ export class CotDocumentacionComponent implements OnInit {
     } finally {
       console.log('FIN DEL  PROGRAMA');
     }
+  }
+
+  //recorre toda la lista de documentos y los elimina
+  deleteAllDocs(){
+    this.paths.forEach((item) => {
+      this.deleteFile(item.docUrlComleta);
+    });
+    this.paths = [];
+  }
+
+  //emilima de la base de datos y del servidor el archivo que coincida con la url ingesada como parametro
+  deleteFile(ruta: string) { 
+    
+    this.uploadfile.deleteFile(ruta).subscribe({
+      next: (data) => {
+        this.showExito = true;
+        this.msjExito = 'Archivo Eliminado Correctamente';
+        setTimeout(() => {
+          this.showExito = false;
+          this.msjExito = '';
+        }, 2000);
+        this.GetfileView();
+      },
+      error: (error) => {
+        console.error(error);
+        this.showError = true;
+        this.msjError = 'Error no se puede Eliminar el archivo intente nuevamente';
+        setTimeout(() => {
+          this.showError = false;
+          this.msjError = '';
+        }, 2000);
+      },
+      complete: () => {
+        console.log('Proceso completado');
+      },
+    });
+
   }
 }

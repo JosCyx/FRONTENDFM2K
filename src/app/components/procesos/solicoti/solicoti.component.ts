@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 //servicios de comunicacion
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -21,6 +21,7 @@ import { es } from 'date-fns/locale';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/ruteo-area.service';
+import { CotDocumentacionComponent } from './cot-documentacion/cot-documentacion.component';
 
 
 interface RuteoArea {
@@ -139,6 +140,7 @@ export class SolicotiComponent implements OnInit {
   // lastIDDet!: number;
 
   //variables compartidas con los demas componentes
+  @ViewChild(CotDocumentacionComponent) cotDocumentacion!: CotDocumentacionComponent;
   @Input() sharedTipoSol: number = 1;
   @Input() sharedNoSol!: number;
   @Input() sharedCabecera!: CabeceraCotizacion;
@@ -158,7 +160,9 @@ export class SolicotiComponent implements OnInit {
     private ruteoService: RuteoAreaService) { }
 
   ngOnInit(): void {
-    
+    this.empService.getEmpleadosList().subscribe((data) => {
+      this.empleadosEdit = data;
+    });
 
     this.inspectores$ = this.empService.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
     /*this.inspectores$.subscribe((data) => {
@@ -299,6 +303,7 @@ export class SolicotiComponent implements OnInit {
   cancelarAll(): void {
     this.clear();
     this.ngOnInit();
+    this.cotDocumentacion.deleteAllDocs();
   }
 
 

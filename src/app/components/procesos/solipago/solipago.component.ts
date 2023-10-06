@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
@@ -15,6 +15,7 @@ import { DetCotOCService } from 'src/app/services/comunicationAPI/solicitudes/de
 import { ProveedorService } from 'src/app/services/comunicationAPI/seguridad/proveedor.service';
 import { CookieService } from 'ngx-cookie-service';
 import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/ruteo-area.service';
+import { SPDocumentacionComponent } from './sp-documentacion/sp-documentacion.component';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -104,6 +105,7 @@ export class SolipagoComponent implements OnInit {
   empleadoEdi: any[] = [];
   proveedores: any[] = [];
   //variables compartidas con los demas componentes
+  @ViewChild(SPDocumentacionComponent) spDocumentacion!: SPDocumentacionComponent;
   @Input() sharedTipoSol: number = 3;
   @Input() sharedNoSol!: number;
   estadoSol: string = '10';
@@ -129,7 +131,11 @@ export class SolipagoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.sharedNoSol);
+    //console.log(this.sharedNoSol);
+
+    this.empService.getEmpleadosList().subscribe((data) => {
+      this.empleadoEdi = data;
+    });
 
     this.areaList$ = this.areaService.getAreaList();
 
@@ -247,6 +253,7 @@ export class SolipagoComponent implements OnInit {
   cancelar(): void {
     this.clear();
     this.ngOnInit();
+    this.spDocumentacion.deleteAllDocs();
   }
   //Limpiar en modulo Editar
   cancelarEdi(): void {
