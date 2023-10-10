@@ -26,6 +26,13 @@
                         <a class="nav-link" [ngClass]="{'active': actionCreate === 'creacion'}"
                             (click)="selectCreateAction('creacion')">Creación</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" [ngClass]="{'active': actionCreate === 'proveedores'}"
+                            (click)="selectCreateAction('proveedores')
+                            "
+                            (click)="setNoSol()"
+                            >Proveedores</a>
+                    </li>
                     <li class="nav-item" *ngIf="showDoc">
                         <a class="nav-link" [ngClass]="{'active': actionCreate === 'documentacion'}"
                             (click)="selectCreateAction('documentacion')">Documentación</a>
@@ -137,6 +144,10 @@
                 <div *ngIf="actionCreate == 'documentacion'">
                     <app-cot-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
                         [estadoSol]="estadoSol"></app-cot-documentacion>
+                </div>
+                <div *ngIf="actionCreate == 'proveedores'">
+                    <app-cot-proveedores [cabSolCotAsunto]="cabSolCotAsunto" [mail_detalles]="sharedDetalle"
+                        [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-cot-proveedores>
                 </div>
 
                 <div class="foot-cabecera">
@@ -425,7 +436,7 @@
                 </div>
 
                 <div *ngIf="actionEdit == 'proveedores'">
-                    <app-cot-proveedores [mail_cabecera]="sharedCabecera" [mail_detalles]="sharedDetalle"
+                    <app-cot-proveedores [cabSolCotAsunto]="cabSolCotAsunto" [mail_detalles]="sharedDetalle"
                         [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-cot-proveedores>
                 </div>
 
