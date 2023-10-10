@@ -119,8 +119,8 @@ export class CotProveedoresComponent implements OnInit {
   //variables para el contenido del correo
   mail_asunto: string = 'FUNDACION MALECON 2000 - SOLICITUD DE COTIZACION';
 
-  @Input() mail_cabecera!: CabeceraCotizacion;
-  @Input() mail_detalles: DetalleCotizacion[] = [];
+  @Input() cabSolCotAsunto!: any;
+  @Input() mail_detalles: any[] = [];
   newFecha: Date = new Date();
   sol_fecha!: string;
   sol_asunto!: string;
@@ -451,7 +451,7 @@ export class CotProveedoresComponent implements OnInit {
   //guarda el correo del proveedor para enviar email
   saveDataProv() {
      this.sol_fecha = this.formatDateToSpanish(this.newFecha);
-     this.sol_asunto = this.mail_cabecera.cabSolCotAsunto;
+     this.sol_asunto = this.cabSolCotAsunto;
    }
 
 
@@ -1029,6 +1029,38 @@ export class CotProveedoresComponent implements OnInit {
       
       </html>`;
   }
+/**
+ * Recorre el arreglo assignedProvs$ y eliminar los proveedores al momento de cancelar la solicitud
+ */  
+RecorrerPro(){
+  let a= this.assignedProvs;
+  a.forEach(element => {
+    console.log("elemento ",element.cotProvId);
+    this.provCotService.deleteProvCot(element.cotProvId).subscribe({
+      next: data => {
+        console.log('Eliminado con exito!');
+        this.showmsj=true;
+        this.msjExito="Solicitud Cancelada con exito";
+        setTimeout(() => {
+          this.showmsj=false;
+          this.msjExito="";
+        }, 1000);
+      },
+      error: error => {
+        console.error('Error al Eliminar!', error);
+        this.showmsjerror=true;
+        this.msjError="Error al cancelar la solicitud";
+        setTimeout(() => {
+          this.showmsjerror=false;
+          this.msjError="";
+        }, 1000);
+      }
+    })
+
+  });
+
+
+}
 
 
 }

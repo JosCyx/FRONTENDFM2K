@@ -23,6 +23,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/ruteo-area.service';
 import { CotDocumentacionComponent } from './cot-documentacion/cot-documentacion.component';
 import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
+import { CotProveedoresComponent } from './cot-proveedores/cot-proveedores.component';
 
 
 interface RuteoArea {
@@ -144,10 +145,11 @@ export class SolicotiComponent implements OnInit {
 
   //variables compartidas con los demas componentes
   @ViewChild(CotDocumentacionComponent) cotDocumentacion!: CotDocumentacionComponent;
+  @ViewChild(CotProveedoresComponent) cotProveedores!: CotProveedoresComponent;
   @Input() sharedTipoSol: number = 1;
   @Input() sharedNoSol!: number;
-  @Input() sharedCabecera!: CabeceraCotizacion;
-  @Input() sharedDetalle: DetalleCotizacion[] = [];
+  @Input() cabSolCotAsunto!: any;
+  @Input() sharedDetalle: any[] = [];
 
   constructor(private router: Router,
     private empService: EmpleadosService,
@@ -311,10 +313,9 @@ export class SolicotiComponent implements OnInit {
   cancelarAll(): void {
     this.clear();
     this.ngOnInit();
+    this.cotProveedores.RecorrerPro();
     this.cotDocumentacion.deleteAllDocs();
   }
-
-
   clear(): void {
     this.empleado = '';
     this.showArea = '';
@@ -346,11 +347,16 @@ export class SolicotiComponent implements OnInit {
       this.solNumerico = "COT " + this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
     }
   }
+  //metodo para asignar numero nuevo de solicitud
+  async setNoSol() {
+    this.sharedNoSol = await this.getLastSol();
+  }
 
   showDoc: boolean = false;
   async setNoSolDocumentacion(){
-    this.sharedNoSol = await this.getLastSol();
+     await this.setNoSol();
     this.showDoc = this.showDoc ? false : true;
+
   }
 
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
@@ -604,8 +610,11 @@ export class SolicotiComponent implements OnInit {
     }
 
     this.detalleList.push(detalle);
+    this.sharedDetalle=this.detalleList;
+    this.cabSolCotAsunto=this.cab_asunto;
     console.log("Detalles:", this.detalleList);
-
+    console.log("est es shared detalle",this.sharedDetalle);
+    console.log("este es el asunto",this.cabSolCotAsunto);
     //aumenta el valor del id de detalle
     this.incrementDetID();
 
@@ -821,7 +830,7 @@ export class SolicotiComponent implements OnInit {
   async saveData() {
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
     this.cabecera = this.solicitudEdit.cabecera;
-    this.sharedCabecera = this.cabecera;//envia la cabecera al componente de proveedores
+    this.cabSolCotAsunto=this.cabecera.cabSolCotAsunto;//envia la cabecera al componente de proveedores
     this.sharedTipoSol = this.cabecera.cabSolCotTipoSolicitud;
     this.sharedNoSol = this.cabecera.cabSolCotNoSolicitud;
     this.checkAprobPrep(this.cabecera.cabSolCotEstadoTracking);
