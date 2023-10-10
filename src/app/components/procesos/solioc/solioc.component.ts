@@ -23,6 +23,7 @@ import { CabeceraOrdenCompra } from 'src/app/models/procesos/solcotizacion/Cabec
 import { CookieService } from 'ngx-cookie-service';
 import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/ruteo-area.service';
 import { OCDocumentacionComponent } from './oc-documentacion/oc-documentacion.component';
+import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -86,6 +87,7 @@ export class SoliocComponent implements OnInit {
   det_descp!: string; //se usa para el detalle y para el item por sector
   det_unidad: string = 'Unidad';
   det_cantidad: number = 0;
+  det_presupuesto: number = 0;
 
   //variables del item por sector
   item_id: number = 1;
@@ -126,6 +128,7 @@ export class SoliocComponent implements OnInit {
   //sectores: any[] = [];
   inspectores: any[] = [];
   inspectoresEdit: any[] = [];
+  presupuestos: any[] = [];
 
   //variable editar orden compra
   solID: number = this.serviceGlobal.solID;
@@ -160,7 +163,8 @@ export class SoliocComponent implements OnInit {
     private provService: ProveedorService,
     private serviceGlobal: GlobalService,
     private cookieService: CookieService,
-    private ruteoService: RuteoAreaService
+    private ruteoService: RuteoAreaService,
+    private prespService: PresupuestoService
   ) {}
 
   ngOnInit(): void {
@@ -188,6 +192,11 @@ export class SoliocComponent implements OnInit {
     this.areaList$.subscribe((data) => {
       this.areas = data;
     });
+
+    this.prespService.getPresupuestos().subscribe((data : any) => {
+      this.presupuestos = data;
+    });
+
     if (this.changeview == 'editar') {
       this.editSolicitud();
     }
@@ -643,6 +652,7 @@ export class SoliocComponent implements OnInit {
       det_descp: this.det_descp,
       det_unidad: this.det_unidad,
       det_cantidad: this.det_cantidad,
+      det_presupuesto: this.det_presupuesto
     };
 
     this.detalleList.push(detalle);
@@ -660,6 +670,7 @@ export class SoliocComponent implements OnInit {
     this.det_descp = '';
     this.det_unidad = 'Unidad';
     this.det_cantidad = 0;
+    this.det_presupuesto = 0;
     this.tmpItemSect = [];
   }
 
@@ -988,6 +999,7 @@ export class SoliocComponent implements OnInit {
         solCotDescripcion: detalle.solCotDescripcion,
         solCotUnidad: detalle.solCotUnidad,
         solCotCantidadTotal: detalle.solCotCantidadTotal,
+        solCotPresupuesto: detalle.solCotPresupuesto
       };
       console.log('Nuevo detalle: ', data);
       this.detCotService.addDetalleCotizacion(data).subscribe(
@@ -1130,6 +1142,7 @@ export class SoliocComponent implements OnInit {
           solCotDescripcion: detalle.det_descp,
           solCotUnidad: detalle.det_unidad,
           solCotCantidadTotal: detalle.det_cantidad,
+          solCotPresupuesto: detalle.det_presupuesto
         };
         //console.log("Nuevo detalle: ",data);
         this.detCotService.addDetalleCotizacion(data).subscribe(
@@ -1203,6 +1216,7 @@ export class SoliocComponent implements OnInit {
         solCotDescripcion: det.det_descp,
         solCotUnidad: det.det_unidad,
         solCotCantidadTotal: det.det_cantidad,
+        solCotPresupuesto: det.det_presupuesto
       };
 
       this.detalle.push(data);

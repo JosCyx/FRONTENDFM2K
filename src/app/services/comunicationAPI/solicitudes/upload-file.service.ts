@@ -44,6 +44,11 @@ export class UploadFileService {
     return this.http.get<any>(`${this.APIUrl}/Documento/GetDocumentos?tipoSol=${tipoSol}&noSol=${noSol}`, { headers: headers });
   }
 
+  getFilesDestino(tipoSol:number,noSol:number):Observable<any[]>{
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(`${this.APIUrl}/Documento/GetDestinoFiles?tipoSol=${tipoSol}&noSol=${noSol}`, { headers: headers });
+  }
+
   viewFile(filesNombres:string):Observable<any>{
     const headers = this.getHeadersWithAuthToken();
     return this.http.get(`${this.APIUrl}/Documento/ViewFile?fileName=${filesNombres}`, {responseType:'blob'});

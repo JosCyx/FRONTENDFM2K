@@ -258,4 +258,9 @@ export class SpDestinoComponent implements OnInit {
       );
   }
 
+  //visualizar los archivos registrados
+  viewFile(){
+    
+  }
+
 }

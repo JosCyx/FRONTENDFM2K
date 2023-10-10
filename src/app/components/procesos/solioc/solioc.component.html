@@ -154,6 +154,7 @@
               <tr>
                 <th scope="col">Item</th>
                 <th scope="col">Descripción*</th>
+                <th scope="col">Presupuesto*</th>
                 <th scope="col">Sector*</th>
                 <th scope="col">Unidad</th>
                 <th scope="col">Cantidad Total</th>
@@ -187,6 +188,13 @@
                     [(ngModel)]="det_descp"
                   ></textarea>
                 </td>
+                <td class="align-middle">
+                  <select class="form-control" [(ngModel)]="det_presupuesto">
+                      <option value="0" selected disabled>Presupuesto</option>
+                      <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
+                          {{prep.prespNombre}}</option>
+                  </select>
+              </td>
                 <td class="align-middle">
                   <button
                     class="btn btn-outline-primary"
@@ -545,6 +553,7 @@
               <tr>
                 <th scope="col">Item</th>
                 <th scope="col">Descripción*</th>
+                <th scope="col">Presupuesto*</th>
                 <th scope="col">Sector*</th>
                 <th scope="col">Unidad</th>
                 <th scope="col">Cantidad Total</th>
@@ -570,7 +579,13 @@
                     [appSecureDisable]= "estadoSol"
                   ></textarea>
                 </td>
-  
+                <td class="align-middle">
+                  <select class="form-control" [(ngModel)]="det.solCotPresupuesto" [appSecureDisable]="estadoSol">
+                      <option value="" selected disabled>Presupuesto</option>
+                      <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
+                          {{prep.prespNombre}}</option>
+                  </select>
+              </td>
                 <td class="align-middle">
                   <button
                     class="btn btn-outline-primary"
@@ -620,6 +635,13 @@
                     [(ngModel)]="det_descp"
                   ></textarea>
                 </td>
+                <td class="align-middle">
+                  <select class="form-control" [(ngModel)]="det_presupuesto">
+                      <option value="0" selected disabled>Presupuesto</option>
+                      <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
+                          {{prep.prespNombre}}</option>
+                  </select>
+              </td>
                 <td class="align-middle">
                   <button
                     class="btn btn-outline-primary"

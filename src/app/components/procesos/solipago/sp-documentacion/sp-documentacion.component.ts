@@ -117,11 +117,9 @@ export class SPDocumentacionComponent implements OnInit {
     try {
       this.uploadfile.getFile(this.tipoSol, this.noSol).pipe(
         concatMap(async (data) => {
-          console.log('este es mi data', data);
           const promises = data.map(async (item) => {
             try {
               const ruta = this.getNombreArchivo(item.docUrl);
-              console.log(ruta);
               const docUrl = await this.getUrlFile(ruta); // Espera a que se resuelva getUrlFile
               const pat: Path = {
                 docNombre: item.docNombre,

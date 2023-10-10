@@ -6,6 +6,7 @@ export class DetalleCotizacion {
   public solCotDescripcion: string;
   public solCotUnidad: string;
   public solCotCantidadTotal: number;
+  public solCotPresupuesto: number;
 
   constructor(data: any) {
       this.solCotID = data.solCotID;
@@ -15,5 +16,6 @@ export class DetalleCotizacion {
       this.solCotDescripcion = data.solCotDescripcion;
       this.solCotUnidad = data.solCotUnidad;
       this.solCotCantidadTotal = data.solCotCantidadTotal;
+      this.solCotPresupuesto = data.solCotPresupuesto;
   }
 } 

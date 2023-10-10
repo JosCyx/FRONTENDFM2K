@@ -22,6 +22,7 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/ruteo-area.service';
 import { CotDocumentacionComponent } from './cot-documentacion/cot-documentacion.component';
+import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
 
 
 interface RuteoArea {
@@ -82,6 +83,7 @@ export class SolicotiComponent implements OnInit {
   det_id: number = 1;//se usa para el detalle y para el item por sector
   det_descp!: string;//se usa para el detalle y para el item por sector
   det_unidad: string = 'Unidad';
+  det_presupuesto: number = 0;
   det_cantidad: number = 0;
 
   //variables del item por sector
@@ -122,6 +124,7 @@ export class SolicotiComponent implements OnInit {
   empleadosEdit: any[] = [];
   inspectoresEdit: any[] = [];
   areas: any[] = [];
+  presupuestos: any[] = [];
   //sectores: any[] = [];
   inspectores: any[] = [];
 
@@ -157,7 +160,8 @@ export class SolicotiComponent implements OnInit {
     private itmSectService: ItemSectorService,
     private serviceGlobal: GlobalService,
     private cookieService: CookieService,
-    private ruteoService: RuteoAreaService) { }
+    private ruteoService: RuteoAreaService,
+    private prespService: PresupuestoService) { }
 
   ngOnInit(): void {
     this.empService.getEmpleadosList().subscribe((data) => {
@@ -182,6 +186,10 @@ export class SolicotiComponent implements OnInit {
     this.nivelRut$ = this.nivRuteService.getNivelbyEstado('A').pipe(
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
     );
+
+    this.prespService.getPresupuestos().subscribe((data : any) => {
+      this.presupuestos = data;
+    });
 
 
     if (this.changeview == 'editar') {
@@ -491,7 +499,8 @@ export class SolicotiComponent implements OnInit {
         solCotIdDetalle: detalle.det_id,
         solCotDescripcion: detalle.det_descp,
         solCotUnidad: detalle.det_unidad,
-        solCotCantidadTotal: detalle.det_cantidad
+        solCotCantidadTotal: detalle.det_cantidad,
+        solCotPresupuesto: detalle.det_presupuesto
       }
 
       //envia a la api el arreglo data por medio del metodo post
@@ -590,7 +599,8 @@ export class SolicotiComponent implements OnInit {
       det_id: this.det_id,
       det_descp: this.det_descp,
       det_unidad: this.det_unidad,
-      det_cantidad: this.det_cantidad
+      det_cantidad: this.det_cantidad,
+      det_presupuesto: this.det_presupuesto
     }
 
     this.detalleList.push(detalle);
@@ -614,6 +624,7 @@ export class SolicotiComponent implements OnInit {
     this.det_descp = '';
     this.det_unidad = 'Unidad';
     this.det_cantidad = 0;
+    this.det_presupuesto = 0;
     this.tmpItemSect = [];
 
 
@@ -772,7 +783,8 @@ export class SolicotiComponent implements OnInit {
         solCotIdDetalle: det.det_id,
         solCotDescripcion: det.det_descp,
         solCotUnidad: det.det_unidad,
-        solCotCantidadTotal: det.det_cantidad
+        solCotCantidadTotal: det.det_cantidad,
+        solCotPresupuesto: det.det_presupuesto
       }
 
       this.detalle.push(data);
@@ -1009,6 +1021,7 @@ export class SolicotiComponent implements OnInit {
   cancelarItem(): void {
     this.calcularCantDetalle();
     this.det_cantidad = 0;
+    this.det_presupuesto = 0;
     this.det_descp_edit = '';
     this.item_id = 1;
     this.tmpItemSect = [];
@@ -1098,7 +1111,8 @@ export class SolicotiComponent implements OnInit {
         solCotIdDetalle: detalle.solCotIdDetalle,
         solCotDescripcion: detalle.solCotDescripcion,
         solCotUnidad: detalle.solCotUnidad,
-        solCotCantidadTotal: detalle.solCotCantidadTotal
+        solCotCantidadTotal: detalle.solCotCantidadTotal,
+        solCotPresupuesto: detalle.solCotPresupuesto
       }
       console.log("Nuevo detalle: ", data);
       this.detCotService.addDetalleCotizacion(data).subscribe(
