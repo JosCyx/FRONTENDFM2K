@@ -31,7 +31,7 @@ interface Evidencias {
 @Component({
   selector: 'app-sp-destino',
   templateUrl: './sp-destino.component.html',
-  styleUrls: ['./sp-destino.component.css']
+  styleUrls: ['./sp-destino.component.css'],
 })
 export class SpDestinoComponent implements OnInit {
   @Input() tipoSol!: number;
@@ -41,9 +41,12 @@ export class SpDestinoComponent implements OnInit {
   @Input() areaSol!: number;
   @Input() detalles!: Detalle[];
 
-
   archivo!: File;
   archivos: Evidencias[] = [];
+
+  //Alerta
+  alert: boolean = false;
+  alertText: string = "";
 
   private inputTimer: any;
   empleados!: any[];
@@ -68,37 +71,42 @@ export class SpDestinoComponent implements OnInit {
     private empleadoService: EmpleadosService,
     private uploadService: UploadFileService,
     private destinoService: DestinoPagoServiceService,
-    private globalService: GlobalService) { }
-
+    private globalService: GlobalService
+  ) { }
 
   ngOnInit(): void {
-    console.log("Detalles recibidos:", this.detalles);
-    this.sectoresService.getSectoresList().subscribe((data: any[]) => {
-      this.sectores = data;
-    }, (error) => {
-      console.log(error);
-    });
+    console.log('Detalles recibidos:', this.detalles);
+    this.sectoresService.getSectoresList().subscribe(
+      (data: any[]) => {
+        this.sectores = data;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
 
-    this.empleadoService.getEmpleadobyArea(this.areaSol).subscribe((data: any[]) => {
-      this.empleados = data;
-    }, (error) => {
-      console.log(error);
-    });
-
+    this.empleadoService.getEmpleadobyArea(this.areaSol).subscribe(
+      (data: any[]) => {
+        this.empleados = data;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   //busca los empleados segun su area
   searchEmpleado(): void {
     if (this.empleadoBusq.length > 2) {
-      this.empleadoService.getEmpleadobyArea(this.areaSol).subscribe((data: any[]) => {
-        this.empleados = data;
-      });
+      this.empleadoService
+        .getEmpleadobyArea(this.areaSol)
+        .subscribe((data: any[]) => {
+          this.empleados = data;
+        });
     } else {
       this.empleados = [];
     }
-
   }
-
 
   onInputChanged(): void {
     // Cancelamos el temporizador anterior antes de crear uno nuevo
@@ -108,9 +116,14 @@ export class SpDestinoComponent implements OnInit {
     this.inputTimer = setTimeout(() => {
       // Coloca aquí la lógica que deseas ejecutar después de que el usuario haya terminado de modificar el input
       if (this.empleadoBusq) {
-        const empleadoSeleccionado = this.empleados.find(emp => (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.empleadoBusq);
-        this.empleadoDestino = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : 'No se ha encontrado el inspector';
-
+        const empleadoSeleccionado = this.empleados.find(
+          (emp) =>
+            emp.empleadoNombres + ' ' + emp.empleadoApellidos ===
+            this.empleadoBusq
+        );
+        this.empleadoDestino = empleadoSeleccionado
+          ? empleadoSeleccionado.empleadoIdNomina
+          : 'No se ha encontrado el inspector';
       } else {
         this.empleadoDestino = 0;
       }
@@ -124,24 +137,22 @@ export class SpDestinoComponent implements OnInit {
 
   //guarda los datos del destino segun su item (se ejecuta en el boton confirmar del modal)
   setItemDestino() {
-
     const itemDestino = {
       dtTipoSol: this.tipoSol,
       dtNoSol: this.noSol,
       dtIdItem: this.idItem,
       dtEmpleado: this.empleadoDestino,
       dtSector: this.sectorDestino,
-      dtObservaciones: this.observacionesDestino
+      dtObservaciones: this.observacionesDestino,
     };
     this.itemDestino.push(itemDestino);
 
     //cambiar de estado el campo de asignado
-    this.detalles.forEach(det => {
+    this.detalles.forEach((det) => {
       if (det.idDetalle === this.idItem) {
         det.destinoDetalle = true;
       }
     });
-
 
     //limpiar las variables
     this.sectorDestino = 9999;
@@ -156,11 +167,13 @@ export class SpDestinoComponent implements OnInit {
   }
 
   resetInputFile() {
-    const inputElement = document.getElementById("archivoInput") as HTMLInputElement;
+    const inputElement = document.getElementById(
+      'archivoInput'
+    ) as HTMLInputElement;
 
     if (inputElement) {
       // Resetea el valor del input
-      inputElement.value = "";
+      inputElement.value = '';
     } else {
       console.error("El elemento con ID 'archivoInput' no existe en el DOM.");
     }
@@ -168,11 +181,12 @@ export class SpDestinoComponent implements OnInit {
 
   //verifica que todos los items tengan un destino asignado
   checkDestinos() {
-    this.checkdestino = this.detalles.every(det => det.destinoDetalle === true);
+    this.checkdestino = this.detalles.every(
+      (det) => det.destinoDetalle === true
+    );
   }
 
-  cancelarDestino(){
-
+  cancelarDestino() {
     //limpiar las variables usadas en el modal del destino y la variable idItem
     this.sectorDestino = 9999;
     this.empleadoDestino = 0;
@@ -180,88 +194,115 @@ export class SpDestinoComponent implements OnInit {
     this.empleadoBusq = '';
     this.idItem = 0;
     this.archivo = null as any;
-    this.resetInputFile(); 
+    this.resetInputFile();
   }
 
-  deleteArchivo(index: number){
+  deleteArchivo(index: number) {
     console.log(this.archivos);
-    this.archivos.splice(index,1);
+    this.archivos.splice(index, 1);
   }
-
 
   //SUBIR LOS ARCHIVOS AL SERVIDOR
 
   //guarda el archivo en la lista de archivos y resetea el input para agregar nuevos archivos
   getFiles(event: any): void {
     this.archivo = event.target.files[0];
-    const data = {
-      evIdDetalle: this.idItem,
-      evNombre: this.archivo.name,
-      evArchivo: this.archivo
+    console.log('tamañlan sd', this.archivo);
+    //200KB
+    if (this.archivo.type !== 'image/jpeg' && this.archivo.type !== 'image/jpg') {
+      this.alert = true;
+      this.alertText = " ‎  El archivo debe ser de tipo JPEG o JPG";
+      setTimeout(() => {
+        this.alert = false;
+        this.alertText = "";
+        this.resetInputFile();
+      }, 2000);
+    } else if (this.archivo.size > 200000) {
+      this.alert = true;
+      this.alertText = " ‎ El Tamaño del archivo no debe superar los 200kB";
+      setTimeout(() => {
+        this.alert = false;
+        this.alertText = "";
+        this.resetInputFile();
+      }, 2000);
+    } else {
+      const data = {
+        evIdDetalle: this.idItem,
+        evNombre: this.archivo.name,
+        evArchivo: this.archivo,
+      };
+      this.archivos.push(data);
+
+      //limpiar el input y la variable archivo
+      this.archivo = null as any;
+      this.resetInputFile();
     }
-    this.archivos.push(data);
-
-    //limpiar el input y la variable archivo
-    this.archivo = null as any;
-    this.resetInputFile();
   }
-
-
 
   //envía los destinos a la API para ser guardados
   registrar() {
     // console.log(this.itemDestino);
     // console.log(this.archivos);
-    this.itemDestino.forEach(item => {
-      this.archivos.forEach(arch => {
+    this.itemDestino.forEach((item) => {
+      this.archivos.forEach((arch) => {
         if (arch.evIdDetalle === item.dtIdItem) {
           //guardar el archivo en el servidor
 
-          this.sendfile(arch.evArchivo, item.dtIdItem.toString()).subscribe((url) => {
-            
-            this.urlArchivo = url;
+          
+          this.sendfile(arch.evArchivo, item.dtIdItem.toString()).subscribe(
+            (url) => {
+              this.urlArchivo = url;
 
-            const data: any = {
-              destPagTipoSol: item.dtTipoSol,
-              destPagNoSol: item.dtNoSol,
-              destPagIdDetalle: item.dtIdItem,
-              destPagEmpleado: item.dtEmpleado,
-              destPagSector: item.dtSector,
-              destPagObervacion: item.dtObservaciones,
-              destPagEvidencia: this.urlArchivo
+              const data: any = {
+                destPagTipoSol: item.dtTipoSol,
+                destPagNoSol: item.dtNoSol,
+                destPagIdDetalle: item.dtIdItem,
+                destPagEmpleado: item.dtEmpleado,
+                destPagSector: item.dtSector,
+                destPagObervacion: item.dtObservaciones,
+                destPagEvidencia: this.urlArchivo,
+              };
+
+              this.destinoService.agregarEvidenciaPago(data).subscribe(
+                res => {
+                  //console.log("Exito: ",res);
+                  this.showExito = true;
+                  this.msjExito = 'Se ha agregado el destino correctamente.';
+  
+                  setTimeout(() => {
+                    this.showExito = false;
+                    this.msjExito = '';
+                  }, 2000);
+                },
+                error => {
+                  console.log("Error: ", error);
+                  this.showError = true;
+                  this.msjError = 'No se ha podido agregar el destino, intente nuevamente.';
+  
+                  setTimeout(() => {
+                    this.showError = false;
+                    this.msjError = '';
+                  }, 2000);
+                }
+              );
+
+              this.urlArchivo = '';
             }
             
-            this.destinoService.agregarEvidenciaPago(data).subscribe(
-              res => {
-                //console.log("Exito: ",res);
-                this.showExito = true;
-                this.msjExito = 'Se ha agregado el destino correctamente.';
-
-                setTimeout(() => {
-                  this.showExito = false;
-                  this.msjExito = '';
-                }, 2000);
-              },
-              error => {
-                console.log("Error: ",error);
-                this.showError = true;
-                this.msjError = 'No se ha podido agregar el destino, intente nuevamente.';
-
-                setTimeout(() => {
-                  this.showError = false;
-                  this.msjError = '';
-                }, 2000);
-              }
-            );
-  
-            this.urlArchivo = '';
-          });
-
+            
+          );
+          
+          
+          
         }
+
       });
     });
     this.globalService.setDestino = true;
-  }
+}
+  
+
+
 
   //Enviar archivos al servidor
   sendfile(file: File, idItem: string): Observable<string> {
@@ -269,7 +310,8 @@ export class SpDestinoComponent implements OnInit {
     body.append('archivos', file);
 
     // Utilizamos el operador map para transformar la respuesta en la URL
-    return this.uploadService.uploadPagoDocs(body, this.numericoSol, idItem)
+    return this.uploadService
+      .uploadPagoDocs(body, this.numericoSol, idItem)
       .pipe(
         map((data) => {
           return data.url;
@@ -278,8 +320,8 @@ export class SpDestinoComponent implements OnInit {
   }
 
   //visualizar los archivos registrados
-  viewFile(){
-    
+  viewFile() {
+
   }
 
 }

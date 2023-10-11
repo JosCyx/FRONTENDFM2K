@@ -104,7 +104,7 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Evidencias:</label>
-                            <input class="form-control" type="file" id="archivoInput" (change)="getFiles($event)" />
+                            <input class="form-control" type="file" id="archivoInput" (change)="getFiles($event)" accept="image/jpeg,image/jpg"  />
                         </div>
                         <div>
                             <!-- mostrar una lista con los archivos que esten subidos a la lista -->
@@ -119,6 +119,13 @@
                                 </tr>
                             </table>
                         </div>
+                        <!-- Alerta -->
+                        <div  *ngIf="alert" class=  "alert alert-warning d-flex align-items-center" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <div>
+                                   {{alertText}}
+                            </div>
+                          </div>
                     </form>
                 </div>
             </div>
