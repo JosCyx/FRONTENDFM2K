@@ -164,6 +164,7 @@
               <tr *ngFor="let det of detalleList">
                 <td class="align-middle">{{ det.det_id }}</td>
                 <td class="align-middle">{{ det.det_descp }}</td>
+                <td class="align-middle">{{ det.det_presupuesto }}</td>
                 <td class="align-middle">Asignado</td>
                 <td class="align-middle">{{ det.det_unidad }}</td>
                 <td class="align-middle">
@@ -200,7 +201,7 @@
                     class="btn btn-outline-primary"
                     data-toggle="modal"
                     data-target="#itemsector"
-                    [disabled]="!det_descp"
+                    [disabled]="!det_descp || !det_presupuesto"
                   >
                     Desglose
                   </button>
@@ -646,7 +647,7 @@
                     class="btn btn-outline-primary"
                     data-toggle="modal"
                     data-target="#itemsector"
-                    [disabled]="!det_descp"
+                    [disabled]="!det_descp || !det_presupuesto"
                     (click)="openModalItem()"
                   >
                     Desglose

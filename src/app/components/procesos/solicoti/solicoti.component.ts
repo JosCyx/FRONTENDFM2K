@@ -635,6 +635,7 @@ export class SolicotiComponent implements OnInit {
     if (!this.detType) {
       this.item_id = 1
     }
+    this.item_id = 1
 
     //si esta en la vista de editar, enviar los datos a las listas de la respuesta
     if (this.changeview == "editar") {

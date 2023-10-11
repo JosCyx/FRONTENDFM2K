@@ -111,14 +111,14 @@
                                 </td>
                                 <td class="align-middle">
                                     <select class="form-control" [(ngModel)]="det_presupuesto">
-                                        <option value="0" selected disabled>Presupuesto</option>
+                                        <option value="" selected disabled>Presupuesto</option>
                                         <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                                             {{prep.prespNombre}}</option>
                                     </select>
                                 </td>
                                 <td class="align-middle">
                                     <button class="btn btn-outline-primary" data-toggle="modal"
-                                        data-target="#itemsector" [disabled]="!det_descp">
+                                        data-target="#itemsector" [disabled]="!det_descp || !det_presupuesto">
                                         Desglose
                                     </button>
                                 </td>
@@ -420,7 +420,7 @@
                                 </td>
                                 <td class="align-middle">
                                     <button class="btn btn-outline-primary" data-toggle="modal"
-                                        data-target="#itemsector" [disabled]="!det_descp" (click)="openModalItem()"
+                                        data-target="#itemsector" [disabled]="!det_descp  || !det_presupuesto" (click)="openModalItem()"
                                         [appSecureDisable]="estadoSol">
                                         Desglose
                                     </button>

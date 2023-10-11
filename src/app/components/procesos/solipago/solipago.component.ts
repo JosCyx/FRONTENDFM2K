@@ -17,6 +17,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/ruteo-area.service';
 import { SPDocumentacionComponent } from './sp-documentacion/sp-documentacion.component';
 import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
+import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -115,6 +116,8 @@ export class SolipagoComponent implements OnInit {
   detallesToDestino: any[] = [];
   setDestino: boolean = this.globalService.setDestino;
 
+  areaUserCookie: string = '';
+
   constructor(
     private empService: EmpleadosService,
     private areaService: AreasService,
@@ -130,6 +133,7 @@ export class SolipagoComponent implements OnInit {
     private ruteoService: RuteoAreaService,
     private globalService: GlobalService,
     private sendMailService: SendEmailService,
+    private nivGerenciaService: NivGerenciaService
 
   ) { }
 
@@ -150,6 +154,11 @@ export class SolipagoComponent implements OnInit {
     this.areaList$.subscribe((data) => {
       this.areas = data;
     });
+
+    this.nivGerenciaService.getNivGerencias().subscribe((data : any) => {
+      this.nivGerencias = data;
+    });
+
     if (this.changeview == 'editar') {
       this.editSolicitud();
     }
@@ -903,7 +912,7 @@ export class SolipagoComponent implements OnInit {
   }
 
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
-  areaUserCookie: string = '';
+ 
   nivGerencias: any[] = [];
   mailToNotify: string = '';
   emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>

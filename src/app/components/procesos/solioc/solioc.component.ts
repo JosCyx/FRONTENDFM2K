@@ -25,6 +25,7 @@ import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/rut
 import { OCDocumentacionComponent } from './oc-documentacion/oc-documentacion.component';
 import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
 import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
+import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -151,6 +152,8 @@ export class SoliocComponent implements OnInit {
   @Input() sharedNoSol!: number;
   estadoSol: string = '10';
 
+  areaUserCookie: string = '';
+
   constructor(
     private empService: EmpleadosService,
     private sectService: SectoresService,
@@ -166,7 +169,8 @@ export class SoliocComponent implements OnInit {
     private cookieService: CookieService,
     private ruteoService: RuteoAreaService,
     private prespService: PresupuestoService,
-    private sendMailService: SendEmailService
+    private sendMailService: SendEmailService,
+    private nivGerenciaService: NivGerenciaService
   ) {}
 
   ngOnInit(): void {
@@ -174,6 +178,10 @@ export class SoliocComponent implements OnInit {
     
     this.empService.getEmpleadosList().subscribe((data) => {
       this.empleadoedit = data;
+    });
+
+    this.nivGerenciaService.getNivGerencias().subscribe((data : any) => {
+      this.nivGerencias = data;
     });
 
     this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
@@ -1573,7 +1581,7 @@ export class SoliocComponent implements OnInit {
   }
 
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
-  areaUserCookie: string = '';
+  
   nivGerencias: any[] = [];
   mailToNotify: string = '';
   emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>
