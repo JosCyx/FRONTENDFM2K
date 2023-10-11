@@ -217,7 +217,7 @@ export class SpDestinoComponent implements OnInit {
         this.alertText = "";
         this.resetInputFile();
       }, 2000);
-    } else if (this.archivo.size > 200000) {
+    } else if (this.archivo.size > 500000) {
       this.alert = true;
       this.alertText = " ‎ El Tamaño del archivo no debe superar los 200kB";
       setTimeout(() => {
@@ -263,6 +263,8 @@ export class SpDestinoComponent implements OnInit {
                 destPagEvidencia: this.urlArchivo,
               };
 
+              console.log("Datos: ",data);
+
               this.destinoService.agregarEvidenciaPago(data).subscribe(
                 res => {
                   //console.log("Exito: ",res);
@@ -299,6 +301,7 @@ export class SpDestinoComponent implements OnInit {
       });
     });
     this.globalService.setDestino = true;
+    this.archivos = [];
 }
   
 
