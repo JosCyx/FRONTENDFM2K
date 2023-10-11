@@ -24,6 +24,8 @@ import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/rut
 import { CotDocumentacionComponent } from './cot-documentacion/cot-documentacion.component';
 import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
 import { CotProveedoresComponent } from './cot-proveedores/cot-proveedores.component';
+import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
+import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
 
 
 interface RuteoArea {
@@ -128,6 +130,7 @@ export class SolicotiComponent implements OnInit {
   presupuestos: any[] = [];
   //sectores: any[] = [];
   inspectores: any[] = [];
+  nivGerencias: any[] = [];
 
   //edicion de solicitud de cotizacion
   solID: number = this.serviceGlobal.solID;
@@ -151,6 +154,8 @@ export class SolicotiComponent implements OnInit {
   @Input() cabSolCotAsunto!: any;
   @Input() sharedDetalle: any[] = [];
 
+  areaUserCookie: string = '';
+
   constructor(private router: Router,
     private empService: EmpleadosService,
     private sectService: SectoresService,
@@ -163,9 +168,12 @@ export class SolicotiComponent implements OnInit {
     private serviceGlobal: GlobalService,
     private cookieService: CookieService,
     private ruteoService: RuteoAreaService,
-    private prespService: PresupuestoService) { }
+    private prespService: PresupuestoService,
+    private nivGerenciaService: NivGerenciaService,
+    private sendMailService: SendEmailService) { }
 
   ngOnInit(): void {
+    this. areaUserCookie= this.cookieService.get('userArea');
     this.empService.getEmpleadosList().subscribe((data) => {
       this.empleadosEdit = data;
     });
@@ -191,6 +199,10 @@ export class SolicotiComponent implements OnInit {
 
     this.prespService.getPresupuestos().subscribe((data : any) => {
       this.presupuestos = data;
+    });
+
+    this.nivGerenciaService.getNivGerencias().subscribe((data : any) => {
+      this.nivGerencias = data;
     });
 
 
@@ -1279,6 +1291,7 @@ export class SolicotiComponent implements OnInit {
     try {
       this.check();
       this.enviarSolicitud();
+      this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
       this.showmsjerror = true;
@@ -1291,10 +1304,12 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
+  //añadir el envio del correo a la edicion y los otros tipos de solicitud
   guardarEnviarSolEditada() {
     try {
       this.saveEdit();
-      this.enviarSolicitud();      
+      this.enviarSolicitud(); 
+      this.sendNotify();     
     } catch (error) {
       console.log('Error:', error);
       this.showmsjerror = true;
@@ -1355,32 +1370,34 @@ export class SolicotiComponent implements OnInit {
         } else {
           for (let i = 0; i < this.nivelSolAsignado.length; i++) {
             var nivel = this.nivelSolAsignado[i];
-            console.log('Nivel: ', nivel);
+            //console.log('Nivel: ', nivel);
             if (this.nivelSolAsignado[0].rutareaNivel != 10) {
               newEstado = 20;
               break;
             }
             if (nivel.rutareaNivel == this.estadoTrkTmp) {
               newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
+              console.log('Nuevo estado: ', newEstado);
               break;
             }
           }
         }
-        console.log('Nuevo estado: ', this.trTipoSolicitud, this.noSolTmp, newEstado);
-
-        this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
-          (response) => {
-            //console.log('Estado actualizado exitosamente');
-            setTimeout(() => {
-              this.clear();
-              this.serviceGlobal.solView = 'crear';
-              this.router.navigate(['allrequest']);
-            }, 2500);
-          },
-          (error) => {
-            console.log('Error al actualizar el estado: ', error);
-          }
-        );
+        //console.log('Nuevo estado: ', this.trTipoSolicitud, this.noSolTmp, newEstado);
+        setTimeout(() => {
+          this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+            (response) => {
+              //console.log('Estado actualizado exitosamente');
+              setTimeout(() => {
+                this.clear();
+                this.serviceGlobal.solView = 'crear';
+                this.router.navigate(['allrequest']);
+              }, 2500);
+            },
+            (error) => {
+              console.log('Error al actualizar el estado: ', error);
+            }
+          );
+        }, 1500);
       }
 
     } catch (error) {
@@ -1400,4 +1417,48 @@ export class SolicotiComponent implements OnInit {
       throw error;
     }
   }
+
+  ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
+  mailToNotify: string = '';
+  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>
+  Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo. Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>
+  Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
+
+  sendNotify(){
+
+    setTimeout(() => {
+      const data = {
+        destinatario: this.mailToNotify,
+        asunto: 'Nueva Solicitud Recibida - Acción Requerida',
+        contenido: this.emailContent
+      }
+  
+      this.sendMailService.sendMailtoProv(data).subscribe(
+        response => {
+          console.log("Exito, correo enviado");
+          // this.showmsj = true;
+          // this.msjExito = `Correos enviados exitosamente.`;
+  
+          // setTimeout(() => {
+          //   this.showmsj = false;
+          //   this.msjExito = '';
+          // }, 4000)
+  
+        },
+        error => {
+          console.log(`Error, no se ha podido enviar el correo al proveedor.`, error)
+          this.showmsjerror = true;
+          this.msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
+  
+          setTimeout(() => {
+            this.showmsjerror = false;
+            this.msjError = '';
+          }, 4000)
+        }
+      );
+    }, 1000);
+    
+    
+  }
+
 }

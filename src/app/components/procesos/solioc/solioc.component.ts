@@ -24,6 +24,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/ruteo-area.service';
 import { OCDocumentacionComponent } from './oc-documentacion/oc-documentacion.component';
 import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
+import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -164,10 +165,13 @@ export class SoliocComponent implements OnInit {
     private serviceGlobal: GlobalService,
     private cookieService: CookieService,
     private ruteoService: RuteoAreaService,
-    private prespService: PresupuestoService
+    private prespService: PresupuestoService,
+    private sendMailService: SendEmailService
   ) {}
 
   ngOnInit(): void {
+    this. areaUserCookie= this.cookieService.get('userArea');
+    
     this.empService.getEmpleadosList().subscribe((data) => {
       this.empleadoedit = data;
     });
@@ -1532,19 +1536,22 @@ export class SoliocComponent implements OnInit {
         }
         console.log('Nuevo estado: ', this.trTipoSolicitud, this.noSolTmp, newEstado);
 
-        this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
-          (response) => {
-            //console.log('Estado actualizado exitosamente');
-            setTimeout(() => {
-              this.clear();
-              this.serviceGlobal.solView = 'crear';
-              this.router.navigate(['allrequest']);
-            }, 2500);
-          },
-          (error) => {
-            console.log('Error al actualizar el estado: ', error);
-          }
-        );
+        setTimeout(() => {
+          
+          this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+            (response) => {
+              //console.log('Estado actualizado exitosamente');
+              setTimeout(() => {
+                this.clear();
+                this.serviceGlobal.solView = 'crear';
+                this.router.navigate(['allrequest']);
+              }, 2500);
+            },
+            (error) => {
+              console.log('Error al actualizar el estado: ', error);
+            }
+          );
+        }, 1500);
       }
 
     } catch (error) {
@@ -1564,4 +1571,48 @@ export class SoliocComponent implements OnInit {
       throw error;
     }
   }
+
+  ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
+  areaUserCookie: string = '';
+  nivGerencias: any[] = [];
+  mailToNotify: string = '';
+  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>
+  Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo. Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>
+  Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
+
+  sendNotify(){
+
+    setTimeout(() => {
+      const data = {
+        destinatario: this.mailToNotify,
+        asunto: 'Nueva Solicitud Recibida - Acción Requerida',
+        contenido: this.emailContent
+      }
+  
+      this.sendMailService.sendMailtoProv(data).subscribe(
+        response => {
+          console.log("Exito, correo enviado");
+          // this.showmsj = true;
+          // this.msjExito = `Correos enviados exitosamente.`;
+  
+          // setTimeout(() => {
+          //   this.showmsj = false;
+          //   this.msjExito = '';
+          // }, 4000)
+  
+        },
+        error => {
+          console.log(`Error, no se ha podido enviar el correo al proveedor.`, error)
+          this.showmsjerror = true;
+          this.msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
+  
+          setTimeout(() => {
+            this.showmsjerror = false;
+            this.msjError = '';
+          }, 4000)
+        }
+      );
+    }, 1000);
+  }
+    
 }

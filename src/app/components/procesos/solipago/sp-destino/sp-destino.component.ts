@@ -59,6 +59,11 @@ export class SpDestinoComponent implements OnInit {
   empleadoDestino!: number;
   observacionesDestino!: string;
 
+  showExito: boolean = false;
+  msjExito: string = '';
+  showError: boolean = false;
+  msjError: string = '';
+
   constructor(private sectoresService: SectoresService,
     private empleadoService: EmpleadosService,
     private uploadService: UploadFileService,
@@ -228,10 +233,24 @@ export class SpDestinoComponent implements OnInit {
             
             this.destinoService.agregarEvidenciaPago(data).subscribe(
               res => {
-                console.log("Exito: ",res);
+                //console.log("Exito: ",res);
+                this.showExito = true;
+                this.msjExito = 'Se ha agregado el destino correctamente.';
+
+                setTimeout(() => {
+                  this.showExito = false;
+                  this.msjExito = '';
+                }, 2000);
               },
               error => {
                 console.log("Error: ",error);
+                this.showError = true;
+                this.msjError = 'No se ha podido agregar el destino, intente nuevamente.';
+
+                setTimeout(() => {
+                  this.showError = false;
+                  this.msjError = '';
+                }, 2000);
               }
             );
   

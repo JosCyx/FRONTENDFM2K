@@ -21,6 +21,14 @@
                 </tr>
             </tbody>
         </table>
+        <div>
+            <div *ngIf="showExito" class="alert alert-success text-center" role="alert">
+                <span><i class="bi bi-upload"> {{ msjExito }}</i></span>
+            </div>
+            <div *ngIf="showError" class="alert alert-danger text-center" role="alert">
+                <span><i class="bi bi-x-circle"> {{ msjError }}</i></span>
+            </div>
+        </div>
         <div class="text-end">
             <button class="btn btn-primary" (click)="registrar()" [disabled]="!checkdestino">Guardar evidencias</button>
         </div>

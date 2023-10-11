@@ -88,7 +88,6 @@
                 disabled 
               />
             </div>
-            <!--  -->
           </div>
           <div class="row">
             <div class="input-group col mb-1">
@@ -795,7 +794,7 @@
 
 <!-- MODALES PARA VERIFICAR EL GUARDADO DE LA SOLICITUD -->
 <!--Modal para guardar edicion de solicitud  -->
-<div class="modal fade" #exampleModal id="guardarOrdenCompra" data-backdrop="static" tabindex="-1" role="dialog"
+<div class="modal fade" #exampleModal id="guardarOrdenPago" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -853,11 +852,20 @@
         <div class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea guardar la solicitud y enviarla para su revisón?
+                    ¿Está seguro que desea guardar la solicitud y enviarla para su revisión?
                 </h3>
             </div>
             <div class="modal-body">
                 <p>Al enviar la solicitud no podrá volver a editarla y pasará al siguiente nivel.</p>
+                <div>
+                  <label for="nivGerencia" class="input-label">Notificar a:</label>
+                  <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
+                      <option value="" selected disabled>Seleccione una opción</option>
+                      <ng-container *ngFor="let niv of nivGerencias">
+                          <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
+                      </ng-container>
+                  </select>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolNueva()">
@@ -878,11 +886,20 @@
         <div class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea guardar los cambios realizados en la solicitud y enviarla para su revisón?
+                    ¿Está seguro que desea guardar los cambios realizados en la solicitud y enviarla para su revisión?
                 </h3>
             </div>
             <div class="modal-body">
                 <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.</p>
+                <div>
+                  <label for="nivGerencia" class="input-label">Notificar a:</label>
+                  <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
+                      <option value="" selected disabled>Seleccione una opción</option>
+                      <ng-container *ngFor="let niv of nivGerencias">
+                          <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
+                      </ng-container>
+                  </select>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">

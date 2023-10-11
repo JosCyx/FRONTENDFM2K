@@ -91,6 +91,9 @@
                             <tr *ngFor="let det of detalleList">
                                 <td class="align-middle">{{ det.det_id }}</td>
                                 <td class="align-middle">{{ det.det_descp }}</td>
+                                <ng-container *ngFor="let prep of presupuestos">
+                                    <td class="align-middle" *ngIf="prep.prespId == det.det_presupuesto">{{ prep.prespNombre }}</td>
+                                </ng-container>
                                 <td class="align-middle">Asignado</td>
                                 <td class="align-middle">{{ det.det_unidad }}</td>
                                 <td class="align-middle">
@@ -221,11 +224,7 @@
                 itemSectorList.length === 0" data-toggle="modal" data-target="#guardarCotizacion" *appAuthorize="'25'">
                         Guardar
                     </button>
-                    <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" [disabled]="
-                !empleado ||
-                !cab_asunto ||
-                detalleList.length === 0 ||
-                itemSectorList.length === 0" *appAuthorize="'27'">
+                    <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud"  *appAuthorize="'27'">
                         Guardar y enviar
                     </button>
                     <button class="btn btn-danger m-2" (click)="cancelarAll()">
@@ -839,11 +838,20 @@
         <div class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea guardar la solicitud y enviarla para su revisón?
+                    ¿Está seguro que desea guardar la solicitud y enviarla para su revisión?
                 </h3>
             </div>
             <div class="modal-body">
-                <p>Al enviar la solicitud no podrá volver a editarla y pasará al estado de Revisión 1.</p>
+                <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente estado.</p>
+                <div>
+                    <label for="nivGerencia" class="input-label">Notificar a:</label>
+                    <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
+                        <option value="" selected disabled>Seleccione una opción</option>
+                        <ng-container *ngFor="let niv of nivGerencias">
+                            <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
+                        </ng-container>
+                    </select>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolNueva()">
@@ -864,12 +872,20 @@
         <div class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea guardar los cambios realizados en la solicitud y enviarla para su revisón?
+                    ¿Está seguro que desea guardar los cambios realizados en la solicitud y enviarla para su revisión?
                 </h3>
             </div>
             <div class="modal-body">
-                <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.
-                </p>
+                <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.</p>
+                <div>
+                    <label for="nivGerencia" class="input-label">Notificar a:</label>
+                    <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
+                        <option value="" selected disabled>Seleccione una opción</option>
+                        <ng-container *ngFor="let niv of nivGerencias">
+                            <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
+                        </ng-container>
+                    </select>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
