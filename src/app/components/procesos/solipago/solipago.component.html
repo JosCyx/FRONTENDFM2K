@@ -375,11 +375,10 @@
             data-target="#guardarOrdenPago"
             (click)="saveReceptor()"
             *appAuthorize="'31'"
-            [disabled]="!setDestino"
           >
             Guardar
           </button>
-          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" *appAuthorize="'27'" [disabled]="!setDestino">
+          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" *appAuthorize="'27'" >
             Guardar y enviar
         </button>
           <button class="btn btn-danger m-2" (click)="cancelar()">
@@ -776,7 +775,6 @@
             data-target="#guardarEdicion"
             (click)="saveReceptor()"
             [appSecureDisable]= "estadoSol"
-            [disabled]="!setDestino"
           >
             Guardar
           </button>
@@ -797,7 +795,7 @@
 <div class="modal fade" #exampleModal id="guardarOrdenPago" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+        <div *ngIf="setDestino"  class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
                     ¿Está seguro que desea guardar esta solicitud?
@@ -815,8 +813,26 @@
                 </button>
             </div>
         </div>
+        <!--  -->
+        <div  *ngIf="!setDestino" class="modal-content">
+          <div class="modal-header justify-content-center">
+              <h3 class="font-weight-bold" id="exampleModalLabel">
+                  Error
+              </h3>
+          </div>
+          <div class="modal-body">
+              <p>No se han guardo los destinos de los Items.</p>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">
+                  Aceptar
+              </button>
+          </div>
+      </div>
     </div>
 </div>
+
+
 
 <!--Modal para guardar edicion de solicitud  -->
 <div class="modal fade" #exampleModal id="guardarEdicion" data-backdrop="static" tabindex="-1" role="dialog"
@@ -849,7 +865,7 @@
 <div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+        <div  *ngIf="setDestino" class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
                     ¿Está seguro que desea guardar la solicitud y enviarla para su revisión?
@@ -876,7 +892,23 @@
                 </button>
             </div>
         </div>
+        <div  *ngIf="!setDestino" class="modal-content">
+          <div class="modal-header justify-content-center">
+              <h3 class="font-weight-bold" id="exampleModalLabel">
+                  Error
+              </h3>
+          </div>
+          <div class="modal-body">
+              <p>No se han guardo los destinos de los Items.</p>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">
+                  Aceptar
+              </button>
+          </div>
+      </div>
     </div>
+    <!--  -->
 </div>
 
 <!-- Modal para verificar el envío de la solcitud guardada-->

@@ -115,6 +115,10 @@ export class SolipagoComponent implements OnInit {
 
   detallesToDestino: any[] = [];
   setDestino: boolean = this.globalService.setDestino;
+  settear(){
+    console.log("Estes es mi metodo settea")
+    this.setDestino = this.globalService.setDestino;
+  }
 
   areaUserCookie: string = '';
 
