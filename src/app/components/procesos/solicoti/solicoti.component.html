@@ -111,7 +111,7 @@
                                 </td>
                                 <td class="align-middle">
                                     <select class="form-control" [(ngModel)]="det_presupuesto">
-                                        <option value="" selected disabled>Presupuesto</option>
+                                        <option value="0" selected disabled>presupuesto...</option>
                                         <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                                             {{prep.prespNombre}}</option>
                                     </select>
@@ -254,6 +254,10 @@
                         <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}"
                             (click)="selectEditAction('documentacion')">Documentación</a>
                     </li>
+                    <li class="nav-item" id="anulacion">
+                        <a class="nav-link" [ngClass]="{'active': actionEdit === 'anulacion'}"
+                            (click)="selectEditAction('anulacion')">Anular</a>
+                    </li>
                 </ul>
             </div>
 
@@ -372,7 +376,7 @@
                                         [appSecureDisable]="estadoSol"></textarea>
                                 <td class="align-middle">
                                     <select class="form-control" [(ngModel)]="det.solCotPresupuesto" [appSecureDisable]="estadoSol">
-                                        <option value="" selected disabled>Presupuesto</option>
+                                        <option value="" selected disabled>>presupuesto...</option>
                                         <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                                             {{prep.prespNombre}}</option>
                                     </select>
@@ -465,6 +469,12 @@
                     <app-cot-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
                         [estadoSol]="estadoSol"></app-cot-documentacion>
                 </div>
+
+                <div *ngIf="actionEdit == 'anulacion'">
+                    <app-cot-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+                        [estadoSol]="estadoSol"></app-cot-anulacion>
+                </div>
+
 
                 <div class="foot-cabecera">
                     <div class="form-floating mb-3">

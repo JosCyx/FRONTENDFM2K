@@ -773,6 +773,7 @@ export class SolipagoComponent implements OnInit {
     try {
       this.generarSolicitud();
       this.enviarSolicitud();
+      this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
       this.showmsjerror = true;
@@ -789,6 +790,7 @@ export class SolipagoComponent implements OnInit {
     try {
       this.savePagoEdit();
       this.enviarSolicitud();
+      this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
       this.showmsjerror = true;

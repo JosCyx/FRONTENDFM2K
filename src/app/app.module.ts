@@ -41,6 +41,9 @@ import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitud
 import { SpDestinoComponent } from './components/procesos/solipago/sp-destino/sp-destino.component';
 import { RolesTransacComponent } from './components/seguridad/roles-transac/roles-transac.component';
 import { RolesUsersComponent } from './components/seguridad/roles-users/roles-users.component';
+import { CotAnulacionComponent } from './components/procesos/solicoti/cot-anulacion/cot-anulacion.component';
+import { OcAnulacionComponent } from './components/procesos/solioc/oc-anulacion/oc-anulacion.component';
+import { SpAnulacionComponent } from './components/procesos/solipago/sp-anulacion/sp-anulacion.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +77,10 @@ import { RolesUsersComponent } from './components/seguridad/roles-users/roles-us
     SolicitudesNoAprobadasComponent,
     SpDestinoComponent,
     RolesTransacComponent,
-    RolesUsersComponent
+    RolesUsersComponent,
+    CotAnulacionComponent,
+    OcAnulacionComponent,
+    SpAnulacionComponent
   ],
   imports: [
     BrowserModule,

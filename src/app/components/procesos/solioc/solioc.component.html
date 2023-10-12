@@ -191,7 +191,7 @@
                 </td>
                 <td class="align-middle">
                   <select class="form-control" [(ngModel)]="det_presupuesto">
-                      <option value="0" selected disabled>Presupuesto</option>
+                      <option value="0" selected disabled>>presupuesto...</option>
                       <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                           {{prep.prespNombre}}</option>
                   </select>
@@ -581,7 +581,7 @@
                 </td>
                 <td class="align-middle">
                   <select class="form-control" [(ngModel)]="det.solCotPresupuesto" [appSecureDisable]="estadoSol">
-                      <option value="" selected disabled>Presupuesto</option>
+                      <option value="" selected disabled>>presupuesto...</option>
                       <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                           {{prep.prespNombre}}</option>
                   </select>

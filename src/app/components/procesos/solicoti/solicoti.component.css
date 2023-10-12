@@ -68,3 +68,20 @@
     border: 0px;
 }
 
+#anulacion{
+    background-color: rgb(255, 73, 73);
+    color: white;
+    border-radius: 5px 5px 0px 0px;
+}
+
+#anulacion:hover{
+    background-color: rgb(136, 37, 37);
+    color: white;
+    border-radius: 5px 5px 0px 0px;
+}
+
+#anulacion:active {
+    background-color: rgb(136, 37, 37);
+    color: white;
+    border-radius: 5px 5px 0px 0px;
+}
