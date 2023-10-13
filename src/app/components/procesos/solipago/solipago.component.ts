@@ -461,7 +461,7 @@ export class SolipagoComponent implements OnInit {
       console.log('partes', partes);
       if (partes && partes.length === 3) {
         console.log("este mi partes ",partes[1]);
-        if(partes[1]=='1'){
+        if(partes[1] !='2'){
           this.alertBool = true;
           this.alertText = 'No se ha encontrado la solicitud';
           this.detalleSolPagos = [];

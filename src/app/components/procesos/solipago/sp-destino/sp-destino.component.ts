@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { I } from '@fullcalendar/core/internal-common';
+import { I, co } from '@fullcalendar/core/internal-common';
 import { Observable, map } from 'rxjs';
 import { DestinoPagoServiceService } from 'src/app/services/comunicationAPI/seguridad/destino-pago-service.service';
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
@@ -192,9 +192,18 @@ export class SpDestinoComponent implements OnInit {
     this.empleadoDestino = 0;
     this.observacionesDestino = '';
     this.empleadoBusq = '';
-    this.idItem = 0;
     this.archivo = null as any;
     this.resetInputFile();
+    for (let i=0 ;  i < this.archivos.length; i++) {
+      const iterator = this.archivos[i];
+      console.log("traeme todo  ",iterator)
+      if(iterator.evIdDetalle == this.idItem){
+        console.log("este es mi cambio items if ",this.idItem);
+        console.log("este es mi cambio if ",iterator.evIdDetalle);
+        this.archivos.splice(i,1);
+      }
+    }
+    this.idItem = 0;
   }
 
   deleteArchivo(index: number) {
