@@ -254,10 +254,10 @@
                         <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}"
                             (click)="selectEditAction('documentacion')">Documentación</a>
                     </li>
-                    <!-- <li class="nav-item" id="anulacion">
-                        <a class="nav-link" [ngClass]="{'active': actionEdit === 'anulacion'}"
-                            (click)="selectEditAction('anulacion')">Anular</a>
-                    </li> -->
+                    <li class="nav-item" >
+                        <a class="nav-link" [ngClass]="{'active': actionEdit === 'autorizacion'}"
+                            (click)="selectEditAction('autorizacion')">Autorizacion</a>
+                    </li>
                 </ul>
             </div>
 
@@ -470,7 +470,7 @@
                         [estadoSol]="estadoSol"></app-cot-documentacion>
                 </div>
 
-                <div *ngIf="actionEdit == 'anulacion'">
+                <div *ngIf="actionEdit == 'autorizacion'">
                     <app-cot-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
                         [estadoSol]="estadoSol"></app-cot-anulacion>
                 </div>
@@ -533,7 +533,7 @@
                     </div>
                 </div>
                 <div class="col text-end">
-                    <ng-container *ngIf="cabecera.cabSolCotEstadoTracking!= 0">
+                    <ng-container *ngIf="cabecera.cabSolCotEstadoTracking == 10">
                         <button class="btn btn-primary m-2" data-toggle="modal" data-target="#guardarEdicion"
                             (click)="saveIdInspector()" [appSecureDisable]="estadoSol">Guardar</button>
                         <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitudGuardada"

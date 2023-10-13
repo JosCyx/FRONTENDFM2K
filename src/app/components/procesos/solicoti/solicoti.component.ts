@@ -26,6 +26,7 @@ import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes
 import { CotProveedoresComponent } from './cot-proveedores/cot-proveedores.component';
 import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
 import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
+import { CotAnulacionComponent } from './cot-anulacion/cot-anulacion.component';
 
 
 interface RuteoArea {
@@ -325,8 +326,13 @@ export class SolicotiComponent implements OnInit {
   cancelarAll(): void {
     this.clear();
     this.ngOnInit();
-    this.cotProveedores.RecorrerPro();
-    this.cotDocumentacion.deleteAllDocs();
+    try {
+      this.cotProveedores.RecorrerPro();
+      this.cotDocumentacion.deleteAllDocs();
+      
+    } catch (error) {
+      console.log("Error al cancelar: ", error);
+    }
   }
   clear(): void {
     this.empleado = '';
@@ -1321,6 +1327,10 @@ export class SolicotiComponent implements OnInit {
         this.msjError = "";
       }, 2500);
     }
+  }
+
+  metodo2(){
+    console.log("metodo");
   }
 
   noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui

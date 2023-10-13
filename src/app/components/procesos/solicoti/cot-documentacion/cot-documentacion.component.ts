@@ -167,6 +167,7 @@ export class CotDocumentacionComponent implements OnInit {
       this.deleteFile(item.docUrlComleta);
     });
     this.paths = [];
+    console.log("metodo de eliminar todos los documentos");
   }
 
   //emilima de la base de datos y del servidor el archivo que coincida con la url ingesada como parametro

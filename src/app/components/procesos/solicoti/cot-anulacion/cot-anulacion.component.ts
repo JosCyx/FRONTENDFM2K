@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ViewChild,Injector } from '@angular/core';
+import { SolicotiComponent } from '../solicoti.component';
 
 @Component({
   selector: 'app-cot-anulacion',
@@ -11,10 +12,31 @@ export class CotAnulacionComponent {
   @Input() noSol: number = 0;
   @Input() estadoSol!: string;
 
-  constructor() { }
+  @ViewChild(SolicotiComponent) solCotChild!: SolicotiComponent;
+
+  constructor(private injector: Injector) {
+    this.solCotChild = this.injector.get(SolicotiComponent);
+   }
 
   ngOnInit(): void {
-    console.log(this.tipoSol, this.noSol, this.estadoSol);
+    //console.log(this.tipoSol, this.noSol, this.estadoSol);
+    console.log(this.solCotChild);
+  }
+
+  enviarCotizacion(){
+    this.solCotChild.metodo2();
+  }
+
+  metodo(){
+    console.log('metodo');
+  }
+
+  anularCotizacion(){
+
+  }
+
+  noAutorizarCotizacion(){
+
   }
 
 }
