@@ -11,6 +11,7 @@ export class CotAnulacionComponent {
   @Input() tipoSol: number = 0;
   @Input() noSol: number = 0;
   @Input() estadoSol!: string;
+  @Input() setMotivo!: boolean;
 
   constructor(private sharedService: SharedService) {}
 

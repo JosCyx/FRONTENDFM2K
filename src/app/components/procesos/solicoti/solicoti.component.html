@@ -338,14 +338,14 @@
                                 <div class="input-group">
                                     <label class="input-group-text">Aprobación presupuestaria:</label>
                                     <select class="form-select" [(ngModel)]="cabecera.cabSolCotAprobPresup"
-                                        [appSecureDisable]="estadoSol">
+                                        [appSecureDisable]="estadoSol" (change)="setMotivoDev()">
                                         <option value="SI">Sí</option>
                                         <option value="NO">No</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-8">
-                                <div class="input-group">
+                                <div class="input-group" *ngIf="setMotivo">
                                     <label class="input-group-text">Motivo de devolución:</label>
                                     <textarea class="form-control limited-textarea" rows="1"
                                         placeholder="Ingrese el motivo de devolución"
@@ -482,7 +482,7 @@
 
                 <div *ngIf="actionEdit == 'autorizacion'">
                     <app-cot-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
-                        [estadoSol]="estadoSol"></app-cot-anulacion>
+                        [estadoSol]="estadoSol" [setMotivo]="setMotivo"></app-cot-anulacion>
                 </div>
 
 

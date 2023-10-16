@@ -912,7 +912,7 @@ export class SoliocComponent implements OnInit {
       case 'F':
         return 'Finalizado';
       case 'C':
-        return 'Cancelado';
+        return 'Anulado';
       default:
         return ''; // Manejo por defecto si el valor no es A, F o C
     }

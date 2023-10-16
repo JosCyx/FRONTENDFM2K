@@ -100,7 +100,7 @@
               <td class="align-middle" [ngSwitch]="sol.cabSolCotEstado">
                 <span *ngSwitchCase="'A'">Activo</span>
                 <span *ngSwitchCase="'F'">Finalizado</span>
-                <span *ngSwitchCase="'C'">Cancelado</span>
+                <span *ngSwitchCase="'C'">Anulado</span>
               </td>
               <ng-container *ngFor="let trck of trckList$ | async">
                 <td
@@ -146,7 +146,7 @@
               <td class="align-middle" [ngSwitch]="sol.cabSolOCEstado">
                 <span *ngSwitchCase="'A'">Activo</span>
                 <span *ngSwitchCase="'F'">Finalizado</span>
-                <span *ngSwitchCase="'C'">Cancelado</span>
+                <span *ngSwitchCase="'C'">Anulado</span>
               </td>
               <ng-container *ngFor="let trck of trckList$ | async">
                 <td
@@ -192,7 +192,7 @@
               <td class="align-middle" [ngSwitch]="sol.cabPagoEstado">
                 <span *ngSwitchCase="'A'">Activo</span>
                 <span *ngSwitchCase="'F'">Finalizado</span>
-                <span *ngSwitchCase="'C'">Cancelado</span>
+                <span *ngSwitchCase="'C'">Anulado</span>
               </td>
               <ng-container *ngFor="let trck of trckList$ | async">
                 <td

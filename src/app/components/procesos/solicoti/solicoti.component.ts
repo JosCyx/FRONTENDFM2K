@@ -939,7 +939,7 @@ export class SolicotiComponent implements OnInit {
       case 'F':
         return 'Finalizado';
       case 'C':
-        return 'Cancelado';
+        return 'Anulado';
       default:
         return ''; // Manejo por defecto si el valor no es A, F o C
     }
@@ -1594,6 +1594,11 @@ export class SolicotiComponent implements OnInit {
     }, 1000);
 
 
+  }
+
+  setMotivo: boolean = false;
+  setMotivoDev(){
+    this.setMotivo = !this.setMotivo;
   }
 
 }
