@@ -41,6 +41,7 @@ import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitud
 import { SpDestinoComponent } from './components/procesos/solipago/sp-destino/sp-destino.component';
 import { RolesTransacComponent } from './components/seguridad/roles-transac/roles-transac.component';
 import { RolesUsersComponent } from './components/seguridad/roles-users/roles-users.component';
+import { CotPdfComponent } from './components/procesos/solicoti/cot-pdf/cot-pdf.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +75,8 @@ import { RolesUsersComponent } from './components/seguridad/roles-users/roles-us
     SolicitudesNoAprobadasComponent,
     SpDestinoComponent,
     RolesTransacComponent,
-    RolesUsersComponent
+    RolesUsersComponent,
+    CotPdfComponent
   ],
   imports: [
     BrowserModule,
