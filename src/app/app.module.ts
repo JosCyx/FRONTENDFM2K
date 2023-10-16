@@ -42,6 +42,10 @@ import { SpDestinoComponent } from './components/procesos/solipago/sp-destino/sp
 import { RolesTransacComponent } from './components/seguridad/roles-transac/roles-transac.component';
 import { RolesUsersComponent } from './components/seguridad/roles-users/roles-users.component';
 import { CotPdfComponent } from './components/procesos/solicoti/cot-pdf/cot-pdf.component';
+import { CotAnulacionComponent } from './components/procesos/solicoti/cot-anulacion/cot-anulacion.component';
+import { OcAnulacionComponent } from './components/procesos/solioc/oc-anulacion/oc-anulacion.component';
+import { SpAnulacionComponent } from './components/procesos/solipago/sp-anulacion/sp-anulacion.component';
+
 
 @NgModule({
   declarations: [
@@ -76,7 +80,10 @@ import { CotPdfComponent } from './components/procesos/solicoti/cot-pdf/cot-pdf.
     SpDestinoComponent,
     RolesTransacComponent,
     RolesUsersComponent,
-    CotPdfComponent
+    CotPdfComponent,
+    CotAnulacionComponent,
+    OcAnulacionComponent,
+    SpAnulacionComponent
   ],
   imports: [
     BrowserModule,

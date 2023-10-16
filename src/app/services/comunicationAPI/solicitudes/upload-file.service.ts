@@ -2,17 +2,19 @@ import { HttpClient, HttpHeaders,HttpResponse  } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
+import { GlobalService } from '../../global.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UploadFileService {
 
-  readonly APIUrl = "https://localhost:7086/api";
+  readonly APIUrl = this.globalService.APIUrl;
 
   constructor(
     private http: HttpClient,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private globalService: GlobalService
   ) { }
 
   private getHeadersWithAuthToken(): HttpHeaders {

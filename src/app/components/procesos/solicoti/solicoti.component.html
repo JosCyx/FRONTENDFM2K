@@ -1,7 +1,7 @@
 <app-menu></app-menu>
 <div class="container">
     <h2 class="font-weight-bolt ruteo">Solicitud de Cotizacion</h2>
-    <div class="">
+    <div class=" text center">
         <nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 30px;">
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
@@ -10,9 +10,19 @@
                         Crear
                     </button> -->
                     <!-- <button class="btn btn-danger" (click)="enviarSolicitud()">Boton</button> -->
+                    
                 </div>
             </div>
         </nav>
+    </div>
+    <div class=" m-2 text-center">
+        <div *ngIf="showmsj" class="alert alert-success" role="alert">
+            <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
+        </div>
+        <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+            <span><i class="bi bi-exclamation-triangle-fill">
+                    {{ msjError }}</i></span>
+        </div>
     </div>
 
     <ng-container *appAuthorize="'25'">
@@ -112,7 +122,7 @@
                                 </td>
                                 <td class="align-middle">
                                     <select class="form-control" [(ngModel)]="det_presupuesto">
-                                        <option value="" selected disabled>Presupuesto</option>
+                                        <option value="0" selected disabled>presupuesto...</option>
                                         <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                                             {{prep.prespNombre}}</option>
                                     </select>
@@ -209,12 +219,12 @@
             </div>
             <div class="d-flex row">
                 <div class="col">
-                    <div *ngIf="showmsj" class="alert alert-success" role="alert">
+                    <!-- <div *ngIf="showmsj" class="alert alert-success" role="alert">
                         <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
                     </div>
                     <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
                         <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="col text-end">
@@ -254,6 +264,10 @@
                     <li class="nav-item">
                         <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}"
                             (click)="selectEditAction('documentacion')">Documentación</a>
+                    </li>
+                    <li class="nav-item" >
+                        <a class="nav-link" [ngClass]="{'active': actionEdit === 'autorizacion'}"
+                            (click)="selectEditAction('autorizacion')">Autorizacion</a>
                     </li>
                 </ul>
             </div>
@@ -325,14 +339,14 @@
                                 <div class="input-group">
                                     <label class="input-group-text">Aprobación presupuestaria:</label>
                                     <select class="form-select" [(ngModel)]="cabecera.cabSolCotAprobPresup"
-                                        [appSecureDisable]="estadoSol">
+                                        [appSecureDisable]="estadoSol" (change)="setMotivoDev()">
                                         <option value="SI">Sí</option>
                                         <option value="NO">No</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-8">
-                                <div class="input-group">
+                                <div class="input-group" *ngIf="setMotivo">
                                     <label class="input-group-text">Motivo de devolución:</label>
                                     <textarea class="form-control limited-textarea" rows="1"
                                         placeholder="Ingrese el motivo de devolución"
@@ -373,7 +387,7 @@
                                         [appSecureDisable]="estadoSol"></textarea>
                                 <td class="align-middle">
                                     <select class="form-control" [(ngModel)]="det.solCotPresupuesto" [appSecureDisable]="estadoSol">
-                                        <option value="" selected disabled>Presupuesto</option>
+                                        <option value="" selected disabled>>presupuesto...</option>
                                         <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                                             {{prep.prespNombre}}</option>
                                     </select>
@@ -467,6 +481,12 @@
                         [estadoSol]="estadoSol"></app-cot-documentacion>
                 </div>
 
+                <div *ngIf="actionEdit == 'autorizacion'">
+                    <app-cot-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+                        [estadoSol]="estadoSol" [setMotivo]="setMotivo"></app-cot-anulacion>
+                </div>
+
+
                 <div class="foot-cabecera">
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="floatingInput"
@@ -515,16 +535,16 @@
             </div>
             <div class="d-flex row mt-2">
                 <div class="col">
-                    <div *ngIf="showmsj" class="alert alert-success" role="alert">
+                    <!-- <div *ngIf="showmsj" class="alert alert-success" role="alert">
                         <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
                     </div>
                     <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
                         <span><i class="bi bi-exclamation-triangle-fill">
                                 {{ msjError }}</i></span>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="col text-end">
-                    <ng-container *ngIf="cabecera.cabSolCotEstadoTracking!= 0">
+                    <ng-container *ngIf="cabecera.cabSolCotEstadoTracking == 10">
                         <button class="btn btn-primary m-2" data-toggle="modal" data-target="#guardarEdicion"
                             (click)="saveIdInspector()" [appSecureDisable]="estadoSol">Guardar</button>
                         <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitudGuardada"

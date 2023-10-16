@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
+import { SharedService } from 'src/app/services/shared.service';
 
 interface Path {
   docUrl: any;
@@ -27,7 +28,12 @@ export class OCDocumentacionComponent implements OnInit {
   showError: boolean = false;
   msjExito: string = '';
   msjError: string = '';
-  constructor(private uploadfile: UploadFileService) {}
+  constructor(private uploadfile: UploadFileService,
+    private sharedService: SharedService) {
+      this.sharedService.ocDocumentacion$.subscribe(() =>{
+        this.deleteAllDocs();
+      });
+    }
   ngOnInit(): void {
     this.GetfileView();
   }

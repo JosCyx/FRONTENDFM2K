@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
+import { SharedService } from 'src/app/services/shared.service';
 
 interface Path {
   docUrl: any;
@@ -31,7 +32,12 @@ export class CotDocumentacionComponent implements OnInit {
   msjExito: string = '';
   msjError: string = '';
 
-  constructor(private uploadfile: UploadFileService) {}
+  constructor(private uploadfile: UploadFileService,
+    private sharedService: SharedService) {
+      this.sharedService.cotDocumentacion$.subscribe(() =>{
+        this.deleteAllDocs();
+      });
+    }
 
   ngOnInit(): void {
     console.log(this.noSol);
@@ -167,6 +173,7 @@ export class CotDocumentacionComponent implements OnInit {
       this.deleteFile(item.docUrlComleta);
     });
     this.paths = [];
+    console.log("metodo de eliminar todos los documentos");
   }
 
   //emilima de la base de datos y del servidor el archivo que coincida con la url ingesada como parametro

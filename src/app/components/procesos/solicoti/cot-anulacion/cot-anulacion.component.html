@@ -1,0 +1,92 @@
+<div class="anulacion mb-3">
+    <div class="m-2">
+        <h2>Autorización de solicitud</h2>
+        <div class="text-center">
+            <div class="row buttons-ruteo">
+                <button *ngIf="!setMotivo" class="btn btn-success col m-2" data-toggle="modal" data-target="#enviarSolicitud">Aprobar</button>
+                <button class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">No autorizar</button>
+                <button class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud">Anular</button>
+            </div>
+        </div> 
+    </div>
+</div>
+
+
+<!-- Modal para verificar el envío de la soliitud recien registrada-->
+<div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea enviar esta solicitud?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente nivel.</p>
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="enviarCotizacion()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para verificar el envío de la soliitud recien registrada-->
+<div class="modal fade" #exampleModal id="rechazarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea no autorizar esta solicitud?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al no autorizar la solicitud, esta se regresará al nivel anterior para su revisión.</p>
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="noAutorizarCotizacion()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para verificar el envío de la soliitud recien registrada-->
+<div class="modal fade" #exampleModal id="anularSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea anular esta solicitud?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al anular la solicitud, esta tendrá el estado ANULADO y el proceso quedará finalizado.</p>
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="anularCotizacion()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -12,6 +12,15 @@
       </div>
     </nav>
   </div>
+  <div class=" m-2 text-center">
+    <div *ngIf="showmsj" class="alert alert-success" role="alert">
+        <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
+    </div>
+    <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+        <span><i class="bi bi-exclamation-triangle-fill">
+                {{ msjError }}</i></span>
+    </div>
+</div>
 
   <ng-container *appAuthorize="'31'">
     <div class="form-cot" *ngIf="changeview === 'crear'">
@@ -362,7 +371,7 @@
       <!-- Mensaje de error  -->
       <div class="d-flex row">
         <div class="col">
-          <div *ngIf="showmsj" class="alert alert-success" role="alert">
+          <!-- <div *ngIf="showmsj" class="alert alert-success" role="alert">
             <span
               ><i class="bi bi-check-circle-fill">{{ msjExito }}</i></span
             >
@@ -373,7 +382,7 @@
                 {{ msjError }}</i
               ></span
             >
-          </div>
+          </div> -->
         </div>
   
         <div class="col text-end">
@@ -417,6 +426,10 @@
             <li class="nav-item">
               <a class="nav-link" [ngClass]="{'active': actionEdit === 'destino'}" (click)="selectEditAction('destino')">Destino</a>
           </li>
+          <li class="nav-item" >
+            <a class="nav-link" [ngClass]="{'active': actionEdit === 'autorizacion'}"
+                (click)="selectEditAction('autorizacion')">Autorizacion</a>
+        </li>
         </ul>
     </div>
       <!-- Fin -->
@@ -596,6 +609,10 @@
         <div *ngIf="actionEdit == 'documentacion'" >
           <app-sp-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-sp-documentacion>
         </div>
+        <div *ngIf="actionEdit == 'autorizacion'">
+          <app-oc-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+              [estadoSol]="estadoSol"></app-oc-anulacion>
+      </div>
         <div *ngIf="actionEdit == 'destino'">
           <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol" 
                           [areaSol]="areaSolTmp" [detalles]="detallesToDestino" [numericoSol]="numericoSol"></app-sp-destino>
@@ -762,7 +779,7 @@
       </div>
       <div class="d-flex row">
         <div class="col">
-          <div *ngIf="showmsj" class="alert alert-success" role="alert">
+          <!-- <div *ngIf="showmsj" class="alert alert-success" role="alert">
             <span
               ><i class="bi bi-check-circle-fill">{{ msjExito }}</i></span
             >
@@ -773,7 +790,7 @@
                 {{ msjError }}</i
               ></span
             >
-          </div>
+          </div> -->
         </div>
   
         <div class="col text-end">

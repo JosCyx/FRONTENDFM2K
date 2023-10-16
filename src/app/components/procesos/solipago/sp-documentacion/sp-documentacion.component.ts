@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { concatMap } from 'rxjs/operators';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
+import { SharedService } from 'src/app/services/shared.service';
 
 
 
@@ -31,7 +32,12 @@ export class SPDocumentacionComponent implements OnInit {
   msjExito: string = '';
   msjError: string = '';
 
-  constructor(private uploadfile: UploadFileService) { }
+  constructor(private uploadfile: UploadFileService, 
+    private sharedService: SharedService) { 
+      this.sharedService.spDocumentacion$.subscribe(() =>{
+        this.deleteAllDocs();
+      });
+    }
 
   ngOnInit(): void {
     setTimeout(() => {

@@ -13,6 +13,15 @@
       </div>
     </nav>
   </div>
+  <div class=" m-2 text-center">
+    <div *ngIf="showmsj" class="alert alert-success" role="alert">
+        <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
+    </div>
+    <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+        <span><i class="bi bi-exclamation-triangle-fill">
+                {{ msjError }}</i></span>
+    </div>
+</div>
 
   <ng-container *appAuthorize="'28'">
     <div class="form-cot" *ngIf="changeview == 'crear'">
@@ -191,7 +200,7 @@
                 </td>
                 <td class="align-middle">
                   <select class="form-control" [(ngModel)]="det_presupuesto">
-                      <option value="0" selected disabled>Presupuesto</option>
+                      <option value="0" selected disabled>>presupuesto...</option>
                       <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                           {{prep.prespNombre}}</option>
                   </select>
@@ -336,7 +345,7 @@
       </div>
       <div class="d-flex row">
         <div class="col">
-          <div *ngIf="showmsj" class="alert alert-success" role="alert">
+          <!-- <div *ngIf="showmsj" class="alert alert-success" role="alert">
             <span
               ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
             >
@@ -347,7 +356,7 @@
                 {{ msjError }}</i
               ></span
             >
-          </div>
+          </div> -->
         </div>
   
         <div class="col text-end">
@@ -390,6 +399,10 @@
             <li class="nav-item">
                 <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}" (click)="selectEditAction('documentacion')">Documentación</a>
             </li>
+            <li class="nav-item" >
+              <a class="nav-link" [ngClass]="{'active': actionEdit === 'autorizacion'}"
+                  (click)="selectEditAction('autorizacion')">Autorizacion</a>
+          </li>
         </ul>
     </div>
       <!-- Fin -->
@@ -546,6 +559,10 @@
         <div *ngIf="actionEdit =='documentacion'" >
           <app-oc-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-oc-documentacion>
         </div>
+        <div *ngIf="actionEdit == 'autorizacion'">
+          <app-oc-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+              [estadoSol]="estadoSol"></app-oc-anulacion>
+      </div>
         <!-- *EDITAR dentro del tablas -->
         <div class="detalle"  *ngIf="actionEdit =='edicion'" >
           <table class="table table-striped text-center">
@@ -581,7 +598,7 @@
                 </td>
                 <td class="align-middle">
                   <select class="form-control" [(ngModel)]="det.solCotPresupuesto" [appSecureDisable]="estadoSol">
-                      <option value="" selected disabled>Presupuesto</option>
+                      <option value="" selected disabled>>presupuesto...</option>
                       <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                           {{prep.prespNombre}}</option>
                   </select>
@@ -776,7 +793,7 @@
       </div>
       <div class="d-flex row mt-2">
         <div class="col">
-          <div *ngIf="showmsj" class="alert alert-success" role="alert">
+          <!-- <div *ngIf="showmsj" class="alert alert-success" role="alert">
             <span
               ><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span
             >
@@ -787,7 +804,7 @@
                 {{ msjError }}</i
               ></span
             >
-          </div>
+          </div> -->
         </div>
         <div class="col text-end">
           <button

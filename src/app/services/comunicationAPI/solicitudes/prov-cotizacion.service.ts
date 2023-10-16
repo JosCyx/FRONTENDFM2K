@@ -3,16 +3,18 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
+import { GlobalService } from '../../global.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProvCotizacionService {
-  readonly APIUrl = "https://localhost:7086/api";
+  readonly APIUrl = this.globalService.APIUrl;
 
   constructor(
     private http: HttpClient,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private globalService: GlobalService
   ) { }
 
   private getHeadersWithAuthToken(): HttpHeaders {

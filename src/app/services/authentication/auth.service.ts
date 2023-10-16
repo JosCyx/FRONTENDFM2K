@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import jwt_decode from 'jwt-decode';
 import { Observable } from 'rxjs';
+import { GlobalService } from '../global.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,13 @@ import { Observable } from 'rxjs';
 export class AuthService {
 
   //COMUNICACION CON LA API PARA REALIZAR EL LOGIN
-  readonly APIurl = 'https://localhost:7086/api';
+  readonly APIurl = this.globalService.APIUrl;
 
-  constructor(private http: HttpClient, private cookieService: CookieService) { }
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService,
+    private globalService: GlobalService
+  ) { }
 
 
   login(user: string, pass: string) {
