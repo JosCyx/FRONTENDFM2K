@@ -1,5 +1,5 @@
-import { Component, Input, ViewChild,Injector } from '@angular/core';
-import { SolicotiComponent } from '../solicoti.component';
+import { Component, Input} from '@angular/core';
+import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'app-cot-anulacion',
@@ -12,31 +12,18 @@ export class CotAnulacionComponent {
   @Input() noSol: number = 0;
   @Input() estadoSol!: string;
 
-  @ViewChild(SolicotiComponent) solCotChild!: SolicotiComponent;
-
-  constructor(private injector: Injector) {
-    this.solCotChild = this.injector.get(SolicotiComponent);
-   }
-
-  ngOnInit(): void {
-    //console.log(this.tipoSol, this.noSol, this.estadoSol);
-    console.log(this.solCotChild);
-  }
+  constructor(private sharedService: SharedService) {}
 
   enviarCotizacion(){
-    this.solCotChild.metodo2();
-  }
-
-  metodo(){
-    console.log('metodo');
+    this.sharedService.aprobar();
   }
 
   anularCotizacion(){
-
+    this.sharedService.anular();
   }
 
   noAutorizarCotizacion(){
-
+    this.sharedService.noautorizar();
   }
 
 }

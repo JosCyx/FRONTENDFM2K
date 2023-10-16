@@ -8,6 +8,7 @@ import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/s
 import { CabeceraCotizacion } from 'src/app/models/procesos/solcotizacion/CabeceraCotizacion';
 import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/DetalleCotizacion';
 import { ParamsConfigService } from 'src/app/services/comunicationAPI/seguridad/params-config.service';
+import { SharedService } from 'src/app/services/shared.service';
 
 interface selectedProveedor {
   ruc: string,
@@ -129,7 +130,12 @@ export class CotProveedoresComponent implements OnInit {
   constructor(private provService: ProveedorService,
     private provCotService: ProvCotizacionService,
     private sendMailService: SendEmailService,
-    private paramService: ParamsConfigService) { }
+    private paramService: ParamsConfigService,
+    private sharedService: SharedService) { 
+      this.sharedService.cotProveedores$.subscribe(() =>{
+        this.RecorrerPro();
+      });
+    }
 
   ngOnInit(): void {
     this.getProvCotizacion();

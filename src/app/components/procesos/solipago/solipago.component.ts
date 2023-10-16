@@ -18,6 +18,7 @@ import { RuteoAreaService } from 'src/app/services/comunicationAPI/seguridad/rut
 import { SPDocumentacionComponent } from './sp-documentacion/sp-documentacion.component';
 import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
 import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
+import { SharedService } from 'src/app/services/shared.service';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -137,9 +138,27 @@ export class SolipagoComponent implements OnInit {
     private ruteoService: RuteoAreaService,
     private globalService: GlobalService,
     private sendMailService: SendEmailService,
-    private nivGerenciaService: NivGerenciaService
+    private nivGerenciaService: NivGerenciaService,
+    private sharedService: SharedService
+  ) { 
+    //se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
+    this.sharedService.aprobarsp$.subscribe(() => {
+      //console.log("Aprobando solicitud...");
+      this.enviarSolicitud();
+    });
 
-  ) { }
+    //se suscribe al observable de anulacion y ejecuta el codigo para anular la solicitud
+    this.sharedService.anularsp$.subscribe(() => {
+      //console.log("Anulando solicitud...");
+      this.anularSolicitud();
+    });
+
+    //se suscribe al observable de no autorizacion y ejecuta el codigo para no autorizar la solicitud
+    this.sharedService.noautorizarsp$.subscribe(() => {
+      //console.log("No autorizando solicitud...");
+      this.noAutorizar();
+    });
+  }
 
   ngOnInit(): void {
     this. areaUserCookie= this.cookieService.get('userArea');
@@ -270,6 +289,7 @@ export class SolipagoComponent implements OnInit {
   cancelar(): void {
     this.clear();
     this.ngOnInit();
+    this.sharedService.spDocumentacionChange();
     this.spDocumentacion.deleteAllDocs();
   }
   //Limpiar en modulo Editar
@@ -873,7 +893,11 @@ export class SolipagoComponent implements OnInit {
           this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
               //console.log('Estado actualizado exitosamente');
+              this.showmsj = true;
+              this.msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido enviada exitosamente.`;
               setTimeout(() => {
+                this.showmsj = false;
+                this.msjExito = '';
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
                 this.router.navigate(['allrequest']);
@@ -893,6 +917,7 @@ export class SolipagoComponent implements OnInit {
 
   // Método que consulta los niveles que tiene asignado el tipo de solicitud según el área
   nivelSolAsignado: RuteoArea[] = [];
+  nivelRuteotoAut: RuteoArea[] = [];
   async getNivelRuteoArea() {
     try {
       const response = await this.ruteoService.getRuteosByArea(this.areaSolTmp).toPromise();
@@ -904,7 +929,7 @@ export class SolipagoComponent implements OnInit {
     }
   }
 
-  ////////////////////////////////////////////////DOCUMENTACION DE CREACION DE PAGO//////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////DOCUMENTACION DE CREACION DE PAGO/////////////////////////////////////////
   showDoc: boolean = false;
   async setNoSolDocumentacion(){
     this.sharedNoSol = await this.getLastSol();
@@ -915,6 +940,105 @@ export class SolipagoComponent implements OnInit {
 
   selectCreateAction(action: string) {
     this.actionCreate = action;
+  }
+
+
+   ///////////////////////////////////////////ANULACION DE SOLICITUD///////////////////////////////////////////////////
+
+   anularSolicitud() {
+    let exito: boolean = false;
+    let exitotrk: boolean = false;
+    try {
+      this.cabPagoService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'C').subscribe(
+        (response) => {
+          //console.log('Estado actualizado exitosamente');
+          exito = true;
+        },
+        (error) => {
+          console.log('Error al actualizar el estado: ', error);
+          exito = false;
+        }
+      );
+
+      this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 9999).subscribe(
+        (response) => {
+          //console.log('Estado de tracknig actualizado exitosamente');
+          exitotrk = true;
+        },
+        (error) => {
+          console.log('Error al actualizar el estado: ', error);
+          exitotrk = false;
+        }
+      );
+      setTimeout(() => {
+
+        if (exito && exitotrk) {
+          this.showmsj = true;
+          this.msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido anulada exitosamente.`;
+          setTimeout(() => {
+            this.showmsj = false;
+            this.msjExito = '';
+            this.clear();
+            this.serviceGlobal.solView = 'crear';
+            this.router.navigate(['allrequest']);
+          }, 2500);
+        }
+      }, 500);
+
+    } catch (error) {
+      console.log('Error:', error);
+      this.showmsjerror = true;
+      this.msjError = "No se ha podido anular la solicitud, intente nuevamente.";
+      setTimeout(() => {
+        this.showmsjerror = false;
+        this.msjError = '';
+      }, 2500);
+    }
+
+  }
+  ///////////////////////////////////////////NO AUTORIZAR SOLICITUD///////////////////////////////////////////////////
+
+  async noAutorizar(){
+    await this.getNivelRuteoArea();
+    console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
+    
+
+    for(let i = 0; i < this.nivelRuteotoAut.length; i++){
+      let niv = this.nivelRuteotoAut[i];
+      if(niv.rutareaNivel == this.estadoTrkTmp){
+        let newEstado = this.nivelRuteotoAut[i-1].rutareaNivel;
+        
+        this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+          (response) => {
+            //console.log('Estado de tracknig actualizado exitosamente');
+            this.showmsj = true;
+            this.msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel anterior.`;
+
+            setTimeout(() => {
+              this.showmsj = false;
+              this.msjExito = '';
+              this.clear();
+              this.serviceGlobal.solView = 'crear';
+              this.router.navigate(['allrequest']);
+            }, 2500);
+          },
+          (error) => {
+            console.log('Error al actualizar el estado: ', error);
+            this.showmsjerror = true;
+            this.msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+
+            setTimeout(() => {
+              this.showmsjerror = false;
+              this.msjError = '';
+            }, 2500);
+          }
+        );
+        
+        //console.log("Nuevo estado: ", newEstado);
+        break;
+      }
+
+    }
   }
 
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////

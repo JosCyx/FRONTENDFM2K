@@ -45,6 +45,7 @@ import { CotAnulacionComponent } from './components/procesos/solicoti/cot-anulac
 import { OcAnulacionComponent } from './components/procesos/solioc/oc-anulacion/oc-anulacion.component';
 import { SpAnulacionComponent } from './components/procesos/solipago/sp-anulacion/sp-anulacion.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,

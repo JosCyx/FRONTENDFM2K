@@ -9,7 +9,7 @@ import { CabCotizacionService } from 'src/app/services/comunicationAPI/solicitud
 import { DetCotOCService } from 'src/app/services/comunicationAPI/solicitudes/det-cot-oc.service';
 import { ItemSectorService } from 'src/app/services/comunicationAPI/solicitudes/item-sector.service';
 
-import { Observable, map } from 'rxjs';
+import { Observable, map, forkJoin } from 'rxjs';
 import { Detalle } from 'src/app/models/procesos/Detalle';
 import { ItemSector } from 'src/app/models/procesos/ItemSector';
 import { GlobalService } from 'src/app/services/global.service';
@@ -27,6 +27,8 @@ import { CotProveedoresComponent } from './cot-proveedores/cot-proveedores.compo
 import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
 import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
 import { CotAnulacionComponent } from './cot-anulacion/cot-anulacion.component';
+import { SharedService } from 'src/app/services/shared.service';
+import { ex } from '@fullcalendar/core/internal-common';
 
 
 interface RuteoArea {
@@ -171,10 +173,29 @@ export class SolicotiComponent implements OnInit {
     private ruteoService: RuteoAreaService,
     private prespService: PresupuestoService,
     private nivGerenciaService: NivGerenciaService,
-    private sendMailService: SendEmailService) { }
+    private sendMailService: SendEmailService,
+    private sharedService: SharedService) {
+    //se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
+    this.sharedService.aprobar$.subscribe(() => {
+      //console.log("Aprobando solicitud...");
+      this.enviarSolicitud();
+    });
+
+    //se suscribe al observable de anulacion y ejecuta el codigo para anular la solicitud
+    this.sharedService.anular$.subscribe(() => {
+      //console.log("Anulando solicitud...");
+      this.anularSolicitud();
+    });
+
+    //se suscribe al observable de no autorizacion y ejecuta el codigo para no autorizar la solicitud
+    this.sharedService.noautorizar$.subscribe(() => {
+      //console.log("No autorizando solicitud...");
+      this.noAutorizar();
+    });
+  }
 
   ngOnInit(): void {
-    this. areaUserCookie= this.cookieService.get('userArea');
+    this.areaUserCookie = this.cookieService.get('userArea');
     this.empService.getEmpleadosList().subscribe((data) => {
       this.empleadosEdit = data;
     });
@@ -198,11 +219,11 @@ export class SolicotiComponent implements OnInit {
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
     );
 
-    this.prespService.getPresupuestos().subscribe((data : any) => {
+    this.prespService.getPresupuestos().subscribe((data: any) => {
       this.presupuestos = data;
     });
 
-    this.nivGerenciaService.getNivGerencias().subscribe((data : any) => {
+    this.nivGerenciaService.getNivGerencias().subscribe((data: any) => {
       this.nivGerencias = data;
     });
 
@@ -327,9 +348,12 @@ export class SolicotiComponent implements OnInit {
     this.clear();
     this.ngOnInit();
     try {
+      this.sharedService.cotDocumentacionChange();
+      this.sharedService.cotProveedoresChange();
+      /*
       this.cotProveedores.RecorrerPro();
-      this.cotDocumentacion.deleteAllDocs();
-      
+      this.cotDocumentacion.deleteAllDocs();*/
+
     } catch (error) {
       console.log("Error al cancelar: ", error);
     }
@@ -371,8 +395,8 @@ export class SolicotiComponent implements OnInit {
   }
 
   showDoc: boolean = false;
-  async setNoSolDocumentacion(){
-     await this.setNoSol();
+  async setNoSolDocumentacion() {
+    await this.setNoSol();
     this.showDoc = this.showDoc ? false : true;
 
   }
@@ -628,11 +652,11 @@ export class SolicotiComponent implements OnInit {
     }
 
     this.detalleList.push(detalle);
-    this.sharedDetalle=this.detalleList;
-    this.cabSolCotAsunto=this.cab_asunto;
+    this.sharedDetalle = this.detalleList;
+    this.cabSolCotAsunto = this.cab_asunto;
     console.log("Detalles:", this.detalleList);
-    console.log("est es shared detalle",this.sharedDetalle);
-    console.log("este es el asunto",this.cabSolCotAsunto);
+    console.log("est es shared detalle", this.sharedDetalle);
+    console.log("este es el asunto", this.cabSolCotAsunto);
     //aumenta el valor del id de detalle
     this.incrementDetID();
 
@@ -849,7 +873,7 @@ export class SolicotiComponent implements OnInit {
   async saveData() {
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
     this.cabecera = this.solicitudEdit.cabecera;
-    this.cabSolCotAsunto=this.cabecera.cabSolCotAsunto;//envia la cabecera al componente de proveedores
+    this.cabSolCotAsunto = this.cabecera.cabSolCotAsunto;//envia la cabecera al componente de proveedores
     this.sharedTipoSol = this.cabecera.cabSolCotTipoSolicitud;
     this.sharedNoSol = this.cabecera.cabSolCotNoSolicitud;
     this.checkAprobPrep(this.cabecera.cabSolCotEstadoTracking);
@@ -1315,8 +1339,8 @@ export class SolicotiComponent implements OnInit {
   guardarEnviarSolEditada() {
     try {
       this.saveEdit();
-      this.enviarSolicitud(); 
-      this.sendNotify();     
+      this.enviarSolicitud();
+      this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
       this.showmsjerror = true;
@@ -1327,10 +1351,6 @@ export class SolicotiComponent implements OnInit {
         this.msjError = "";
       }, 2500);
     }
-  }
-
-  metodo2(){
-    console.log("metodo");
   }
 
   noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui
@@ -1398,7 +1418,11 @@ export class SolicotiComponent implements OnInit {
           this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
               //console.log('Estado actualizado exitosamente');
+              this.showmsj = true;
+              this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido enviada exitosamente.`;
               setTimeout(() => {
+                this.showmsj = false;
+                this.msjExito = '';
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
                 this.router.navigate(['allrequest']);
@@ -1418,16 +1442,116 @@ export class SolicotiComponent implements OnInit {
 
   // Método que consulta los niveles que tiene asignado el tipo de solicitud según el área
   nivelSolAsignado: RuteoArea[] = [];
+  nivelRuteotoAut: RuteoArea[] = [];
   async getNivelRuteoArea() {
     try {
       const response = await this.ruteoService.getRuteosByArea(this.areaSolTmp).toPromise();
       this.nivelSolAsignado = response.filter((res: any) => res.rutareaTipoSol == this.trTipoSolicitud);
       this.nivelSolAsignado.sort((a, b) => a.rutareaNivel - b.rutareaNivel);
+      this.nivelRuteotoAut = this.nivelSolAsignado;
       //console.log('Niveles de ruteo asignados: ', this.nivelSolAsignado);
     } catch (error) {
       throw error;
     }
   }
+  ///////////////////////////////////////////ANULACION DE SOLICITUD///////////////////////////////////////////////////
+
+  anularSolicitud() {
+    let exito: boolean = false;
+    let exitotrk: boolean = false;
+    try {
+      this.cabCotService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'C').subscribe(
+        (response) => {
+          //console.log('Estado actualizado exitosamente');
+          exito = true;
+        },
+        (error) => {
+          console.log('Error al actualizar el estado: ', error);
+          exito = false;
+        }
+      );
+
+      this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 9999).subscribe(
+        (response) => {
+          //console.log('Estado de tracknig actualizado exitosamente');
+          exitotrk = true;
+        },
+        (error) => {
+          console.log('Error al actualizar el estado: ', error);
+          exitotrk = false;
+        }
+      );
+      setTimeout(() => {
+
+        if (exito && exitotrk) {
+          this.showmsj = true;
+          this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido anulada exitosamente.`;
+          setTimeout(() => {
+            this.showmsj = false;
+            this.msjExito = '';
+            this.clear();
+            this.serviceGlobal.solView = 'crear';
+            this.router.navigate(['allrequest']);
+          }, 2500);
+        }
+      }, 1000);
+
+    } catch (error) {
+      console.log('Error:', error);
+      this.showmsjerror = true;
+      this.msjError = "No se ha podido anular la solicitud, intente nuevamente.";
+      setTimeout(() => {
+        this.showmsjerror = false;
+        this.msjError = '';
+      }, 2500);
+    }
+
+  }
+  ///////////////////////////////////////////NO AUTORIZAR SOLICITUD///////////////////////////////////////////////////
+
+  async noAutorizar(){
+    await this.getNivelRuteoArea();
+    console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
+    
+
+    for(let i = 0; i < this.nivelRuteotoAut.length; i++){
+      let niv = this.nivelRuteotoAut[i];
+      if(niv.rutareaNivel == this.estadoTrkTmp){
+        let newEstado = this.nivelRuteotoAut[i-1].rutareaNivel;
+        
+        this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+          (response) => {
+            //console.log('Estado de tracknig actualizado exitosamente');
+            this.showmsj = true;
+            this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel anterior.`;
+
+            setTimeout(() => {
+              this.showmsj = false;
+              this.msjExito = '';
+              this.clear();
+              this.serviceGlobal.solView = 'crear';
+              this.router.navigate(['allrequest']);
+            }, 2500);
+          },
+          (error) => {
+            console.log('Error al actualizar el estado: ', error);
+            this.showmsjerror = true;
+            this.msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+
+            setTimeout(() => {
+              this.showmsjerror = false;
+              this.msjError = '';
+            }, 2500);
+          }
+        );
+        
+        //console.log("Nuevo estado: ", newEstado);
+        break;
+      }
+
+    }
+  }
+
 
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
   mailToNotify: string = '';
@@ -1435,7 +1559,7 @@ export class SolicotiComponent implements OnInit {
   Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo. Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>
   Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
 
-  sendNotify(){
+  sendNotify() {
 
     setTimeout(() => {
       const data = {
@@ -1443,24 +1567,24 @@ export class SolicotiComponent implements OnInit {
         asunto: 'Nueva Solicitud Recibida - Acción Requerida',
         contenido: this.emailContent
       }
-  
+
       this.sendMailService.sendMailtoProv(data).subscribe(
         response => {
           console.log("Exito, correo enviado");
           // this.showmsj = true;
           // this.msjExito = `Correos enviados exitosamente.`;
-  
+
           // setTimeout(() => {
           //   this.showmsj = false;
           //   this.msjExito = '';
           // }, 4000)
-  
+
         },
         error => {
           console.log(`Error, no se ha podido enviar el correo al proveedor.`, error)
           this.showmsjerror = true;
           this.msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
-  
+
           setTimeout(() => {
             this.showmsjerror = false;
             this.msjError = '';
@@ -1468,8 +1592,8 @@ export class SolicotiComponent implements OnInit {
         }
       );
     }, 1000);
-    
-    
+
+
   }
 
 }
