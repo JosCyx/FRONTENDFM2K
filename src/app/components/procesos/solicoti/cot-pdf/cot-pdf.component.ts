@@ -1,31 +1,94 @@
-import { Component,Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { map } from 'rxjs';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
+import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
+import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
 import { CabCotizacionService } from 'src/app/services/comunicationAPI/solicitudes/cab-cotizacion.service';
 import { GlobalService } from 'src/app/services/global.service';
+import { ca, da } from 'date-fns/locale';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
+interface SolicitudData {
+  cabecera: any;
+  detalles: any[];
+  items: any;
+}
 @Component({
   selector: 'app-cot-pdf',
   templateUrl: './cot-pdf.component.html',
-  styleUrls: ['./cot-pdf.component.css']
+  styleUrls: ['./cot-pdf.component.css'],
 })
 export class CotPdfComponent implements OnInit {
   //variables
-  @Input() tipoSol:number=0;
-  @Input() noSol:number=0;
+  @Input() tipoSol: number = 0;
+  @Input() noSol: number = 0;
   CabCotiza: string = 'SOLICITUD DE COTIZACIONES';
-  //global 
+  //global
   solID: number = this.serviceGlobal.solID;
-  constructor(private service:CabCotizacionService,private serviceGlobal: GlobalService,
-    ) { }
+  //guardar array de datos
+  empleadosEdit: any[] = [];
+  area: any[] = [];
+  NivelRuta: any[] = [];
+  emptyObjects: any = [
+    {
+      text: '',
+    },
+    {
+      text: '',
+    },
+    {
+      text: '',
+    },
+    {
+      text: '',
+    },
+    {
+      text: '',
+    },
+    {
+      text: '',
+    },
+  ];
+  datosMapeados!: any[];
+  //variables
+  empleados: string = '';
+  areas: string = '';
+  nivelRuta: string = '';
+  //varuables
+  datosCabcot!: SolicitudData;
+  constructor(
+    private serviceCabCo: CabCotizacionService,
+    private serviceGlobal: GlobalService,
+    private empService: EmpleadosService,
+    private areaService: AreasService,
+    private nivRuteService: NivelRuteoService
+  ) {}
   ngOnInit(): void {
+    this.empService.getEmpleadosList().subscribe((data) => {
+      this.empleadosEdit = data;
+    });
+    this.areaService.getAreaList().subscribe((data) => {
+      this.area = data;
+    });
+    this.nivRuteService
+      .getNivelbyEstado('A')
+      .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)))
+      .subscribe((data) => {
+        this.NivelRuta = data;
+      });
   }
 
-imprimir(){
-  console.log(this.solID);
-}
-  clickpdf(){
+  clickpdf() {
+    this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
+      next: (res) => {
+        this.datosCabcot = res;
+      },
+      error: (err) => {
+        console.error('este es mi error ', err);
+      },
+    });
     const dd: any = {
       content: [
         {
@@ -49,27 +112,33 @@ imprimir(){
             body: [
               [
                 { text: 'FECHA:' },
-                { text: 'miercoles, 14 de junio  de 2023' },
+                {
+                  text: this.formatDateToSpanish(
+                    new Date(this.datosCabcot.cabecera.cabSolCotFecha)
+                  ),
+                },
                 { text: 'SOLICITADO POR :' },
-                { text: 'Ing.Kevin Recalde', colSpan: 2 },
+                { text: this.empleados, colSpan: 2 },
                 {},
               ],
               [
-                { text: 'SECTOR:' },
-                { text: 'Departamento de sistemas' },
-                { text: 'ACTIVIDAD:' },
-                { text: '', colSpan: 2 },
+                { text: 'AREA:' },
+                { text: this.areas },
+                { text: 'ESTADO:' },
+                { text: this.estadoTexto(), colSpan: 2 },
                 '',
               ],
-              [{ text: 'SUBACTIVIDADES:' },
-              { text: '', colSpan: 4 },
-              '',
-              '',
-              '',],
+              [
+                { text: 'APROBADO POR :' },
+                { text: '' },
+                { text: 'TRACKING' },
+                { text: this.nivelRuta, colSpan: 2 },
+                '',
+              ],
               [
                 { text: 'ASUNTO' },
                 {
-                  text: 'Compra de Baterias para oficinas de programa educativo',
+                  text: this.datosCabcot.cabecera.cabSolCotAsunto,
                   colSpan: 4,
                 },
               ],
@@ -98,7 +167,8 @@ imprimir(){
                 },
                 '',
               ],
-              [{}, {}, {}, {}, { text: '', colSpan: 2 }, ''],
+               [{text:this.retornar()}, {}, {}, {}, { text: '', colSpan: 2 }, ''],
+              ,
               [
                 {
                   text: 'MATERIALES Y PROCEDIMIENTO A SEGUIR:',
@@ -216,7 +286,114 @@ imprimir(){
     };
     const pdf = pdfMake.createPdf(dd);
     pdf.open();
-
   }
+  //Metodos
+  formatDateToSpanish(date: Date): string {
+    const daysOfWeek = [
+      'Domingo',
+      'Lunes',
+      'Martes',
+      'Miércoles',
+      'Jueves',
+      'Viernes',
+      'Sábado',
+    ];
+    const months = [
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre',
+    ];
 
+    const dayOfWeek = daysOfWeek[date.getDay()];
+    const dayOfMonth = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+
+    return `${dayOfWeek}, ${dayOfMonth} de ${month} de ${year}`;
+  }
+  formatDateToYYYYMMDD(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  }
+  imprimir() {
+    console.log(this.solID);
+    this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
+      next: (res) => {
+        console.log('data', res);
+        this.datosCabcot = res;
+        this.traerEmpleado();
+        this.TraerArea();
+        this.EstadoTracking();
+      },
+      error: (err) => {
+        console.error('este es mi error ', err);
+      },
+    });
+    //empleados
+  }
+  traerEmpleado() {
+    for (let emp of this.empleadosEdit) {
+      if (
+        emp.empleadoIdNomina == this.datosCabcot.cabecera.cabSolCotSolicitante
+      ) {
+        this.empleados = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
+        console.log('CAMVBIOSD ', this.empleados);
+      }
+    }
+  }
+  TraerArea() {
+    for (const listArea of this.area) {
+      if (listArea.areaIdNomina == this.datosCabcot.cabecera.cabSolCotArea) {
+        this.areas = listArea.areaDecp;
+      }
+    }
+  }
+  estadoTexto(): string {
+    switch (this.datosCabcot.cabecera.cabSolCotEstado) {
+      case 'A':
+        return 'Activo';
+      case 'F':
+        return 'Finalizado';
+      case 'C':
+        return 'Anulado';
+      default:
+        return ''; // Manejo por defecto si el valor no es A, F o C
+    }
+  }
+  EstadoTracking() {
+    for (const NvTrk of this.NivelRuta) {
+      if (NvTrk.nivel === this.datosCabcot.cabecera.cabSolCotEstadoTracking) {
+        this.nivelRuta = NvTrk.descRuteo;
+      }
+    }
+  }
+  retornar() {
+    this.datosMapeados = this.datosCabcot.items.map((element: any,index:any) => {
+      console.log('elemesntos sfsdf', element);
+      const { itmCantidad, itmID, itmIdDetalle, itmIdItem, itmNumSol, itmSector } = element;
+      return {
+        text: `itmCantidad: ${itmCantidad}, itmID: ${itmID}, itmIdDetalle: ${itmIdDetalle}, itmIdItem: ${itmIdItem}, itmNumSol: ${itmNumSol}, itmSector: ${itmSector}`
+      };
+    });
+    console.log("cffdfd",this.emptyObjects)
+    for (const iterator of this.datosMapeados) {
+      console.log('este es midfdf isdfdsndexsdfsddsf', iterator);
+    }
+    // for (let index = 0; index < this.datosMapeados.length; index++) {
+    //   console.log('este es midfdf index', this.datosMapeados);
+    // }
+    // return cantidad;
+  }
 }
