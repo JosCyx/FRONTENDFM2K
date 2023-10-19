@@ -8,11 +8,15 @@ import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/ni
 import { CabCotizacionService } from 'src/app/services/comunicationAPI/solicitudes/cab-cotizacion.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { ca, da } from 'date-fns/locale';
+import { format, parseISO } from 'date-fns';
+import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
+import { C } from '@fullcalendar/core/internal-common';
+import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
 interface SolicitudData {
   cabecera: any;
-  detalles: any[];
+  detalles: any;
   items: any;
 }
 @Component({
@@ -29,31 +33,19 @@ export class CotPdfComponent implements OnInit {
   solID: number = this.serviceGlobal.solID;
   //guardar array de datos
   empleadosEdit: any[] = [];
+  inspectoresEdit: any[] = [];
   area: any[] = [];
   NivelRuta: any[] = [];
-  emptyObjects: any = [
-    {
-      text: '',
-    },
-    {
-      text: '',
-    },
-    {
-      text: '',
-    },
-    {
-      text: '',
-    },
-    {
-      text: '',
-    },
-    {
-      text: '',
-    },
-  ];
-  datosMapeados!: any[];
+  combinarObJ: any = [];
+  combinarSecto: any = [];
+  datosMapeados: any[] = [];
+  nuevoArray: any[] = [];
+  sectores: any[] = [];
   //variables
   empleados: string = '';
+  inpectores: string = '';
+  presupues: any[] = [];
+
   areas: string = '';
   nivelRuta: string = '';
   //varuables
@@ -63,7 +55,9 @@ export class CotPdfComponent implements OnInit {
     private serviceGlobal: GlobalService,
     private empService: EmpleadosService,
     private areaService: AreasService,
-    private nivRuteService: NivelRuteoService
+    private nivRuteService: NivelRuteoService,
+    private prespService: PresupuestoService,
+    private sectService: SectoresService,
   ) {}
   ngOnInit(): void {
     this.empService.getEmpleadosList().subscribe((data) => {
@@ -78,12 +72,35 @@ export class CotPdfComponent implements OnInit {
       .subscribe((data) => {
         this.NivelRuta = data;
       });
+    this.empService.getEmpleadobyArea(12).subscribe({
+      next: (res) => {
+        this.inspectoresEdit = res;
+      },
+    });
+    this.prespService.getPresupuestos().subscribe({
+      next: (respuestas: any) => {
+        this.presupues = respuestas;
+      },
+    });
+    this.sectService.getSectoresList().pipe(map(sector=>sector.sort((a,b)=>a.sectNombre.localeCompare(b.sectNombre)))).subscribe({
+      next: (respuestas: any) => {
+        this.sectores = respuestas;
+        console.log(this.sectores);
+      }
+    });
   }
 
   clickpdf() {
     this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
       next: (res) => {
         this.datosCabcot = res;
+        console.log('eto son cambios', this.datosCabcot);
+        this.traerEmpleado();
+        this.TraerArea();
+        this.EstadoTracking();
+        this.BuscarInpector();
+        this.retornar();
+        this.retornarSub();
       },
       error: (err) => {
         console.error('este es mi error ', err);
@@ -104,39 +121,51 @@ export class CotPdfComponent implements OnInit {
           style: 'subheader',
           margin: [0, 10, 0, 30],
         },
-        { text: 'No.IT 00220', alignment: 'right', margin: [0, 0, 10, 5] },
+        {
+          text: this.datosCabcot.cabecera.cabSolCotNumerico,
+          alignment: 'right',
+          margin: [0, 0, 10, 5],
+        },
         {
           fontSize: 10,
           table: {
-            widths: [85, 200, 100, 50, 30],
+            widths: [90, 160, 60, 70, 85],
             body: [
               [
-                { text: 'FECHA:' },
+                { text: 'FECHA:', style: 'tableHeader' },
                 {
                   text: this.formatDateToSpanish(
                     new Date(this.datosCabcot.cabecera.cabSolCotFecha)
                   ),
                 },
-                { text: 'SOLICITADO POR :' },
-                { text: this.empleados, colSpan: 2 },
+                { text: 'AREA:', style: 'tableHeader' },
+                { text: this.areas, colSpan: 2 },
+
                 {},
               ],
               [
-                { text: 'AREA:' },
-                { text: this.areas },
-                { text: 'ESTADO:' },
+                { text: 'SOLICITADO POR :', style: 'tableHeader' },
+                { text: this.empleados, colSpan: 4 },
+                '',
+                '',
+                '',
+              ],
+              [
+                { text: 'APROBADO POR :', style: 'tableHeader' },
+                { text: '' },
+                { text: 'ESTADO:', style: 'tableHeader' },
                 { text: this.estadoTexto(), colSpan: 2 },
                 '',
               ],
               [
-                { text: 'APROBADO POR :' },
+                { text: 'FINANCIERO :', style: 'tableHeader' },
                 { text: '' },
-                { text: 'TRACKING' },
+                { text: 'TRACKING', style: 'tableHeader' },
                 { text: this.nivelRuta, colSpan: 2 },
                 '',
               ],
               [
-                { text: 'ASUNTO' },
+                { text: 'ASUNTO', style: 'tableHeader' },
                 {
                   text: this.datosCabcot.cabecera.cabSolCotAsunto,
                   colSpan: 4,
@@ -146,7 +175,7 @@ export class CotPdfComponent implements OnInit {
           },
         },
         {
-          margin: [0, 5],
+          margin: [0, 5, 0, 0],
           fontSize: 10,
           table: {
             widths: [30, 200, 70, 50, 50, 56],
@@ -154,21 +183,20 @@ export class CotPdfComponent implements OnInit {
               [
                 { text: 'ITEM', style: 'tableHeader' },
                 {
-                  text: 'DESCRIPCION DEL TRABAJO:(ESPECIFICACIONES)',
+                  text: 'DESCRIPCION',
                   style: 'tableHeader',
                 },
-                { text: 'PRESUPUESTO', style: 'tableHeader' },
+                { text: 'PRESUPUESTO', style: 'tableHeader', colSpan: 2 },
+                '',
                 { text: 'UNIDAD', style: 'tableHeader' },
                 {
                   text: 'CANTIDAD',
                   style: 'tableHeader',
-                  colSpan: 2,
                   alignment: 'center',
                 },
-                '',
               ],
-               [{text:this.retornar()}, {}, {}, {}, { text: '', colSpan: 2 }, ''],
-              ,
+              //  [{}, {}, {}, {}, { text: '', colSpan: 2 }, ''],
+              ...this.combinarObJ,
               [
                 {
                   text: 'MATERIALES Y PROCEDIMIENTO A SEGUIR:',
@@ -192,7 +220,7 @@ export class CotPdfComponent implements OnInit {
               [
                 { text: '1' },
                 {
-                  text: 'Compra de Baterias para UPS S de respaldo de energia en oficina de programacion educativo ',
+                  text: this.datosCabcot.cabecera.cabSolCotProcedimiento,
                   colSpan: 5,
                 },
                 '',
@@ -200,8 +228,6 @@ export class CotPdfComponent implements OnInit {
                 '',
                 '',
               ],
-              [{ text: '2' }, { text: '', colSpan: 5 }, '', '', '', ''],
-              [{ text: '3' }, { text: '', colSpan: 5 }, '', '', '', ''],
               [
                 { text: 'OBSERVACIONES', style: 'textos', colSpan: 6 },
                 '',
@@ -210,15 +236,28 @@ export class CotPdfComponent implements OnInit {
                 '',
                 '',
               ],
-              [{ text: '1' }, { text: '', colSpan: 5 }, '', '', '', ''],
-              [{ text: '2' }, { text: '', colSpan: 5 }, '', '', '', ''],
+              [
+                { text: '1' },
+                {
+                  text: this.datosCabcot.cabecera.cabSolCotObervaciones,
+                  colSpan: 5,
+                },
+                '',
+                '',
+                '',
+                '',
+              ],
               [
                 { text: 'ADJUNTO COTIZACIONES:', style: 'textos', colSpan: 2 },
                 '',
-                { text: 'SI' },
-                { text: 'NO:X' },
-                { text: 'CUANTAS:' },
+                { text: this.datosCabcot.cabecera.cabSolCotAdjCot },
+                {
+                  text: 'NUMERO DE COTIZACIONES:',
+                  colSpan: 2,
+                  style: 'textos',
+                },
                 '',
+                { text: this.datosCabcot.cabecera.cabSolCotNumCotizacion },
               ],
             ],
           },
@@ -227,21 +266,27 @@ export class CotPdfComponent implements OnInit {
           margin: [0, 10, 0, 0],
           fontSize: 10,
           table: {
-            widths: [200, 100, 183],
+            widths: [150, 87, 150, 87],
             body: [
               [
-                { text: 'PLAZO PARA ENTREGA DE OFERTAS' },
-                { text: '', colSpan: 1 },
+                { text: 'PLAZO DE ENTREGA:', style: 'textos' },
                 {
-                  text: '___DIA ___MES___ANO',
+                  text: (this.datosCabcot.cabecera.cabSolCotPlazoEntrega =
+                    format(
+                      parseISO(this.datosCabcot.cabecera.cabSolCotPlazoEntrega),
+                      'yyyy-MM-dd'
+                    )),
                   alignment: 'center',
                 },
-              ],
-              [
-                { text: 'FECHA MAXIMA ENTREGA DE TRABAJOS:' },
-                { text: '', colSpan: 1 },
+                { text: 'FECHA MAXIMA DE ENTREGA:', style: 'textos' },
                 {
-                  text: '___DIA ___MES___ANO',
+                  text: (this.datosCabcot.cabecera.cabSolCotFechaMaxentrega =
+                    format(
+                      parseISO(
+                        this.datosCabcot.cabecera.cabSolCotFechaMaxentrega
+                      ),
+                      'yyyy-MM-dd'
+                    )),
                   alignment: 'center',
                 },
               ],
@@ -252,15 +297,30 @@ export class CotPdfComponent implements OnInit {
           margin: [0, 5],
           fontSize: 10,
           table: {
-            widths: [200, 100, 60, 115],
+            widths: [100, 200, 87, 87],
             body: [
               [
-                { text: 'COORDINAR INSPECCION EN SITIO CON:', style: 'footer' },
-                '',
-                '',
-                '',
+                { text: 'INSPECTOR:', style: 'footer' },
+                { text: this.inpectores },
+                { text: 'TELEFONO:', style: 'footer' },
+                { text: this.datosCabcot.cabecera.cabSolCotTelefInspector },
               ],
-              ['INSPECCION REALIZADA:', '', { text: 'TELEFONO:' }, ''],
+            ],
+          },
+        },
+        {
+          text: 'Desglose de Sectores',
+          pageBreak: 'before',
+        },
+        {
+          table: {
+            body: [
+              [
+                { text: 'DESCRIPCION', bold: true },
+                { text: 'CANTIDAD', bold: true },
+                { text: 'SECTOR', bold: true },
+              ],
+              ...this.combinarSecto
             ],
           },
         },
@@ -285,7 +345,7 @@ export class CotPdfComponent implements OnInit {
       },
     };
     const pdf = pdfMake.createPdf(dd);
-    pdf.open();
+    pdf.download();
   }
   //Metodos
   formatDateToSpanish(date: Date): string {
@@ -327,22 +387,6 @@ export class CotPdfComponent implements OnInit {
 
     return `${year}-${month}-${day}`;
   }
-  imprimir() {
-    console.log(this.solID);
-    this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
-      next: (res) => {
-        console.log('data', res);
-        this.datosCabcot = res;
-        this.traerEmpleado();
-        this.TraerArea();
-        this.EstadoTracking();
-      },
-      error: (err) => {
-        console.error('este es mi error ', err);
-      },
-    });
-    //empleados
-  }
   traerEmpleado() {
     for (let emp of this.empleadosEdit) {
       if (
@@ -380,20 +424,86 @@ export class CotPdfComponent implements OnInit {
     }
   }
   retornar() {
-    this.datosMapeados = this.datosCabcot.items.map((element: any,index:any) => {
-      console.log('elemesntos sfsdf', element);
-      const { itmCantidad, itmID, itmIdDetalle, itmIdItem, itmNumSol, itmSector } = element;
+    const detalles = this.datosCabcot.detalles;
+    console.log('detalles', detalles);
+    this.datosMapeados = detalles.map((index: any) => {
       return {
-        text: `itmCantidad: ${itmCantidad}, itmID: ${itmID}, itmIdDetalle: ${itmIdDetalle}, itmIdItem: ${itmIdItem}, itmNumSol: ${itmNumSol}, itmSector: ${itmSector}`
+        solCotIdDetalle: index.solCotIdDetalle,
+        solCotDescripcion: index.solCotDescripcion,
+        solCotPresupuesto: index.solCotPresupuesto,
+        solCotUnidad: index.solCotUnidad,
+        solCotCantidadTotal: index.solCotCantidadTotal,
       };
     });
-    console.log("cffdfd",this.emptyObjects)
-    for (const iterator of this.datosMapeados) {
-      console.log('este es midfdf isdfdsndexsdfsddsf', iterator);
+    console.log('datos mapeados', this.datosMapeados);
+    for (let index = 0; index < this.datosMapeados.length; index++) {
+      let presuM = '';
+      for (const iterator of this.presupues) {
+        if (iterator.prespId == this.datosMapeados[index].solCotPresupuesto) {
+          presuM = iterator.prespNombre;
+        }
+      }
+      const {
+        solCotIdDetalle,
+        solCotDescripcion,
+        solCotUnidad,
+        solCotCantidadTotal,
+      } = this.datosMapeados[index];
+
+      const a = [
+        { text: solCotIdDetalle, alignment: 'center' },
+        { text: solCotDescripcion, alignment: 'left' },
+        { text: presuM, alignment: 'right', colSpan: 2 },
+        { text: '', alignment: 'center' },
+        { text: solCotUnidad, alignment: 'center' },
+        { text: solCotCantidadTotal, alignment: 'center' },
+      ];
+      this.combinarObJ.push(a);
     }
-    // for (let index = 0; index < this.datosMapeados.length; index++) {
-    //   console.log('este es midfdf index', this.datosMapeados);
-    // }
-    // return cantidad;
+  }
+  retornarSub() {
+      const item = this.datosCabcot.items;
+      console.log('DAME ESTA VARIABLE', item);
+      let arraysector=item.map((index:any)=>{
+        return{
+          itmIdDetalle:index.itmIdDetalle,
+          itmSector:index.itmSector,
+          itmCantidad:index.itmCantidad,
+
+        }
+      })
+      console.log("este es map de sub ",arraysector)
+      for(let index=0; index< arraysector.length; index++){
+        let descripcion='';
+        for (const iterator of this.datosMapeados) {
+          if(iterator.solCotIdDetalle==arraysector[index].itmIdDetalle){
+            descripcion=iterator.solCotDescripcion;
+          }
+        }
+        let sector='';
+        for (const iterator of this.sectores) {
+          if (iterator.sectIdNomina == arraysector[index].itmSector ) {
+            sector = iterator.sectNombre;
+          }
+        }
+        const {itmCantidad}=arraysector[index];
+        const a=[
+          {text:descripcion,alignment:'center'},
+          {text:itmCantidad,alignment:'center'},
+          {text:sector,alignment:'left'},
+        ]
+        this.combinarSecto.push(a);
+      }
+  }
+  BuscarInpector() {
+    for (const iterator of this.inspectoresEdit) {
+      if (
+        iterator.empleadoIdNomina ==
+        this.datosCabcot.cabecera.cabSolCotInspector
+      ) {
+        this.inpectores =
+          iterator.empleadoNombres + '' + iterator.empleadoApellidos;
+      }
+    }
   }
 }
