@@ -20,6 +20,8 @@ export class CabeceraOrdenCompra {
   public cabSolOCProveedor:string
   public cabSolOCRUCProveedor:string;
   public cabSolOCIdEmisor: number;
+  public cabSolOCApprovedBy: number;
+  public cabSolOCFinancieroBy:number;
 
   constructor(data: any) {
     this.cabSolOCTipoSolicitud = data.cabSolOCTipoSolicitud;
@@ -43,5 +45,7 @@ export class CabeceraOrdenCompra {
     this.cabSolOCProveedor=data.cabSolOCProveedor;
     this.cabSolOCRUCProveedor=data.cabSolOCRUCProveedor;
     this.cabSolOCIdEmisor = data.cabSolOCIdEmisor;
+    this.cabSolOCApprovedBy = data.cabSolOCApprovedBy;
+    this.cabSolOCFinancieroBy=data.cabSolOCFinancieroBy;
   }
 }

@@ -490,6 +490,29 @@
             </div>
             <!--  -->
           </div>
+          <!--  -->
+          <div class="row">
+            <div class="input-group col mb-1">
+              <label class="input-group-text">Aprobado por:</label>
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Ingrese el numero Factura"
+                [(ngModel)]="cabecera.cabPagoApprovedBy"
+                disabled
+              />
+            </div>
+            <div class="input-group col mb-1">
+              <label class="input-group-text">Financiero:</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="cabecera.cabPagoFinancieroBy"
+                disabled
+              />
+            </div>
+          </div>
+          <!--  -->
           <div class="row">
             <div class="input-group col mb-1">
               <label class="input-group-text">No factura:</label>

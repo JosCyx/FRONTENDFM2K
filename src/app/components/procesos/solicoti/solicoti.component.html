@@ -310,8 +310,8 @@
                     <div class="row mb-1">
                         <div class="input-group col">
                             <label class="input-group-text">Aprobado por:</label>
-                            <input type="text" class="form-control mr-3" [(ngModel)]="cabecera.cabSolCotApprovedBy"
-                                [appSecureDisable]="estadoSol" />
+                            <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotApprovedBy"
+                            disabled />
                         </div>
                         <div class="input-group col">
                             <label class="input-group-text">Estado:</label>
@@ -335,10 +335,10 @@
                     <div class="row mb-1">
                         <div class="input-group col">
                             <label class="input-group-text">Financiero:</label>
-                            <input type="text" class="form-control mr-3" [(ngModel)]="cabecera.cabSolCotFinancieroBy"
-                                [appSecureDisable]="estadoSol" />
+                            <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotFinancieroBy"
+                                disabled />
                         </div>
-                        <div class="input-group col std">
+                        <div class="input-group col">
                             <label class="input-group-text">Tracking:</label>
                             <ng-container *ngFor="let nvTRk of nivelRut$ | async">
                                 <input *ngIf="nvTRk.nivel === cabecera.cabSolCotEstadoTracking" type="text"
@@ -363,7 +363,7 @@
                     <div class="row mb-1">
                         <div class="input-group col">
                             <label class="input-group-text">Asunto:</label>
-                            <input type="text" class="form-control mr-3" [(ngModel)]="cabecera.cabSolCotAsunto"
+                            <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotAsunto"
                                 [appSecureDisable]="estadoSol" />
                         </div>
                     </div>

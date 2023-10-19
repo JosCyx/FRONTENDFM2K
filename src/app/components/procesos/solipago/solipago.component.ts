@@ -427,7 +427,9 @@ export class SolipagoComponent implements OnInit {
       cabPagoCancelacionOrden: this.cab_cancelarOrden,
       cabPagoEstado: this.cab_estado,
       cabPagoEstadoTrack: this.trNivelEmision,
-      cabPagoIdEmisor: this.cookieService.get('userIdNomina')
+      cabPagoIdEmisor: Number(this.cookieService.get('userIdNomina')),
+      cabPagoApprovedBy: 0,
+      cabPagoFinancieroBy: 0
     };
 
     //enviar datos de cabecera a la API
@@ -673,8 +675,11 @@ export class SolipagoComponent implements OnInit {
       cabPagoCancelacionOrden: this.cabecera.cabPagoCancelacionOrden,
       cabPagoEstado: this.cabecera.cabPagoEstado,
       cabPagoEstadoTrack: this.cabecera.cabPagoEstadoTrack,
-      cabPagoIdEmisor: this.cookieService.get('userIdNomina')
+      cabPagoIdEmisor: Number(this.cookieService.get('userIdNomina')),
+      cabPagoApprovedBy: this.aprobadopor,
+      cabPagoFinancieroBy: this.financieropor
     };
+    
     console.log('esta guardo editada de cabecera solicitud ', dataCAB);
     this.cabPagoService
       .updatecabPago(this.cabecera.cabPagoID, dataCAB)
@@ -833,8 +838,21 @@ export class SolipagoComponent implements OnInit {
   estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
   areaSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
+
+  aprobadopor: number = 0;
+  financieropor: number = 0;
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
+    if(this.estadoTrkTmp == 40){
+      this.aprobadopor = Number(this.cookieService.get('userIdNomina'));
+      //this.saveEditCabecera();
+      this.setAprobadoPor(this.aprobadopor);
+    }else if (this.estadoTrkTmp == 60){
+      this.financieropor = Number(this.cookieService.get('userIdNomina'));
+      //this.saveEditCabecera();
+      this.setFinancieroPor(this.financieropor);
+    }
+
     try {
       // Espera a que se complete getNivelRuteoArea
       await this.getNivelRuteoArea();
@@ -1084,5 +1102,27 @@ export class SolipagoComponent implements OnInit {
         }
       );
     }, 1000);
+  }
+
+  setAprobadoPor(id: number){
+    this.cabPagoService.updateAprobadoCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
+      (response) => {
+        console.log('ACTUALIZADO CORRECTAMENTE');
+      },
+      (error) => {
+        console.log('error : ', error);
+      }
+    );
+  }
+
+  setFinancieroPor(id: number){
+    this.cabPagoService.updateFinancieroCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
+      (response) => {
+        console.log('ACTUALIZADO CORRECTAMENTE');
+      },
+      (error) => {
+        console.log('error : ', error);
+      }
+    );
   }
 }

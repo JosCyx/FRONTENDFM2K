@@ -188,13 +188,24 @@ export class SpDestinoComponent implements OnInit {
 
   cancelarDestino() {
     //limpiar las variables usadas en el modal del destino y la variable idItem
+    this.deleteArchivoModal(this.idItem);
     this.sectorDestino = 9999;
     this.empleadoDestino = 0;
     this.observacionesDestino = '';
     this.empleadoBusq = '';
-    this.idItem = 0;
     this.archivo = null as any;
     this.resetInputFile();
+    this.idItem = 0;
+  }
+
+  deleteArchivoModal(idDlt: number) {
+    for (let i = 0; i < this.archivos.length; i++) {
+      if (this.archivos[i].evIdDetalle === idDlt) {
+        //console.log('Archivo a eliminar:', this.archivos[i]);
+        this.archivos.splice(i, 1);
+       
+      }
+    }
   }
 
   deleteArchivo(index: number) {

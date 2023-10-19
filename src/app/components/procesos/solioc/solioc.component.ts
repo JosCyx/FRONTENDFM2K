@@ -515,7 +515,9 @@ export class SoliocComponent implements OnInit {
       cabSolOCNumerico: this.solNumerico,
       cabSolOCProveedor: this.cab_proveedor,
       cabSolOCRUCProveedor: this.cab_ruc_prov,
-      cabSolOCIdEmisor: this.cookieService.get('userIdNomina')
+      cabSolOCIdEmisor: Number(this.cookieService.get('userIdNomina')),
+      cabSolOCApprovedBy: 0,
+      cabSolOCFinancieroBy: 0
     };
 
     //enviar datos de cabecera a la API
@@ -1007,7 +1009,9 @@ export class SoliocComponent implements OnInit {
       cabSolOCNumerico: this.cabecera.cabSolOCNumerico,
       cabSolOCProveedor: this.cabecera.cabSolOCProveedor,
       cabSolOCRUCProveedor: this.cabecera.cabSolOCRUCProveedor,
-      cabSolOCIdEmisor: this.cookieService.get('userIdNomina')
+      cabSolOCIdEmisor: Number(this.cookieService.get('userIdNomina')),
+      cabSolOCApprovedBy: this.aprobadopor,
+      cabSolOCFinancieroBy: this.financieropor
     };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
     console.log('2. guardando solicitud...', dataCAB);
@@ -1510,8 +1514,21 @@ export class SoliocComponent implements OnInit {
   estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
   areaSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
+
+  aprobadopor: number = 0;
+  financieropor: number = 0;
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
+    if(this.estadoTrkTmp == 40){
+      this.aprobadopor = Number(this.cookieService.get('userIdNomina'));
+      //this.saveEditCabecera();
+      this.setAprobadoPor(this.aprobadopor);
+    }else if (this.estadoTrkTmp == 60){
+      this.financieropor = Number(this.cookieService.get('userIdNomina'));
+      //this.saveEditCabecera();
+      this.setFinancieroPor(this.financieropor);
+    }
+
     try {
       // Espera a que se complete getNivelRuteoArea
       await this.getNivelRuteoArea();
@@ -1747,6 +1764,29 @@ export class SoliocComponent implements OnInit {
         }
       );
     }, 1000);
+  }
+
+
+  setAprobadoPor(id: number){
+    this.cabOCService.updateAprobadoCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
+      (response) => {
+        console.log('ACTUALIZADO CORRECTAMENTE');
+      },
+      (error) => {
+        console.log('error : ', error);
+      }
+    );
+  }
+
+  setFinancieroPor(id: number){
+    this.cabOCService.updateFinancieroCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
+      (response) => {
+        console.log('ACTUALIZADO CORRECTAMENTE');
+      },
+      (error) => {
+        console.log('error : ', error);
+      }
+    );
   }
     
 }

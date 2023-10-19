@@ -23,6 +23,8 @@ export class CabeceraPago {
   public cabPagoEstado: string;
   public cabPagoEstadoTrack: number;
   public cabPagoIdEmisor: number;
+  public cabPagoApprovedBy: number;
+  public cabPagoFinancieroBy:number;
 
   constructor(data: any) {
     this.cabPagoID = data.cabPagoID;
@@ -49,5 +51,7 @@ export class CabeceraPago {
     this.cabPagoEstado = data.cabPagoEstado;
     this.cabPagoEstadoTrack = data.cabPagoEstadoTrack;
     this.cabPagoIdEmisor = data.cabPagoIdEmisor;
+    this.cabPagoApprovedBy = data.cabPagoApprovedBy;
+    this.cabPagoFinancieroBy = data.cabPagoFinancieroBy;
   }
 }

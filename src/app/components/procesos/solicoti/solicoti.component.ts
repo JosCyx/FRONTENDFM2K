@@ -1151,7 +1151,7 @@ export class SolicotiComponent implements OnInit {
     console.log("Cabecera editada: ", this.cabecera.cabSolCotID, dataCAB);
     this.cabCotService.updateCabCotizacion(this.cabecera.cabSolCotID, dataCAB).subscribe(
       (response) => {
-        console.log('ACTUALIZADA CORRECTAMENTE');
+        console.log('CABECERA ACTUALIZADA CORRECTAMENTE');
       },
       (error) => {
         console.log('error : ', error);
