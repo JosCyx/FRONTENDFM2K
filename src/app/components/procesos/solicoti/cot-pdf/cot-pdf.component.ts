@@ -85,267 +85,266 @@ export class CotPdfComponent implements OnInit {
     this.sectService.getSectoresList().pipe(map(sector=>sector.sort((a,b)=>a.sectNombre.localeCompare(b.sectNombre)))).subscribe({
       next: (respuestas: any) => {
         this.sectores = respuestas;
-        console.log(this.sectores);
       }
     });
   }
 
-  clickpdf() {
-    this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
+    clickpdf() {
+      this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
       next: (res) => {
         this.datosCabcot = res;
-        console.log('eto son cambios', this.datosCabcot);
-        this.traerEmpleado();
-        this.TraerArea();
-        this.EstadoTracking();
-        this.BuscarInpector();
-        this.retornar();
-        this.retornarSub();
+          this.traerEmpleado();
+          this.TraerArea();
+          this.EstadoTracking();
+          this.BuscarInpector();
+          this.retornar();
+          this.retornarSub();
+          const dd: any = {
+            content: [
+              {
+                text: 'imagen',
+                //  image: 'src\assets\img\icon.png',
+                margin: [0, 20],
+              },
+              { text: 'FUNDACION MALECON 2000', style: 'header' },
+      
+              {
+                text: this.CabCotiza,
+                alignment: 'center',
+                style: 'subheader',
+                margin: [0, 10, 0, 30],
+              },
+              {
+                text: this.datosCabcot.cabecera.cabSolCotNumerico,
+                alignment: 'right',
+                margin: [0, 0, 10, 5],
+              },
+              {
+                fontSize: 10,
+                table: {
+                  widths: [90, 160, 60, 70, 85],
+                  body: [
+                    [
+                      { text: 'FECHA:', style: 'tableHeader' },
+                      {
+                        text: this.formatDateToSpanish(
+                          new Date(this.datosCabcot.cabecera.cabSolCotFecha)
+                        ),
+                      },
+                      { text: 'AREA:', style: 'tableHeader' },
+                      { text: this.areas, colSpan: 2 },
+      
+                      {},
+                    ],
+                    [
+                      { text: 'SOLICITADO POR :', style: 'tableHeader' },
+                      { text: this.empleados, colSpan: 4 },
+                      '',
+                      '',
+                      '',
+                    ],
+                    [
+                      { text: 'APROBADO POR :', style: 'tableHeader' },
+                      { text: '' },
+                      { text: 'ESTADO:', style: 'tableHeader' },
+                      { text: this.estadoTexto(), colSpan: 2 },
+                      '',
+                    ],
+                    [
+                      { text: 'FINANCIERO :', style: 'tableHeader' },
+                      { text: '' },
+                      { text: 'TRACKING', style: 'tableHeader' },
+                      { text: this.nivelRuta, colSpan: 2 },
+                      '',
+                    ],
+                    [
+                      { text: 'ASUNTO', style: 'tableHeader' },
+                      {
+                        text: this.datosCabcot.cabecera.cabSolCotAsunto,
+                        colSpan: 4,
+                      },
+                    ],
+                  ],
+                },
+              },
+              {
+                margin: [0, 5, 0, 0],
+                fontSize: 10,
+                table: {
+                  widths: [30, 200, 70, 50, 50, 56],
+                  body: [
+                    [
+                      { text: 'ITEM', style: 'tableHeader' },
+                      {
+                        text: 'DESCRIPCION',
+                        style: 'tableHeader',
+                      },
+                      { text: 'PRESUPUESTO', style: 'tableHeader', colSpan: 2 },
+                      '',
+                      { text: 'UNIDAD', style: 'tableHeader' },
+                      {
+                        text: 'CANTIDAD',
+                        style: 'tableHeader',
+                        alignment: 'center',
+                      },
+                    ],
+                    //  [{}, {}, {}, {}, { text: '', colSpan: 2 }, ''],
+                    ...this.combinarObJ,
+                    [
+                      {
+                        text: 'MATERIALES Y PROCEDIMIENTO A SEGUIR:',
+                        style: 'tableHeader',
+                        colSpan: 6,
+                      },
+                      {
+                        text: '',
+                      },
+                      {
+                        text: '',
+                      },
+                      {
+                        text: '',
+                      },
+                      {
+                        text: '',
+                      },
+                      '',
+                    ],
+                    [
+                      { text: '1' },
+                      {
+                        text: this.datosCabcot.cabecera.cabSolCotProcedimiento,
+                        colSpan: 5,
+                      },
+                      '',
+                      '',
+                      '',
+                      '',
+                    ],
+                    [
+                      { text: 'OBSERVACIONES', style: 'textos', colSpan: 6 },
+                      '',
+                      '',
+                      '',
+                      '',
+                      '',
+                    ],
+                    [
+                      { text: '1' },
+                      {
+                        text: this.datosCabcot.cabecera.cabSolCotObervaciones,
+                        colSpan: 5,
+                      },
+                      '',
+                      '',
+                      '',
+                      '',
+                    ],
+                    [
+                      { text: 'ADJUNTO COTIZACIONES:', style: 'textos', colSpan: 2 },
+                      '',
+                      { text: this.datosCabcot.cabecera.cabSolCotAdjCot },
+                      {
+                        text: 'NUMERO DE COTIZACIONES:',
+                        colSpan: 2,
+                        style: 'textos',
+                      },
+                      '',
+                      { text: this.datosCabcot.cabecera.cabSolCotNumCotizacion },
+                    ],
+                  ],
+                },
+              },
+              {
+                margin: [0, 10, 0, 0],
+                fontSize: 10,
+                table: {
+                  widths: [150, 87, 150, 87],
+                  body: [
+                    [
+                      { text: 'PLAZO DE ENTREGA:', style: 'textos' },
+                      {
+                        text: (this.datosCabcot.cabecera.cabSolCotPlazoEntrega =
+                          format(
+                            parseISO(this.datosCabcot.cabecera.cabSolCotPlazoEntrega),
+                            'yyyy-MM-dd'
+                          )),
+                        alignment: 'center',
+                      },
+                      { text: 'FECHA MAXIMA DE ENTREGA:', style: 'textos' },
+                      {
+                        text: (this.datosCabcot.cabecera.cabSolCotFechaMaxentrega =
+                          format(
+                            parseISO(
+                              this.datosCabcot.cabecera.cabSolCotFechaMaxentrega
+                            ),
+                            'yyyy-MM-dd'
+                          )),
+                        alignment: 'center',
+                      },
+                    ],
+                  ],
+                },
+              },
+              {
+                margin: [0, 5],
+                fontSize: 10,
+                table: {
+                  widths: [100, 200, 87, 87],
+                  body: [
+                    [
+                      { text: 'INSPECTOR:', style: 'footer' },
+                      { text: this.inpectores },
+                      { text: 'TELEFONO:', style: 'footer' },
+                      { text: this.datosCabcot.cabecera.cabSolCotTelefInspector },
+                    ],
+                  ],
+                },
+              },
+              {
+                text: 'Desglose de Sectores',
+                pageBreak: 'before',
+              },
+              {
+                table: {
+                  body: [
+                    [
+                      { text: 'DESCRIPCION', bold: true },
+                      { text: 'CANTIDAD', bold: true },
+                      { text: 'SECTOR', bold: true },
+                    ],
+                    ...this.combinarSecto
+                  ],
+                },
+              },
+            ],
+            styles: {
+              tableHeader: {
+                bold: true,
+              },
+              header: {
+                fontSize: 20,
+                alignment: 'center',
+              },
+              subheader: {
+                fontSize: 15,
+              },
+              textos: {
+                bold: true,
+              },
+              footer: {
+                bold: true,
+              },
+            },
+          };
+          const pdf = pdfMake.createPdf(dd);
+          pdf.download();
       },
       error: (err) => {
         console.error('este es mi error ', err);
       },
     });
-    const dd: any = {
-      content: [
-        {
-          text: 'imagen',
-          //  image: 'src\assets\img\icon.png',
-          margin: [0, 20],
-        },
-        { text: 'FUNDACION MALECON 2000', style: 'header' },
-
-        {
-          text: this.CabCotiza,
-          alignment: 'center',
-          style: 'subheader',
-          margin: [0, 10, 0, 30],
-        },
-        {
-          text: this.datosCabcot.cabecera.cabSolCotNumerico,
-          alignment: 'right',
-          margin: [0, 0, 10, 5],
-        },
-        {
-          fontSize: 10,
-          table: {
-            widths: [90, 160, 60, 70, 85],
-            body: [
-              [
-                { text: 'FECHA:', style: 'tableHeader' },
-                {
-                  text: this.formatDateToSpanish(
-                    new Date(this.datosCabcot.cabecera.cabSolCotFecha)
-                  ),
-                },
-                { text: 'AREA:', style: 'tableHeader' },
-                { text: this.areas, colSpan: 2 },
-
-                {},
-              ],
-              [
-                { text: 'SOLICITADO POR :', style: 'tableHeader' },
-                { text: this.empleados, colSpan: 4 },
-                '',
-                '',
-                '',
-              ],
-              [
-                { text: 'APROBADO POR :', style: 'tableHeader' },
-                { text: '' },
-                { text: 'ESTADO:', style: 'tableHeader' },
-                { text: this.estadoTexto(), colSpan: 2 },
-                '',
-              ],
-              [
-                { text: 'FINANCIERO :', style: 'tableHeader' },
-                { text: '' },
-                { text: 'TRACKING', style: 'tableHeader' },
-                { text: this.nivelRuta, colSpan: 2 },
-                '',
-              ],
-              [
-                { text: 'ASUNTO', style: 'tableHeader' },
-                {
-                  text: this.datosCabcot.cabecera.cabSolCotAsunto,
-                  colSpan: 4,
-                },
-              ],
-            ],
-          },
-        },
-        {
-          margin: [0, 5, 0, 0],
-          fontSize: 10,
-          table: {
-            widths: [30, 200, 70, 50, 50, 56],
-            body: [
-              [
-                { text: 'ITEM', style: 'tableHeader' },
-                {
-                  text: 'DESCRIPCION',
-                  style: 'tableHeader',
-                },
-                { text: 'PRESUPUESTO', style: 'tableHeader', colSpan: 2 },
-                '',
-                { text: 'UNIDAD', style: 'tableHeader' },
-                {
-                  text: 'CANTIDAD',
-                  style: 'tableHeader',
-                  alignment: 'center',
-                },
-              ],
-              //  [{}, {}, {}, {}, { text: '', colSpan: 2 }, ''],
-              ...this.combinarObJ,
-              [
-                {
-                  text: 'MATERIALES Y PROCEDIMIENTO A SEGUIR:',
-                  style: 'tableHeader',
-                  colSpan: 6,
-                },
-                {
-                  text: '',
-                },
-                {
-                  text: '',
-                },
-                {
-                  text: '',
-                },
-                {
-                  text: '',
-                },
-                '',
-              ],
-              [
-                { text: '1' },
-                {
-                  text: this.datosCabcot.cabecera.cabSolCotProcedimiento,
-                  colSpan: 5,
-                },
-                '',
-                '',
-                '',
-                '',
-              ],
-              [
-                { text: 'OBSERVACIONES', style: 'textos', colSpan: 6 },
-                '',
-                '',
-                '',
-                '',
-                '',
-              ],
-              [
-                { text: '1' },
-                {
-                  text: this.datosCabcot.cabecera.cabSolCotObervaciones,
-                  colSpan: 5,
-                },
-                '',
-                '',
-                '',
-                '',
-              ],
-              [
-                { text: 'ADJUNTO COTIZACIONES:', style: 'textos', colSpan: 2 },
-                '',
-                { text: this.datosCabcot.cabecera.cabSolCotAdjCot },
-                {
-                  text: 'NUMERO DE COTIZACIONES:',
-                  colSpan: 2,
-                  style: 'textos',
-                },
-                '',
-                { text: this.datosCabcot.cabecera.cabSolCotNumCotizacion },
-              ],
-            ],
-          },
-        },
-        {
-          margin: [0, 10, 0, 0],
-          fontSize: 10,
-          table: {
-            widths: [150, 87, 150, 87],
-            body: [
-              [
-                { text: 'PLAZO DE ENTREGA:', style: 'textos' },
-                {
-                  text: (this.datosCabcot.cabecera.cabSolCotPlazoEntrega =
-                    format(
-                      parseISO(this.datosCabcot.cabecera.cabSolCotPlazoEntrega),
-                      'yyyy-MM-dd'
-                    )),
-                  alignment: 'center',
-                },
-                { text: 'FECHA MAXIMA DE ENTREGA:', style: 'textos' },
-                {
-                  text: (this.datosCabcot.cabecera.cabSolCotFechaMaxentrega =
-                    format(
-                      parseISO(
-                        this.datosCabcot.cabecera.cabSolCotFechaMaxentrega
-                      ),
-                      'yyyy-MM-dd'
-                    )),
-                  alignment: 'center',
-                },
-              ],
-            ],
-          },
-        },
-        {
-          margin: [0, 5],
-          fontSize: 10,
-          table: {
-            widths: [100, 200, 87, 87],
-            body: [
-              [
-                { text: 'INSPECTOR:', style: 'footer' },
-                { text: this.inpectores },
-                { text: 'TELEFONO:', style: 'footer' },
-                { text: this.datosCabcot.cabecera.cabSolCotTelefInspector },
-              ],
-            ],
-          },
-        },
-        {
-          text: 'Desglose de Sectores',
-          pageBreak: 'before',
-        },
-        {
-          table: {
-            body: [
-              [
-                { text: 'DESCRIPCION', bold: true },
-                { text: 'CANTIDAD', bold: true },
-                { text: 'SECTOR', bold: true },
-              ],
-              ...this.combinarSecto
-            ],
-          },
-        },
-      ],
-      styles: {
-        tableHeader: {
-          bold: true,
-        },
-        header: {
-          fontSize: 20,
-          alignment: 'center',
-        },
-        subheader: {
-          fontSize: 15,
-        },
-        textos: {
-          bold: true,
-        },
-        footer: {
-          bold: true,
-        },
-      },
-    };
-    const pdf = pdfMake.createPdf(dd);
-    pdf.download();
+     
   }
   //Metodos
   formatDateToSpanish(date: Date): string {
@@ -393,7 +392,6 @@ export class CotPdfComponent implements OnInit {
         emp.empleadoIdNomina == this.datosCabcot.cabecera.cabSolCotSolicitante
       ) {
         this.empleados = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
-        console.log('CAMVBIOSD ', this.empleados);
       }
     }
   }
@@ -435,7 +433,6 @@ export class CotPdfComponent implements OnInit {
         solCotCantidadTotal: index.solCotCantidadTotal,
       };
     });
-    console.log('datos mapeados', this.datosMapeados);
     for (let index = 0; index < this.datosMapeados.length; index++) {
       let presuM = '';
       for (const iterator of this.presupues) {
@@ -463,7 +460,6 @@ export class CotPdfComponent implements OnInit {
   }
   retornarSub() {
       const item = this.datosCabcot.items;
-      console.log('DAME ESTA VARIABLE', item);
       let arraysector=item.map((index:any)=>{
         return{
           itmIdDetalle:index.itmIdDetalle,
