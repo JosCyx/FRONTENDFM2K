@@ -50,3 +50,9 @@
     /*bordes que no se muestren*/
     border: 0px;
 }
+
+.a-verify{
+    color: rgb(69, 69, 255);
+    font-style: italic;
+    text-decoration: underline;
+}

@@ -418,10 +418,12 @@
             <li class="nav-item">
               <a class="nav-link" [ngClass]="{'active': actionEdit === 'destino'}" (click)="selectEditAction('destino')">Destino</a>
           </li>
-          <li class="nav-item" >
-            <a class="nav-link" [ngClass]="{'active': actionEdit === 'autorizacion'}"
-                (click)="selectEditAction('autorizacion')">Autorizacion</a>
-        </li>
+          <ng-container *ngIf="cabecera.cabPagoEstadoTrack > 10 && cabecera.cabPagoEstadoTrack != 0 && cabecera.cabPagoEstadoTrack != 9999">
+            <li class="nav-item" *appAuthorize="'53'">
+              <a class="nav-link" [ngClass]="{'active': actionEdit === 'autorizacion'}"
+                  (click)="selectEditAction('autorizacion')">Autorizacion</a>
+          </li>
+          </ng-container>
         </ul>
     </div>
       <!-- Fin -->
@@ -602,8 +604,20 @@
           <app-sp-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-sp-documentacion>
         </div>
         <div *ngIf="actionEdit == 'autorizacion'">
-          <app-oc-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
-              [estadoSol]="estadoSol"></app-oc-anulacion>
+          <div class="anulacion mb-3">
+              <div class="m-2">
+                  <h2>Autorización de solicitud</h2>
+                  <div class="text-center">
+                      <div class="row buttons-ruteo">
+                          <button *appAuthorize="'56'" class="btn btn-success col m-2" data-toggle="modal" data-target="#enviarSolicitud">Aprobar</button>
+                          <button *appAuthorize="'59'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">No autorizar</button>
+                          <button *appAuthorize="'62'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud">Anular</button>
+                      </div>
+                  </div> 
+              </div>
+          </div>
+          <!-- <app-oc-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+              [estadoSol]="estadoSol"></app-oc-anulacion> -->
       </div>
         <div *ngIf="actionEdit == 'destino'">
           <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol" 
@@ -963,3 +977,81 @@
 </div>
 
 
+<!-- Modal para verificar el envío de la soliitud recien registrada-->
+<div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea enviar esta solicitud?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente nivel.</p>
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="enviarSolicitud()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para verificar el envío de la soliitud recien registrada-->
+<div class="modal fade" #exampleModal id="rechazarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea no autorizar esta solicitud?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al no autorizar la solicitud, esta se regresará al nivel anterior para su revisión.</p>
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="noAutorizar()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para verificar el envío de la soliitud recien registrada-->
+<div class="modal fade" #exampleModal id="anularSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea anular esta solicitud?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al anular la solicitud, esta tendrá el estado ANULADO y el proceso quedará finalizado.</p>
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="anularSolicitud()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -9,7 +9,7 @@ import { CabCotizacionService } from 'src/app/services/comunicationAPI/solicitud
 import { DetCotOCService } from 'src/app/services/comunicationAPI/solicitudes/det-cot-oc.service';
 import { ItemSectorService } from 'src/app/services/comunicationAPI/solicitudes/item-sector.service';
 
-import { Observable, map, forkJoin } from 'rxjs';
+import { Observable, map, forkJoin, switchMap } from 'rxjs';
 import { Detalle } from 'src/app/models/procesos/Detalle';
 import { ItemSector } from 'src/app/models/procesos/ItemSector';
 import { GlobalService } from 'src/app/services/global.service';
@@ -159,6 +159,8 @@ export class SolicotiComponent implements OnInit {
 
   areaUserCookie: string = '';
 
+  setMotivo: boolean = false;
+
   constructor(private router: Router,
     private empService: EmpleadosService,
     private sectService: SectoresService,
@@ -175,6 +177,7 @@ export class SolicotiComponent implements OnInit {
     private nivGerenciaService: NivGerenciaService,
     private sendMailService: SendEmailService,
     private sharedService: SharedService) {
+    /*  
     //se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobar$.subscribe(() => {
       //console.log("Aprobando solicitud...");
@@ -191,7 +194,7 @@ export class SolicotiComponent implements OnInit {
     this.sharedService.noautorizar$.subscribe(() => {
       //console.log("No autorizando solicitud...");
       this.noAutorizar();
-    });
+    });*/
   }
 
   ngOnInit(): void {
@@ -215,7 +218,7 @@ export class SolicotiComponent implements OnInit {
       this.areas = data;
     });
 
-    this.nivelRut$ = this.nivRuteService.getNivelbyEstado('A').pipe(
+    this.nivelRut$ = this.nivRuteService.getNivelruteo().pipe(
       map(niv => niv.sort((a, b) => a.nivel - b.nivel))
     );
 
@@ -479,7 +482,11 @@ export class SolicotiComponent implements OnInit {
       cabSolCotFechaMaxentrega: this.cab_fechaMax,
       cabSolCotInspector: this.cab_inspector,
       cabSolCotTelefInspector: this.cab_telef_insp,
-      cabSolCotNumerico: this.solNumerico
+      cabSolCotNumerico: this.solNumerico,
+      cabSolCotIdEmisor: Number(this.cookieService.get('userIdNomina')),
+      cabSolCotApprovedBy: 0,
+      cabSolCotFinancieroBy: 0,
+      cabSolCotAprobPresup: 'SI'
     }
 
 
@@ -872,6 +879,7 @@ export class SolicotiComponent implements OnInit {
 
   async saveData() {
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
+    //console.log(this.solicitudEdit)
     this.cabecera = this.solicitudEdit.cabecera;
     this.cabSolCotAsunto = this.cabecera.cabSolCotAsunto;//envia la cabecera al componente de proveedores
     this.sharedTipoSol = this.cabecera.cabSolCotTipoSolicitud;
@@ -1134,7 +1142,10 @@ export class SolicotiComponent implements OnInit {
       cabSolCotTelefInspector: this.cabecera.cabSolCotTelefInspector,
       cabSolCotNumerico: this.cabecera.cabSolCotNumerico,
       cabSolCotAprobPresup: this.cabecera.cabSolCotAprobPresup,
-      cabSolCotMtovioDev: this.cabecera.cabSolCotMtovioDev
+      cabSolCotMtovioDev: this.cabecera.cabSolCotMtovioDev,
+      cabSolCotIdEmisor: Number(this.cookieService.get('userIdNomina')),
+      cabSolCotApprovedBy: this.aprobadopor,
+      cabSolCotFinancieroBy: this.financieropor
     };
 
     console.log("Cabecera editada: ", this.cabecera.cabSolCotID, dataCAB);
@@ -1357,72 +1368,35 @@ export class SolicotiComponent implements OnInit {
   estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
   areaSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
+  aprobadopor: number = 0;
+  financieropor: number = 0;
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
+    //verifica los niveles de aprobacion y financiero para asignar el usuario que envia la solicitud para guardar el empleado quien autoriza
+    if(this.estadoTrkTmp == 40){
+      this.aprobadopor = Number(this.cookieService.get('userIdNomina'));
+      //this.saveEditCabecera();
+      this.setAprobadoPor(this.aprobadopor);
+    }else if (this.estadoTrkTmp == 60){
+      this.financieropor = Number(this.cookieService.get('userIdNomina'));
+      //this.saveEditCabecera();
+      this.setFinancieroPor(this.financieropor);
+    }
+
+    await this.getNivelRuteoArea();
     try {
       // Espera a que se complete getNivelRuteoArea
-      await this.getNivelRuteoArea();
-
       var newEstado: number = 0;
       //si la solicitud ya eta en el nivel 70 se cambia su estado a FINALIZADO
+
       if (this.estadoTrkTmp == 70) {
         //console.log("FINALIZADO");
-        this.cabCotService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'F').subscribe(
-          (response) => {
-            //console.log('Estado actualizado exitosamente');
-            setTimeout(() => {
-              this.clear();
-              this.serviceGlobal.solView = 'crear';
-              this.router.navigate(['allrequest']);
-            }, 2500);
-          },
-          (error) => {
-            console.log('Error al actualizar el estado: ', error);
-          }
-        );
-
-        this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
-          (response) => {
-            //console.log('Estado actualizado exitosamente');
-            setTimeout(() => {
-              this.clear();
-              this.serviceGlobal.solView = 'crear';
-              this.router.navigate(['allrequest']);
-            }, 2500);
-          },
-          (error) => {
-            console.log('Error al actualizar el estado: ', error);
-          }
-        );
-      } else {
-        //Si el area no tiene niveles asignados a ese tipo de solicitud se envia directamente al siguiente nivel que sería revision 2
-        if (this.nivelSolAsignado.length == 0) {
-          newEstado = 20;
-        } else {
-          for (let i = 0; i < this.nivelSolAsignado.length; i++) {
-            var nivel = this.nivelSolAsignado[i];
-            //console.log('Nivel: ', nivel);
-            if (this.nivelSolAsignado[0].rutareaNivel != 10) {
-              newEstado = 20;
-              break;
-            }
-            if (nivel.rutareaNivel == this.estadoTrkTmp) {
-              newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
-              console.log('Nuevo estado: ', newEstado);
-              break;
-            }
-          }
-        }
-        //console.log('Nuevo estado: ', this.trTipoSolicitud, this.noSolTmp, newEstado);
-        setTimeout(() => {
-          this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+        try {
+          //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);
+          this.cabCotService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'F').subscribe(
             (response) => {
-              //console.log('Estado actualizado exitosamente');
-              this.showmsj = true;
-              this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido enviada exitosamente.`;
+              //console.log(response);
               setTimeout(() => {
-                this.showmsj = false;
-                this.msjExito = '';
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
                 this.router.navigate(['allrequest']);
@@ -1432,13 +1406,112 @@ export class SolicotiComponent implements OnInit {
               console.log('Error al actualizar el estado: ', error);
             }
           );
-        }, 1500);
+          
+          
+          this.actualizarEstadoTRK(this.trTipoSolicitud, this.noSolTmp, newEstado)
+          .then((response) => {
+            //console.log("Respuesta exitosa", response);
+            this.showmsj = true;
+            this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido enviada exitosamente.`;
+
+            setTimeout(() => {
+              this.showmsj = false;
+              this.msjExito = '';
+              this.clear();
+              this.serviceGlobal.solView = 'crear';
+              this.router.navigate(['allrequest']);
+            }, 2500);
+          })
+          .catch((error) => {
+            console.log('Error al actualizar el estado: ', error);
+            // Maneja el error como desees
+          });
+        } catch (error) {
+          console.error('Error al setear el estado como finalizado: ', error);
+        }
+
+      } else {
+        /*console.log("Ruteo normal, estado actual: ", this.estadoTrkTmp);
+        console.log(this.nivelSolAsignado)
+        console.log(this.nivelSolAsignado.length)*/
+
+        for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+
+          var nivel = this.nivelSolAsignado[i];
+          //console.log('Nivel: ', nivel);
+
+          /*console.log("nivel de la lista: ", nivel.rutareaNivel);
+          console.log("nivel de la solicitud: ", this.estadoTrkTmp);*/
+          if (nivel.rutareaNivel == this.estadoTrkTmp) {
+            //console.log("entra al IF")
+            newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
+            //console.log(newEstado);
+
+            break;
+          }
+
+        }
+        //hace la peticion a la API para cambiar el estado de la solicitud
+        //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);
+        this.actualizarEstadoTRK(this.trTipoSolicitud, this.noSolTmp, newEstado)
+          .then((response) => {
+            //console.log("Respuesta exitosa", response);
+            this.showmsj = true;
+            this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido enviada exitosamente.`;
+
+            setTimeout(() => {
+              this.showmsj = false;
+              this.msjExito = '';
+              this.clear();
+              this.serviceGlobal.solView = 'crear';
+              this.router.navigate(['allrequest']);
+            }, 2500);
+          })
+          .catch((error) => {
+            console.log('Error al actualizar el estado: ', error);
+            // Maneja el error como desees
+          });
+        /*this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+          (response) => {
+            console.log("Respuesta exitoso", response);
+            this.showmsj = true;
+            this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido enviada exitosamente.`;
+            setTimeout(() => {
+              this.showmsj = false;
+              this.msjExito = '';
+              this.clear();
+              this.serviceGlobal.solView = 'crear';
+              this.router.navigate(['allrequest']);
+            }, 2500);
+          },
+          (error) => {
+            console.log('Error al actualizar el estado: ', error);
+          }
+        );*/
       }
 
     } catch (error) {
       console.error('Error al obtener los niveles de ruteo asignados: ', error);
     }
+
+    console.log("FIN DEL METODO ENVIARSOLICITUD()");
   }
+
+
+  actualizarEstadoTRK(trTipoSolicitud: number, noSolTmp: number, newEstado: number) {
+    return new Promise((resolve, reject) => {
+      this.cabCotService.updateEstadoTRKCotizacion(trTipoSolicitud, noSolTmp, newEstado).subscribe(
+        (response) => {
+          resolve(response); // Resuelve la promesa en caso de éxito
+        },
+        (error) => {
+          reject(error); // Rechaza la promesa en caso de error
+        }
+      );
+    });
+  }
+
+
 
   // Método que consulta los niveles que tiene asignado el tipo de solicitud según el área
   nivelSolAsignado: RuteoArea[] = [];
@@ -1509,16 +1582,16 @@ export class SolicotiComponent implements OnInit {
   }
   ///////////////////////////////////////////NO AUTORIZAR SOLICITUD///////////////////////////////////////////////////
 
-  async noAutorizar(){
+  async noAutorizar() {
     await this.getNivelRuteoArea();
     console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
-    
 
-    for(let i = 0; i < this.nivelRuteotoAut.length; i++){
+
+    for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
       let niv = this.nivelRuteotoAut[i];
-      if(niv.rutareaNivel == this.estadoTrkTmp){
-        let newEstado = this.nivelRuteotoAut[i-1].rutareaNivel;
-        
+      if (niv.rutareaNivel == this.estadoTrkTmp) {
+        let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
+
         this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
           (response) => {
             //console.log('Estado de tracknig actualizado exitosamente');
@@ -1544,7 +1617,7 @@ export class SolicotiComponent implements OnInit {
             }, 2500);
           }
         );
-        
+
         //console.log("Nuevo estado: ", newEstado);
         break;
       }
@@ -1596,9 +1669,36 @@ export class SolicotiComponent implements OnInit {
 
   }
 
-  setMotivo: boolean = false;
-  setMotivoDev(){
-    this.setMotivo = !this.setMotivo;
+  
+  setMotivoDev() {
+    if(this.setMotivo == false){
+      this.setMotivo = true;
+    }else{
+      this.setMotivo = false;
+    }
+    //this.setMotivo = !this.setMotivo;
+  }
+
+  setAprobadoPor(id: number){
+    this.cabCotService.updateAprobadoCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
+      (response) => {
+        console.log('ACTUALIZADO CORRECTAMENTE');
+      },
+      (error) => {
+        console.log('error : ', error);
+      }
+    );
+  }
+
+  setFinancieroPor(id: number){
+    this.cabCotService.updateFinancieroCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
+      (response) => {
+        console.log('ACTUALIZADO CORRECTAMENTE');
+      },
+      (error) => {
+        console.log('error : ', error);
+      }
+    );
   }
 
 }

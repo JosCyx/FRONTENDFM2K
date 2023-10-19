@@ -3,9 +3,9 @@
         <h2>Autorización de solicitud</h2>
         <div class="text-center">
             <div class="row buttons-ruteo">
-                <button class="btn btn-success col m-2" data-toggle="modal" data-target="#enviarSolicitud">Aprobar</button>
-                <button class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">No autorizar</button>
-                <button class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud">Anular</button>
+                <button *appAuthorize="'55'" class="btn btn-success col m-2" data-toggle="modal" data-target="#enviarSolicitud">Aprobar</button>
+                <button *appAuthorize="'58'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">No autorizar</button>
+                <button *appAuthorize="'61'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud">Anular</button>
             </div>
         </div> 
     </div>

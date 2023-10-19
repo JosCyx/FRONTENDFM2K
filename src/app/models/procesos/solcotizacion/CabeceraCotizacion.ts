@@ -19,6 +19,9 @@ export class CabeceraCotizacion {
   public cabSolCotTelefInspector: string;
   public cabSolCotAprobPresup: string;
   public cabSolCotMtovioDev: string;
+  public cabSolCotIdEmisor: number;
+  public cabSolCotApprovedBy: number;
+  public cabSolCotFinancieroBy:number;
 
   constructor(data: any) {
       this.cabSolCotTipoSolicitud = data.cabSolCotTipoSolicitud;
@@ -41,5 +44,8 @@ export class CabeceraCotizacion {
       this.cabSolCotTelefInspector = data.cabSolCotTelefInspector;
       this.cabSolCotAprobPresup = data.cabSolCotAprobPresup;
       this.cabSolCotMtovioDev = data.cabSolCotMtovioDev;
+      this.cabSolCotIdEmisor = data.cabSolCotIdEmisor;
+      this.cabSolCotApprovedBy = data.cabSolCotApprovedBy;
+      this.cabSolCotFinancieroBy = data.cabSolCotFinancieroBy;
   }
 }

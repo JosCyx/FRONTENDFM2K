@@ -4,7 +4,9 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class GlobalService {
-  readonly APIUrl = "http://192.168.1.243:9192/api";
+  //url de la API publicada
+  //readonly APIUrl = "http://192.168.1.243:9192/api";
+  readonly APIUrl = "https://localhost:7086/api";
 
   solView: string = 'crear';
   changePage: boolean = false; 

@@ -174,7 +174,7 @@ export class SoliocComponent implements OnInit {
     private nivGerenciaService: NivGerenciaService,
     private sharedService: SharedService
   ) {
-    //se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
+    /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobaroc$.subscribe(() => {
       //console.log("Aprobando solicitud...");
       this.enviarSolicitud();
@@ -190,7 +190,7 @@ export class SoliocComponent implements OnInit {
     this.sharedService.noautorizaroc$.subscribe(() => {
       //console.log("No autorizando solicitud...");
       this.noAutorizar();
-    });
+    });*/
   }
 
   ngOnInit(): void {
@@ -209,7 +209,7 @@ export class SoliocComponent implements OnInit {
       this.inspectoresEdit = data;
     });
     this.nivelRut$ = this.nivRuteService
-      .getNivelbyEstado('A')
+      .getNivelruteo()
       .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
     this.sectores$ = this.sectService
       .getSectoresList()
@@ -515,6 +515,7 @@ export class SoliocComponent implements OnInit {
       cabSolOCNumerico: this.solNumerico,
       cabSolOCProveedor: this.cab_proveedor,
       cabSolOCRUCProveedor: this.cab_ruc_prov,
+      cabSolOCIdEmisor: this.cookieService.get('userIdNomina')
     };
 
     //enviar datos de cabecera a la API
@@ -1006,6 +1007,7 @@ export class SoliocComponent implements OnInit {
       cabSolOCNumerico: this.cabecera.cabSolOCNumerico,
       cabSolOCProveedor: this.cabecera.cabSolOCProveedor,
       cabSolOCRUCProveedor: this.cabecera.cabSolOCRUCProveedor,
+      cabSolOCIdEmisor: this.cookieService.get('userIdNomina')
     };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
     console.log('2. guardando solicitud...', dataCAB);

@@ -82,5 +82,15 @@ export class CabCotizacionService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolCotizacions/UpdateEstado?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`,null, { headers: headers });
   }
+
+  updateAprobadoCotizacion(tipoSol: number, noSol: number, id: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/CabSolCotizacions/UpdateAprobado?tipoSol=${tipoSol}&noSol=${noSol}&id=${id}`,null, { headers: headers });
+  }
+
+  updateFinancieroCotizacion(tipoSol: number, noSol: number, id: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/CabSolCotizacions/UpdateFinanciero?tipoSol=${tipoSol}&noSol=${noSol}&id=${id}`,null, { headers: headers });
+  }
 }
 

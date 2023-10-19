@@ -43,4 +43,11 @@ export class ProvCotizacionService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.delete(this.APIUrl + `/CotizacionProveedors/${id}`, { headers: headers });
   }
+
+  verifyProveedor(id: number){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/CotizacionProveedors/UpdateVerifyProveedor?idProv=${id}`, null, { headers: headers });
+  }
+
+  
 }

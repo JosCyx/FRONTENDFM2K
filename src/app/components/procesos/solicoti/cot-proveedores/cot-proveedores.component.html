@@ -139,7 +139,8 @@
                     <th class="align-middle">Teléfono*</th>
                     <th class="align-middle">Correo*</th>
                     <th class="align-middle">Dirección</th>
-                    <th class="align-middle">Acciones</th>
+                    <th class="align-middle">Verificado</th>
+                    <th class="align-middle">Eliminar</th>
                 </tr>
             </thead>
             <tbody>
@@ -153,6 +154,9 @@
                     <td class="align-middle">{{prov.cotProvTelefono}}</td>
                     <td class="align-middle">{{prov.cotProvCorreo}}</td>
                     <td class="align-middle">{{prov.cotProvDireccion}}</td>
+                    <td class="align-middle" [ngSwitch]="prov.cotProvVerify">
+                        <span *ngSwitchCase="1">Verificado</span>
+                        <span *ngSwitchCase="0">Nuevo Proveedor<br><a class="link-primary link-underline a-verify" data-toggle="modal" data-target="#verifyProvAssigned" (click)="setProvId(prov.cotProvId)">Verificar</a></span></td>
                     <td class="align-middle">
                         <button class="btn btn-border btn-prov" data-toggle="modal" data-target="#deleteProvAssigned"
                             (click)="selectIdDltProv(prov.cotProvId)" [appSecureDisable]="estadoSol">
@@ -206,6 +210,31 @@
     </div>
 </div>
 
+<!-- Modal para verificar un proveedor asignado -->
+<div class="modal fade" id="verifyProvAssigned" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    Verificar proveedor asignado
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro(a) que desea verificar el proveedor?<br>Al verificar el proveedor dejará de ser proveedor nuevo.<br>Advertencia: debe asegurarse de haber agregado el proveedor al servidor AX anteriormente, esa acción no corresponde a esta aplicación.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="changeVerifyProv()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal para eliminar un proveedor ya asignado -->
 <div class="modal fade" id="deleteProvAssigned" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -217,7 +246,7 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <p>¿Está seguro que desea el proveedor?<br>Esta acción no se puede deshacer.</p>
+                <p>¿Está seguro(a) que desea eliminar el proveedor?<br>Esta acción no se puede deshacer.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteProvAssigned()">

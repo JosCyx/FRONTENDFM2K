@@ -22,6 +22,7 @@ export class CabeceraPago {
   public cabPagoCancelacionOrden: string | null;
   public cabPagoEstado: string;
   public cabPagoEstadoTrack: number;
+  public cabPagoIdEmisor: number;
 
   constructor(data: any) {
     this.cabPagoID = data.cabPagoID;
@@ -47,5 +48,6 @@ export class CabeceraPago {
     this.cabPagoCancelacionOrden = data.cabPagoCancelacionOrden;
     this.cabPagoEstado = data.cabPagoEstado;
     this.cabPagoEstadoTrack = data.cabPagoEstadoTrack;
+    this.cabPagoIdEmisor = data.cabPagoIdEmisor;
   }
 }

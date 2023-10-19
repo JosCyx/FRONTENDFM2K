@@ -141,7 +141,7 @@ export class SolipagoComponent implements OnInit {
     private nivGerenciaService: NivGerenciaService,
     private sharedService: SharedService
   ) { 
-    //se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
+    /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobarsp$.subscribe(() => {
       //console.log("Aprobando solicitud...");
       this.enviarSolicitud();
@@ -157,7 +157,7 @@ export class SolipagoComponent implements OnInit {
     this.sharedService.noautorizarsp$.subscribe(() => {
       //console.log("No autorizando solicitud...");
       this.noAutorizar();
-    });
+    });*/
   }
 
   ngOnInit(): void {
@@ -171,7 +171,7 @@ export class SolipagoComponent implements OnInit {
     this.areaList$ = this.areaService.getAreaList();
 
     this.nivelRut$ = this.nivRuteService
-      .getNivelbyEstado('A')
+      .getNivelruteo()
       .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
 
     this.areaList$.subscribe((data) => {
@@ -427,6 +427,7 @@ export class SolipagoComponent implements OnInit {
       cabPagoCancelacionOrden: this.cab_cancelarOrden,
       cabPagoEstado: this.cab_estado,
       cabPagoEstadoTrack: this.trNivelEmision,
+      cabPagoIdEmisor: this.cookieService.get('userIdNomina')
     };
 
     //enviar datos de cabecera a la API
@@ -672,6 +673,7 @@ export class SolipagoComponent implements OnInit {
       cabPagoCancelacionOrden: this.cabecera.cabPagoCancelacionOrden,
       cabPagoEstado: this.cabecera.cabPagoEstado,
       cabPagoEstadoTrack: this.cabecera.cabPagoEstadoTrack,
+      cabPagoIdEmisor: this.cookieService.get('userIdNomina')
     };
     console.log('esta guardo editada de cabecera solicitud ', dataCAB);
     this.cabPagoService

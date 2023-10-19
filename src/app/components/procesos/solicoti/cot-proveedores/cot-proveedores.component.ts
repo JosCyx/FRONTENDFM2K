@@ -16,7 +16,8 @@ interface selectedProveedor {
   telefono: string,
   correo: string,
   validEmail: boolean,
-  direccion: string
+  direccion: string,
+  verify: number
 }
 
 
@@ -260,7 +261,8 @@ export class CotProveedoresComponent implements OnInit {
         telefono: prov.prov_telefono || '',
         correo: '',
         direccion: '',
-        validEmail: true
+        validEmail: true,
+        verify: 1
       };
 
       // Agregar la nueva instancia a la lista proveedorListSelected
@@ -325,7 +327,8 @@ export class CotProveedoresComponent implements OnInit {
         telefono: this.dataForm.value.newCodePhone! + ' ' + this.dataForm.value.newPhone!,
         correo: this.dataForm.value.newEmail!,
         direccion: this.dataForm.value.newDireccion!,
-        validEmail: true
+        validEmail: true,
+        verify: 0
       }
       console.log(this.dataForm.value)
       this.proveedorListSelected.push(newPrv);
@@ -347,9 +350,6 @@ export class CotProveedoresComponent implements OnInit {
   saveProvDB() {
     if (this.verifyPhoneEmailProv()) {
       console.log(this.proveedorListSelected);
-
-
-
       for (let prov of this.proveedorListSelected) {
 
         if (prov.validEmail === false) {
@@ -362,7 +362,8 @@ export class CotProveedoresComponent implements OnInit {
             cotProvNombre: prov.nombre,
             cotProvTelefono: prov.telefono,
             cotProvCorreo: prov.correo,
-            cotProvDireccion: prov.direccion
+            cotProvDireccion: prov.direccion,
+            cotProvVerify: prov.verify
           }
           this.provCotService.addProvCotizacion(data).subscribe(
             response => {
@@ -958,11 +959,39 @@ export class CotProveedoresComponent implements OnInit {
                                   <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Cabin',sans-serif;" align="left">
       
                                     <div style="font-size: 14px; line-height: 140%; text-align: left; word-wrap: break-word;">
+                                    <p style="line-height: 140%;">Solicito a ustedes me ayuden cotizando mi requerimiento adjunto:<br><br>
+                                    </p>
+                                      <p style="line-height: 140%;"><strong>Favor incluir esta información en su proforma, son requisitos indispensables (campos obligatorios):</strong><br>
+                                        - Nombre del Proveedor<br>
+                                        - Razón Social<br>
+                                        - Ruc o Cédula<br>
+                                        - Dirección o ubicación<br>
+                                        - Teléfonos<br>
+                                        - E-mail<br>
+                                        - Fecha<br><br>
+                                        </p>
+                                        <p style="line-height: 140%;">Forma de Pago: De preferencia crédito 30 días<br>
+                                          Detalle del Tiempo de Entrega<br><br>
+                                          
+                                          </p>
+                                      <p style="line-height: 140%;"><strong>Adjunte también la descripción del Trabajo detallando costos de:</strong><br>
+                                        - Materiales<br>
+                                        - Mano de Obra<br>
+                                        - Transporte<br>
+                                        - Garantía<br><br><br>
+                                        </p>
+                                      <p style="line-height: 140%;">Por favor adjuntar: el certificado de RUC de sus actividades económicas, contacto o vendedor que realizó la cotización y contacto o persona que realizó la inspección.<br>
+                                        En caso de no tener en stock el mencionado requerimiento, enviar un correo indicando la situación.<br><br><br>
+                                        </p>
                                       <p style="line-height: 140%;">&nbsp;</p>
-                                      <p style="line-height: 140%;">&nbsp;</p>
-                                      <p style="line-height: 140%;">&nbsp;</p>
-                                      <p style="line-height: 140%;">&nbsp;</p>
-                                      <p style="line-height: 140%;">&nbsp;</p>
+                                      <p style="line-height: 140%;">(593) 2524-530 | 128<br>
+
+                                        jzuleta@malecon2000.org.ec<br>
+                                        
+                                        http://malecon2000.com/<br>
+                                        
+                                        Sargento Vargas # 116 y Av. Olmedo, Edificio Fundación Malecón 2000, Piso 1
+                                        </p>
                                     </div>
       
                                   </td>
@@ -1036,7 +1065,7 @@ export class CotProveedoresComponent implements OnInit {
       </html>`;
   }
 /**
- * Recorre el arreglo assignedProvs$ y eliminar los proveedores al momento de cancelar la solicitud
+ * Recorre el arreglo  y eliminar los proveedores al momento de cancelar la solicitud
  */  
 RecorrerPro(){
   let a= this.assignedProvs;
@@ -1067,6 +1096,34 @@ RecorrerPro(){
 
 
 }
+id_prov!: number;
+setProvId(id: number){
+  this.id_prov=id;
+}
 
+changeVerifyProv(){
+  console.log("id del provedor a verificar",this.id_prov);
+  this.provCotService.verifyProveedor(this.id_prov).subscribe(
+    response => {
+      console.log('Verificado con exito!');
+      this.showmsj=true;
+      this.msjExito="Proveedor verificado con exito";
+      setTimeout(() => {
+        this.showmsj=false;
+        this.msjExito="";
+        this.getProvCotizacion();
+      }, 2500);
+    },
+    error => {
+      console.error('Error al verificar!', error);
+      this.showmsjerror=true;
+      this.msjError="Error al verificar el proveedor";
+      setTimeout(() => {
+        this.showmsjerror=false;
+        this.msjError="";
+      }, 2500);
+    }
+  );
+}
 
 }

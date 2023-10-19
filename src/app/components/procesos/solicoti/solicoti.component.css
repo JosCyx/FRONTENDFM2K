@@ -85,3 +85,13 @@
     color: white;
     border-radius: 5px 5px 0px 0px;
 }
+
+.anulacion{
+    background-color: rgb(237, 237, 237);
+    border-radius: 5pt;
+}
+
+.buttons-ruteo{
+    width: 50%;
+    margin: 0 auto;
+}

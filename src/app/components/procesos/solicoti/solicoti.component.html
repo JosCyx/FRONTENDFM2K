@@ -104,7 +104,10 @@
                                 <ng-container *ngFor="let prep of presupuestos">
                                     <td class="align-middle" *ngIf="prep.prespId == det.det_presupuesto">{{ prep.prespNombre }}</td>
                                 </ng-container>
-                                <td class="align-middle">Asignado</td>
+                                <td class="align-middle">
+                                    <button class="btn btn-outline-primary" data-toggle="modal"
+                                    data-target="#itemsectorview" >Editar</button>
+                                </td>
                                 <td class="align-middle">{{ det.det_unidad }}</td>
                                 <td class="align-middle">
                                     {{ det.det_cantidad }}
@@ -264,10 +267,12 @@
                         <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}"
                             (click)="selectEditAction('documentacion')">Documentación</a>
                     </li>
-                    <li class="nav-item" >
-                        <a class="nav-link" [ngClass]="{'active': actionEdit === 'autorizacion'}"
-                            (click)="selectEditAction('autorizacion')">Autorizacion</a>
-                    </li>
+                    <ng-container *ngIf="cabecera.cabSolCotEstadoTracking > 10 && cabecera.cabSolCotEstadoTracking != 0 && cabecera.cabSolCotEstadoTracking != 9999">
+                        <li class="nav-item" *appAuthorize="'53'">
+                            <a class="nav-link" [ngClass]="{'active': actionEdit === 'autorizacion'}"
+                                (click)="selectEditAction('autorizacion')">Autorizacion</a>
+                        </li>
+                    </ng-container>
                 </ul>
             </div>
 
@@ -304,11 +309,15 @@
                     </div>
                     <div class="row mb-1">
                         <div class="input-group col">
-                            <label class="input-group-text">Asunto:</label>
-                            <input type="text" class="form-control mr-3" [(ngModel)]="cabecera.cabSolCotAsunto"
+                            <label class="input-group-text">Aprobado por:</label>
+                            <input type="text" class="form-control mr-3" [(ngModel)]="cabecera.cabSolCotApprovedBy"
                                 [appSecureDisable]="estadoSol" />
                         </div>
-                        <div class="row col">
+                        <div class="input-group col">
+                            <label class="input-group-text">Estado:</label>
+                            <input type="text" class="form-control" [value]="estadoTexto" disabled />
+                        </div>
+                        <!-- <div class="row col">
                             <div class="input-group col std">
                                 <label class="input-group-text">Estado:</label>
                                 <input type="text" class="form-control" [value]="estadoTexto" disabled />
@@ -320,8 +329,43 @@
                                         class="form-control" [value]="nvTRk.descRuteo" disabled />
                                 </ng-container>
                             </div>
-                        </div>
+                        </div> -->
 
+                    </div>
+                    <div class="row mb-1">
+                        <div class="input-group col">
+                            <label class="input-group-text">Financiero:</label>
+                            <input type="text" class="form-control mr-3" [(ngModel)]="cabecera.cabSolCotFinancieroBy"
+                                [appSecureDisable]="estadoSol" />
+                        </div>
+                        <div class="input-group col std">
+                            <label class="input-group-text">Tracking:</label>
+                            <ng-container *ngFor="let nvTRk of nivelRut$ | async">
+                                <input *ngIf="nvTRk.nivel === cabecera.cabSolCotEstadoTracking" type="text"
+                                    class="form-control" [value]="nvTRk.descRuteo" disabled />
+                            </ng-container>
+                        </div>
+                        <!-- <div class="row col">
+                            <div class="input-group col std">
+                                <label class="input-group-text">Estado:</label>
+                                <input type="text" class="form-control" [value]="estadoTexto" disabled />
+                            </div>
+                            <div class="input-group col std">
+                                <label class="input-group-text">Tracking:</label>
+                                <ng-container *ngFor="let nvTRk of nivelRut$ | async">
+                                    <input *ngIf="nvTRk.nivel === cabecera.cabSolCotEstadoTracking" type="text"
+                                        class="form-control" [value]="nvTRk.descRuteo" disabled />
+                                </ng-container>
+                            </div>
+                        </div> -->
+
+                    </div>
+                    <div class="row mb-1">
+                        <div class="input-group col">
+                            <label class="input-group-text">Asunto:</label>
+                            <input type="text" class="form-control mr-3" [(ngModel)]="cabecera.cabSolCotAsunto"
+                                [appSecureDisable]="estadoSol" />
+                        </div>
                     </div>
 
                     <div class="presupuestaria" *ngIf="aprobPreps">
@@ -481,8 +525,22 @@
                 </div>
 
                 <div *ngIf="actionEdit == 'autorizacion'">
-                    <app-cot-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
-                        [estadoSol]="estadoSol" [setMotivo]="setMotivo"></app-cot-anulacion>
+                    <div class="anulacion mb-3">
+                        <div class="m-2">
+                            <h2>Autorización de solicitud</h2>
+                            <div class="text-center">
+                                <div class="row buttons-ruteo">
+                                    <ng-container *appAuthorize="'54'">
+                                        <button *ngIf="!setMotivo" class="btn btn-success col m-2" data-toggle="modal" data-target="#enviarSolicitud">Aprobar</button>
+                                    </ng-container>
+                                    <button *appAuthorize="'57'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">No autorizar</button>
+                                    <button *appAuthorize="'60'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud">Anular</button>
+                                </div>
+                            </div> 
+                        </div>
+                    </div>
+                    <!-- <app-cot-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+                        [estadoSol]="estadoSol" [setMotivo]="setMotivo"></app-cot-anulacion> -->
                 </div>
 
 
@@ -560,6 +618,95 @@
     </ng-container>
 </div>
 
+<!-- Modal para los items por sector-->
+<div class="modal fade" #exampleModal id="itemsectorview" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    Ingrese los items según el sector
+                </h3>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped text-center justify-content-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">N° Detalle</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">N° Item</th>
+                            <th scope="col">Cantidad*</th>
+                            <th scope="col" colspan="2">Sector*</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of tmpItemSect">
+                            <td class="align-middle">{{ item.det_id }}</td>
+                            <td class="align-middle">{{ item.det_descp }}</td>
+                            <td class="align-middle">{{ item.item_id }}</td>
+                            <td class="align-middle">{{ item.item_cant }}</td>
+                            <!-- <td class="align-middle">
+                                {{ item.item_sector
+                                }}<button class="btn text-danger" (click)="deleteItem(item.item_id)">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </td> -->
+                            <ng-container *ngFor="let sect of sectores$ | async">
+                                <td *ngIf="sect.sectIdNomina == item.item_sector" class="align-middle">
+                                    {{ sect.sectNombre }}
+                                </td>
+                            </ng-container>
+                            <td>
+                                <button class="btn text-danger" (click)="deleteItem(item.item_id)">
+                                    <i class="bi bi-x-circle"></i></button>
+                            </td>
+                        </tr>
+                        <!-- <tr>
+                            <td class="align-middle">{{ det_id }}</td>
+                            <td class="align-middle">
+                                <input class="form-control" type="text" value="Descripción" [(ngModel)]="det_descp"
+                                    placeholder="Descripción" disabled />
+                            </td>
+                            <td class="align-middle cel-prep">
+                                <input type="text" class="form-control text-center" [(ngModel)]="item_id" disabled />
+                            </td>
+                            <td class="align-middle">
+                                <div class="cel-prep">
+                                    <input class="form-control" [(ngModel)]="item_cant" min="1" type="number"
+                                        placeholder="Cantidad" />
+                                </div>
+                            </td>
+                            <td class="align-middle" style="width: 150px" colspan="2">
+                                <div class="cel-prep">
+                                    <select class="form-select" name="item_sector" [(ngModel)]="item_sector">
+                                        <option selected disabled value="0">
+                                            Selecciona un sector...
+                                        </option>
+                                        <option *ngFor="let sect of sectores$ | async" [value]="sect.sectIdNomina">
+                                            {{ sect.sectNombre }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="6" class="align-middle text-end">
+                                <button class="btn btn-success" [disabled]="!item_sector" (click)="addItemSector()">
+                                    <i class="bi bi-check"></i>
+                                </button>
+                            </td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Modal para los items por sector-->
 <div class="modal fade" #exampleModal id="itemsector" data-backdrop="static" tabindex="-1" role="dialog"
@@ -909,6 +1056,85 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para verificar el envío de la soliitud recien registrada-->
+<div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea enviar esta solicitud?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente nivel.</p>
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="enviarSolicitud()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para verificar el envío de la soliitud recien registrada-->
+<div class="modal fade" #exampleModal id="rechazarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea no autorizar esta solicitud?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al no autorizar la solicitud, esta se regresará al nivel anterior para su revisión.</p>
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="noAutorizar()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para verificar el envío de la soliitud recien registrada-->
+<div class="modal fade" #exampleModal id="anularSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea anular esta solicitud?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al anular la solicitud, esta tendrá el estado ANULADO y el proceso quedará finalizado.</p>
+               
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="anularSolicitud()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
