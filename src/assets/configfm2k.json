@@ -1,3 +1,7 @@
 {
-    "APIUrl":"https://localhost:7086/api"
+    "APIUrl":"https://localhost:7086/api",
+    "Emails":{
+        "compras":"email de compras",
+        "financiero": "email de financiero"
+    }
 }

@@ -9,19 +9,25 @@ export class GlobalService {
   //url de la API publicada
   //readonly APIUrl = "http://192.168.1.234:9192/api";
 
-  readonly APIUrl = "https://localhost:7086/api";
+  APIUrl = "https://localhost:7086/api";
+  //api2: string = '';
 
   solView: string = 'crear';
   changePage: boolean = false; 
   solID: number = 0;
-
   setDestino: boolean = false;
 
-  
-  // Otras propiedades...
 
-  constructor(private http: HttpClient) {}
+  rutaJSON: string = '../../assets/configfm2k.json';
+  configJSON: any = {};
 
-  //src/assets/configfm2k.json
+  constructor(private http: HttpClient) {
+    console.log("Servicio global corriendo...");
+    this.http.get(this.rutaJSON).subscribe((data: any) => {
+      this.configJSON = data;
+      this.APIUrl = data.APIUrl;
+    });
+  }
+
   
 }

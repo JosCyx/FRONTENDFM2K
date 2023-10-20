@@ -804,7 +804,7 @@ export class SolipagoComponent implements OnInit {
     try {
       this.generarSolicitud();
       this.enviarSolicitud();
-      this.sendNotify();
+      //this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
       this.showmsjerror = true;
@@ -821,7 +821,7 @@ export class SolipagoComponent implements OnInit {
     try {
       this.savePagoEdit();
       this.enviarSolicitud();
-      this.sendNotify();
+      //this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
       this.showmsjerror = true;
@@ -1070,6 +1070,13 @@ export class SolipagoComponent implements OnInit {
   Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
 
   sendNotify(){
+    if(this.estadoTrkTmp == 50){
+      this.mailToNotify = this.globalService.configJSON['Emails']['compras'];
+      console.log(this.mailToNotify);
+    }else if(this.estadoTrkTmp == 60){
+      this.mailToNotify = this.globalService.configJSON['Emails']['financiero'];
+      console.log(this.mailToNotify);
+    }
 
     setTimeout(() => {
       const data = {

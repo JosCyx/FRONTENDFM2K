@@ -531,9 +531,9 @@
                             <div class="text-center">
                                 <div class="row buttons-ruteo">
                                     <ng-container *appAuthorize="'54'">
-                                        <button *ngIf="!setMotivo" class="btn btn-success col m-2" data-toggle="modal" data-target="#enviarSolicitud">Aprobar</button>
+                                        <button *ngIf="!setMotivo" class="btn btn-success col m-2" data-toggle="modal" data-target="#aprobarSolicitud">Aprobar</button>
                                     </ng-container>
-                                    <button *appAuthorize="'57'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">No autorizar</button>
+                                    <button *appAuthorize="'57'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">Devolver</button>
                                     <button *appAuthorize="'60'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud">Anular</button>
                                 </div>
                             </div> 
@@ -1067,7 +1067,7 @@
 </div>
 
 <!-- Modal para verificar el envío de la soliitud recien registrada-->
-<div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+<div class="modal fade" #exampleModal id="aprobarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -1078,7 +1078,15 @@
             </div>
             <div class="modal-body">
                 <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente nivel.</p>
-               
+                <div *ngIf="estadoTrkTmp < 40">
+                    <label for="nivGerencia" class="input-label">Notificar a:</label>
+                    <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
+                        <option value="" selected disabled>Seleccione una opción</option>
+                        <ng-container *ngFor="let niv of nivGerencias">
+                            <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
+                        </ng-container>
+                    </select>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="enviarSolicitud()">
