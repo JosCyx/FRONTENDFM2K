@@ -7,10 +7,8 @@ import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/emp
 import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
 import { CabCotizacionService } from 'src/app/services/comunicationAPI/solicitudes/cab-cotizacion.service';
 import { GlobalService } from 'src/app/services/global.service';
-import { ca, da } from 'date-fns/locale';
 import { format, parseISO } from 'date-fns';
 import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
-import { C } from '@fullcalendar/core/internal-common';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
