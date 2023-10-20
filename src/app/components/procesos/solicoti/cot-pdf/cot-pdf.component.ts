@@ -338,7 +338,7 @@ export class CotPdfComponent implements OnInit {
             },
           };
           const pdf = pdfMake.createPdf(dd);
-          pdf.download();
+          pdf.download(this.datosCabcot.cabecera.cabSolCotNumerico);
       },
       error: (err) => {
         console.error('este es mi error ', err);

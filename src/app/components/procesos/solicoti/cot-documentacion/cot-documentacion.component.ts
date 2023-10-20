@@ -147,11 +147,11 @@ export class CotDocumentacionComponent implements OnInit {
                 docUrlComleta: data[i].docUrl,
               };
               this.paths.push(pat);
+              console.log('Esto son mis Paths guardados',this.paths);
             } catch (error) {
               console.error('Error al obtener la URL del archivo: ', error);
             }
           }
-          console.log('Lista de documentos: ', this.paths);
         },
         error:(err)=> {
           console.error('Error al momento de obtener ', err);
@@ -166,7 +166,37 @@ export class CotDocumentacionComponent implements OnInit {
       console.log('FIN DEL  PROGRAMA');
     }
   }
-
+  DowmloadFile(url: any, fileName: any) {
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        const blobURL = window.URL.createObjectURL(blob);
+  
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = blobURL;
+        a.download = fileName;
+  
+        document.body.appendChild(a);
+        a.click();
+  
+        window.URL.revokeObjectURL(blobURL);
+        document.body.removeChild(a);
+      })
+      .catch((error) => {
+        console.error('Error al descargar el archivo:', error);
+      });
+  }
+   allDownload() {
+    this.paths.forEach((item) => {
+      this.DowmloadFile(item.docUrl, item.docNombre);
+    });
+   }
   //recorre toda la lista de documentos y los elimina
   deleteAllDocs(){
     this.paths.forEach((item) => {
