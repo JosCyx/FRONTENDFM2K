@@ -46,6 +46,7 @@ import { CotAnulacionComponent } from './components/procesos/solicoti/cot-anulac
 import { OcAnulacionComponent } from './components/procesos/solioc/oc-anulacion/oc-anulacion.component';
 import { SpAnulacionComponent } from './components/procesos/solipago/sp-anulacion/sp-anulacion.component';
 import { OcPdfComponent } from './components/procesos/solioc/oc-pdf/oc-pdf.component';
+import { SpPdfComponent } from './components/procesos/solipago/sp-pdf/sp-pdf.component';
 
 
 @NgModule({
@@ -85,7 +86,8 @@ import { OcPdfComponent } from './components/procesos/solioc/oc-pdf/oc-pdf.compo
     CotAnulacionComponent,
     OcAnulacionComponent,
     SpAnulacionComponent,
-    OcPdfComponent
+    OcPdfComponent,
+    SpPdfComponent
   ],
   imports: [
     BrowserModule,

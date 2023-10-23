@@ -614,6 +614,7 @@ export class SolipagoComponent implements OnInit {
       };
     });
     //formatear la fecha de la solicitud de pago
+    this.fechaFormateada=this.formatDateToSpanish( new Date( this.cabecera.cabPagoFechaEmision))
     this.cabecera.cabPagoFechaInspeccion = format(
       parseISO(this.cabecera.cabPagoFechaInspeccion),
       'yyyy-MM-dd'
