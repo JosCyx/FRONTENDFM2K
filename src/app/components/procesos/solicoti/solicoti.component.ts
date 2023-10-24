@@ -478,8 +478,8 @@ export class SolicotiComponent implements OnInit {
       cabSolCotTelefInspector: this.cab_telef_insp,
       cabSolCotNumerico: this.solNumerico,
       cabSolCotIdEmisor: this.cookieService.get('userIdNomina'),
-      cabSolCotApprovedBy: 'Nivel no alcanzado',
-      cabSolCotFinancieroBy: 'Nivel no alcanzado',
+      cabSolCotApprovedBy: '000000',
+      cabSolCotFinancieroBy: '000000',
       cabSolCotAprobPresup: 'SI'
     }
 
@@ -886,7 +886,6 @@ export class SolicotiComponent implements OnInit {
 
     //asigna el nivel de tracking de la solicitud a una variable para controlar la edicion
     this.estadoSol = this.cabecera.cabSolCotEstadoTracking.toString();
-    console.log("Estado de la solicitud: ", this.estadoSol, this.estadoTrkTmp);
 
     for (let emp of this.empleadosEdit) {
       if (emp.empleadoIdNomina == this.cabecera.cabSolCotInspector) {
@@ -1457,7 +1456,7 @@ export class SolicotiComponent implements OnInit {
             (response) => {
               console.log("Solicitud enviada");
               this.showmsj = true;
-              this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido enviada exitosamente.`;
+              this.msjExito = `La solicitud ha sido enviada exitosamente.`;
 
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
               this.sendNotify(newEstado, newestadoSt);
@@ -1619,13 +1618,13 @@ export class SolicotiComponent implements OnInit {
     setTimeout(() => {
       this.nivGerenciaService.getNivGerenciasByDep(depToSearch, nivelStr).subscribe(
         (response) => {
-          console.log('Niveles de gerencia para este nivel: ', response);
+          //console.log('Niveles de gerencia para este nivel: ', response);
           for (let emp of response) {
             if (emp.empNivImp == 'T') {
               //buscar el correo del empleado y setear su correo en la variable maltonotify
               this.empService.getEmpleadoByNomina(emp.empNivEmpelado).subscribe(
                 (response: any) => {
-                  console.log('Empleado: ', response);
+                  //console.log('Empleado: ', response);
                   mailToNotify = response[0].empleadoCorreo;
                   //enviar la notificacion al correo guardado en mailnotify
                   //this.sendMail(mailToNotify);

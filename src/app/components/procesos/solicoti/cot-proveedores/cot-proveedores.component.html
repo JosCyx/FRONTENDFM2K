@@ -6,10 +6,13 @@
                     (click)="selectAction('consultar')" (click)="getProvCotizacion()">Proveedores asignados</a>
             </li>
 
-            <li class="nav-item" *appAuthorize="'37'">
-                <a class="nav-link" [ngClass]="{'active': actionProv === 'agregar'}"
-                    (click)="selectAction('agregar')">Asignar proveedores</a>
-            </li>
+            <!-- modificar para que no se puedan asignar proveedores en caso de que la solicitud ya ha sido enviada -->
+            <ng-container *ngIf="estadoSol == '10' || userId == '001294'">
+                <li class="nav-item" *appAuthorize="'37'">
+                    <a class="nav-link" [ngClass]="{'active': actionProv === 'agregar'}"
+                        (click)="selectAction('agregar')">Asignar proveedores</a>
+                </li>
+            </ng-container>
 
         </ul>
     </div>
@@ -145,7 +148,7 @@
             </thead>
             <tbody>
                 <tr *ngIf="!hasProvs">
-                    <td class="align-middle text-danger" colspan="6">No hay proveedores asignados para esta solicitud
+                    <td class="align-middle text-danger" colspan="7">No hay proveedores asignados para esta solicitud
                     </td>
                 </tr>
                 <tr *ngFor="let prov of assignedProvs$ | async">

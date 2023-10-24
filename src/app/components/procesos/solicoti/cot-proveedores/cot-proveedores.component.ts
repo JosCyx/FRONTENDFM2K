@@ -9,6 +9,7 @@ import { CabeceraCotizacion } from 'src/app/models/procesos/solcotizacion/Cabece
 import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/DetalleCotizacion';
 import { ParamsConfigService } from 'src/app/services/comunicationAPI/seguridad/params-config.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { CookieService } from 'ngx-cookie-service';
 
 interface selectedProveedor {
   ruc: string,
@@ -35,6 +36,7 @@ export class CotProveedoresComponent implements OnInit {
   @Input() noSol: number = 0;
   @Input() viewElement!: boolean;
   @Input() estadoSol!: string;
+  userId: string = this.coockieService.get('userIdNomina');
 
   //variables para controlar comportamiento de la pagina
   actionProv: string = 'consultar';
@@ -132,7 +134,8 @@ export class CotProveedoresComponent implements OnInit {
     private provCotService: ProvCotizacionService,
     private sendMailService: SendEmailService,
     private paramService: ParamsConfigService,
-    private sharedService: SharedService) { 
+    private sharedService: SharedService,
+    private coockieService: CookieService) { 
       this.sharedService.cotProveedores$.subscribe(() =>{
         this.RecorrerPro();
       });

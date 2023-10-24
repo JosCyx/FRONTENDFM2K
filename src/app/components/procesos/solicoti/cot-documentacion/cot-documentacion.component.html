@@ -9,12 +9,12 @@
       class="form-control"
       id="inputFile"
       (change)="getFiles($event)"
-      [appSecureDisable]="estadoSol"
+      [disabled]="estadoSol != '10'"
     />
     <button
       class="btn btn-success"
       (click)="sendfile()"
-      [appSecureDisable]="estadoSol"
+      [disabled]="estadoSol != '10'"
     >
       <i class="bi bi-upload"> Subir</i>
     </button>
