@@ -165,7 +165,14 @@ export class SpPdfComponent implements OnInit {
                       { text: 'SUBTOTAL', style: 'tableHeader' },
                     ],
                     ...this.combinarObJ,
-                    ['','','','',{text:'TOTAL'},{text:this.datosSP.cabecera.cabpagototal}],
+                    [
+                      '',
+                      '',
+                      '',
+                      '',
+                      { text: 'TOTAL' },
+                      { text: this.datosSP.cabecera.cabpagototal },
+                    ],
                     [
                       {
                         text: 'OBSERVACIONES',
@@ -211,28 +218,60 @@ export class SpPdfComponent implements OnInit {
                       '',
                     ],
                     [
-                      { text: 'VALOR A DESCONTAR ', style: 'tableHeader',colSpan: 2 },
+                      {
+                        text: 'VALOR A DESCONTAR ',
+                        style: 'tableHeader',
+                        colSpan: 2,
+                      },
                       '',
                       { text: this.datosSP.cabecera.cabPagoValorMulta },
-                      { text: 'PAGO TOTAL AUTORIZADO', style: 'tableHeader',colSpan: 2 },
+                      {
+                        text: 'PAGO TOTAL AUTORIZADO',
+                        style: 'tableHeader',
+                        colSpan: 2,
+                      },
                       '',
                       { text: this.datosSP.cabecera.cabPagoValorTotalAut },
                     ],
                     [
-                      { text: 'RECIBE ', style: 'tableHeader',colSpan: 2 },
+                      { text: 'RECIBE ', style: 'tableHeader', colSpan: 2 },
                       '',
                       { text: this.datosSP.cabecera.cabPagoValorMulta },
-                      { text: 'FECHA DE INSPECCION', style: 'tableHeader',colSpan: 2 },
+                      {
+                        text: 'FECHA DE INSPECCION',
+                        style: 'tableHeader',
+                        colSpan: 2,
+                      },
                       '',
-                      { text: (this.datosSP.cabecera.cabPagoFechaInspeccion=format(parseISO(this.datosSP.cabecera.cabPagoFechaInspeccion),'yyyy-MM-dd')) },
+                      {
+                        text: (this.datosSP.cabecera.cabPagoFechaInspeccion =
+                          format(
+                            parseISO(
+                              this.datosSP.cabecera.cabPagoFechaInspeccion
+                            ),
+                            'yyyy-MM-dd'
+                          )),
+                      },
                     ],
                     [
-                      { text: 'CANCELA ORDEN', style: 'tableHeader',colSpan: 2 },
+                      {
+                        text: 'CANCELA ORDEN',
+                        style: 'tableHeader',
+                        colSpan: 2,
+                      },
                       '',
                       { text: this.datosSP.cabecera.cabPagoCancelacionOrden },
                       '',
                       '',
-                      { text: (this.datosSP.cabecera.cabPagoFechaInspeccion=format(parseISO(this.datosSP.cabecera.cabPagoFechaInspeccion),'yyyy-MM-dd')) },
+                      {
+                        text: (this.datosSP.cabecera.cabPagoFechaInspeccion =
+                          format(
+                            parseISO(
+                              this.datosSP.cabecera.cabPagoFechaInspeccion
+                            ),
+                            'yyyy-MM-dd'
+                          )),
+                      },
                     ],
                   ],
                 },
@@ -339,8 +378,9 @@ export class SpPdfComponent implements OnInit {
     }
   }
   retornarTabla() {
-    const item = this.datosSP.detalles.sort((a:any, b:any) =>a.detPagoIdDetalle - b.detPagoIdDetalle)
-    ;
+    const item = this.datosSP.detalles.sort(
+      (a: any, b: any) => a.detPagoIdDetalle - b.detPagoIdDetalle
+    );
     console.log('dame esto ', item);
     let datosDetalles = item.map((item: any) => {
       return {
@@ -372,12 +412,12 @@ export class SpPdfComponent implements OnInit {
       this.combinarObJ.push(datos);
     }
   }
-
-  // CancelarOrden(){
-  //   switch (this.datosSP.cabecera.cabPagoCancelacionOrden) {
-  //     case 'S':
-  //       return 'Si';
-  //     case 'N':
-  //       return 'No';
+  //this.datosSP.cabecera.cabPagoCancelacionOrden
+  // CancelarOrden(orden: string):string{
+  //   switch (orden) {
+  //     case 'T':
+  //       return 'TOTAL';
+  //     case 'T':
+  //       return 'PARCIAL';
   // }
 }
