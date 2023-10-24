@@ -69,10 +69,11 @@ export class SolicotiComponent implements OnInit {
   trTipoSolicitud: number = 1;//indica el tipo de solicitud co el que estamos trabajando, este valor cambia en cada tipo de solicitud
   trLastNoSol!: number;
   trNivelEmision: number = 10;//nivel de emision por defecto
-  trIdNomEmp!: number;
+  trIdNomEmp!: string;//id de nomina del empleado que emite la solicitud
 
   //variables de la cabecera
-  cab_area!: number;
+  cab_id_area!: number ;
+  cab_id_dpto!: number;
   cab_fecha: string = this.formatDateToYYYYMMDD(this.fecha);
   cab_asunto!: string;
   cab_proc!: string;
@@ -212,9 +213,7 @@ export class SolicotiComponent implements OnInit {
       map(sectores => sectores.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre)))
     );
 
-    this.areaList$ = this.areaService.getAreaList();
-
-    this.areaList$.subscribe((data) => {
+    this.areaService.getAreaList().subscribe((data) => {
       this.areas = data;
     });
 
@@ -303,16 +302,13 @@ export class SolicotiComponent implements OnInit {
     } else {
       for (let emp of this.empleados) {
         if ((emp.empleadoNombres + ' ' + emp.empleadoApellidos) == this.empleado) {
-          this.trIdNomEmp = emp.empleadoIdNomina;
-          //console.log("Empleado ID:",this.trIdNomEmp);
-          this.areaSolTmp = emp.empleadoIdArea;
+          this.trIdNomEmp = emp.empleadoIdNomina;//guarda el id de nomina del empleado utilizado para registrar el tracking
+          this.cab_id_area = emp.empleadoIdArea;//guardar el area de la solicitud como string
+          this.cab_id_dpto = emp.empleadoIdDpto;//guarda el departamento de la solicitud como int para realizar busquedas
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
-              this.cab_area = area.areaIdNomina;
               this.showArea = area.areaDecp;
-
-              this.areaNmco = area.areaNemonico;
-              //console.log("Empleado area ID:",this.cab_area);
+              this.areaNmco = area.areaNemonico;//extrae el nemonico del area para generar el nombre de la solicitud
             } else if (emp.empleadoIdArea === 0) {
               this.showArea = 'El empleado no posee un area asignada.'
             }
@@ -363,7 +359,6 @@ export class SolicotiComponent implements OnInit {
   }
   clear(): void {
     this.empleado = '';
-    this.showArea = '';
     this.cab_asunto = '';
     this.det_descp = '';
     this.det_id = 1;
@@ -467,7 +462,8 @@ export class SolicotiComponent implements OnInit {
 
     const dataCAB = {
       cabSolCotTipoSolicitud: this.trTipoSolicitud,
-      cabSolCotArea: this.cab_area,
+      cabSolCotIdArea: this.cab_id_area,
+      cabSolCotIdDept: this.cab_id_dpto,
       cabSolCotNoSolicitud: this.trLastNoSol,
       cabSolCotSolicitante: this.trIdNomEmp,
       cabSolCotFecha: this.cab_fecha,
@@ -888,7 +884,7 @@ export class SolicotiComponent implements OnInit {
     this.checkAprobPrep(this.cabecera.cabSolCotEstadoTracking);
     this.noSolTmp = this.cabecera.cabSolCotNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabSolCotEstadoTracking;
-    this.areaSolTmp = this.cabecera.cabSolCotArea;
+    this.areaSolTmp = this.cabecera.cabSolCotIdArea;
 
     //asigna el nivel de tracking de la solicitud a una variable para controlar la edicion
     this.estadoSol = this.cabecera.cabSolCotEstadoTracking.toString();
@@ -1126,7 +1122,8 @@ export class SolicotiComponent implements OnInit {
     const dataCAB = {
       cabSolCotID: this.cabecera.cabSolCotID,
       cabSolCotTipoSolicitud: this.cabecera.cabSolCotTipoSolicitud,
-      cabSolCotArea: this.cabecera.cabSolCotArea,
+      cabSolCotIdArea: this.cabecera.cabSolCotIdArea,
+      //agregar el departamento
       cabSolCotNoSolicitud: this.cabecera.cabSolCotNoSolicitud,
       cabSolCotSolicitante: this.cabecera.cabSolCotSolicitante,
       cabSolCotFecha: this.fechaSinFormato,
@@ -1392,7 +1389,6 @@ export class SolicotiComponent implements OnInit {
     try {
       // Espera a que se complete getNivelRuteoArea
       var newEstado: number = 0;
-      var actualEstadoString: string = '';
       //si la solicitud ya eta en el nivel 70 se cambia su estado a FINALIZADO
 
       if (this.estadoTrkTmp == 70) {
@@ -1441,15 +1437,6 @@ export class SolicotiComponent implements OnInit {
           if (nivel.rutareaNivel == this.estadoTrkTmp) {
             newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
 
-
-            for(let i=0; i < this.nivelesRuteo.length; i++){
-              let niv = this.nivelesRuteo[i];
-
-              if(niv.nivel == newEstado){
-                actualEstadoString = this.nivelesRuteo[i-1].descRuteo;
-              }
-            }
-
             break;
           }
 
@@ -1462,7 +1449,7 @@ export class SolicotiComponent implements OnInit {
               console.log("Solicitud enviada");
               this.showmsj = true;
               this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido enviada exitosamente.`;
-              this.sendNotify(actualEstadoString);
+              this.sendNotify(newEstado);
   
               setTimeout(() => {
                 //envia el correo a quien corresponda
@@ -1611,18 +1598,21 @@ export class SolicotiComponent implements OnInit {
   Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
 
   //MODIFICAR EL ACCESO A LOS CORREOS DE ACUERDO AL NIVEL DE RUTEO
-  sendNotify(nivelStr: string) {
+  sendNotify(nivelStr: number) {
     console.log("Nivel de ruteo: ", nivelStr);
-    if(nivelStr == 'Aprobación'){
-      this.mailToNotify = this.serviceGlobal.configJSON['Emails']['compras'];
-      console.log(this.mailToNotify);
-    }else if(nivelStr == 'Proceso de compra'){
-      this.mailToNotify = this.serviceGlobal.configJSON['Emails']['financiero'];
-      console.log(this.mailToNotify);
-    }else if(nivelStr == 'Proceso Financiero'){
-      this.mailToNotify = this.serviceGlobal.configJSON['Emails']['compras'];
-      console.log(this.mailToNotify);
-    }
+
+    this.nivGerenciaService.getNivGerenciasByArea(Number(this.cookieService.get('userArea'))).subscribe(
+      (response) => {
+        console.log('Niveles de gerencia: ', response);
+        /*for(let niv of response){
+          if(){}
+
+        }*/
+      },
+      (error) => {
+        console.log('Error al obtener los niveles de gerencia: ', error);
+      }
+    );
 
     console.log("Correo enviado a: ", this.mailToNotify)
     /*setTimeout(() => {

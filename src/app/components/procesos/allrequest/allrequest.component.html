@@ -22,10 +22,7 @@
       <div class="form input-group">
         <select class="form-select" name="tipoSol" [(ngModel)]="bsqTipoSol">
           <option disabled selected value="0">Seleccione una opción...</option>
-          <option
-            *ngFor="let tpsol of tipoSol$ | async"
-            [value]="tpsol.tipoSolId"
-          >
+          <option *ngFor="let tpsol of tipoSol$ | async" [value]="tpsol.tipoSolId">
             {{ tpsol.tipoSolNombre }}
           </option>
         </select>
@@ -68,28 +65,16 @@
             </td>
           </tr>
           <ng-container *ngIf="btp == 1">
-            <tr
-              *ngFor="
-                let sol of allSol
-                  | paginate : { itemsPerPage: 10, currentPage: currentPage }
-              "
-              (click)="selectSol(sol.cabSolCotID)"
-            >
+            <tr *ngFor="let sol of allSol| paginate : { itemsPerPage: 10, currentPage: currentPage }" (click)="selectSol(sol.cabSolCotID)">
               <td class="align-middle">{{ sol.cabSolCotNumerico }}</td>
               <ng-container *ngFor="let area of areaList$ | async">
-                <td
-                  class="align-middle"
-                  *ngIf="area.areaIdNomina === sol.cabSolCotArea"
-                >
+                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolCotIdArea">
                   {{ area.areaDecp }}
                 </td>
               </ng-container>
               <td class="align-middle">{{ sol.cabSolCotNoSolicitud }}</td>
               <ng-container *ngFor="let emp of empleadoList$ | async">
-                <td
-                  class="align-middle"
-                  *ngIf="emp.empleadoIdNomina === sol.cabSolCotSolicitante"
-                >
+                <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolCotSolicitante">
                   {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
                 </td>
               </ng-container>
@@ -103,10 +88,7 @@
                 <span *ngSwitchCase="'C'">Anulado</span>
               </td>
               <ng-container *ngFor="let trck of trckList$ | async">
-                <td
-                  class="align-middle"
-                  *ngIf="trck.nivel === sol.cabSolCotEstadoTracking"
-                >
+                <td class="align-middle" *ngIf="trck.nivel === sol.cabSolCotEstadoTracking">
                   {{ trck.descRuteo }}
                 </td>
               </ng-container>
@@ -114,28 +96,19 @@
           </ng-container>
 
           <ng-container *ngIf="btp == 2">
-            <tr
-              *ngFor="
+            <tr *ngFor="
                 let sol of allSol
                   | paginate : { itemsPerPage: 10, currentPage: currentPage }
-              "
-              (click)="selectSol(sol.cabSolOCID)"
-            >
+              " (click)="selectSol(sol.cabSolOCID)">
               <td class="align-middle">{{ sol.cabSolOCNumerico }}</td>
               <ng-container *ngFor="let area of areaList$ | async">
-                <td
-                  class="align-middle"
-                  *ngIf="area.areaIdNomina === sol.cabSolOCArea"
-                >
+                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolOCArea">
                   {{ area.areaDecp }}
                 </td>
               </ng-container>
               <td class="align-middle">{{ sol.cabSolOCNoSolicitud }}</td>
               <ng-container *ngFor="let emp of empleadoList$ | async">
-                <td
-                  class="align-middle"
-                  *ngIf="emp.empleadoIdNomina === sol.cabSolOCSolicitante"
-                >
+                <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolOCSolicitante">
                   {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
                 </td>
               </ng-container>
@@ -149,10 +122,7 @@
                 <span *ngSwitchCase="'C'">Anulado</span>
               </td>
               <ng-container *ngFor="let trck of trckList$ | async">
-                <td
-                  class="align-middle"
-                  *ngIf="trck.nivel === sol.cabSolOCEstadoTracking"
-                >
+                <td class="align-middle" *ngIf="trck.nivel === sol.cabSolOCEstadoTracking">
                   {{ trck.descRuteo }}
                 </td>
               </ng-container>
@@ -160,28 +130,19 @@
           </ng-container>
 
           <ng-container *ngIf="btp == 3">
-            <tr
-              *ngFor="
+            <tr *ngFor="
                 let sol of allSol
                   | paginate : { itemsPerPage: 10, currentPage: currentPage }
-              "
-              (click)="selectSol(sol.cabPagoID)"
-            >
+              " (click)="selectSol(sol.cabPagoID)">
               <td class="align-middle">{{ sol.cabPagoNumerico }}</td>
               <ng-container *ngFor="let area of areaList$ | async">
-                <td
-                  class="align-middle"
-                  *ngIf="area.areaIdNomina === sol.cabPagoAreaSolicitante"
-                >
+                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabPagoAreaSolicitante">
                   {{ area.areaDecp }}
                 </td>
               </ng-container>
               <td class="align-middle">{{ sol.cabPagoNoSolicitud }}</td>
               <ng-container *ngFor="let emp of empleadoList$ | async">
-                <td
-                  class="align-middle"
-                  *ngIf="emp.empleadoIdNomina === sol.cabPagoSolicitante"
-                >
+                <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabPagoSolicitante">
                   {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
                 </td>
               </ng-container>
@@ -195,10 +156,7 @@
                 <span *ngSwitchCase="'C'">Anulado</span>
               </td>
               <ng-container *ngFor="let trck of trckList$ | async">
-                <td
-                  class="align-middle"
-                  *ngIf="trck.nivel === sol.cabPagoEstadoTrack"
-                >
+                <td class="align-middle" *ngIf="trck.nivel === sol.cabPagoEstadoTrack">
                   {{ trck.descRuteo }}
                 </td>
               </ng-container>

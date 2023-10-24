@@ -28,8 +28,13 @@ export class NivGerenciaService {
     });
   }
 
-  getNivGerencias() {
+  getNivGerencias() : Observable<any[]> {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get(this.APIUrl + '/NivGerenciums', { headers: headers });
+    return this.http.get<any>(this.APIUrl + '/NivGerenciums', { headers: headers });
+  }
+
+  getNivGerenciasByArea(areaId: number) : Observable<any[]> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + '/NivGerenciums/GetByArea/' + areaId, { headers: headers });
   }
 }

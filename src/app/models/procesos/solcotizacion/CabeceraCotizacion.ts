@@ -1,6 +1,6 @@
 export class CabeceraCotizacion {
   public cabSolCotTipoSolicitud: number;
-  public cabSolCotArea: number;
+  public cabSolCotIdArea: number;
   public cabSolCotNumerico: string;
   public cabSolCotID: number;
   public cabSolCotNoSolicitud: number;
@@ -25,7 +25,7 @@ export class CabeceraCotizacion {
 
   constructor(data: any) {
       this.cabSolCotTipoSolicitud = data.cabSolCotTipoSolicitud;
-      this.cabSolCotArea = data.cabSolCotArea;
+      this.cabSolCotIdArea = data.cabSolCotArea;
       this.cabSolCotNumerico = data.cabSolCotNumerico;
       this.cabSolCotID = data.cabSolCotID;
       this.cabSolCotNoSolicitud = data.cabSolCotNoSolicitud;
