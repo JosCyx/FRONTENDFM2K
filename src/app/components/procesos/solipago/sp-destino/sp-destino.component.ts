@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { I } from '@fullcalendar/core/internal-common';
+import { I, co } from '@fullcalendar/core/internal-common';
 import { Observable, map } from 'rxjs';
 import { DestinoPagoServiceService } from 'src/app/services/comunicationAPI/seguridad/destino-pago-service.service';
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';

@@ -8,6 +8,7 @@
           <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">
             Crear
           </button> -->
+          <app-sp-pdf></app-sp-pdf>
         </div>
       </div>
     </nav>
@@ -190,6 +191,14 @@
               <i class="bi bi-search"></i>
             </button>
           </div>
+          <!-- Mensaje de error -->
+          <div  *ngIf="alertBool" class=  "alert alert-warning d-flex align-items-center mt-2" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <div>
+                   {{alertText}}
+            </div>
+          </div>
+
         </div>
         <div *ngIf="actionCreate == 'creacion'">
           <div class="tabs-edit" *ngIf="destinoIO">

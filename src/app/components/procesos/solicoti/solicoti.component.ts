@@ -28,8 +28,6 @@ import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes
 import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
 import { CotAnulacionComponent } from './cot-anulacion/cot-anulacion.component';
 import { SharedService } from 'src/app/services/shared.service';
-import { ex } from '@fullcalendar/core/internal-common';
-
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -157,6 +155,7 @@ export class SolicotiComponent implements OnInit {
   @Input() sharedNoSol!: number;
   @Input() cabSolCotAsunto!: any;
   @Input() sharedDetalle: any[] = [];
+  
 
   areaUserCookie: string = '';
 
@@ -198,6 +197,7 @@ export class SolicotiComponent implements OnInit {
     });*/
   }
 
+ 
   ngOnInit(): void {
     this.areaUserCookie = this.cookieService.get('userArea');
     this.empService.getEmpleadosList().subscribe((data) => {

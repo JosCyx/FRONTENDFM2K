@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
 import { GlobalService } from 'src/app/services/global.service';
 import { DetallePago } from 'src/app/models/procesos/solcotizacion/DetallePago';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, set } from 'date-fns';
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
 import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
@@ -58,7 +58,6 @@ export class SolipagoComponent implements OnInit {
   receptor!: string;
   //*Variables de input para solicitar tipo de solicitud  y no solicitud
   valorinput: string = '';
-  tipoSolinput!: number;
   noSolicinput!: number;
   //Creacion de Lista para guardar los tipos de solicit y no solicitud
   detalleSolPagos: any[] = [];
@@ -104,6 +103,9 @@ export class SolipagoComponent implements OnInit {
   //TIPO DE BUSQUEDAS
   tipobusqueda: string = 'nombre';
   buscarProveedor: string = '';
+  //
+  alertBool:boolean=false;
+  alertText:string='';
   //
   empleadoEdi: any[] = [];
   proveedores: any[] = [];
@@ -479,46 +481,59 @@ export class SolipagoComponent implements OnInit {
       this.detallesToDestino = [];
     } else {
       const partes = this.valorinput.match(/(\d+)-(\d+)/);
-      //console.log(partes);
+      console.log('partes', partes);
       if (partes && partes.length === 3) {
-        this.tipoSolinput = parseInt(partes[1], 10);
+        console.log("este mi partes ",partes[1]);
+        if(partes[1] !='2'){
+          this.alertBool = true;
+          this.alertText = 'No se ha encontrado la solicitud';
+          this.detalleSolPagos = [];
+          setTimeout(() => {
+            this.alertBool = false;
+            this.alertText = '';
+          }, 1000);
+        }else{
+          console.log('tiene formato pasa por aqui');
         this.noSolicinput = parseInt(partes[2], 10);
-        //console.log('Tipo de solicitus', this.tipoSolinput);
-        //console.log('Numero de solicitud', this.noSolicinput);
-      } else {
+          try {
+            this.detSolService
+              .getDetalle_solicitud(2, this.noSolicinput)
+              .subscribe(
+                (response) => {
+    
+                  //console.log('response', response);
+                  this.detalleSolPagos = response.map((ini: any) => ({
+                    idDetalle: ini.solCotIdDetalle,
+                    itemDesc: ini.solCotDescripcion,
+                  }));
+    
+                  //variables para controlar los datos ue se le pasan a destino
+                  this.destinoIO = true;
+                  this.detallesToDestino = response.map((detalle: any) => {
+                    return {
+                      idDetalle: detalle.solCotIdDetalle,
+                      descpDetalle: detalle.solCotDescripcion,
+                      destinoDetalle: false
+                    };
+                  });
+                  //console.log('cambios en el map ', this.detalleSolPagos);
+                },
+                (error) => {
+                  console.log('error al guardar la cabecera: ', error);
+                }
+              );
+          } catch (error) {
+            console.log('error', error);
+          }
+
+        }
+        
+
+      } 
+      else {
         console.log('No tiene ningun formato realizado');
       }
-      //console.log('VALOR INGRESADO:', this.valorinput);
-      try {
-        this.detSolService
-          .getDetalle_solicitud(this.tipoSolinput, this.noSolicinput)
-          .subscribe(
-            (response) => {
-
-              //console.log('response', response);
-              this.detalleSolPagos = response.map((ini: any) => ({
-                idDetalle: ini.solCotIdDetalle,
-                itemDesc: ini.solCotDescripcion,
-              }));
-
-              //variables para controlar los datos ue se le pasan a destino
-              this.destinoIO = true;
-              this.detallesToDestino = response.map((detalle: any) => {
-                return {
-                  idDetalle: detalle.solCotIdDetalle,
-                  descpDetalle: detalle.solCotDescripcion,
-                  destinoDetalle: false
-                };
-              });
-              //console.log('cambios en el map ', this.detalleSolPagos);
-            },
-            (error) => {
-              console.log('error al guardar la cabecera: ', error);
-            }
-          );
-      } catch (error) {
-        console.log('error', error);
-      }
+      
     }
   }
   //* Agregamos los detalles de pago a base
@@ -602,6 +617,7 @@ export class SolipagoComponent implements OnInit {
       };
     });
     //formatear la fecha de la solicitud de pago
+    this.fechaFormateada=this.formatDateToSpanish( new Date( this.cabecera.cabPagoFechaEmision))
     this.cabecera.cabPagoFechaInspeccion = format(
       parseISO(this.cabecera.cabPagoFechaInspeccion),
       'yyyy-MM-dd'

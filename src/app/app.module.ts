@@ -41,9 +41,12 @@ import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitud
 import { SpDestinoComponent } from './components/procesos/solipago/sp-destino/sp-destino.component';
 import { RolesTransacComponent } from './components/seguridad/roles-transac/roles-transac.component';
 import { RolesUsersComponent } from './components/seguridad/roles-users/roles-users.component';
+import { CotPdfComponent } from './components/procesos/solicoti/cot-pdf/cot-pdf.component';
 import { CotAnulacionComponent } from './components/procesos/solicoti/cot-anulacion/cot-anulacion.component';
 import { OcAnulacionComponent } from './components/procesos/solioc/oc-anulacion/oc-anulacion.component';
 import { SpAnulacionComponent } from './components/procesos/solipago/sp-anulacion/sp-anulacion.component';
+import { OcPdfComponent } from './components/procesos/solioc/oc-pdf/oc-pdf.component';
+import { SpPdfComponent } from './components/procesos/solipago/sp-pdf/sp-pdf.component';
 
 
 @NgModule({
@@ -79,9 +82,12 @@ import { SpAnulacionComponent } from './components/procesos/solipago/sp-anulacio
     SpDestinoComponent,
     RolesTransacComponent,
     RolesUsersComponent,
+    CotPdfComponent,
     CotAnulacionComponent,
     OcAnulacionComponent,
-    SpAnulacionComponent
+    SpAnulacionComponent,
+    OcPdfComponent,
+    SpPdfComponent
   ],
   imports: [
     BrowserModule,
