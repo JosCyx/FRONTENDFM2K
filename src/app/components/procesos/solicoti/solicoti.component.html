@@ -5,7 +5,6 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 30px;">
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
-                    <app-cot-pdf></app-cot-pdf>
                     <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">
                         Crear
                     </button> -->
@@ -166,7 +165,7 @@
                 </div>
 
                 <div *ngIf="actionCreate == 'documentacion'">
-                    <app-cot-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+                    <app-cot-documentacion [view]="changeview"  [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
                         [estadoSol]="estadoSol"></app-cot-documentacion>
                 </div>
                 <div *ngIf="actionCreate == 'proveedores'">
@@ -587,8 +586,11 @@
                         <label class="input-group-text">Teléfono:</label>
                         <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolCotTelefInspector"
                             [appSecureDisable]="estadoSol" />
+                        </div>
+                        <div class="row justify-content-between " >
+                            <app-cot-pdf class="text-end" ></app-cot-pdf>
+                        </div>
                     </div>
-                </div>
             </div>
             <div class="d-flex row mt-2">
                 <div class="col">

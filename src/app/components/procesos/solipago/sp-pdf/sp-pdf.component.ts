@@ -25,6 +25,7 @@ export class SpPdfComponent implements OnInit {
   //Variables
   datosSP!: SP;
   empleados: string = '';
+  recibe:string='';
   areas: string = '';
   nivelRuta: string = '';
 
@@ -64,6 +65,7 @@ export class SpPdfComponent implements OnInit {
         next: (response) => {
           this.datosSP = response;
           this.traerEmpleado();
+          this.traerRecibe();
           this.TraerArea();
           this.EstadoTracking();
           this.retornarTabla();
@@ -80,13 +82,13 @@ export class SpPdfComponent implements OnInit {
               },
               {
                 text: this.datosSP.cabecera.cabPagoNumerico,
-                algnment: 'right',
+                algnment: 'left',
                 margin: [0, 0, 10, 5],
               },
               {
                 fontSize: 10,
                 table: {
-                  widths: [90, 170, 70, 95, 40],
+                  widths: [90, 170, 130, 50, 25],
                   body: [
                     [
                       { text: 'FECHA', style: 'tableHeader' },
@@ -154,7 +156,7 @@ export class SpPdfComponent implements OnInit {
                 margin: [0, 5, 0, 0],
                 fontSize: 10,
                 table: {
-                  widths: [30, 170, 70, 70, 60, 56],
+                  widths: [30, 120, 120, 70, 60, 56],
                   body: [
                     [
                       { text: 'N°', style: 'tableHeader' },
@@ -236,7 +238,7 @@ export class SpPdfComponent implements OnInit {
                     [
                       { text: 'RECIBE ', style: 'tableHeader', colSpan: 2 },
                       '',
-                      { text: this.datosSP.cabecera.cabPagoValorMulta },
+                      { text: this.recibe },
                       {
                         text: 'FECHA DE INSPECCION',
                         style: 'tableHeader',
@@ -260,18 +262,15 @@ export class SpPdfComponent implements OnInit {
                         colSpan: 2,
                       },
                       '',
-                      { text: this.datosSP.cabecera.cabPagoCancelacionOrden },
-                      '',
-                      '',
                       {
-                        text: (this.datosSP.cabecera.cabPagoFechaInspeccion =
-                          format(
-                            parseISO(
-                              this.datosSP.cabecera.cabPagoFechaInspeccion
-                            ),
-                            'yyyy-MM-dd'
-                          )),
+                        text: this.CancelarOrden(
+                          this.datosSP.cabecera.cabPagoCancelacionOrden
+                        ),
+                        colSpan: 4,
                       },
+                      '',
+                      '',
+                      '',
                     ],
                   ],
                 },
@@ -298,6 +297,7 @@ export class SpPdfComponent implements OnInit {
           };
           const pdf = pdfMake.createPdf(PDFSP);
           pdf.open();
+          this.clear();
         },
         error: (err) => {
           console.error(err);
@@ -338,6 +338,16 @@ export class SpPdfComponent implements OnInit {
     const year = date.getFullYear();
 
     return `${dayOfWeek}, ${dayOfMonth} de ${month} de ${year}`;
+  }
+  traerRecibe() {
+    for (let iterator of this.empleadoedit) {
+      if (
+        iterator.empleadoIdNomina == this.datosSP.cabecera.cabPagoReceptor
+      ) {
+        this.recibe =
+          iterator.empleadoNombres + ' ' + iterator.empleadoApellidos;
+      }
+    }
   }
   traerEmpleado() {
     for (let iterator of this.empleadoedit) {
@@ -412,12 +422,20 @@ export class SpPdfComponent implements OnInit {
       this.combinarObJ.push(datos);
     }
   }
-  //this.datosSP.cabecera.cabPagoCancelacionOrden
-  // CancelarOrden(orden: string):string{
-  //   switch (orden) {
-  //     case 'T':
-  //       return 'TOTAL';
-  //     case 'T':
-  //       return 'PARCIAL';
-  // }
+  // this.datosSP.cabecera.cabPagoCancelacionOrden
+  CancelarOrden(orden: string): string {
+    switch (orden) {
+      case 'TTL':
+        return 'TOTAL';
+      case 'PCL':
+        return 'PARCIAL';
+      default:
+        return ''; // Manejo por defecto si el valor no es A, F o C
+    }
+  }
+  clear(){
+    this.datosSP = {cabecera:{},
+            detalles: []};
+            this.combinarObJ = [];
+  }
 }

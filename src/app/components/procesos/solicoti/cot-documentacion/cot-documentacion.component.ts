@@ -22,6 +22,8 @@ export class CotDocumentacionComponent implements OnInit {
   @Input() tipoSol!: number;
   @Input() noSol!: number;
   @Input() estadoSol!: string;
+  @Input() view!: string;
+
   //
   prefijo!: string;
   //Variable para Obtener el path

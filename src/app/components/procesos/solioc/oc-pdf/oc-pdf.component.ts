@@ -45,7 +45,6 @@ export class OcPdfComponent implements OnInit {
   combinarObJ: any = [];
   combinarSecto: any = [];
 
-
   constructor(
     private serviceGlobal: GlobalService,
     private cabOCService: CabOrdCompraService,
@@ -54,7 +53,7 @@ export class OcPdfComponent implements OnInit {
     private provService: ProveedorService,
     private nivRuteService: NivelRuteoService,
     private prespService: PresupuestoService,
-    private sectService: SectoresService,
+    private sectService: SectoresService
   ) {}
 
   ngOnInit(): void {
@@ -80,11 +79,18 @@ export class OcPdfComponent implements OnInit {
         this.inspectoresEdit = res;
       },
     });
-    this.sectService.getSectoresList().pipe(map(sector=>sector.sort((a,b)=>a.sectNombre.localeCompare(b.sectNombre)))).subscribe({
-      next: (respuestas: any) => {
-        this.sectores = respuestas;
-      }
-    });
+    this.sectService
+      .getSectoresList()
+      .pipe(
+        map((sector) =>
+          sector.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre))
+        )
+      )
+      .subscribe({
+        next: (respuestas: any) => {
+          this.sectores = respuestas;
+        },
+      });
   }
 
   ClickPDF() {
@@ -101,7 +107,7 @@ export class OcPdfComponent implements OnInit {
           this.BuscarInpector();
           const pdfc: any = {
             content: [
-              { text: 'Imagen', margin: [0, 20] },
+              // { image: 'Imagen', margin: [0, 20] },
               { text: 'FUNDACION MALECON 2000', style: 'header' },
               {
                 text: 'ORDEN DE COMPRA',
@@ -304,8 +310,8 @@ export class OcPdfComponent implements OnInit {
               {
                 margin: [0, 10, 0, 0],
                 text: 'Desglose de Sectores',
-                bold:true,
-                alignment:'center',
+                bold: true,
+                alignment: 'center',
                 pageBreak: 'before',
               },
               {
@@ -316,7 +322,7 @@ export class OcPdfComponent implements OnInit {
                       { text: 'CANTIDAD', bold: true },
                       { text: 'SECTOR', bold: true },
                     ],
-                    ...this.combinarSecto
+                    ...this.combinarSecto,
                   ],
                 },
               },
@@ -341,7 +347,8 @@ export class OcPdfComponent implements OnInit {
             },
           };
           const pdf = pdfMake.createPdf(pdfc);
-          pdf.open();
+          pdf.download(this.datosCabOC.cabecera.cabSolOCNumerico);
+          this.clear();
         },
       });
     } catch (error) {
@@ -457,48 +464,51 @@ export class OcPdfComponent implements OnInit {
       this.combinarObJ.push(a);
     }
   }
-  RetornarOrdencompraSub(){
+  RetornarOrdencompraSub() {
     const item = this.datosCabOC.items;
-    let arraysector=item.map((index:any)=>{
-      return{
-        itmIdDetalle:index.itmIdDetalle,
-        itmSector:index.itmSector,
-        itmCantidad:index.itmCantidad,
-
-      }
-    })
+    let arraysector = item.map((index: any) => {
+      return {
+        itmIdDetalle: index.itmIdDetalle,
+        itmSector: index.itmSector,
+        itmCantidad: index.itmCantidad,
+      };
+    });
     for (let index = 0; index < arraysector.length; index++) {
-      let descripcion='';
+      let descripcion = '';
       for (const iterator of this.datosMapeados) {
-        if(iterator.solCotIdDetalle == arraysector[index].itmIdDetalle){
-          descripcion=iterator.solCotDescripcion;
+        if (iterator.solCotIdDetalle == arraysector[index].itmIdDetalle) {
+          descripcion = iterator.solCotDescripcion;
         }
       }
-      let sector='';
-      for(let iter of this.sectores){
-        if(iter.sectIdNomina== arraysector[index].itmSector){
-          sector=iter.sectNombre;
+      let sector = '';
+      for (let iter of this.sectores) {
+        if (iter.sectIdNomina == arraysector[index].itmSector) {
+          sector = iter.sectNombre;
         }
       }
-      const {itmCantidad}=arraysector[index];
-      const a=[
-        {text:descripcion,alignment:'left'},
-        {text:itmCantidad,alignment:'center'},
-        {text:sector,alignment:'left'}
-      ]
+      const { itmCantidad } = arraysector[index];
+      const a = [
+        { text: descripcion, alignment: 'left' },
+        { text: itmCantidad, alignment: 'center' },
+        { text: sector, alignment: 'left' },
+      ];
       this.combinarSecto.push(a);
     }
-
   }
   BuscarInpector() {
     for (const iterator of this.inspectoresEdit) {
       if (
-        iterator.empleadoIdNomina ==
-        this.datosCabOC.cabecera.cabSolOCInspector
+        iterator.empleadoIdNomina == this.datosCabOC.cabecera.cabSolOCInspector
       ) {
         this.inpectores =
           iterator.empleadoNombres + '' + iterator.empleadoApellidos;
       }
     }
+  }
+
+  clear() {
+    this.datosCabOC = { cabecera: {}, detalles: [], items: [] };
+    this.combinarObJ = [];
+    this.combinarSecto = [];
   }
 }

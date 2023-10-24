@@ -99,11 +99,11 @@ export class CotPdfComponent implements OnInit {
           this.retornarSub();
           const dd: any = {
             content: [
-              {
-                text: 'imagen',
-                //  image: 'src\assets\img\icon.png',
-                margin: [0, 20],
-              },
+              // {
+              //   image: 'src\assets\img\icon.jpg',
+              //   //  image: 'src\assets\img\icon.png',
+              //   margin: [0, 20],
+              // },
               { text: 'FUNDACION MALECON 2000', style: 'header' },
       
               {
@@ -340,6 +340,7 @@ export class CotPdfComponent implements OnInit {
           };
           const pdf = pdfMake.createPdf(dd);
           pdf.download(this.datosCabcot.cabecera.cabSolCotNumerico);
+          this.clear();
       },
       error: (err) => {
         console.error('este es mi error ', err);
@@ -503,4 +504,10 @@ export class CotPdfComponent implements OnInit {
       }
     }
   }
+  clear() {
+    this.datosCabcot = { cabecera: {}, detalles: [], items: [] };
+    this.combinarObJ = [];
+    this.combinarSecto=[];
+  }
+
 }

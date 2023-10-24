@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class GlobalService{
   //url de la API publicada
-  //readonly APIUrl = "http://192.168.1.234:9192/api";
+  //  APIUrl = "http://192.168.1.234:9192/api";
 
   APIUrl = "https://localhost:7086/api";
   //api2: string = '';
