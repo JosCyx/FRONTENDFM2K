@@ -70,7 +70,7 @@ export class SolicotiComponent implements OnInit {
   trIdNomEmp!: string;//id de nomina del empleado que emite la solicitud
 
   //variables de la cabecera
-  cab_id_area!: number ;
+  cab_id_area!: number;
   cab_id_dpto!: number;
   cab_fecha: string = this.formatDateToYYYYMMDD(this.fecha);
   cab_asunto!: string;
@@ -132,7 +132,7 @@ export class SolicotiComponent implements OnInit {
   presupuestos: any[] = [];
   //sectores: any[] = [];
   inspectores: any[] = [];
-  nivGerencias: any[] = [];
+  //nivGerencias: any[] = [];
 
   //edicion de solicitud de cotizacion
   solID: number = this.serviceGlobal.solID;
@@ -155,7 +155,7 @@ export class SolicotiComponent implements OnInit {
   @Input() sharedNoSol!: number;
   @Input() cabSolCotAsunto!: any;
   @Input() sharedDetalle: any[] = [];
-  
+
 
   areaUserCookie: string = '';
 
@@ -197,7 +197,7 @@ export class SolicotiComponent implements OnInit {
     });*/
   }
 
- 
+
   ngOnInit(): void {
     this.areaUserCookie = this.cookieService.get('userArea');
     this.empService.getEmpleadosList().subscribe((data) => {
@@ -225,9 +225,6 @@ export class SolicotiComponent implements OnInit {
       this.presupuestos = data;
     });
 
-    this.nivGerenciaService.getNivGerencias().subscribe((data: any) => {
-      this.nivGerencias = data;
-    });
 
 
     if (this.changeview == 'editar') {
@@ -303,11 +300,12 @@ export class SolicotiComponent implements OnInit {
       for (let emp of this.empleados) {
         if ((emp.empleadoNombres + ' ' + emp.empleadoApellidos) == this.empleado) {
           this.trIdNomEmp = emp.empleadoIdNomina;//guarda el id de nomina del empleado utilizado para registrar el tracking
-          this.cab_id_area = emp.empleadoIdArea;//guardar el area de la solicitud como string
+          this.cab_id_area = emp.empleadoIdArea;//guardar el area de la solicitud como int para realizar busquedas
+          this.deptSolTmp = emp.empleadoIdDpto;
           this.cab_id_dpto = emp.empleadoIdDpto;//guarda el departamento de la solicitud como int para realizar busquedas
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
-              this.showArea = area.areaDecp;
+              this.showArea = area.areaDecp;//define el nombre del area para mostrarlo en el html
               this.areaNmco = area.areaNemonico;//extrae el nemonico del area para generar el nombre de la solicitud
             } else if (emp.empleadoIdArea === 0) {
               this.showArea = 'El empleado no posee un area asignada.'
@@ -479,9 +477,9 @@ export class SolicotiComponent implements OnInit {
       cabSolCotInspector: this.cab_inspector,
       cabSolCotTelefInspector: this.cab_telef_insp,
       cabSolCotNumerico: this.solNumerico,
-      cabSolCotIdEmisor: Number(this.cookieService.get('userIdNomina')),
-      cabSolCotApprovedBy: 0,
-      cabSolCotFinancieroBy: 0,
+      cabSolCotIdEmisor: this.cookieService.get('userIdNomina'),
+      cabSolCotApprovedBy: 'Nivel no alcanzado',
+      cabSolCotFinancieroBy: 'Nivel no alcanzado',
       cabSolCotAprobPresup: 'SI'
     }
 
@@ -884,7 +882,7 @@ export class SolicotiComponent implements OnInit {
     this.checkAprobPrep(this.cabecera.cabSolCotEstadoTracking);
     this.noSolTmp = this.cabecera.cabSolCotNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabSolCotEstadoTracking;
-    this.areaSolTmp = this.cabecera.cabSolCotIdArea;
+    this.deptSolTmp = this.cabecera.cabSolCotIdDept;
 
     //asigna el nivel de tracking de la solicitud a una variable para controlar la edicion
     this.estadoSol = this.cabecera.cabSolCotEstadoTracking.toString();
@@ -1123,7 +1121,7 @@ export class SolicotiComponent implements OnInit {
       cabSolCotID: this.cabecera.cabSolCotID,
       cabSolCotTipoSolicitud: this.cabecera.cabSolCotTipoSolicitud,
       cabSolCotIdArea: this.cabecera.cabSolCotIdArea,
-      //agregar el departamento
+      cabSolCotIdDept: this.cabecera.cabSolCotIdDept,
       cabSolCotNoSolicitud: this.cabecera.cabSolCotNoSolicitud,
       cabSolCotSolicitante: this.cabecera.cabSolCotSolicitante,
       cabSolCotFecha: this.fechaSinFormato,
@@ -1141,7 +1139,7 @@ export class SolicotiComponent implements OnInit {
       cabSolCotNumerico: this.cabecera.cabSolCotNumerico,
       cabSolCotAprobPresup: this.cabecera.cabSolCotAprobPresup,
       cabSolCotMtovioDev: this.cabecera.cabSolCotMtovioDev,
-      cabSolCotIdEmisor: Number(this.cookieService.get('userIdNomina')),
+      cabSolCotIdEmisor: this.cookieService.get('userIdNomina'),
       cabSolCotApprovedBy: this.aprobadopor,
       cabSolCotFinancieroBy: this.financieropor
     };
@@ -1329,7 +1327,7 @@ export class SolicotiComponent implements OnInit {
 
   guardarEnviarSolNueva() {
     try {
-      this.check();  
+      this.check();
       setTimeout(() => {
         this.enviarSolicitud();
       }, 500);
@@ -1368,19 +1366,19 @@ export class SolicotiComponent implements OnInit {
 
   noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui
   estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
-  areaSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
+  deptSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
-  aprobadopor: number = 0;
-  financieropor: number = 0;
+  aprobadopor: string = '';
+  financieropor: string = '';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
     //verifica los niveles de aprobacion y financiero para asignar el usuario que envia la solicitud para guardar el empleado quien autoriza
-    if(this.estadoTrkTmp == 40){
-      this.aprobadopor = Number(this.cookieService.get('userIdNomina'));
+    if (this.estadoTrkTmp == 40) {
+      this.aprobadopor = this.cookieService.get('userIdNomina');
       //this.saveEditCabecera();
       this.setAprobadoPor(this.aprobadopor);
-    }else if (this.estadoTrkTmp == 60){
-      this.financieropor = Number(this.cookieService.get('userIdNomina'));
+    } else if (this.estadoTrkTmp == 60) {
+      this.financieropor = this.cookieService.get('userIdNomina');
       //this.saveEditCabecera();
       this.setFinancieroPor(this.financieropor);
     }
@@ -1388,7 +1386,8 @@ export class SolicotiComponent implements OnInit {
     await this.getNivelRuteoArea();
     try {
       // Espera a que se complete getNivelRuteoArea
-      var newEstado: number = 0;
+      let newEstado: number = 0;
+      let newestadoSt: string;
       //si la solicitud ya eta en el nivel 70 se cambia su estado a FINALIZADO
 
       if (this.estadoTrkTmp == 70) {
@@ -1408,20 +1407,20 @@ export class SolicotiComponent implements OnInit {
               console.log('Error al actualizar el estado: ', error);
             }
           );
-          
+
           this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
             (response) => {
-              
+
               this.showmsj = true;
               this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido enviada exitosamente.`;
 
-            setTimeout(() => {
-              this.showmsj = false;
-              this.msjExito = '';
-              this.clear();
-              this.serviceGlobal.solView = 'crear';
-              this.router.navigate(['allrequest']);
-            }, 2000);
+              setTimeout(() => {
+                this.showmsj = false;
+                this.msjExito = '';
+                this.clear();
+                this.serviceGlobal.solView = 'crear';
+                this.router.navigate(['allrequest']);
+              }, 2000);
             },
             (error) => {
               console.log('Error al actualizar el estado: ', error);
@@ -1436,7 +1435,17 @@ export class SolicotiComponent implements OnInit {
           var nivel = this.nivelSolAsignado[i];
           if (nivel.rutareaNivel == this.estadoTrkTmp) {
             newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
-
+            //extrae el tipo de proceso del nivel actual
+            this.nivRuteService.getNivelInfo(newEstado).subscribe(
+              (response) => {
+                newestadoSt = response[0].procesoRuteo;
+                console.log("tipo de proceso de nivel: ", newestadoSt);
+              },
+              (error) => {
+                console.log('Error al obtener el nuevo estado de tracking: ', error);
+              }
+            )
+            //newestadoSt = this.nivelSolAsignado[i + 1].rutareaNivel;
             break;
           }
 
@@ -1449,10 +1458,11 @@ export class SolicotiComponent implements OnInit {
               console.log("Solicitud enviada");
               this.showmsj = true;
               this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido enviada exitosamente.`;
-              this.sendNotify(newEstado);
-  
+
+              //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
+              this.sendNotify(newEstado, newestadoSt);
+
               setTimeout(() => {
-                //envia el correo a quien corresponda
                 this.showmsj = false;
                 this.msjExito = '';
                 this.clear();
@@ -1465,7 +1475,7 @@ export class SolicotiComponent implements OnInit {
             }
           );
         }, 500);
-       
+
       }
 
     } catch (error) {
@@ -1481,9 +1491,9 @@ export class SolicotiComponent implements OnInit {
   nivelRuteotoAut: RuteoArea[] = [];
   nivelesRuteo: any[] = [];
   async getNivelRuteoArea() {
-    this.nivelRut$.subscribe((response) => {this.nivelesRuteo = response;});
+    this.nivelRut$.subscribe((response) => { this.nivelesRuteo = response; });
     try {
-      const response = await this.ruteoService.getRuteosByArea(this.areaSolTmp).toPromise();
+      const response = await this.ruteoService.getRuteosByArea(this.deptSolTmp).toPromise();
       this.nivelSolAsignado = response.filter((res: any) => res.rutareaTipoSol == this.trTipoSolicitud);
       this.nivelSolAsignado.sort((a, b) => a.rutareaNivel - b.rutareaNivel);
       this.nivelRuteotoAut = this.nivelSolAsignado;
@@ -1592,32 +1602,57 @@ export class SolicotiComponent implements OnInit {
 
 
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
-  mailToNotify: string = '';
-  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>
-  Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo. Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>
-  Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
 
-  //MODIFICAR EL ACCESO A LOS CORREOS DE ACUERDO AL NIVEL DE RUTEO
-  sendNotify(nivelStr: number) {
+
+  async sendNotify(nivelStr: number, nivelStatus: string) {
     console.log("Nivel de ruteo: ", nivelStr);
 
-    this.nivGerenciaService.getNivGerenciasByArea(Number(this.cookieService.get('userArea'))).subscribe(
-      (response) => {
-        console.log('Niveles de gerencia: ', response);
-        /*for(let niv of response){
-          if(){}
+    let mailToNotify = '';
+    let depToSearch = 0;
 
-        }*/
-      },
-      (error) => {
-        console.log('Error al obtener los niveles de gerencia: ', error);
-      }
-    );
+    if (nivelStatus == 'E') {
+      depToSearch = this.deptSolTmp;
+    } else if (nivelStatus == 'G') {
+      depToSearch = 0;
+    }
 
-    console.log("Correo enviado a: ", this.mailToNotify)
-    /*setTimeout(() => {
+    setTimeout(() => {
+      this.nivGerenciaService.getNivGerenciasByDep(depToSearch, nivelStr).subscribe(
+        (response) => {
+          console.log('Niveles de gerencia para este nivel: ', response);
+          for (let emp of response) {
+            if (emp.empNivImp == 'T') {
+              //buscar el correo del empleado y setear su correo en la variable maltonotify
+              this.empService.getEmpleadoByNomina(emp.empNivEmpelado).subscribe(
+                (response: any) => {
+                  console.log('Empleado: ', response);
+                  mailToNotify = response[0].empleadoCorreo;
+                  //enviar la notificacion al correo guardado en mailnotify
+                  //this.sendMail(mailToNotify);
+                  console.log("Correo enviado a: ", mailToNotify)
+                },
+                (error) => {
+                  console.log('Error al obtener el empleado: ', error);
+                }
+              );
+            }
+          }
+        },
+        (error) => {
+          console.log('Error al obtener los niveles de gerencia: ', error);
+        }
+      );
+    }, 100);
+  }
+
+  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>
+    Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo. Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>
+    Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
+
+  sendMail(mailToNotify: string) {
+    setTimeout(() => {
       const data = {
-        destinatario: this.mailToNotify,
+        destinatario: mailToNotify,
         asunto: 'Nueva Solicitud Recibida - Acción Requerida',
         contenido: this.emailContent
       }
@@ -1645,23 +1680,21 @@ export class SolicotiComponent implements OnInit {
           }, 4000)
         }
       );
-    }, 1000);*/
-
-
+    }, 1000);
   }
 
-  
+
   setMotivoDev() {
-    if(this.setMotivo == false){
+    if (this.setMotivo == false) {
       this.setMotivo = true;
-    }else{
+    } else {
       this.setMotivo = false;
     }
     //this.setMotivo = !this.setMotivo;
   }
 
-  setAprobadoPor(id: number){
-    this.cabCotService.updateAprobadoCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
+  setAprobadoPor(id: string) {
+    this.cabCotService.updateAprobadoCotizacion(this.trTipoSolicitud, this.noSolTmp, id).subscribe(
       (response) => {
         console.log('ACTUALIZADO CORRECTAMENTE');
       },
@@ -1671,8 +1704,8 @@ export class SolicotiComponent implements OnInit {
     );
   }
 
-  setFinancieroPor(id: number){
-    this.cabCotService.updateFinancieroCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
+  setFinancieroPor(id: string) {
+    this.cabCotService.updateFinancieroCotizacion(this.trTipoSolicitud, this.noSolTmp, id).subscribe(
       (response) => {
         console.log('ACTUALIZADO CORRECTAMENTE');
       },

@@ -3,8 +3,9 @@ export class CabeceraPago {
   public cabPagoNumerico: string;
   public cabPagoTipoSolicitud: number;
   public cabPagoNoSolicitud: number;
-  public cabPagoAreaSolicitante: number;
-  public cabPagoSolicitante: number;
+  public cabPagoIdAreaSolicitante: number;
+  public cabPagoIdDeptSolicitante: number;
+  public cabPagoSolicitante: string;
   public cabPagoNoOrdenCompra: string;
   public cabPagoFechaEmision: string;
   public cabPagoFechaEnvio: string;
@@ -22,16 +23,16 @@ export class CabeceraPago {
   public cabPagoCancelacionOrden: string | null;
   public cabPagoEstado: string;
   public cabPagoEstadoTrack: number;
-  public cabPagoIdEmisor: number;
-  public cabPagoApprovedBy: number;
-  public cabPagoFinancieroBy:number;
+  public cabPagoIdEmisor: string;
+  public cabPagoApprovedBy: string;
 
   constructor(data: any) {
     this.cabPagoID = data.cabPagoID;
     this.cabPagoNumerico = data.cabPagoNumerico;
     this.cabPagoTipoSolicitud = data.cabPagoTipoSolicitud;
     this.cabPagoNoSolicitud = data.cabPagoNoSolicitud;
-    this.cabPagoAreaSolicitante = data.cabPagoAreaSolicitante;
+    this.cabPagoIdAreaSolicitante = data.cabPagoIdAreaSolicitante;
+    this.cabPagoIdDeptSolicitante = data.cabPagoIdDeptSolicitante;
     this.cabPagoSolicitante = data.cabPagoSolicitante;
     this.cabPagoNoOrdenCompra = data.cabPagoNoOrdenCompra;
     this.cabPagoFechaEmision = data.cabPagoFechaEmision;
@@ -52,6 +53,5 @@ export class CabeceraPago {
     this.cabPagoEstadoTrack = data.cabPagoEstadoTrack;
     this.cabPagoIdEmisor = data.cabPagoIdEmisor;
     this.cabPagoApprovedBy = data.cabPagoApprovedBy;
-    this.cabPagoFinancieroBy = data.cabPagoFinancieroBy;
   }
 }

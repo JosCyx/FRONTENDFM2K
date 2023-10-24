@@ -4,7 +4,7 @@ export class CabeceraCotizacion {
   public cabSolCotNumerico: string;
   public cabSolCotID: number;
   public cabSolCotNoSolicitud: number;
-  public cabSolCotSolicitante: number;
+  public cabSolCotSolicitante: string;
   public cabSolCotFecha: string;
   public cabSolCotAsunto: string;
   public cabSolCotProcedimiento: string;
@@ -19,9 +19,10 @@ export class CabeceraCotizacion {
   public cabSolCotTelefInspector: string;
   public cabSolCotAprobPresup: string;
   public cabSolCotMtovioDev: string;
-  public cabSolCotIdEmisor: number;
-  public cabSolCotApprovedBy: number;
-  public cabSolCotFinancieroBy:number;
+  public cabSolCotIdEmisor: string;
+  public cabSolCotApprovedBy: string;
+  public cabSolCotFinancieroBy:string;
+  public cabSolCotIdDept: number;
 
   constructor(data: any) {
       this.cabSolCotTipoSolicitud = data.cabSolCotTipoSolicitud;
@@ -47,5 +48,6 @@ export class CabeceraCotizacion {
       this.cabSolCotIdEmisor = data.cabSolCotIdEmisor;
       this.cabSolCotApprovedBy = data.cabSolCotApprovedBy;
       this.cabSolCotFinancieroBy = data.cabSolCotFinancieroBy;
+      this.cabSolCotIdDept = data.cabSolCotIdDept;
   }
 }

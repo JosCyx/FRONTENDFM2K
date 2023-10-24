@@ -67,10 +67,11 @@ export class SoliocComponent implements OnInit {
   trTipoSolicitud: number = 2; //indica el tipo de solicitud co el que estamos trabajando, este valor cambia en cada tipo de solicitud
   trLastNoSol!: number;
   trNivelEmision: number = 10; //nivel de emision por defecto
-  trIdNomEmp!: number;
+  trIdNomEmp!: string;
 
   //variables de la cabecera
-  cab_area!: number;
+  cab_id_area!: number;
+  cab_id_dept!: number;
   cab_fecha: string = this.formatDateToYYYYMMDD(this.fecha);
   cab_asunto!: string;
   cab_proc!: string;
@@ -306,11 +307,12 @@ export class SoliocComponent implements OnInit {
           this.empleado
         ) {
           this.trIdNomEmp = emp.empleadoIdNomina;
-          //console.log("Empleado ID:",this.trIdNomEmp);
+          this.cab_id_area = emp.empleadoIdArea;
+          this.cab_id_dept = emp.empleadoIdDpto;
           this.areaSolTmp = emp.empleadoIdArea;
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
-              this.cab_area = area.areaIdNomina;
+              
               this.showArea = area.areaDecp;
 
               this.areaNmco = area.areaNemonico;
@@ -497,7 +499,8 @@ export class SoliocComponent implements OnInit {
 
     const dataCAB = {
       cabSolOCTipoSolicitud: this.trTipoSolicitud,
-      cabSolOCArea: this.cab_area,
+      cabSolOCArea: this.cab_id_area,
+      cabSolOcIdDept: this.cab_id_dept,
       cabSolOCNoSolicitud: this.trLastNoSol,
       cabSolOCSolicitante: this.trIdNomEmp,
       cabSolOCFecha: this.cab_fecha,
@@ -852,7 +855,7 @@ export class SoliocComponent implements OnInit {
     this.sharedNoSol=this.cabecera.cabSolOCNoSolicitud;
     this.noSolTmp = this.cabecera.cabSolOCNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabSolOCEstadoTracking;
-    this.areaSolTmp = this.cabecera.cabSolOCArea;
+    this.areaSolTmp = this.cabecera.cabSolOCIdArea;
 
     this.estadoSol = this.cabecera.cabSolOCEstadoTracking.toString();
 
@@ -988,10 +991,11 @@ export class SoliocComponent implements OnInit {
   }
   //* Editar orden compra en el Enviar
   async saveEditCabecera() {
-    const dataCAB = {
+    const dataCAB  = {
       cabSolOCID: this.cabecera.cabSolOCID,
       cabSolOCTipoSolicitud: this.cabecera.cabSolOCTipoSolicitud,
-      cabSolOCArea: this.cabecera.cabSolOCArea,
+      cabSolOCIdArea: this.cabecera.cabSolOCIdArea,
+      cabSolOcIdDept: this.cabecera.cabSolOCIdDept,
       cabSolOCNoSolicitud: this.cabecera.cabSolOCNoSolicitud,
       cabSolOCSolicitante: this.cabecera.cabSolOCSolicitante,
       cabSolOCFecha: this.fechaSinFormato,

@@ -102,7 +102,7 @@
               " (click)="selectSol(sol.cabSolOCID)">
               <td class="align-middle">{{ sol.cabSolOCNumerico }}</td>
               <ng-container *ngFor="let area of areaList$ | async">
-                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolOCArea">
+                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolOCIdArea">
                   {{ area.areaDecp }}
                 </td>
               </ng-container>
@@ -136,7 +136,7 @@
               " (click)="selectSol(sol.cabPagoID)">
               <td class="align-middle">{{ sol.cabPagoNumerico }}</td>
               <ng-container *ngFor="let area of areaList$ | async">
-                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabPagoAreaSolicitante">
+                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabPagoIdAreaSolicitante">
                   {{ area.areaDecp }}
                 </td>
               </ng-container>

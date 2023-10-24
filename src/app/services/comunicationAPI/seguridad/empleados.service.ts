@@ -52,4 +52,9 @@ export class EmpleadosService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any[]>(`${this.APIUrl}/Empleadoes/GetEmpleadobyArea?area=${area}`, { headers: headers });
   }
+
+  getEmpleadoByNomina(nomina: string) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any[]>(`${this.APIUrl}/Empleadoes/GetEmpleadobyNomina?nomina=${nomina}`, { headers: headers });
+  }
 }

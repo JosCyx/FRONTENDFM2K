@@ -45,4 +45,8 @@ export class NivelRuteoService {
     return this.http.get<any[]>(`${this.APIUrl}/NivelesRuteos/GetNivelByEstado?estadoRuteo=${estadoRuteo}`, { headers: headers });
   }
   
+  getNivelInfo(nivelId: number): Observable<any> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any[]>(this.APIUrl + `/NivelesRuteos/GetNivelbyNivel?nivel=${nivelId}`, { headers: headers });
+  }
 }

@@ -30,11 +30,11 @@ export class NivGerenciaService {
 
   getNivGerencias() : Observable<any[]> {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get<any>(this.APIUrl + '/NivGerenciums', { headers: headers });
+    return this.http.get<any>(this.APIUrl + '/EmplNivels', { headers: headers });
   }
 
-  getNivGerenciasByArea(areaId: number) : Observable<any[]> {
+  getNivGerenciasByDep(dep: number, niv: number) : Observable<any[]> {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get<any>(this.APIUrl + '/NivGerenciums/GetByArea/' + areaId, { headers: headers });
+    return this.http.get<any>(this.APIUrl + `/EmplNivels/GetEmplByDep?dep=${dep}&nivel=${niv}`, { headers: headers });
   }
 }

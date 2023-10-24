@@ -9,8 +9,7 @@
                     <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">
                         Crear
                     </button> -->
-                    <!-- <button class="btn btn-danger" (click)="enviarSolicitud()">Boton</button> -->
-                    
+                    <!-- <button class="btn btn-danger" (click)="getNivelRuteoArea()">Boton</button>                     -->
                 </div>
             </div>
         </nav>
@@ -335,7 +334,7 @@
                     </div>
                     <div class="row mb-1">
                         <div class="input-group col">
-                            <label class="input-group-text">Financiero:</label>
+                            <label class="input-group-text">Apr. Financiera:</label>
                             <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotFinancieroBy"
                                 disabled />
                         </div>
@@ -1011,7 +1010,7 @@
             </div>
             <div class="modal-body">
                 <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente estado.</p>
-                <div>
+                <!-- <div>
                     <label for="nivGerencia" class="input-label">Notificar a:</label>
                     <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
                         <option value="" selected disabled>Seleccione una opción</option>
@@ -1019,7 +1018,7 @@
                             <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
                         </ng-container>
                     </select>
-                </div>
+                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolNueva()">
@@ -1045,7 +1044,7 @@
             </div>
             <div class="modal-body">
                 <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.</p>
-                <div>
+                <!-- <div>
                     <label for="nivGerencia" class="input-label">Notificar a:</label>
                     <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
                         <option value="" selected disabled>Seleccione una opción</option>
@@ -1053,7 +1052,7 @@
                             <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
                         </ng-container>
                     </select>
-                </div>
+                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
@@ -1079,7 +1078,7 @@
             </div>
             <div class="modal-body">
                 <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente nivel.</p>
-                <div *ngIf="estadoTrkTmp < 40">
+                <!-- <div *ngIf="estadoTrkTmp < 40">
                     <label for="nivGerencia" class="input-label">Notificar a:</label>
                     <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
                         <option value="" selected disabled>Seleccione una opción</option>
@@ -1087,7 +1086,7 @@
                             <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
                         </ng-container>
                     </select>
-                </div>
+                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="enviarSolicitud()">

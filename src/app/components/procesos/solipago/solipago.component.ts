@@ -72,7 +72,8 @@ export class SolipagoComponent implements OnInit {
   //
   SolID: number = this.serviceGlobal.solID;
   //*variables de cabecera
-  cab_area!: number;
+  cab_id_area!: number;
+  cab_id_dept!: number;
   cab_fecha: string = this.formatDateToYYYYMMDD(this.fecha);
   cab_ordencompra!: string;
   cab_nofactura!: string;
@@ -82,7 +83,7 @@ export class SolipagoComponent implements OnInit {
   cab_observa!: string;
   cab_aplicarmult!: string;
   cab_valordescontar!: 0;
-  cab_totalautorizado!: string;
+  cab_totalautorizado!: number;
   cab_recibe!: number;
   cab_fechaInspeccion!: Date;
   cab_cancelarOrden!: string;
@@ -96,7 +97,7 @@ export class SolipagoComponent implements OnInit {
   trTipoSolicitud: number = 3; //indica el tipo de solicitud co el que estamos trabajando, este valor cambia en cada tipo de solicitud
   trLastNoSol!: number;
   trNivelEmision: number = 10; //nivel de emision por defecto
-  trIdNomEmp!: number;
+  trIdNomEmp!: string;
   //
   Total: number = 0;
   //
@@ -217,9 +218,11 @@ export class SolipagoComponent implements OnInit {
           this.trIdNomEmp = emp.empleadoIdNomina;
           //console.log("Empleado ID:",this.trIdNomEmp);
           this.areaSolTmp = emp.empleadoIdArea;
+          this.cab_id_dept = emp.empleadoIdDpto;
+          this.cab_id_area = emp.empleadoIdArea;
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
-              this.cab_area = area.areaIdNomina;
+              
               this.showArea = area.areaDecp;
 
               this.areaNmco = area.areaNemonico;
@@ -311,7 +314,7 @@ export class SolipagoComponent implements OnInit {
     this.cab_observa = '';
     this.cab_aplicarmult = '';
     this.cab_valordescontar = 0;
-    this.cab_totalautorizado = '';
+    this.cab_totalautorizado = 0;
     this.cab_recibe = 0;
     this.cab_fechaInspeccion = new Date();
     this.cab_cancelarOrden = '';
@@ -410,7 +413,8 @@ export class SolipagoComponent implements OnInit {
       cabPagoNumerico: this.solNumerico,
       cabPagoTipoSolicitud: this.trTipoSolicitud,
       cabPagoNoSolicitud: this.trLastNoSol,
-      cabPagoAreaSolicitante: this.cab_area,
+      cabPagoIdAreaSolicitante: this.cab_id_area,
+      cabPagoIdDeptSolicitante: this.cab_id_dept,
       cabPagoSolicitante: this.trIdNomEmp,
       cabPagoNoOrdenCompra: this.cab_ordencompra,
       cabPagoFechaEmision: this.cab_fecha,
@@ -596,7 +600,7 @@ export class SolipagoComponent implements OnInit {
     this.cabecera = this.solicitudEdit.cabecera;
     this.noSolTmp = this.cabecera.cabPagoNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabPagoEstadoTrack;
-    this.areaSolTmp = this.cabecera.cabPagoAreaSolicitante;
+    this.areaSolTmp = this.cabecera.cabPagoIdAreaSolicitante;
     this.numericoSol = this.cabecera.cabPagoNumerico;
 
     this.estadoSol = this.cabecera.cabPagoEstadoTrack.toString();
@@ -672,7 +676,8 @@ export class SolipagoComponent implements OnInit {
       cabPagoNumerico: this.cabecera.cabPagoNumerico,
       cabPagoTipoSolicitud: this.cabecera.cabPagoTipoSolicitud,
       cabPagoNoSolicitud: this.cabecera.cabPagoNoSolicitud,
-      cabPagoAreaSolicitante: this.cabecera.cabPagoAreaSolicitante,
+      cabPagoIdAreaSolicitante: this.cabecera.cabPagoIdAreaSolicitante,
+      cabPagoIdDeptSolicitante: this.cabecera.cabPagoIdDeptSolicitante,
       cabPagoSolicitante: this.cabecera.cabPagoSolicitante,
       cabPagoNoOrdenCompra: this.cabecera.cabPagoNoOrdenCompra,
       cabPagoFechaEmision: this.cabecera.cabPagoFechaEmision,

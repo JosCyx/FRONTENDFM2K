@@ -1,10 +1,11 @@
 export class CabeceraOrdenCompra {
   public cabSolOCTipoSolicitud: number;
-  public cabSolOCArea: number;
+  public cabSolOCIdArea: number;
+  public cabSolOCIdDept: number
   public cabSolOCNumerico: string;
   public cabSolOCID: number;
   public cabSolOCNoSolicitud: number;
-  public cabSolOCSolicitante: number;
+  public cabSolOCSolicitante: string;
   public cabSolOCFecha: string;
   public cabSolOCAsunto: string;
   public cabSolOCProcedimiento: string;
@@ -19,13 +20,14 @@ export class CabeceraOrdenCompra {
   public cabSolOCTelefInspector: string;
   public cabSolOCProveedor:string
   public cabSolOCRUCProveedor:string;
-  public cabSolOCIdEmisor: number;
-  public cabSolOCApprovedBy: number;
-  public cabSolOCFinancieroBy:number;
+  public cabSolOCIdEmisor: string;
+  public cabSolOCApprovedBy: string;
+  public cabSolOCFinancieroBy: string;
 
   constructor(data: any) {
     this.cabSolOCTipoSolicitud = data.cabSolOCTipoSolicitud;
-    this.cabSolOCArea = data.cabSolOCArea;
+    this.cabSolOCIdArea = data.cabSolOCIdArea;
+    this.cabSolOCIdDept = data.cabSolOCIdDept;
     this.cabSolOCNumerico = data.cabSolOCNumerico;
     this.cabSolOCID = data.cabSolOCID;
     this.cabSolOCNoSolicitud = data.cabSolOCNoSolicitud;

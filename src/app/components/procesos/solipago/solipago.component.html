@@ -489,7 +489,7 @@
               <label class="input-group-text">Area:</label>
               <ng-container *ngFor="let are of areas">
                 <input
-                  *ngIf="are.areaIdNomina == cabecera.cabPagoAreaSolicitante"
+                  *ngIf="are.areaIdNomina == cabecera.cabPagoIdAreaSolicitante"
                   type="text"
                   class="form-control"
                   [value]="are.areaDecp"
@@ -508,15 +508,6 @@
                 class="form-control"
                 placeholder="Ingrese el numero Factura"
                 [(ngModel)]="cabecera.cabPagoApprovedBy"
-                disabled
-              />
-            </div>
-            <div class="input-group col mb-1">
-              <label class="input-group-text">Financiero:</label>
-              <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="cabecera.cabPagoFinancieroBy"
                 disabled
               />
             </div>
