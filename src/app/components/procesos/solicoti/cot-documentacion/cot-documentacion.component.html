@@ -1,5 +1,5 @@
-<div class="row justify-content-between" >
-  <div class="input-group col-6 " *appAuthorize="'38'">
+<div class="row justify-content-between">
+  <div class="input-group col-6" *appAuthorize="'38'">
     <label for="inputFile" class="input-group-text">
       <i class="bi bi-upload"></i>
     </label>
@@ -18,11 +18,11 @@
     >
       <i class="bi bi-upload"> Subir</i>
     </button>
-  </div> 
-<div class="col-2 w-2" >
-    <button class="btn btn-success" (click)="allDownload()">Descargar</button>
-  
-</div></div>
+  </div>
+  <div class="col-2 w-2">
+    <button *ngIf="!view "  class="btn btn-success" (click)="allDownload()">Descargar</button>
+  </div>
+</div>
 <div>
   <div *ngIf="showExito" class="alert alert-success text-center" role="alert">
     <span
@@ -37,9 +37,9 @@
 </div>
 
 <!--  Visualizar PDF  -->
-<div class="ini  m-3">
+<div class="ini m-3">
   <ng-container *ngFor="let pat of paths">
-    <div class=" text-center documentos">
+    <div class="text-center documentos">
       <div class="text-end">
         <a (click)="deleteFile(pat.docUrlComleta)"
           ><i class="bi bi-x-lg"></i

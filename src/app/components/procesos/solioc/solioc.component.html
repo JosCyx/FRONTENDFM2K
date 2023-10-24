@@ -5,7 +5,6 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 30px;">
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav">
-          <app-oc-pdf></app-oc-pdf>
           <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">
             Crear
           </button> -->
@@ -571,7 +570,7 @@
           </div>
         </div>
         <div *ngIf="actionEdit =='documentacion'" >
-          <app-oc-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-oc-documentacion>
+          <app-oc-documentacion [view]="changeview" poSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-oc-documentacion>
         </div>
         <div *ngIf="actionEdit == 'autorizacion'">
           <div class="anulacion mb-3">
@@ -815,6 +814,9 @@
               [appSecureDisable]= "estadoSol"
             />
           </div>
+         <div class="row justify-content-between" >
+           <app-oc-pdf class="text-end" ></app-oc-pdf>
+         </div>
         </div>
       </div>
       <div class="d-flex row mt-2">

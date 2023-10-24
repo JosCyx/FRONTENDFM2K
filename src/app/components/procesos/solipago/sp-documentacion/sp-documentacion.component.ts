@@ -22,6 +22,7 @@ export class SPDocumentacionComponent implements OnInit {
   @Input() tipoSol!: number;
   @Input() noSol!: number;
   @Input() estadoSol!: string;
+  @Input() view!: string;
   //
   prefijo!: string;
 
@@ -193,4 +194,35 @@ export class SPDocumentacionComponent implements OnInit {
     });
 
   }
+  DowmloadFile(url: any, fileName: any) {
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        const blobURL = window.URL.createObjectURL(blob);
+  
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = blobURL;
+        a.download = fileName;
+  
+        document.body.appendChild(a);
+        a.click();
+  
+        window.URL.revokeObjectURL(blobURL);
+        document.body.removeChild(a);
+      })
+      .catch((error) => {
+        console.error('Error al descargar el archivo:', error);
+      });
+  }
+   allDownload() {
+    this.paths.forEach((item) => {
+      this.DowmloadFile(item.docUrl, item.docNombre);
+    });
+   }
 }

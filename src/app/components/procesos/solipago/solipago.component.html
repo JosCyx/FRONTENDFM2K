@@ -8,7 +8,6 @@
           <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">
             Crear
           </button> -->
-          <app-sp-pdf></app-sp-pdf>
         </div>
       </div>
     </nav>
@@ -633,7 +632,7 @@
             </div>
         </div>
         <div *ngIf="actionEdit == 'documentacion'" >
-          <app-sp-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-sp-documentacion>
+          <app-sp-documentacion  [view]="changeview" [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-sp-documentacion>
         </div>
         <div *ngIf="actionEdit == 'autorizacion'">
           <div class="anulacion mb-3">
@@ -811,6 +810,7 @@
             </select>
           </div>
           <div class="text-end">
+            <app-sp-pdf  ></app-sp-pdf>
             <p class="tip">*Campos obligatorios</p>
           </div>
         </div>

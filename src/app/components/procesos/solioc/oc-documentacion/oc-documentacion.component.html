@@ -1,18 +1,23 @@
-<div class="input-group m-2" *appAuthorize="'39'">
-  <label for="inputFile" class="input-group-text">
-    <i class="bi bi-upload"></i>
-  </label>
-  <input
-    id="inputFile"
-    type="file"
-    class="form-control"
-    id="inputFile"
-    (change)="getFiles($event)"
-    [appSecureDisable]= "estadoSol"
-  />
-  <button class="btn btn-success" (click)="sendfile()" [appSecureDisable]= "estadoSol">
-    <i class="bi bi-upload">  Subir</i>
-  </button>
+<div class="row justify-content-between" >
+  <div class="input-group col-6" *appAuthorize="'39'">
+    <label for="inputFile" class="input-group-text">
+      <i class="bi bi-upload"></i>
+    </label>
+    <input
+      id="inputFile"
+      type="file"
+      class="form-control"
+      id="inputFile"
+      (change)="getFiles($event)"
+      [appSecureDisable]= "estadoSol"
+    />
+    <button class="btn btn-success" (click)="sendfile()" [appSecureDisable]= "estadoSol">
+      <i class="bi bi-upload">  Subir</i>
+    </button>
+  </div>
+  <div class="col-2 w-2">
+    <button  *ngIf="view" class="btn btn-success" (click)="allDownload()">Descargar</button>
+  </div>
 </div>
 <div  >
   <div *ngIf="showExito" class="alert alert-success text-center" role="alert">
@@ -38,6 +43,11 @@
           width="100"
           alt="..."/>
         <h5 class="card-title">{{ pat.docNombre }}</h5>
+        <a
+          class="link-primary"
+          (click)="DowmloadFile(pat.docUrl, pat.docNombre)"
+          >Descargar</a
+        >
       </a>
       </div>
   </ng-container>
