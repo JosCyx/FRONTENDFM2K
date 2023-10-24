@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 
 @Injectable({
   providedIn: 'root'
 })
-export class GlobalService {
+export class GlobalService{
   //url de la API publicada
   //readonly APIUrl = "http://192.168.1.234:9192/api";
 
@@ -26,7 +26,10 @@ export class GlobalService {
     this.http.get(this.rutaJSON).subscribe((data: any) => {
       this.configJSON = data;
       this.APIUrl = data.APIUrl;
+      console.log("APIUrl:", this.APIUrl)
     });
+
+
   }
 
   
