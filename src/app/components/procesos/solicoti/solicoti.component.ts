@@ -308,7 +308,7 @@ export class SolicotiComponent implements OnInit {
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
               this.showArea = area.areaDecp;//define el nombre del area para mostrarlo en el html
-              this.areaNmco = area.areaNemonico;//extrae el nemonico del area para generar el nombre de la solicitud
+              this.areaNmco = area.areaNemonico.trim();//extrae el nemonico del area para generar el nombre de la solicitud
             } else if (emp.empleadoIdArea === 0) {
               this.showArea = 'El empleado no posee un area asignada.'
             }
@@ -664,9 +664,9 @@ export class SolicotiComponent implements OnInit {
     this.detalleList.push(detalle);
     this.sharedDetalle = this.detalleList;
     this.cabSolCotAsunto = this.cab_asunto;
-    console.log("Detalles:", this.detalleList);
+    /*console.log("Detalles:", this.detalleList);
     console.log("est es shared detalle", this.sharedDetalle);
-    console.log("este es el asunto", this.cabSolCotAsunto);
+    console.log("este es el asunto", this.cabSolCotAsunto);*/
     //aumenta el valor del id de detalle
     this.incrementDetID();
 
@@ -680,7 +680,7 @@ export class SolicotiComponent implements OnInit {
     //si esta en la vista de editar, enviar los datos a las listas de la respuesta
     if (this.changeview == "editar") {
       this.saveLocaltoResponse();
-      console.log("Item a enviar a la api: ", this.item)
+      //console.log("Item a enviar a la api: ", this.item)
     }
 
     this.det_descp = '';

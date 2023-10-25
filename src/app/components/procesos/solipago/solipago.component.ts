@@ -118,11 +118,11 @@ export class SolipagoComponent implements OnInit {
   numericoSol!: string;
 
   detallesToDestino: any[] = [];
-  setDestino: boolean = this.globalService.setDestino;
-  settear() {
+  setDestino: boolean = false;
+  /*settear() {
     console.log("Estes es mi metodo settea")
     this.setDestino = this.globalService.setDestino;
-  }
+  }*/
 
   areaUserCookie: number = Number(this.cookieService.get('userArea'));
 
@@ -145,6 +145,7 @@ export class SolipagoComponent implements OnInit {
     private nivGerenciaService: NivGerenciaService,
     private sharedService: SharedService
   ) {
+    this.setDestino = this.globalService.setDestino;
     /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobarsp$.subscribe(() => {
       //console.log("Aprobando solicitud...");
@@ -222,7 +223,7 @@ export class SolipagoComponent implements OnInit {
 
               this.showArea = area.areaDecp;
 
-              this.areaNmco = area.areaNemonico;
+              this.areaNmco = area.areaNemonico.trim();
 
               //busca el nuevo nombre de la solicitud y lo asigna a las variables para poder usarlo en el destino
               setTimeout(async () => {

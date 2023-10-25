@@ -76,6 +76,7 @@ export class SpDestinoComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('Detalles recibidos:', this.detalles);
+    
     this.sectoresService.getSectoresList().subscribe(
       (data: any[]) => {
         this.sectores = data;

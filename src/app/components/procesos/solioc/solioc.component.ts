@@ -311,7 +311,7 @@ export class SoliocComponent implements OnInit {
               
               this.showArea = area.areaDecp;
 
-              this.areaNmco = area.areaNemonico;
+              this.areaNmco = area.areaNemonico.trim();
               //console.log("Empleado area ID:",this.cab_area);
             } else if (emp.empleadoIdArea === 0) {
               this.showArea = 'El empleado no posee un area asignada.';
