@@ -495,7 +495,7 @@ export class SoliocComponent implements OnInit {
 
     const dataCAB = {
       cabSolOCTipoSolicitud: this.trTipoSolicitud,
-      cabSolOCArea: this.cab_id_area,
+      cabSolOCIdArea: this.cab_id_area,
       cabSolOcIdDept: this.cab_id_dept,
       cabSolOCNoSolicitud: this.trLastNoSol,
       cabSolOCSolicitante: this.trIdNomEmp,
@@ -1663,6 +1663,18 @@ export class SoliocComponent implements OnInit {
    anularSolicitud() {
     let exito: boolean = false;
     let exitotrk: boolean = false;
+    let mailToNotify: string = '';
+
+    this.empService.getEmpleadoByNomina(this.cabecera.cabSolOCSolicitante).subscribe(
+      (response: any) => {
+        //console.log('Empleado: ', response);
+        mailToNotify = response[0].empleadoCorreo;
+        console.log("Correo enviado a: ", mailToNotify)
+      },
+      (error) => {
+        console.log('Error al obtener el empleado: ', error);
+      }
+    );
     try {
       this.cabOCService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'C').subscribe(
         (response) => {
@@ -1690,6 +1702,10 @@ export class SoliocComponent implements OnInit {
         if (exito && exitotrk) {
           this.showmsj = true;
           this.msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido anulada exitosamente.`;
+
+          //notificar al emisor de la solicitud que ha sido anulada
+          this.sendMail(mailToNotify,2);
+
           setTimeout(() => {
             this.showmsj = false;
             this.msjExito = '';
@@ -1798,7 +1814,7 @@ export class SoliocComponent implements OnInit {
                   //console.log('Empleado: ', response);
                   mailToNotify = response[0].empleadoCorreo;
                   //enviar la notificacion al correo guardado en mailnotify
-                  //this.sendMail(mailToNotify);
+                  this.sendMail(mailToNotify,1);
                   console.log("Correo enviado a: ", mailToNotify)
                 },
                 (error) => {
@@ -1817,12 +1833,23 @@ export class SoliocComponent implements OnInit {
 
   emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
 
-  sendMail(mailToNotify: string) {
+  emailContent2: string = `Estimado,<br>Le notificamos que la solicitud de orden de compra generada ha sido anulada, si desea conocer más detalles pónganse en contacto con el departamento de compras o financiero.`;
+
+  sendMail(mailToNotify: string, type: number) {
+    let contenidoMail = '';
+
+    if(type == 1){
+      contenidoMail = this.emailContent;
+    } else if(type == 2){
+      contenidoMail = this.emailContent2;
+    }
+
     setTimeout(() => {
       const data = {
         destinatario: mailToNotify,
+        //destinatario: 'joseguillermojm.jm@gmail.com',
         asunto: 'Nueva Solicitud Recibida - Acción Requerida',
-        contenido: this.emailContent
+        contenido: contenidoMail
       }
 
       this.sendMailService.sendMailto(data).subscribe(
@@ -1848,7 +1875,7 @@ export class SoliocComponent implements OnInit {
           }, 4000)
         }
       );
-    }, 1000);
+    }, 500);
   }
 
 
