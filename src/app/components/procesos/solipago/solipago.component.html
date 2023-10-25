@@ -283,7 +283,7 @@
   
           <div *ngIf="showItDt == 'destino'">
             <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol" 
-                            [areaSol]="areaSolTmp" [detalles]="detallesToDestino" [numericoSol]="numericoSol"></app-sp-destino>
+                            [areaSol]="depSolTmp" [detalles]="detallesToDestino" [numericoSol]="numericoSol"></app-sp-destino>
           </div>
         </div>
         
@@ -632,7 +632,7 @@
                   <div class="text-center">
                       <div class="row buttons-ruteo">
                           <button *appAuthorize="'56'" class="btn btn-success col m-2" data-toggle="modal" data-target="#enviarSolicitud">Aprobar</button>
-                          <button *appAuthorize="'59'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">No autorizar</button>
+                          <button *appAuthorize="'59'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">Devolver</button>
                           <button *appAuthorize="'62'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud">Anular</button>
                       </div>
                   </div> 
@@ -643,7 +643,7 @@
       </div>
         <div *ngIf="actionEdit == 'destino'">
           <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol" 
-                          [areaSol]="areaSolTmp" [detalles]="detallesToDestino" [numericoSol]="numericoSol"></app-sp-destino>
+                          [areaSol]="depSolTmp" [detalles]="detallesToDestino" [numericoSol]="numericoSol"></app-sp-destino>
         </div>
         <div class="detalle" *ngIf="actionEdit =='edicion'" >
           <table class="table table-striped text-center">
@@ -927,7 +927,7 @@
             </div>
             <div class="modal-body">
                 <p>Al enviar la solicitud no podrá volver a editarla y pasará al siguiente nivel.</p>
-                <div>
+                <!-- <div>
                   <label for="nivGerencia" class="input-label">Notificar a:</label>
                   <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
                       <option value="" selected disabled>Seleccione una opción</option>
@@ -935,7 +935,7 @@
                           <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
                       </ng-container>
                   </select>
-                </div>
+                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolNueva()">
@@ -977,7 +977,7 @@
             </div>
             <div class="modal-body">
                 <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.</p>
-                <div>
+                <!-- <div>
                   <label for="nivGerencia" class="input-label">Notificar a:</label>
                   <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
                       <option value="" selected disabled>Seleccione una opción</option>
@@ -985,7 +985,7 @@
                           <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
                       </ng-container>
                   </select>
-                </div>
+                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">

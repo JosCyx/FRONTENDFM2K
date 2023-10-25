@@ -83,13 +83,13 @@ export class CabPagoService {
     return this.http.put(this.APIUrl + `/CabSolPago/UpdateEstado?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`,null, { headers: headers });
   }
 
-  updateAprobadoCotizacion(tipoSol: number, noSol: number, id: number) {
+  updateAprobadoCotizacion(tipoSol: number, noSol: number, id: string) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolPago/UpdateAprobado?tipoSol=${tipoSol}&noSol=${noSol}&id=${id}`,null, { headers: headers });
   }
 
-  updateFinancieroCotizacion(tipoSol: number, noSol: number, id: number) {
+  /*updateFinancieroCotizacion(tipoSol: number, noSol: number, id: string) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolPago/UpdateFinanciero?tipoSol=${tipoSol}&noSol=${noSol}&id=${id}`,null, { headers: headers });
-  }
+  }*/
 }

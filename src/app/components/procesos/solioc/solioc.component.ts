@@ -1523,8 +1523,8 @@ export class SoliocComponent implements OnInit {
   depSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
 
-  aprobadopor: string = '';
-  financieropor: string = '';
+  aprobadopor: string = '000000';
+  financieropor: string = '000000';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
     //verifica los niveles de aprobacion y financiero para asignar el usuario que envia la solicitud para guardar el empleado quien autoriza
@@ -1536,10 +1536,7 @@ export class SoliocComponent implements OnInit {
       this.financieropor = this.cookieService.get('userIdNomina');
       //this.saveEditCabecera();
       this.setFinancieroPor(this.financieropor);
-    } else {
-      this.aprobadopor = '000000';
-      this.financieropor = '000000';
-    }
+    } 
 
     await this.getNivelRuteoArea();
     try {
