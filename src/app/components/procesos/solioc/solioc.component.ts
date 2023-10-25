@@ -566,6 +566,12 @@ export class SoliocComponent implements OnInit {
     }
   }
   //
+  IdDetalle:number=0;
+  CapturarIdDetalle(id:number):number{
+    this.IdDetalle=id;
+    console.log("idDetalle",this.IdDetalle);
+    return this.IdDetalle;
+  }
   saveItemDet() {
     for (let detalle of this.detalleList) {
       //recorre la lista de detalles
