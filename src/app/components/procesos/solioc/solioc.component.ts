@@ -201,10 +201,6 @@ export class SoliocComponent implements OnInit {
       this.empleadoedit = data;
     });
 
-    this.nivGerenciaService.getNivGerencias().subscribe((data : any) => {
-      this.nivGerencias = data;
-    });
-
     this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
     this.inspectores$.subscribe((data) => {
       this.inspectoresEdit = data;
@@ -309,7 +305,7 @@ export class SoliocComponent implements OnInit {
           this.trIdNomEmp = emp.empleadoIdNomina;
           this.cab_id_area = emp.empleadoIdArea;
           this.cab_id_dept = emp.empleadoIdDpto;
-          this.areaSolTmp = emp.empleadoIdArea;
+          this.depSolTmp = emp.empleadoIdArea;
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
               
@@ -518,9 +514,11 @@ export class SoliocComponent implements OnInit {
       cabSolOCNumerico: this.solNumerico,
       cabSolOCProveedor: this.cab_proveedor,
       cabSolOCRUCProveedor: this.cab_ruc_prov,
-      cabSolOCIdEmisor: Number(this.cookieService.get('userIdNomina')),
-      cabSolOCApprovedBy: 0,
-      cabSolOCFinancieroBy: 0
+      cabSolOCIdEmisor: this.cookieService.get('userIdNomina'),
+      cabSolOCApprovedBy: '000000',
+      cabSolOCFinancieroBy: '000000',
+      cabSolOCAprobPresup: 'SI',
+      cabSolOCMotivoDev: ''
     };
 
     //enviar datos de cabecera a la API
@@ -855,7 +853,7 @@ export class SoliocComponent implements OnInit {
     this.sharedNoSol=this.cabecera.cabSolOCNoSolicitud;
     this.noSolTmp = this.cabecera.cabSolOCNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabSolOCEstadoTracking;
-    this.areaSolTmp = this.cabecera.cabSolOCIdArea;
+    this.depSolTmp = this.cabecera.cabSolOCIdArea;
 
     this.estadoSol = this.cabecera.cabSolOCEstadoTracking.toString();
 
@@ -991,7 +989,7 @@ export class SoliocComponent implements OnInit {
   }
   //* Editar orden compra en el Enviar
   async saveEditCabecera() {
-    const dataCAB  = {
+    const dataCAB = {
       cabSolOCID: this.cabecera.cabSolOCID,
       cabSolOCTipoSolicitud: this.cabecera.cabSolOCTipoSolicitud,
       cabSolOCIdArea: this.cabecera.cabSolOCIdArea,
@@ -1013,9 +1011,11 @@ export class SoliocComponent implements OnInit {
       cabSolOCNumerico: this.cabecera.cabSolOCNumerico,
       cabSolOCProveedor: this.cabecera.cabSolOCProveedor,
       cabSolOCRUCProveedor: this.cabecera.cabSolOCRUCProveedor,
-      cabSolOCIdEmisor: Number(this.cookieService.get('userIdNomina')),
+      cabSolOCIdEmisor: this.cookieService.get('userIdNomina'),
       cabSolOCApprovedBy: this.aprobadopor,
-      cabSolOCFinancieroBy: this.financieropor
+      cabSolOCFinancieroBy: this.financieropor,
+      cabSolOCAprobPresup: this.cabecera.cabSolOCAprobPresup,
+      cabSolOCMotivoDev: this.cabecera. cabSolOCMotivoDev
     };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
     console.log('2. guardando solicitud...', dataCAB);
@@ -1485,7 +1485,9 @@ export class SoliocComponent implements OnInit {
     guardarEnviarSolNueva() {
       try {
         this.check();
-        this.enviarSolicitud();
+        setTimeout(() => {
+          this.enviarSolicitud();
+        }, 500);
       } catch (error) {
         console.log('Error:', error);
         this.showmsjerror = true;
@@ -1501,7 +1503,9 @@ export class SoliocComponent implements OnInit {
     guardarEnviarSolEditada() {
       try {
         this.saveEdit();
-        this.enviarSolicitud();      
+        setTimeout(() => {
+          this.enviarSolicitud();
+        }, 500);     
       } catch (error) {
         console.log('Error:', error);
         this.showmsjerror = true;
@@ -1514,100 +1518,117 @@ export class SoliocComponent implements OnInit {
       }
     }
 
-    noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui
+  noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui
   estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
-  areaSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
+  depSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
 
-  aprobadopor: number = 0;
-  financieropor: number = 0;
+  aprobadopor: string = '';
+  financieropor: string = '';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
-    if(this.estadoTrkTmp == 40){
-      this.aprobadopor = Number(this.cookieService.get('userIdNomina'));
+    //verifica los niveles de aprobacion y financiero para asignar el usuario que envia la solicitud para guardar el empleado quien autoriza
+    if (this.estadoTrkTmp == 40) {
+      this.aprobadopor = this.cookieService.get('userIdNomina');
       //this.saveEditCabecera();
       this.setAprobadoPor(this.aprobadopor);
-    }else if (this.estadoTrkTmp == 60){
-      this.financieropor = Number(this.cookieService.get('userIdNomina'));
+    } else if (this.estadoTrkTmp == 60) {
+      this.financieropor = this.cookieService.get('userIdNomina');
       //this.saveEditCabecera();
       this.setFinancieroPor(this.financieropor);
+    } else {
+      this.aprobadopor = '000000';
+      this.financieropor = '000000';
     }
 
+    await this.getNivelRuteoArea();
     try {
       // Espera a que se complete getNivelRuteoArea
-      await this.getNivelRuteoArea();
-
-      var newEstado: number = 0;
+      let newEstado: number = 0;
+      let newestadoSt: string;
       //si la solicitud ya eta en el nivel 70 se cambia su estado a FINALIZADO
+
       if (this.estadoTrkTmp == 70) {
         //console.log("FINALIZADO");
-        this.cabOCService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'F').subscribe(
-          (response) => {
-            //console.log('Estado actualizado exitosamente');
-            setTimeout(() => {
-              this.clear();
-              this.serviceGlobal.solView = 'crear';
-              this.router.navigate(['allrequest']);
-            }, 2500);
-          },
-          (error) => {
-            console.log('Error al actualizar el estado: ', error);
-          }
-        );
+        try {
+          //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);
+          this.cabOCService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'F').subscribe(
+            (response) => {
+              this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
+                (response) => {
 
-        this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
-          (response) => {
-            //console.log('Estado actualizado exitosamente');
-            setTimeout(() => {
-              this.clear();
-              this.serviceGlobal.solView = 'crear';
-              this.router.navigate(['allrequest']);
-            }, 2500);
-          },
-          (error) => {
-            console.log('Error al actualizar el estado: ', error);
-          }
-        );
-      } else {
-        //Si el area no tiene niveles asignados a ese tipo de solicitud se setea el nuevo nivel a 20 
-        if (this.nivelSolAsignado.length == 0) {
-          newEstado = 20;
-        } else {
-          for (let i = 0; i < this.nivelSolAsignado.length; i++) {
-            var nivel = this.nivelSolAsignado[i];
-            console.log('Nivel: ', nivel);
-            if (this.nivelSolAsignado[0].rutareaNivel != 10) {
-              newEstado = 20;
-              break;
+                  this.showmsj = true;
+                  this.msjExito = `La solicitud ha sido enviada exitosamente.`;
+
+                  setTimeout(() => {
+                    this.showmsj = false;
+                    this.msjExito = '';
+                    this.clear();
+                    this.serviceGlobal.solView = 'crear';
+                    this.router.navigate(['allrequest']);
+                  }, 2000);
+                },
+                (error) => {
+                  console.log('Error al actualizar el estado: ', error);
+                }
+              );
+            },
+            (error) => {
+              console.log('Error al actualizar el estado: ', error);
             }
-            if (nivel.rutareaNivel == this.estadoTrkTmp) {
-              newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
-              break;
-            }
-          }
+          );
+
+
+        } catch (error) {
+          console.error('Error al setear el estado como finalizado: ', error);
         }
-        console.log('Nuevo estado: ', this.trTipoSolicitud, this.noSolTmp, newEstado);
 
+      } else {
+        for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+          var nivel = this.nivelSolAsignado[i];
+          if (nivel.rutareaNivel == this.estadoTrkTmp) {
+            newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
+            //extrae el tipo de proceso del nivel actual
+            this.nivRuteService.getNivelInfo(newEstado).subscribe(
+              (response) => {
+                newestadoSt = response[0].procesoRuteo;
+                //console.log("tipo de proceso de nivel: ", newestadoSt);
+              },
+              (error) => {
+                console.log('Error al obtener el nuevo estado de tracking: ', error);
+              }
+            )
+           
+            break;
+          }
+
+        }
+        //hace la peticion a la API para cambiar el estado de la solicitud
+        //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);
         setTimeout(() => {
-          
           this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
-              //console.log('Estado actualizado exitosamente');
+              console.log("Solicitud enviada");
               this.showmsj = true;
-              this.msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido enviada exitosamente.`;
+              this.msjExito = `La solicitud ha sido enviada exitosamente.`;
+
+              //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
+              this.sendNotify(newEstado, newestadoSt);
+
               setTimeout(() => {
                 this.showmsj = false;
                 this.msjExito = '';
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
                 this.router.navigate(['allrequest']);
-              }, 2500);
+              }, 2000);
             },
             (error) => {
               console.log('Error al actualizar el estado: ', error);
             }
           );
-        }, 1500);
+        }, 500);
+
       }
 
     } catch (error) {
@@ -1618,16 +1639,21 @@ export class SoliocComponent implements OnInit {
   // Método que consulta los niveles que tiene asignado el tipo de solicitud según el área
   nivelSolAsignado: RuteoArea[] = [];
   nivelRuteotoAut: RuteoArea[] = [];
+  nivelesRuteo: any[] = [];
   async getNivelRuteoArea() {
+    this.nivelRut$.subscribe((response) => { this.nivelesRuteo = response; });
     try {
-      const response = await this.ruteoService.getRuteosByArea(this.areaSolTmp).toPromise();
+      const response = await this.ruteoService.getRuteosByArea(this.depSolTmp).toPromise();
       this.nivelSolAsignado = response.filter((res: any) => res.rutareaTipoSol == this.trTipoSolicitud);
       this.nivelSolAsignado.sort((a, b) => a.rutareaNivel - b.rutareaNivel);
+      this.nivelRuteotoAut = this.nivelSolAsignado;
       //console.log('Niveles de ruteo asignados: ', this.nivelSolAsignado);
     } catch (error) {
       throw error;
     }
   }
+
+
 
    ///////////////////////////////////////////ANULACION DE SOLICITUD///////////////////////////////////////////////////
 
@@ -1727,40 +1753,79 @@ export class SoliocComponent implements OnInit {
     }
   }
 
-  ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
-  
-  nivGerencias: any[] = [];
-  mailToNotify: string = '';
-  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>
-  Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo. Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>
-  Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
+  ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL//////////////////////////////////////////////////
 
-  sendNotify(){
+
+  async sendNotify(nivelStr: number, nivelStatus: string) {
+    console.log("Nivel de ruteo: ", nivelStr);
+
+    let mailToNotify = '';
+    let depToSearch = 0;
+
+    if (nivelStatus == 'E') {
+      depToSearch = this.depSolTmp;
+    } else if (nivelStatus == 'G') {
+      depToSearch = 0;
+    }
 
     setTimeout(() => {
+      this.nivGerenciaService.getNivGerenciasByDep(depToSearch, nivelStr).subscribe(
+        (response) => {
+          //console.log('Niveles de gerencia para este nivel: ', response);
+          for (let emp of response) {
+            if (emp.empNivImp == 'T') {
+              //buscar el correo del empleado y setear su correo en la variable maltonotify
+              this.empService.getEmpleadoByNomina(emp.empNivEmpelado).subscribe(
+                (response: any) => {
+                  //console.log('Empleado: ', response);
+                  mailToNotify = response[0].empleadoCorreo;
+                  //enviar la notificacion al correo guardado en mailnotify
+                  //this.sendMail(mailToNotify);
+                  console.log("Correo enviado a: ", mailToNotify)
+                },
+                (error) => {
+                  console.log('Error al obtener el empleado: ', error);
+                }
+              );
+            }
+          }
+        },
+        (error) => {
+          console.log('Error al obtener los niveles de gerencia: ', error);
+        }
+      );
+    }, 100);
+  }
+
+  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>
+    Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo. Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>
+    Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
+
+  sendMail(mailToNotify: string) {
+    setTimeout(() => {
       const data = {
-        destinatario: this.mailToNotify,
+        destinatario: mailToNotify,
         asunto: 'Nueva Solicitud Recibida - Acción Requerida',
         contenido: this.emailContent
       }
-  
+
       this.sendMailService.sendMailtoProv(data).subscribe(
         response => {
           console.log("Exito, correo enviado");
           // this.showmsj = true;
           // this.msjExito = `Correos enviados exitosamente.`;
-  
+
           // setTimeout(() => {
           //   this.showmsj = false;
           //   this.msjExito = '';
           // }, 4000)
-  
+
         },
         error => {
           console.log(`Error, no se ha podido enviar el correo al proveedor.`, error)
           this.showmsjerror = true;
           this.msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
-  
+
           setTimeout(() => {
             this.showmsjerror = false;
             this.msjError = '';
@@ -1771,7 +1836,7 @@ export class SoliocComponent implements OnInit {
   }
 
 
-  setAprobadoPor(id: number){
+  setAprobadoPor(id: string){
     this.cabOCService.updateAprobadoCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
       (response) => {
         console.log('ACTUALIZADO CORRECTAMENTE');
@@ -1782,7 +1847,7 @@ export class SoliocComponent implements OnInit {
     );
   }
 
-  setFinancieroPor(id: number){
+  setFinancieroPor(id: string){
     this.cabOCService.updateFinancieroCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
       (response) => {
         console.log('ACTUALIZADO CORRECTAMENTE');
@@ -1792,5 +1857,27 @@ export class SoliocComponent implements OnInit {
       }
     );
   }
+
+    /////////////////////////////////////////////////APROBACION PRESUPUESTARIA//////////////////////////////////////////////////
+    aprobPreps: boolean = false;
+
+    checkAprobPrep(nivel: number) {
+      if (nivel >= 60) {
+        this.aprobPreps = true;
+      } else {
+        this.aprobPreps = false;
+      }
+    }
+
+    setMotivo: string = 'NO';
+
+    setMotivoDev() {
+      if (this.cabecera.cabSolOCAprobPresup == 'SI') {
+        this.setMotivo = 'NO';
+      } else {
+        this.setMotivo = 'SI';
+      }
+      //this.setMotivo = !this.setMotivo;
+    }
     
 }

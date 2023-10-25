@@ -465,11 +465,29 @@
           <div class="row mb-1">
             <div class="input-group col">
               <label class="input-group-text">Aprobado por:</label>
-              <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolOCApprovedBy" disabled/>
+              <ng-container *ngIf="cabecera.cabSolOCApprovedBy === '000000'; else showValue">
+                <input type="text" class="form-control" value="Nivel no alcanzado." disabled />
+            </ng-container>
+            <ng-template #showValue>
+                <ng-container *ngFor="let emp of empleadoedit">
+                    <input *ngIf="emp.empleadoIdNomina == cabecera.cabSolOCApprovedBy" type="text"
+                        class="form-control" id="busqueda"
+                        [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled />
+                </ng-container>
+            </ng-template>
             </div>
             <div class="input-group col">
               <label class="input-group-text">Apr. Financiera:</label>
-              <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolOCFinancieroBy"  disabled/>
+              <ng-container *ngIf="cabecera.cabSolOCFinancieroBy === '000000'; else showValue">
+                <input type="text" class="form-control" value="Nivel no alcanzado." disabled />
+              </ng-container>
+              <ng-template #showValue>
+                  <ng-container *ngFor="let emp of empleadoedit">
+                      <input *ngIf="emp.empleadoIdNomina == cabecera.cabSolOCFinancieroBy" type="text"
+                          class="form-control" 
+                          [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled />
+                  </ng-container>
+              </ng-template>
             </div>
           </div>
           <!-- Nuevos Campos  -->
@@ -568,6 +586,39 @@
               </div>
             </div>
           </div>
+          <div class="presupuestaria" *ngIf="aprobPreps">
+            <div class="tabs-edit">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link" style="font-style: italic; font-weight: bold;"
+                            [ngClass]="{'active': 1}">Aprobación presupuestaria</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="row mb-1 align-items-center">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <label class="input-group-text">Aprobación presupuestaria:</label>
+                        <select class="form-select" [(ngModel)]="cabecera.cabSolOCAprobPresup"
+                            [appSecureDisable]="estadoSol" (change)="setMotivoDev()">
+                            <option value="SI">Sí</option>
+                            <option value="NO">No</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="input-group" *ngIf="setMotivo == 'SI'">
+                        <label class="input-group-text">Motivo de devolución:</label>
+                        <textarea class="form-control limited-textarea" rows="1"
+                            placeholder="Ingrese el motivo de devolución"
+                            [(ngModel)]="cabecera.cabSolOCMotivoDev"
+                            [appSecureDisable]="estadoSol"></textarea>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
         </div>
         <div *ngIf="actionEdit =='documentacion'" >
           <app-oc-documentacion [view]="changeview" poSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-oc-documentacion>
@@ -1213,7 +1264,7 @@
             </div>
             <div class="modal-body">
                 <p>Al enviar la solicitud no podrá volver a editarla y pasará al siguiente estado.</p>
-                <div>
+                <!-- <div>
                   <label for="nivGerencia" class="input-label">Notificar a:</label>
                   <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
                       <option value="" selected disabled>Seleccione una opción</option>
@@ -1221,7 +1272,7 @@
                           <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
                       </ng-container>
                   </select>
-                </div>
+                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolNueva()">
@@ -1247,7 +1298,7 @@
             </div>
             <div class="modal-body">
                 <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.</p>
-                <div>
+                <!-- <div>
                   <label for="nivGerencia" class="input-label">Notificar a:</label>
                   <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
                       <option value="" selected disabled>Seleccione una opción</option>
@@ -1255,7 +1306,7 @@
                           <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
                       </ng-container>
                   </select>
-                </div>
+                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
