@@ -40,7 +40,7 @@ export class CabPagoService {
     return this.http.get<any>(`${this.APIUrl}/CabSolPago/GetCabecerabyarea?area=${area}`, { headers: headers });
   }
 
-  getPagobyIdNomina(id: number): Observable<any[]> {
+  getPagobyIdNomina(id: string): Observable<any[]> {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any>(`${this.APIUrl}/CabSolPago/GetCabecerabyNomina?idNomina=${id}`, { headers: headers });
   }

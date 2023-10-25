@@ -182,7 +182,7 @@ export class AllrequestComponent implements OnInit {
   //CONSULTA TODAS LAS SOLICITUDES DEPENDIENDO DEL METODO DE BUSQUEDA DEL USUARIO
   getAllCotizaciones(): void {
     if (this.metodoBusq == 1) {
-      this.cabCotService.getCotizacionesByIdNomina(parseInt(this.cookieService.get('userNomina'))).subscribe(
+      this.cabCotService.getCotizacionesByIdNomina(this.cookieService.get('userNomina')).subscribe(
         response => {
           // console.log("Exito: ", response);
           this.allSol = response;
@@ -217,7 +217,7 @@ export class AllrequestComponent implements OnInit {
 
   getAllOrdenCompras(): void {
     if (this.metodoBusq == 1) {
-       this.cabOCService.getOrdenCmpbyIdNomina(parseInt(this.cookieService.get('userNomina'))).subscribe(
+       this.cabOCService.getOrdenCmpbyIdNomina(this.cookieService.get('userNomina')).subscribe(
         response => {
           console.log("Exito: ", response);
           this.allSol = response;
@@ -254,7 +254,7 @@ export class AllrequestComponent implements OnInit {
 
   getAllOrdenPagos(): void {
     if (this.metodoBusq == 1) {
-      this.cabPagoService.getPagobyIdNomina(parseInt(this.cookieService.get('userNomina'))).subscribe(
+      this.cabPagoService.getPagobyIdNomina(this.cookieService.get('userNomina')).subscribe(
         response => {
           console.log("Exito: ", response);
           this.allSol=response;

@@ -7,12 +7,12 @@
             </li>
 
             <!-- modificar para que no se puedan asignar proveedores en caso de que la solicitud ya ha sido enviada -->
-            <ng-container *ngIf="estadoSol == '10' || userId == '001294'">
-                <li class="nav-item" *appAuthorize="'37'">
-                    <a class="nav-link" [ngClass]="{'active': actionProv === 'agregar'}"
-                        (click)="selectAction('agregar')">Asignar proveedores</a>
-                </li>
-            </ng-container>
+
+            <li class="nav-item" *appAuthorize="'37'">
+                <a class="nav-link" [ngClass]="{'active': actionProv === 'agregar'}"
+                    (click)="selectAction('agregar')">Asignar proveedores</a>
+            </li>
+
 
         </ul>
     </div>
@@ -24,18 +24,18 @@
             <div class="busqProveedor row col">
                 <div class="input-group col">
                     <select class="form-select custom-select" [(ngModel)]="tipoBusqProv" name="buscarOpcion"
-                        style="background-color: #d6d6d6;">
+                        style="background-color: #d6d6d6;" [appSecureDisable]="estadoSol">
                         <option selected value="nombre">Nombre del proveedor</option>
                         <option value="ruc">Ruc del proveedor</option>
                     </select>
                     <input type="text" class="form-control" placeholder="Término de busqueda" name="terminoBusqueda"
-                        [(ngModel)]="terminoBusq">
-                    <button class="btn btn-success" type="button" (click)="searchProveedor()"><i class="bi bi-search">
-                            Buscar</i></button>
+                        [(ngModel)]="terminoBusq" [appSecureDisable]="estadoSol">
+                    <button class="btn btn-success" type="button" (click)="searchProveedor()" [appSecureDisable]="estadoSol">
+                        <i class="bi bi-search"> Buscar</i></button>
 
                 </div>
                 <div class="col">
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#newProveedor"><i
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#newProveedor" [appSecureDisable]="estadoSol"><i
                             class="bi bi-plus-circle"> Nuevo proveedor</i></button>
                 </div>
             </div>
@@ -159,7 +159,10 @@
                     <td class="align-middle">{{prov.cotProvDireccion}}</td>
                     <td class="align-middle" [ngSwitch]="prov.cotProvVerify">
                         <span *ngSwitchCase="1">Verificado</span>
-                        <span *ngSwitchCase="0">Nuevo Proveedor<br><a class="link-primary link-underline a-verify" data-toggle="modal" data-target="#verifyProvAssigned" (click)="setProvId(prov.cotProvId)">Verificar</a></span></td>
+                        <span *ngSwitchCase="0">Nuevo Proveedor<br><a class="link-primary link-underline a-verify"
+                                data-toggle="modal" data-target="#verifyProvAssigned"
+                                (click)="setProvId(prov.cotProvId)">Verificar</a></span>
+                    </td>
                     <td class="align-middle">
                         <button class="btn btn-border btn-prov" data-toggle="modal" data-target="#deleteProvAssigned"
                             (click)="selectIdDltProv(prov.cotProvId)" [appSecureDisable]="estadoSol">
@@ -224,10 +227,12 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <p>¿Está seguro(a) que desea verificar el proveedor?<br>Al verificar el proveedor dejará de ser proveedor nuevo.<br>Advertencia: debe asegurarse de haber agregado el proveedor al servidor AX anteriormente, esa acción no corresponde a esta aplicación.</p>
+                <p>¿Está seguro(a) que desea verificar el proveedor?<br>Al verificar el proveedor dejará de ser
+                    proveedor nuevo.<br>Advertencia: debe asegurarse de haber agregado el proveedor al servidor AX
+                    anteriormente, esa acción no corresponde a esta aplicación.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="changeVerifyProv()">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="changeVerifyProv()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -283,14 +288,12 @@
                     <div>
                         <div class="input-group text-end mb-2">
                             <label class="input-group-text" for="fecha">Fecha:</label>
-                            <input class="form-control" type="text" name="fecha" [value]="sol_fecha"
-                                disabled>
+                            <input class="form-control" type="text" name="fecha" [value]="sol_fecha" disabled>
 
                         </div>
                         <div class="input-group text-end mb-2">
                             <label class="input-group-text" for="asunto">Descripción:</label>
-                            <input class="form-control" type="text" name="asunto"
-                                [value]="cabSolCotAsunto" disabled>
+                            <input class="form-control" type="text" name="asunto" [value]="cabSolCotAsunto" disabled>
 
                         </div>
 

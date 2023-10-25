@@ -48,7 +48,7 @@ export class CabCotizacionService {
     return this.http.get<any>(`${this.APIUrl}/CabSolCotizacions/GetCabecerabyarea?area=${area}`, { headers: headers });
   }
 
-  getCotizacionesByIdNomina(id: number): Observable<any[]> {
+  getCotizacionesByIdNomina(id: string): Observable<any[]> {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any>(`${this.APIUrl}/CabSolCotizacions/GetCabecerabyNomina?idNomina=${id}`, { headers: headers });
   }

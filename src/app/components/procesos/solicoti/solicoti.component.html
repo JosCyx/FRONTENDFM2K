@@ -377,7 +377,7 @@
                                 </div>
                             </div>
                             <div class="col-md-8">
-                                <div class="input-group" *ngIf="setMotivo">
+                                <div class="input-group" *ngIf="setMotivo == 'SI'">
                                     <label class="input-group-text">Motivo de devolución:</label>
                                     <textarea class="form-control limited-textarea" rows="1"
                                         placeholder="Ingrese el motivo de devolución"
@@ -520,13 +520,13 @@
                             <div class="text-center">
                                 <div class="row buttons-ruteo">
                                     <ng-container *appAuthorize="'54'">
-                                        <button *ngIf="!setMotivo" class="btn btn-success col m-2" data-toggle="modal"
-                                            data-target="#aprobarSolicitud">Aprobar</button>
+                                        <button *ngIf="setMotivo == 'NO'" class="btn btn-success col m-2" data-toggle="modal"
+                                            data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
                                     </ng-container>
                                     <button *appAuthorize="'57'" class="btn btn-warning col m-2" data-toggle="modal"
-                                        data-target="#rechazarSolicitud">Devolver</button>
+                                        data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>
                                     <button *appAuthorize="'60'" class="btn btn-danger col m-2" data-toggle="modal"
-                                        data-target="#anularSolicitud">Anular</button>
+                                        data-target="#anularSolicitud" [appSecureDisable]="estadoSol">Anular</button>
                                 </div>
                             </div>
                         </div>

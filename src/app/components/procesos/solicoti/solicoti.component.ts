@@ -159,7 +159,7 @@ export class SolicotiComponent implements OnInit {
 
   areaUserCookie: string = '';
 
-  setMotivo: boolean = false;
+  setMotivo: string = 'NO';
 
   constructor(private router: Router,
     private empService: EmpleadosService,
@@ -199,6 +199,7 @@ export class SolicotiComponent implements OnInit {
 
 
   ngOnInit(): void {
+    console.log(this.cookieService.get('userRolNiveles'));
     this.areaUserCookie = this.cookieService.get('userArea');
     this.empService.getEmpleadosList().subscribe((data) => {
       this.empleadosEdit = data;
@@ -1301,7 +1302,7 @@ export class SolicotiComponent implements OnInit {
   aprobPreps: boolean = false;
 
   checkAprobPrep(nivel: number) {
-    if (nivel == 60) {
+    if (nivel >= 60) {
       this.aprobPreps = true;
     } else {
       this.aprobPreps = false;
@@ -1684,10 +1685,10 @@ export class SolicotiComponent implements OnInit {
 
 
   setMotivoDev() {
-    if (this.setMotivo == false) {
-      this.setMotivo = true;
+    if (this.cabecera.cabSolCotAprobPresup == 'SI') {
+      this.setMotivo = 'NO';
     } else {
-      this.setMotivo = false;
+      this.setMotivo = 'SI';
     }
     //this.setMotivo = !this.setMotivo;
   }
