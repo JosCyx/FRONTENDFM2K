@@ -26,7 +26,7 @@ export class CotPdfComponent implements OnInit {
   //variables
   @Input() tipoSol: number = 0;
   @Input() noSol: number = 0;
-  CabCotiza: string = 'SOLICITUD DE COTIZACIONES';
+  CabCotiza: string = 'SOLICITUD DE COTIZACION';
   //global
   solID: number = this.serviceGlobal.solID;
   //guardar array de datos

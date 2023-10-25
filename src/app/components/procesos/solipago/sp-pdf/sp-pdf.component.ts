@@ -433,15 +433,15 @@ export class SpPdfComponent implements OnInit {
     }
   }
   Aprobado(){
-    if (this.datosSP.cabecera.cabSolCotApprovedBy === '000000' ) {
-      this.datosSP.cabecera.cabSolCotApprovedBy = 'NIVEL NO ALCANZADO';
+    if (this.datosSP.cabecera.cabPagoApprovedBy === '000000' ) {
+      this.datosSP.cabecera.cabPagoApprovedBy = 'NIVEL NO ALCANZADO';
     } else {
       for (const iterator of this.empleadoedit) {
         if (
           iterator.empleadoIdNomina ==
-          this.datosSP.cabecera.cabSolCotApprovedBy
+          this.datosSP.cabecera.cabPagoApprovedBy
         ) {
-          this.datosSP.cabecera.cabSolCotApprovedBy =
+          this.datosSP.cabecera.cabPagoApprovedBy =
             iterator.empleadoNombres + '' + iterator.empleadoApellidos;
         }
       }

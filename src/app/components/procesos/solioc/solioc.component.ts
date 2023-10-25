@@ -581,6 +581,7 @@ export class SoliocComponent implements OnInit {
         solCotDescripcion: detalle.det_descp,
         solCotUnidad: detalle.det_unidad,
         solCotCantidadTotal: detalle.det_cantidad,
+        solCotPresupuesto: detalle.det_presupuesto,
       };
       //envia a la api el arreglo data por medio del metodo post
       this.detCotService.addDetalleCotizacion(data).subscribe(

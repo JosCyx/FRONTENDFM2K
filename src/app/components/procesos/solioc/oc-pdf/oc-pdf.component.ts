@@ -157,14 +157,14 @@ export class OcPdfComponent implements OnInit {
                     ],
                     [
                       { text: 'APROBADO POR :', style: 'tableHeader' },
-                      { text: this.datosCabOC.cabecera.cabSolCotApprovedBy },
+                      { text: this.datosCabOC.cabecera.cabSolOCApprovedBy },
                       { text: 'ESTADO:', style: 'tableHeader' },
                       { text: this.estadoTexto(), colSpan: 2 },
                       '',
                     ],
                     [
                       { text: 'FINANCIERO :', style: 'tableHeader' },
-                      { text: this.datosCabOC.cabecera.cabSolCotFinancieroBy },
+                      { text: this.datosCabOC.cabecera.cabSolOCFinancieroBy },
                       { text: 'TRACKING', style: 'tableHeader' },
                       { text: this.nivelRuta, colSpan: 2 },
                       '',
@@ -403,7 +403,7 @@ export class OcPdfComponent implements OnInit {
   }
   TraerArea() {
     for (let listArea of this.area) {
-      if (listArea.areaIdNomina == this.datosCabOC.cabecera.cabSolOCArea) {
+      if (listArea.areaIdNomina == this.datosCabOC.cabecera.cabSolOCIdArea) {
         this.areas = listArea.areaDecp;
       }
     }
@@ -431,7 +431,6 @@ export class OcPdfComponent implements OnInit {
   //Retorna de la tabla Principal
   RetornarOrdencompra() {
     const detalles = this.datosCabOC.detalles;
-    console.log('detalles', detalles);
     this.datosMapeados = detalles.map((item: any) => {
       return {
         solCotIdDetalle: item.solCotIdDetalle,
@@ -511,27 +510,27 @@ export class OcPdfComponent implements OnInit {
     }
   }
   Aprobado(){
-    if (this.datosCabOC.cabecera.cabSolCotApprovedBy === '000000' ) {
-      this.datosCabOC.cabecera.cabSolCotApprovedBy = 'NIVEL NO ALCANZADO';
+    if (this.datosCabOC.cabecera.cabSolOCApprovedBy === '000000' ) {
+      this.datosCabOC.cabecera.cabSolOCApprovedBy = 'NIVEL NO ALCANZADO';
     } else {
       for (const iterator of this.empleadoedit) {
         if (
           iterator.empleadoIdNomina ==
-          this.datosCabOC.cabecera.cabSolCotApprovedBy
+          this.datosCabOC.cabecera.cabSolOCApprovedBy
         ) {
-          this.datosCabOC.cabecera.cabSolCotApprovedBy =
+          this.datosCabOC.cabecera.cabSolOCApprovedBy =
             iterator.empleadoNombres + '' + iterator.empleadoApellidos;
         }
       }
     }
   }
   financiero(){
-    if (this.datosCabOC.cabecera.cabSolCotFinancieroBy === '000000') {
-      this.datosCabOC.cabecera.cabSolCotFinancieroBy = 'NIVEL NO ALCANZADO';
+    if (this.datosCabOC.cabecera.cabSolOCFinancieroBy === '000000') {
+      this.datosCabOC.cabecera.cabSolOCFinancieroBy = 'NIVEL NO ALCANZADO';
     }else{
       for(const itera of this.empleadoedit){
-        if(itera.empleadoIdNomina==this.datosCabOC.cabecera.cabSolCotFinancieroBy){
-          this.datosCabOC.cabecera.cabSolCotFinancieroBy=itera.empleadoNombres+' '+itera.empleadoApellidos;
+        if(itera.empleadoIdNomina==this.datosCabOC.cabecera.cabSolOCFinancieroBy){
+          this.datosCabOC.cabecera.cabSolOCFinancieroBy=itera.empleadoNombres+' '+itera.empleadoApellidos;
         }
       }
     }
