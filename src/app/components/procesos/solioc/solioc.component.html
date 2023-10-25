@@ -635,8 +635,8 @@
                 <h2>Autorización de solicitud</h2>
                 <div class="text-center">
                     <div class="row buttons-ruteo">
-                        <button *appAuthorize="'55'" class="btn btn-success col m-2" data-toggle="modal" data-target="#enviarSolicitud">Aprobar</button>
-                        <button *appAuthorize="'58'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">No autorizar</button>
+                        <button *appAuthorize="'55'" class="btn btn-success col m-2" data-toggle="modal" data-target="#aprobarSolicitud">Aprobar</button>
+                        <button *appAuthorize="'58'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">Devolver</button>
                         <button *appAuthorize="'61'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud">Anular</button>
                     </div>
                 </div> 
@@ -1457,7 +1457,7 @@
 </div>
 
 <!-- Modal para verificar el envío de la soliitud recien registrada-->
-<div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+<div class="modal fade" #exampleModal id="aprobarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
