@@ -161,6 +161,7 @@ export class SolicotiComponent implements OnInit {
 
   setMotivo: string = 'NO';
 
+
   constructor(private router: Router,
     private empService: EmpleadosService,
     private sectService: SectoresService,
@@ -538,7 +539,12 @@ export class SolicotiComponent implements OnInit {
 
 
   }
-
+   IdDetalle:number=0;
+  CapturarIdDetalle(id:number):number{
+    this.IdDetalle=id;
+    console.log("idDetalle",this.IdDetalle);
+    return this.IdDetalle;
+  }
   saveDetItem() {
     //enviar la lista detalle a la api para registrarla
     for (let detalle of this.detalleList) {//recorre la lista de detalles
