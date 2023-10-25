@@ -296,7 +296,7 @@ export class SpPdfComponent implements OnInit {
             },
           };
           const pdf = pdfMake.createPdf(PDFSP);
-          pdf.open();
+          pdf.download(this.datosSP.cabecera.cabPagoNumerico);
           this.clear();
         },
         error: (err) => {

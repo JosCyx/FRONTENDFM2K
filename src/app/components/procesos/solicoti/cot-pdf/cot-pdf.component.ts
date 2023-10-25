@@ -91,6 +91,7 @@ export class CotPdfComponent implements OnInit {
       this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
       next: (res) => {
         this.datosCabcot = res;
+        console.log("esto son mismos",this.datosCabcot)
           this.traerEmpleado();
           this.TraerArea();
           this.EstadoTracking();
@@ -399,7 +400,7 @@ export class CotPdfComponent implements OnInit {
   }
   TraerArea() {
     for (const listArea of this.area) {
-      if (listArea.areaIdNomina == this.datosCabcot.cabecera.cabSolCotArea) {
+      if (listArea.areaIdNomina == this.datosCabcot.cabecera.cabSolCotIdArea) {
         this.areas = listArea.areaDecp;
       }
     }
@@ -425,7 +426,6 @@ export class CotPdfComponent implements OnInit {
   }
   retornar() {
     const detalles = this.datosCabcot.detalles;
-    console.log('detalles', detalles);
     this.datosMapeados = detalles.map((index: any) => {
       return {
         solCotIdDetalle: index.solCotIdDetalle,
