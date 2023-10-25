@@ -25,7 +25,7 @@ export class SpPdfComponent implements OnInit {
   //Variables
   datosSP!: SP;
   empleados: string = '';
-  recibe:string='';
+  recibe: string = '';
   areas: string = '';
   nivelRuta: string = '';
 
@@ -69,6 +69,7 @@ export class SpPdfComponent implements OnInit {
           this.TraerArea();
           this.EstadoTracking();
           this.retornarTabla();
+          this.Aprobado();
           console.log('esta es mi respuesta', this.datosSP);
 
           const PDFSP: any = {
@@ -144,7 +145,7 @@ export class SpPdfComponent implements OnInit {
                     ],
                     [
                       { text: 'APROBADO POR ', style: 'tableHeader' },
-                      { text: '', colSpan: 4 },
+                      { text: this.datosSP.cabecera.cabSolCotApprovedBy, colSpan: 4 },
                       '',
                       '',
                       '',
@@ -296,7 +297,7 @@ export class SpPdfComponent implements OnInit {
             },
           };
           const pdf = pdfMake.createPdf(PDFSP);
-          pdf.open();
+          pdf.download(this.datosSP.cabecera.cabPagoNumerico);
           this.clear();
         },
         error: (err) => {
@@ -341,9 +342,7 @@ export class SpPdfComponent implements OnInit {
   }
   traerRecibe() {
     for (let iterator of this.empleadoedit) {
-      if (
-        iterator.empleadoIdNomina == this.datosSP.cabecera.cabPagoReceptor
-      ) {
+      if (iterator.empleadoIdNomina == this.datosSP.cabecera.cabPagoReceptor) {
         this.recibe =
           iterator.empleadoNombres + ' ' + iterator.empleadoApellidos;
       }
@@ -433,9 +432,23 @@ export class SpPdfComponent implements OnInit {
         return ''; // Manejo por defecto si el valor no es A, F o C
     }
   }
-  clear(){
-    this.datosSP = {cabecera:{},
-            detalles: []};
-            this.combinarObJ = [];
+  Aprobado(){
+    if (this.datosSP.cabecera.cabPagoApprovedBy === '000000' ) {
+      this.datosSP.cabecera.cabPagoApprovedBy = 'NIVEL NO ALCANZADO';
+    } else {
+      for (const iterator of this.empleadoedit) {
+        if (
+          iterator.empleadoIdNomina ==
+          this.datosSP.cabecera.cabPagoApprovedBy
+        ) {
+          this.datosSP.cabecera.cabPagoApprovedBy =
+            iterator.empleadoNombres + '' + iterator.empleadoApellidos;
+        }
+      }
+    }
+  }
+  clear() {
+    this.datosSP = { cabecera: {}, detalles: [] };
+    this.combinarObJ = [];
   }
 }

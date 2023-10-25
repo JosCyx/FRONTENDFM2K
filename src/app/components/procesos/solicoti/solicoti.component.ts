@@ -81,7 +81,7 @@ export class SolicotiComponent implements OnInit {
   cab_estado: string = 'A';//estado inicial Activo
   cab_plazo!: Date;
   cab_fechaMax!: Date;
-  cab_inspector!: number;
+  cab_inspector!: string;
   cab_telef_insp!: string;
 
   //variables del detalle
@@ -288,7 +288,7 @@ export class SolicotiComponent implements OnInit {
         this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : 'No se ha encontrado el inspector';
         console.log("Inspector ID", this.cab_inspector);
       } else {
-        this.cab_inspector = 0;
+        this.cab_inspector = '';
       }
     }, 500); // Retraso de 1 segundo (ajusta el valor según tus necesidades)
   }

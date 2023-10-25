@@ -105,6 +105,8 @@ export class OcPdfComponent implements OnInit {
           this.RetornarOrdencompra();
           this.RetornarOrdencompraSub();
           this.BuscarInpector();
+          this.Aprobado();
+          this.financiero();
           const pdfc: any = {
             content: [
               // { image: 'Imagen', margin: [0, 20] },
@@ -155,14 +157,14 @@ export class OcPdfComponent implements OnInit {
                     ],
                     [
                       { text: 'APROBADO POR :', style: 'tableHeader' },
-                      { text: '' },
+                      { text: this.datosCabOC.cabecera.cabSolOCApprovedBy },
                       { text: 'ESTADO:', style: 'tableHeader' },
                       { text: this.estadoTexto(), colSpan: 2 },
                       '',
                     ],
                     [
                       { text: 'FINANCIERO :', style: 'tableHeader' },
-                      { text: '' },
+                      { text: this.datosCabOC.cabecera.cabSolOCFinancieroBy },
                       { text: 'TRACKING', style: 'tableHeader' },
                       { text: this.nivelRuta, colSpan: 2 },
                       '',
@@ -401,7 +403,7 @@ export class OcPdfComponent implements OnInit {
   }
   TraerArea() {
     for (let listArea of this.area) {
-      if (listArea.areaIdNomina == this.datosCabOC.cabecera.cabSolOCArea) {
+      if (listArea.areaIdNomina == this.datosCabOC.cabecera.cabSolOCIdArea) {
         this.areas = listArea.areaDecp;
       }
     }
@@ -429,7 +431,6 @@ export class OcPdfComponent implements OnInit {
   //Retorna de la tabla Principal
   RetornarOrdencompra() {
     const detalles = this.datosCabOC.detalles;
-    console.log('detalles', detalles);
     this.datosMapeados = detalles.map((item: any) => {
       return {
         solCotIdDetalle: item.solCotIdDetalle,
@@ -439,6 +440,8 @@ export class OcPdfComponent implements OnInit {
         solCotUnidad: item.solCotUnidad,
       };
     });
+    //
+    this.datosMapeados.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
     //
     for (let i = 0; i < this.datosMapeados.length; i++) {
       let presuM = '';
@@ -473,6 +476,7 @@ export class OcPdfComponent implements OnInit {
         itmCantidad: index.itmCantidad,
       };
     });
+    arraysector.sort((a:any, b:any) => a.itmIdDetalle - b.itmIdDetalle);
     for (let index = 0; index < arraysector.length; index++) {
       let descripcion = '';
       for (const iterator of this.datosMapeados) {
@@ -505,7 +509,32 @@ export class OcPdfComponent implements OnInit {
       }
     }
   }
-
+  Aprobado(){
+    if (this.datosCabOC.cabecera.cabSolOCApprovedBy === '000000' ) {
+      this.datosCabOC.cabecera.cabSolOCApprovedBy = 'NIVEL NO ALCANZADO';
+    } else {
+      for (const iterator of this.empleadoedit) {
+        if (
+          iterator.empleadoIdNomina ==
+          this.datosCabOC.cabecera.cabSolOCApprovedBy
+        ) {
+          this.datosCabOC.cabecera.cabSolOCApprovedBy =
+            iterator.empleadoNombres + '' + iterator.empleadoApellidos;
+        }
+      }
+    }
+  }
+  financiero(){
+    if (this.datosCabOC.cabecera.cabSolOCFinancieroBy === '000000') {
+      this.datosCabOC.cabecera.cabSolOCFinancieroBy = 'NIVEL NO ALCANZADO';
+    }else{
+      for(const itera of this.empleadoedit){
+        if(itera.empleadoIdNomina==this.datosCabOC.cabecera.cabSolOCFinancieroBy){
+          this.datosCabOC.cabecera.cabSolOCFinancieroBy=itera.empleadoNombres+' '+itera.empleadoApellidos;
+        }
+      }
+    }
+  }
   clear() {
     this.datosCabOC = { cabecera: {}, detalles: [], items: [] };
     this.combinarObJ = [];

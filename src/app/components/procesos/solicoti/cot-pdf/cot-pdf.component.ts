@@ -26,7 +26,7 @@ export class CotPdfComponent implements OnInit {
   //variables
   @Input() tipoSol: number = 0;
   @Input() noSol: number = 0;
-  CabCotiza: string = 'SOLICITUD DE COTIZACIONES';
+  CabCotiza: string = 'SOLICITUD DE COTIZACION';
   //global
   solID: number = this.serviceGlobal.solID;
   //guardar array de datos
@@ -91,12 +91,15 @@ export class CotPdfComponent implements OnInit {
       this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
       next: (res) => {
         this.datosCabcot = res;
+        console.log("esto son mismos",this.datosCabcot)
           this.traerEmpleado();
           this.TraerArea();
           this.EstadoTracking();
           this.BuscarInpector();
           this.retornar();
           this.retornarSub();
+          this.Aprobado();
+          this.financiero();
           const dd: any = {
             content: [
               // {
@@ -143,14 +146,14 @@ export class CotPdfComponent implements OnInit {
                     ],
                     [
                       { text: 'APROBADO POR :', style: 'tableHeader' },
-                      { text: '' },
+                      { text: this.datosCabcot.cabecera.cabSolCotApprovedBy},
                       { text: 'ESTADO:', style: 'tableHeader' },
                       { text: this.estadoTexto(), colSpan: 2 },
                       '',
                     ],
                     [
                       { text: 'FINANCIERO :', style: 'tableHeader' },
-                      { text: '' },
+                      { text: this.datosCabcot.cabecera.cabSolCotFinancieroBy },
                       { text: 'TRACKING', style: 'tableHeader' },
                       { text: this.nivelRuta, colSpan: 2 },
                       '',
@@ -399,7 +402,7 @@ export class CotPdfComponent implements OnInit {
   }
   TraerArea() {
     for (const listArea of this.area) {
-      if (listArea.areaIdNomina == this.datosCabcot.cabecera.cabSolCotArea) {
+      if (listArea.areaIdNomina == this.datosCabcot.cabecera.cabSolCotIdArea) {
         this.areas = listArea.areaDecp;
       }
     }
@@ -425,7 +428,6 @@ export class CotPdfComponent implements OnInit {
   }
   retornar() {
     const detalles = this.datosCabcot.detalles;
-    console.log('detalles', detalles);
     this.datosMapeados = detalles.map((index: any) => {
       return {
         solCotIdDetalle: index.solCotIdDetalle,
@@ -435,6 +437,7 @@ export class CotPdfComponent implements OnInit {
         solCotCantidadTotal: index.solCotCantidadTotal,
       };
     });
+    this.datosMapeados.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
     for (let index = 0; index < this.datosMapeados.length; index++) {
       let presuM = '';
       for (const iterator of this.presupues) {
@@ -448,7 +451,6 @@ export class CotPdfComponent implements OnInit {
         solCotUnidad,
         solCotCantidadTotal,
       } = this.datosMapeados[index];
-
       const a = [
         { text: solCotIdDetalle, alignment: 'center' },
         { text: solCotDescripcion, alignment: 'left' },
@@ -470,7 +472,7 @@ export class CotPdfComponent implements OnInit {
 
         }
       })
-      console.log("este es map de sub ",arraysector)
+      arraysector.sort((a:any,b:any)=>a.itmIdDetalle-b.itmIdDetalle);
       for(let index=0; index< arraysector.length; index++){
         let descripcion='';
         for (const iterator of this.datosMapeados) {
@@ -501,6 +503,32 @@ export class CotPdfComponent implements OnInit {
       ) {
         this.inpectores =
           iterator.empleadoNombres + '' + iterator.empleadoApellidos;
+      }
+    }
+  }
+  Aprobado(){
+    if (this.datosCabcot.cabecera.cabSolCotApprovedBy === '000000' ) {
+      this.datosCabcot.cabecera.cabSolCotApprovedBy = 'NIVEL NO ALCANZADO';
+    } else {
+      for (const iterator of this.empleadosEdit) {
+        if (
+          iterator.empleadoIdNomina ==
+          this.datosCabcot.cabecera.cabSolCotApprovedBy
+        ) {
+          this.datosCabcot.cabecera.cabSolCotApprovedBy =
+            iterator.empleadoNombres + '' + iterator.empleadoApellidos;
+        }
+      }
+    }
+  }
+  financiero(){
+    if (this.datosCabcot.cabecera.cabSolCotFinancieroBy === '000000') {
+      this.datosCabcot.cabecera.cabSolCotFinancieroBy = 'NIVEL NO ALCANZADO';
+    }else{
+      for(const itera of this.empleadosEdit){
+        if(itera.empleadoIdNomina==this.datosCabcot.cabecera.cabSolCotFinancieroBy){
+          this.datosCabcot.cabecera.cabSolCotFinancieroBy=itera.empleadoNombres+' '+itera.empleadoApellidos;
+        }
       }
     }
   }

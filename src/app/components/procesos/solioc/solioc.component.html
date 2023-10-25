@@ -173,8 +173,14 @@
               <tr *ngFor="let det of detalleList">
                 <td class="align-middle">{{ det.det_id }}</td>
                 <td class="align-middle">{{ det.det_descp }}</td>
-                <td class="align-middle">{{ det.det_presupuesto }}</td>
-                <td class="align-middle">Asignado</td>
+                <ng-container *ngFor="let prep of presupuestos" >
+                  <td class="align-middle" *ngIf="prep.prespId == det.det_presupuesto" >{{ prep.prespNombre }}</td>
+                </ng-container>
+                <td class="align-middle">
+                  <button class="btn btn-outline-primary" data-toggle="modal"
+                  (click)="CapturarIdDetalle(det.det_id)"
+                  data-target="#itemsectorview" >Editar</button>
+              </td>
                 <td class="align-middle">{{ det.det_unidad }}</td>
                 <td class="align-middle">
                   {{ det.det_cantidad }}
@@ -200,7 +206,7 @@
                 </td>
                 <td class="align-middle">
                   <select class="form-control" [(ngModel)]="det_presupuesto">
-                      <option value="0" selected disabled>>presupuesto...</option>
+                      <option value="0" selected disabled>presupuesto...</option>
                       <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                           {{prep.prespNombre}}</option>
                   </select>
@@ -913,6 +919,61 @@
   
   
   <!-- * -->
+  <div class="modal fade" #exampleModal id="itemsectorview" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    Ingrese los items según el sector
+                </h3>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped text-center justify-content-center">
+                    <thead>
+                        <tr>
+                            <th scope="col">N° Detalle</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col">N° Item</th>
+                            <th scope="col">Cantidad*</th>
+                            <th scope="col" colspan="2">Sector*</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of itemSectorList">
+                            <ng-container  *ngIf="item.det_id == IdDetalle" >
+                                <td class="align-middle">{{ item.det_id }}</td>
+                                <td class="align-middle">{{ item.det_descp }}</td>
+                                <td class="align-middle">{{ item.item_id }}</td>
+                                <td class="align-middle"><input type="number" class="form-control" name="item_cant" value="{{ item.item_cant }}"></td>
+                            <ng-container *ngFor="let sect of sectores$ | async">
+                                <!-- <td *ngIf="sect.sectIdNomina == item.item_sector" class="align-middle">
+                                    {{ sect.sectNombre }}
+                                </td> -->
+                                <td *ngIf="sect.sectIdNomina == item.item_sector" class="align-middle">
+                                    <select class="form-select" name="item_sector" [(ngModel)]="item.item_sector">
+                                      <option selected disabled value="0">Selecciona un sector...</option>
+                                      <option *ngFor="let sect of sectores$ | async" [value]="sect.sectIdNomina">{{ sect.sectNombre }}</option>
+                                    </select>
+                                  </td>
+                            </ng-container>
+                            <td>
+                                <button class="btn text-danger" (click)="deleteItem(item.item_id)">
+                                    <i class="bi bi-x-circle"></i></button>
+                            </td>
+                        </ng-container>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">
+                    Aceptar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
   <!-- Modal para los items por sector-->
   <div
     class="modal fade"

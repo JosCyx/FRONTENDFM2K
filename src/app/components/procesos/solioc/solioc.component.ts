@@ -564,6 +564,12 @@ export class SoliocComponent implements OnInit {
     }
   }
   //
+  IdDetalle:number=0;
+  CapturarIdDetalle(id:number):number{
+    this.IdDetalle=id;
+    console.log("idDetalle",this.IdDetalle);
+    return this.IdDetalle;
+  }
   saveItemDet() {
     for (let detalle of this.detalleList) {
       //recorre la lista de detalles
@@ -575,6 +581,7 @@ export class SoliocComponent implements OnInit {
         solCotDescripcion: detalle.det_descp,
         solCotUnidad: detalle.det_unidad,
         solCotCantidadTotal: detalle.det_cantidad,
+        solCotPresupuesto: detalle.det_presupuesto,
       };
       //envia a la api el arreglo data por medio del metodo post
       this.detCotService.addDetalleCotizacion(data).subscribe(
