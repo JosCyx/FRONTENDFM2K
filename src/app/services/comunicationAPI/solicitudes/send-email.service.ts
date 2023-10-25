@@ -30,7 +30,7 @@ export class SendEmailService {
   }
 
   //asignar un proveedor a la cotizacion
-  sendMailtoProv(data: any) {
+  sendMailto(data: any) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(this.APIUrl + '/SendEmail', data, { headers: headers });
   }

@@ -478,7 +478,7 @@ export class CotProveedoresComponent implements OnInit {
         asunto: this.mail_asunto,
         contenido: this.emailContent
       }
-      this.sendMailService.sendMailtoProv(data).subscribe(
+      this.sendMailService.sendMailto(data).subscribe(
         response => {
           console.log("Exito");
           this.showmsj = true;
@@ -516,7 +516,7 @@ export class CotProveedoresComponent implements OnInit {
         asunto: this.mail_asunto,
         contenido: this.emailContent
       }
-      this.sendMailService.sendMailtoProv(data).subscribe(
+      this.sendMailService.sendMailto(data).subscribe(
         response => {
           console.log(`Exito, se ha enviado el correo a ${cmp.identify}.`);
           this.showmsj = true;

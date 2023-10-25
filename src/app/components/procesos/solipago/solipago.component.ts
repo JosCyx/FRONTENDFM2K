@@ -105,8 +105,8 @@ export class SolipagoComponent implements OnInit {
   tipobusqueda: string = 'nombre';
   buscarProveedor: string = '';
   //
-  alertBool:boolean=false;
-  alertText:string='';
+  alertBool: boolean = false;
+  alertText: string = '';
   //
   empleadoEdi: any[] = [];
   proveedores: any[] = [];
@@ -119,12 +119,13 @@ export class SolipagoComponent implements OnInit {
 
   detallesToDestino: any[] = [];
   setDestino: boolean = this.globalService.setDestino;
-  settear(){
+  settear() {
     console.log("Estes es mi metodo settea")
     this.setDestino = this.globalService.setDestino;
   }
 
-  areaUserCookie: string = '';
+  areaUserCookie: number = Number(this.cookieService.get('userArea'));
+
 
   constructor(
     private empService: EmpleadosService,
@@ -143,7 +144,7 @@ export class SolipagoComponent implements OnInit {
     private sendMailService: SendEmailService,
     private nivGerenciaService: NivGerenciaService,
     private sharedService: SharedService
-  ) { 
+  ) {
     /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobarsp$.subscribe(() => {
       //console.log("Aprobando solicitud...");
@@ -164,7 +165,7 @@ export class SolipagoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this. areaUserCookie= this.cookieService.get('userArea');
+
     //console.log(this.sharedNoSol);
 
     this.empService.getEmpleadosList().subscribe((data) => {
@@ -218,7 +219,7 @@ export class SolipagoComponent implements OnInit {
           this.cab_id_area = emp.empleadoIdArea;
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
-              
+
               this.showArea = area.areaDecp;
 
               this.areaNmco = area.areaNemonico;
@@ -482,8 +483,8 @@ export class SolipagoComponent implements OnInit {
       const partes = this.valorinput.match(/(\d+)-(\d+)/);
       console.log('partes', partes);
       if (partes && partes.length === 3) {
-        console.log("este mi partes ",partes[1]);
-        if(partes[1] !='2'){
+        console.log("este mi partes ", partes[1]);
+        if (partes[1] != '2') {
           this.alertBool = true;
           this.alertText = 'No se ha encontrado la solicitud';
           this.detalleSolPagos = [];
@@ -491,21 +492,21 @@ export class SolipagoComponent implements OnInit {
             this.alertBool = false;
             this.alertText = '';
           }, 1000);
-        }else{
+        } else {
           console.log('tiene formato pasa por aqui');
-        this.noSolicinput = parseInt(partes[2], 10);
+          this.noSolicinput = parseInt(partes[2], 10);
           try {
             this.detSolService
               .getDetalle_solicitud(2, this.noSolicinput)
               .subscribe(
                 (response) => {
-    
+
                   //console.log('response', response);
                   this.detalleSolPagos = response.map((ini: any) => ({
                     idDetalle: ini.solCotIdDetalle,
                     itemDesc: ini.solCotDescripcion,
                   }));
-    
+
                   //variables para controlar los datos ue se le pasan a destino
                   this.destinoIO = true;
                   this.detallesToDestino = response.map((detalle: any) => {
@@ -526,13 +527,13 @@ export class SolipagoComponent implements OnInit {
           }
 
         }
-        
 
-      } 
+
+      }
       else {
         console.log('No tiene ningun formato realizado');
       }
-      
+
     }
   }
   //* Agregamos los detalles de pago a base
@@ -616,7 +617,7 @@ export class SolipagoComponent implements OnInit {
       };
     });
     //formatear la fecha de la solicitud de pago
-    this.fechaFormateada=this.formatDateToSpanish( new Date( this.cabecera.cabPagoFechaEmision))
+    this.fechaFormateada = this.formatDateToSpanish(new Date(this.cabecera.cabPagoFechaEmision))
     this.cabecera.cabPagoFechaInspeccion = format(
       parseISO(this.cabecera.cabPagoFechaInspeccion),
       'yyyy-MM-dd'
@@ -695,7 +696,7 @@ export class SolipagoComponent implements OnInit {
       cabPagoApprovedBy: this.aprobadopor,
       cabPagoFinancieroBy: this.financieropor
     };
-    
+
     console.log('esta guardo editada de cabecera solicitud ', dataCAB);
     this.cabPagoService
       .updatecabPago(this.cabecera.cabPagoID, dataCAB)
@@ -931,7 +932,7 @@ export class SolipagoComponent implements OnInit {
                 console.log('Error al obtener el nuevo estado de tracking: ', error);
               }
             )
-           
+
             break;
           }
 
@@ -988,7 +989,7 @@ export class SolipagoComponent implements OnInit {
 
   ///////////////////////////////////////////DOCUMENTACION DE CREACION DE PAGO/////////////////////////////////////////
   showDoc: boolean = false;
-  async setNoSolDocumentacion(){
+  async setNoSolDocumentacion() {
     this.sharedNoSol = await this.getLastSol();
     this.showDoc = this.showDoc ? false : true;
   }
@@ -1000,9 +1001,9 @@ export class SolipagoComponent implements OnInit {
   }
 
 
-   ///////////////////////////////////////////ANULACION DE SOLICITUD///////////////////////////////////////////////////
+  ///////////////////////////////////////////ANULACION DE SOLICITUD///////////////////////////////////////////////////
 
-   anularSolicitud() {
+  anularSolicitud() {
     let exito: boolean = false;
     let exitotrk: boolean = false;
     try {
@@ -1055,21 +1056,36 @@ export class SolipagoComponent implements OnInit {
   }
   ///////////////////////////////////////////NO AUTORIZAR SOLICITUD///////////////////////////////////////////////////
 
-  async noAutorizar(){
+  async noAutorizar() {
     await this.getNivelRuteoArea();
     console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
-    
 
-    for(let i = 0; i < this.nivelRuteotoAut.length; i++){
+
+    for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
       let niv = this.nivelRuteotoAut[i];
-      if(niv.rutareaNivel == this.estadoTrkTmp){
-        let newEstado = this.nivelRuteotoAut[i-1].rutareaNivel;
-        
+      if (niv.rutareaNivel == this.estadoTrkTmp) {
+        let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
+        let newestadoSt = '';
+
+        //extrae el tipo de proceso del nivel actual
+        this.nivRuteService.getNivelInfo(newEstado).subscribe(
+          (response) => {
+            newestadoSt = response[0].procesoRuteo;
+            //console.log("tipo de proceso de nivel: ", newestadoSt);
+          },
+          (error) => {
+            console.log('Error al obtener el nuevo estado de tracking: ', error);
+          }
+        );
+
         this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
           (response) => {
             //console.log('Estado de tracknig actualizado exitosamente');
             this.showmsj = true;
             this.msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel anterior.`;
+
+            //notificar al nivel anterior del devolucion de la solicitud
+            this.sendNotify(newEstado, newestadoSt);
 
             setTimeout(() => {
               this.showmsj = false;
@@ -1090,7 +1106,7 @@ export class SolipagoComponent implements OnInit {
             }, 2500);
           }
         );
-        
+
         //console.log("Nuevo estado: ", newEstado);
         break;
       }
@@ -1099,7 +1115,7 @@ export class SolipagoComponent implements OnInit {
   }
 
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
- 
+
   async sendNotify(nivelStr: number, nivelStatus: string) {
     console.log("Nivel de ruteo: ", nivelStr);
 
@@ -1141,9 +1157,7 @@ export class SolipagoComponent implements OnInit {
     }, 100);
   }
 
-  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>
-    Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo. Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>
-    Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
+  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
 
   sendMail(mailToNotify: string) {
     setTimeout(() => {
@@ -1153,7 +1167,7 @@ export class SolipagoComponent implements OnInit {
         contenido: this.emailContent
       }
 
-      this.sendMailService.sendMailtoProv(data).subscribe(
+      this.sendMailService.sendMailto(data).subscribe(
         response => {
           console.log("Exito, correo enviado");
           // this.showmsj = true;
@@ -1179,8 +1193,8 @@ export class SolipagoComponent implements OnInit {
     }, 1000);
   }
 
-  setAprobadoPor(id: string){
-    this.cabPagoService.updateAprobadoCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
+  setAprobadoPor(id: string) {
+    this.cabPagoService.updateAprobadoCotizacion(this.trTipoSolicitud, this.noSolTmp, id).subscribe(
       (response) => {
         console.log('ACTUALIZADO CORRECTAMENTE');
       },
@@ -1190,14 +1204,14 @@ export class SolipagoComponent implements OnInit {
     );
   }
 
- /* setFinancieroPor(id: number){
-    this.cabPagoService.updateFinancieroCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
-      (response) => {
-        console.log('ACTUALIZADO CORRECTAMENTE');
-      },
-      (error) => {
-        console.log('error : ', error);
-      }
-    );
-  }*/
+  /* setFinancieroPor(id: number){
+     this.cabPagoService.updateFinancieroCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
+       (response) => {
+         console.log('ACTUALIZADO CORRECTAMENTE');
+       },
+       (error) => {
+         console.log('error : ', error);
+       }
+     );
+   }*/
 }

@@ -1446,7 +1446,7 @@ export class SolicotiComponent implements OnInit {
               (error) => {
                 console.log('Error al obtener el nuevo estado de tracking: ', error);
               }
-            )
+            );
            
             break;
           }
@@ -1568,12 +1568,27 @@ export class SolicotiComponent implements OnInit {
       let niv = this.nivelRuteotoAut[i];
       if (niv.rutareaNivel == this.estadoTrkTmp) {
         let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
+        let newestadoSt = '';
+        
+        //extrae el tipo de proceso del nivel actual
+        this.nivRuteService.getNivelInfo(newEstado).subscribe(
+          (response) => {
+            newestadoSt = response[0].procesoRuteo;
+            //console.log("tipo de proceso de nivel: ", newestadoSt);
+          },
+          (error) => {
+            console.log('Error al obtener el nuevo estado de tracking: ', error);
+          }
+        );
 
         this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
           (response) => {
             //console.log('Estado de tracknig actualizado exitosamente');
             this.showmsj = true;
             this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel anterior.`;
+
+            //notificar al nivel anterior del devolucion de la solicitud
+            this.sendNotify(newEstado, newestadoSt);
 
             setTimeout(() => {
               this.showmsj = false;
@@ -1630,7 +1645,7 @@ export class SolicotiComponent implements OnInit {
                   //console.log('Empleado: ', response);
                   mailToNotify = response[0].empleadoCorreo;
                   //enviar la notificacion al correo guardado en mailnotify
-                  //this.sendMail(mailToNotify);
+                  this.sendMail(mailToNotify);
                   console.log("Correo enviado a: ", mailToNotify)
                 },
                 (error) => {
@@ -1647,19 +1662,18 @@ export class SolicotiComponent implements OnInit {
     }, 100);
   }
 
-  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>
-    Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo. Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>
-    Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
+  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
 
   sendMail(mailToNotify: string) {
     setTimeout(() => {
       const data = {
         destinatario: mailToNotify,
+        //destinatario: 'joseguillermojm.jm@gmail.com',
         asunto: 'Nueva Solicitud Recibida - Acción Requerida',
         contenido: this.emailContent
       }
 
-      this.sendMailService.sendMailtoProv(data).subscribe(
+      this.sendMailService.sendMailto(data).subscribe(
         response => {
           console.log("Exito, correo enviado");
           // this.showmsj = true;
@@ -1682,7 +1696,7 @@ export class SolicotiComponent implements OnInit {
           }, 4000)
         }
       );
-    }, 1000);
+    }, 500);
   }
 
 

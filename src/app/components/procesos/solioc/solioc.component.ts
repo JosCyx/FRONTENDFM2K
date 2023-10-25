@@ -1716,12 +1716,27 @@ export class SoliocComponent implements OnInit {
       let niv = this.nivelRuteotoAut[i];
       if(niv.rutareaNivel == this.estadoTrkTmp){
         let newEstado = this.nivelRuteotoAut[i-1].rutareaNivel;
+        let newestadoSt = '';
+        
+        //extrae el tipo de proceso del nivel actual
+        this.nivRuteService.getNivelInfo(newEstado).subscribe(
+          (response) => {
+            newestadoSt = response[0].procesoRuteo;
+            //console.log("tipo de proceso de nivel: ", newestadoSt);
+          },
+          (error) => {
+            console.log('Error al obtener el nuevo estado de tracking: ', error);
+          }
+        );
         
         this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
           (response) => {
             //console.log('Estado de tracknig actualizado exitosamente');
             this.showmsj = true;
             this.msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido devuelta al nivel anterior.`;
+
+            //notificar al nivel anterior del devolucion de la solicitud
+            this.sendNotify(newEstado, newestadoSt);
 
             setTimeout(() => {
               this.showmsj = false;
@@ -1794,9 +1809,7 @@ export class SoliocComponent implements OnInit {
     }, 100);
   }
 
-  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>
-    Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo. Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>
-    Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
+  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
 
   sendMail(mailToNotify: string) {
     setTimeout(() => {
@@ -1806,7 +1819,7 @@ export class SoliocComponent implements OnInit {
         contenido: this.emailContent
       }
 
-      this.sendMailService.sendMailtoProv(data).subscribe(
+      this.sendMailService.sendMailto(data).subscribe(
         response => {
           console.log("Exito, correo enviado");
           // this.showmsj = true;
