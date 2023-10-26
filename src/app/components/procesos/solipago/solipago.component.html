@@ -240,7 +240,8 @@
                     <input
                       type="number"
                       class="form-control text-center"
-                      [(ngModel)]="det.cantidadContrat"
+                      [(ngModel)]="det.itemCant"
+                      disabled
                     />
                   </td>
                   <td class="align-middle" style="width: 150px">
@@ -502,13 +503,17 @@
           <div class="row">
             <div class="input-group col mb-1">
               <label class="input-group-text">Aprobado por:</label>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Ingrese el numero Factura"
-                [(ngModel)]="cabecera.cabPagoApprovedBy"
-                disabled
-              />
+              
+              <ng-container *ngIf="cabecera.cabPagoApprovedBy === '000000'; else showValue">
+                <input type="text" class="form-control" value="Nivel no alcanzado." disabled />
+            </ng-container>
+            <ng-template #showValue>
+                <ng-container *ngFor="let emp of empleadoEdi">
+                    <input *ngIf="emp.empleadoIdNomina == cabecera.cabPagoApprovedBy" type="text"
+                        class="form-control" id="busqueda"
+                        [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled />
+                </ng-container>
+            </ng-template>
             </div>
           </div>
           <!--  -->
@@ -520,7 +525,7 @@
                 class="form-control"
                 placeholder="Ingrese el numero Factura"
                 [(ngModel)]="cabecera.cabPagoNumFactura"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabPagoEstadoTrack > 10"
               />
             </div>
             <div class="input-group col mb-1">
@@ -529,7 +534,7 @@
                 type="text"
                 class="form-control"
                 [(ngModel)]="cabecera.cabPagoFechaFactura"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabPagoEstadoTrack > 10"
               />
             </div>
           </div>
@@ -541,7 +546,7 @@
                 style="background-color: #d6d6d6"
                 [(ngModel)]="tipobusqueda"
                 (ngModelChange)="limpiarCampos()"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabPagoEstadoTrack > 10"
               >
                 <option value="nombre" selected>Proveedor</option>
                 <option value="ruc">Ruc</option>
@@ -553,7 +558,7 @@
                 class="form-control"
                 list="proveedor"
                 (keyup)="searchProveedor(cabecera.cabPagoProveedor)"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabPagoEstadoTrack > 10"
               />
               <input
                 [(ngModel)]="cabecera.cabPagoRucProveedor"
@@ -561,7 +566,7 @@
                 type="text"
                 class="form-control"
                 list="proveedor"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabPagoEstadoTrack > 10"
               />
               <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'">
                 <ng-container *ngFor="let prov of proveedores">
@@ -572,7 +577,7 @@
                 *ngIf="tipobusqueda == 'ruc'"
                 class="btn btn-success"
                 (click)="searchProveedorRuc(cabecera.cabPagoRucProveedor)"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabPagoEstadoTrack > 10"
               >
                 <i class="bi bi-check-lg"></i>
               </button>
@@ -587,14 +592,14 @@
                 class="form-control"
                 *ngIf="tipobusqueda == 'nombre'"
                 [(ngModel)]="cabecera.cabPagoRucProveedor"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabPagoEstadoTrack > 10"
               />
               <input
                 type="text "
                 class="form-control"
                 *ngIf="tipobusqueda == 'ruc'"
                 [(ngModel)]="cabecera.cabPagoProveedor"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabPagoEstadoTrack > 10"
               />
             </div>
           </div>
@@ -631,9 +636,9 @@
                   <h2>Autorización de solicitud</h2>
                   <div class="text-center">
                       <div class="row buttons-ruteo">
-                          <button *appAuthorize="'56'" class="btn btn-success col m-2" data-toggle="modal" data-target="#enviarSolicitud">Aprobar</button>
-                          <button *appAuthorize="'59'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">Devolver</button>
-                          <button *appAuthorize="'62'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud">Anular</button>
+                          <button *appAuthorize="'56'" class="btn btn-success col m-2" data-toggle="modal" data-target="#enviarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
+                          <button *appAuthorize="'59'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>
+                          <button *appAuthorize="'62'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud" [appSecureDisable]="estadoSol">Anular</button>
                       </div>
                   </div> 
               </div>
@@ -675,7 +680,7 @@
                     type="number"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoCantContratada"
-                    [appSecureDisable]= "estadoSol"
+                    [disabled]="cabecera.cabPagoEstadoTrack > 10"
                   />
                 </td>
                 <td class="align-middle" style="width: 150px">
@@ -683,7 +688,7 @@
                     type="number"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoCantRecibida"
-                    [appSecureDisable]= "estadoSol"
+                    [disabled]="cabecera.cabPagoEstadoTrack > 10"
                   />
                 </td>
                 <td class="align-middle cel-prep">
@@ -691,7 +696,7 @@
                     type="number"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoValUnitario"
-                    [appSecureDisable]= "estadoSol"
+                    [disabled]="cabecera.cabPagoEstadoTrack > 10"
                   />
                 </td>
                 <td class="align-middle">
@@ -700,7 +705,7 @@
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoSubtotal"
                     (input)="calculoEditotal()"
-                    [appSecureDisable]= "estadoSol"
+                    [disabled]="cabecera.cabPagoEstadoTrack > 10"
                   />
                 </td>
               </tr>
@@ -715,7 +720,7 @@
                     type="number"
                     class="form-control text-center"
                     [(ngModel)]="cabecera.cabpagototal"
-                    [appSecureDisable]= "estadoSol"
+                    [disabled]="cabecera.cabPagoEstadoTrack > 10"
                   />
                 </td>
               </tr>
@@ -730,7 +735,7 @@
               class="form-control"
               id="floatingInput"
               [(ngModel)]="cabecera.cabPagoObservaciones"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabPagoEstadoTrack > 10"
             />
             <label for="floatingInput">Observaciones:</label>
           </div>
@@ -740,7 +745,7 @@
               class="form-control"
               id="floatingInput"
               [(ngModel)]="cabecera.cabPagoAplicarMulta"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabPagoEstadoTrack > 10"
             />
             <label for="floatingInput">Aplicar multa:</label>
           </div>
@@ -751,7 +756,7 @@
               type="number"
               placeholder="Ingrese el valor a descontar"
               [(ngModel)]="cabecera.cabPagoValorMulta"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabPagoEstadoTrack > 10"
             />
             <label class="input-group-text">Pago total autorizado:</label>
             <input
@@ -759,7 +764,7 @@
               type="number"
               placeholder="Ingrese el valor Total"
               [(ngModel)]="cabecera.cabPagoValorTotalAut"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabPagoEstadoTrack > 10"
             />
           </div>
           <div class="input-group mb-3">
@@ -770,7 +775,7 @@
               list="sugerenciasEdit"
               [(ngModel)]="receptor"
               (keyup)="searchEmpleado()"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabPagoEstadoTrack > 10"
             />
             <datalist id="sugerenciasEdit">
               <ng-container *ngFor="let emp of empleadoEdi">
@@ -785,7 +790,7 @@
               type="text"
               for="fechamaxima"
               [(ngModel)]="cabecera.cabPagoFechaInspeccion"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabPagoEstadoTrack > 10"
             />
           </div>
           <div class="input-group mb-3">
@@ -793,7 +798,7 @@
             <select
               class="form-select"
               [(ngModel)]="cabecera.cabPagoCancelacionOrden"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabPagoEstadoTrack > 10"
             >
               <option disabled selected>Seleccione un opcion....</option>
               <option value="TTL">TOTAL</option>

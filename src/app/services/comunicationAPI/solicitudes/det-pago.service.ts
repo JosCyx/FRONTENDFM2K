@@ -9,13 +9,23 @@ import { GlobalService } from '../../global.service';
   providedIn: 'root'
 })
 export class DetPagoService {
-  readonly APIUrl = this.globalService.APIUrl;
+   APIUrl = this.globalService.APIUrl;
 
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
     private globalService: GlobalService
-  ) { }
+  ) {
+    this.globalService.getConfigLoadedObservable().subscribe(
+      (configLoaded) => {
+        if (configLoaded) {
+          this.APIUrl = this.globalService.getApiUrl();
+          //console.log("Url impresa:", this.APIUrl);
+          // Ahora puedes usar apiUrl de manera segura.
+        }
+      }
+    );
+   }
 
   private getHeadersWithAuthToken(): HttpHeaders {
     // Obtiene el token de la cookie

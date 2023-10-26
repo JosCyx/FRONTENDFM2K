@@ -505,7 +505,7 @@
                 style="background-color: #d6d6d6"
                 [(ngModel)]="tipobusqProv"
                 (ngModelChange)="limpiarCampos()"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabSolOCEstadoTracking > 10"
               >
                 <option value="nombre" selected>Proveedor</option>
                 <option value="ruc">Ruc</option>
@@ -517,7 +517,7 @@
                 class="form-control"
                 list="proveedor"
                 (keyup)="searchProveedor(cabecera.cabSolOCProveedor)"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabSolOCEstadoTracking > 10"
               />
               <input
                 [(ngModel)]="cabecera.cabSolOCRUCProveedor"
@@ -525,7 +525,7 @@
                 type="text"
                 class="form-control"
                 list="proveedor"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabSolOCEstadoTracking > 10"
               />
               <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
                 <ng-container *ngFor="let prov of proveedores">
@@ -547,14 +547,14 @@
                 class="form-control"
                 *ngIf="tipobusqProv == 'nombre'"
                 [(ngModel)]="cabecera.cabSolOCRUCProveedor"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabSolOCEstadoTracking > 10"
               />
               <input
                 type="text "
                 class="form-control"
                 *ngIf="tipobusqProv == 'ruc'"
                 [(ngModel)]="cabecera.cabSolOCProveedor"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabSolOCEstadoTracking > 10"
               />
             </div>
           </div>
@@ -565,7 +565,7 @@
                 type="text"
                 class="form-control mr-3"
                 [(ngModel)]="cabecera.cabSolOCAsunto"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabSolOCEstadoTracking > 10"
               />
             </div>
             <div class="row col">
@@ -635,9 +635,9 @@
                 <h2>Autorización de solicitud</h2>
                 <div class="text-center">
                     <div class="row buttons-ruteo">
-                        <button *appAuthorize="'55'" class="btn btn-success col m-2" data-toggle="modal" data-target="#aprobarSolicitud">Aprobar</button>
-                        <button *appAuthorize="'58'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud">Devolver</button>
-                        <button *appAuthorize="'61'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud">Anular</button>
+                        <button *appAuthorize="'55'" class="btn btn-success col m-2" data-toggle="modal" data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
+                        <button *appAuthorize="'58'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>
+                        <button *appAuthorize="'61'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud" [appSecureDisable]="estadoSol">Anular</button>
                     </div>
                 </div> 
             </div>
@@ -675,12 +675,12 @@
                     cols="10"
                     placeholder="Descripción"
                     [(ngModel)]="det.solCotDescripcion"
-                    [appSecureDisable]= "estadoSol"
+                    [disabled]="cabecera.cabSolOCEstadoTracking > 10"
                   ></textarea>
                 </td>
                 <td class="align-middle">
                   <select class="form-control" [(ngModel)]="det.solCotPresupuesto" [appSecureDisable]="estadoSol">
-                      <option value="" selected disabled>>presupuesto...</option>
+                      <option value="" selected disabled>presupuesto...</option>
                       <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                           {{prep.prespNombre}}</option>
                   </select>
@@ -691,13 +691,13 @@
                     (click)="selectDet(det)"
                     data-toggle="modal"
                     data-target="#itemsectorEdit"
-                    [appSecureDisable]= "estadoSol"
+                    [disabled]="cabecera.cabSolOCEstadoTracking > 10"
                   >
                     Editar
                   </button>
                 </td>
                 <td class="align-middle">
-                  <select class="form-control" [(ngModel)]="det.solCotUnidad" [appSecureDisable]= "estadoSol">
+                  <select class="form-control" [(ngModel)]="det.solCotUnidad" [disabled]="cabecera.cabSolOCEstadoTracking > 10">
                     <option value="Unidad">Unidad</option>
                     <option value="Sacos">Sacos</option>
                     <option value="Paquete">Paquete</option>
@@ -716,13 +716,13 @@
                     (click)="confDeleteDet(det.solCotID, det.solCotIdDetalle)"
                     data-toggle="modal"
                     data-target="#dltDetSaved"
-                    [appSecureDisable]= "estadoSol"
+                    [disabled]="cabecera.cabSolOCEstadoTracking > 10"
                   >
                     <i class="bi bi-x-circle"></i>
                   </button>
                 </td>
               </tr>
-              <tr *ngIf="viewElement">
+              <tr *ngIf="cabecera.cabSolOCEstadoTracking == 10">
                 <th class="align-middle">{{ det_id }}</th>
                 <td class="align-middle">
                   <textarea
@@ -795,8 +795,9 @@
               type="text"
               class="form-control"
               id="floatingInput"
+              [disabled]="cabecera.cabSolOCEstadoTracking > 10"
               [(ngModel)]="cabecera.cabSolOCProcedimiento"
-              [appSecureDisable]= "estadoSol"
+              
             />
             <label for="floatingInput"
               >Materiales y procedimientos a seguir:</label
@@ -808,13 +809,13 @@
               class="form-control"
               id="floatingInput"
               [(ngModel)]="cabecera.cabSolOCObervaciones"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabSolOCEstadoTracking > 10"
             />
             <label for="floatingInput">Observaciones:</label>
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Adjunto cotizaciones:</label>
-            <select class="form-control" [(ngModel)]="cabecera.cabSolOCAdjCot" [appSecureDisable]= "estadoSol">
+            <select class="form-control" [(ngModel)]="cabecera.cabSolOCAdjCot" [disabled]="cabecera.cabSolOCEstadoTracking > 10">
               <option value="SI">Sí</option>
               <option value="NO" selected>No</option>
             </select>
@@ -823,7 +824,7 @@
               class="form-control"
               type="number"
               [(ngModel)]="cabecera.cabSolOCNumCotizacion"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabSolOCEstadoTracking > 10"
             />
           </div>
           <div class="input-group mb-3">
@@ -833,7 +834,7 @@
               type="text"
               for="plazoentrega"
               [(ngModel)]="cabecera.cabSolOCPlazoEntrega"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabSolOCEstadoTracking > 10"
             />
             <label class="input-group-text">Fecha máxima de entrega:</label>
             <input
@@ -841,7 +842,7 @@
               type="text"
               for="fechamaxima"
               [(ngModel)]="cabecera.cabSolOCFechaMaxentrega"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabSolOCEstadoTracking > 10"
             />
           </div>
           <div class="input-group mb-3">
@@ -854,7 +855,7 @@
               [(ngModel)]="inspector"
               (keyup)="searchInspector()"
               (input)="onInputChanged()"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabSolOCEstadoTracking > 10"
             />
             <datalist id="inspectores">
               <ng-container *ngFor="let empOP of inspectores">
@@ -868,7 +869,7 @@
               class="form-control"
               type="text"
               [(ngModel)]="cabecera.cabSolOCTelefInspector"
-              [appSecureDisable]= "estadoSol"
+              [disabled]="cabecera.cabSolOCEstadoTracking > 10"
             />
           </div>
          <div class="row justify-content-between" >
