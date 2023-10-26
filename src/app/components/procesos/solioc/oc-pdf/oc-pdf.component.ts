@@ -6,7 +6,6 @@ import { format, parseISO } from 'date-fns';
 import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
-import { ProveedorService } from 'src/app/services/comunicationAPI/seguridad/proveedor.service';
 import { CabOrdCompraService } from 'src/app/services/comunicationAPI/solicitudes/cab-ord-compra.service';
 import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
 import { GlobalService } from 'src/app/services/global.service';
@@ -44,13 +43,14 @@ export class OcPdfComponent implements OnInit {
   datosMapeados: any[] = [];
   combinarObJ: any = [];
   combinarSecto: any = [];
+  Imagen:string='assets/img/icon.png';
+  copiaImgen:string='';
 
   constructor(
     private serviceGlobal: GlobalService,
     private cabOCService: CabOrdCompraService,
     private empService: EmpleadosService,
     private areaService: AreasService,
-    private provService: ProveedorService,
     private nivRuteService: NivelRuteoService,
     private prespService: PresupuestoService,
     private sectService: SectoresService
@@ -95,6 +95,7 @@ export class OcPdfComponent implements OnInit {
 
   ClickPDF() {
     try {
+      this.traerdatos();
       this.cabOCService.getOrdenComprabyId(this.solID).subscribe({
         next: (resp: any) => {
           this.datosCabOC = resp;
@@ -109,7 +110,12 @@ export class OcPdfComponent implements OnInit {
           this.financiero();
           const pdfc: any = {
             content: [
-              // { image: 'Imagen', margin: [0, 20] },
+              {
+                image: this.copiaImgen,
+                width: 50,
+                height: 50,
+                margin: [0, 20],
+              },
               { text: 'FUNDACION MALECON 2000', style: 'header' },
               {
                 text: 'ORDEN DE COMPRA',
@@ -119,7 +125,7 @@ export class OcPdfComponent implements OnInit {
               },
               {
                 text: this.datosCabOC.cabecera.cabSolOCNumerico,
-                algnment: 'right',
+                alignment: 'right',
                 margin: [0, 0, 10, 5],
               },
               {
@@ -539,5 +545,27 @@ export class OcPdfComponent implements OnInit {
     this.datosCabOC = { cabecera: {}, detalles: [], items: [] };
     this.combinarObJ = [];
     this.combinarSecto = [];
+  }
+  async convertImageToDataUrl(imagePath: string): Promise<string> {
+    try {
+      const response = await fetch(imagePath);
+      const arrayBuffer = await response.arrayBuffer();
+      const base64Image = btoa(
+        new Uint8Array(arrayBuffer).reduce(
+          (data, byte) => data + String.fromCharCode(byte),
+          '',
+        ),
+      );
+      const dataUrl = `data:image/jpeg;base64,${base64Image}`;
+      return dataUrl;
+    } catch (error) {
+      console.error('Error al cargar y convertir la imagen:', error);
+      throw error; // Lanza el error para que sea manejado por la parte que llama a esta función.
+    }
+  }
+  traerdatos() {
+    this.convertImageToDataUrl(this.Imagen).then((dataurl) => {
+      this.copiaImgen = dataurl;
+    });
   }
 }
