@@ -19,7 +19,7 @@ export class GlobalService {
   setDestino: boolean = false;
 
 
-  rutaJSON: string = '../../assets/configfm2k.json';
+  rutaJSON: string = 'assets/configfm2k.json';
   configJSON: any = {};
 
   private configLoaded$: BehaviorSubject<boolean> = new BehaviorSubject(false);

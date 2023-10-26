@@ -80,7 +80,7 @@
               <ng-container *ngFor="let area of areaList">
                 <td
                   class="align-middle"
-                  *ngIf="area.areaIdNomina === sol.cabSolCotArea"
+                  *ngIf="area.areaIdNomina === sol.cabSolCotIdArea"
                 >
                   {{ area.areaDecp }}
                 </td>
@@ -119,7 +119,7 @@
               <ng-container *ngFor="let area of areaList">
                 <td
                   class="align-middle"
-                  *ngIf="area.areaIdNomina === sol.cabSolOCArea"
+                  *ngIf="area.areaIdNomina === sol.cabSolOCIdArea"
                 >
                   {{ area.areaDecp }}
                 </td>
@@ -158,7 +158,7 @@
               <ng-container *ngFor="let area of areaList">
                 <td
                   class="align-middle"
-                  *ngIf="area.areaIdNomina === sol.cabPagoAreaSolicitante"
+                  *ngIf="area.areaIdNomina === sol.cabPagoIdAreaSolicitante"
                 >
                   {{ area.areaDecp }}
                 </td>
@@ -196,7 +196,7 @@
     </div>
     <div class="text-end">
       <button [disabled]="!isConsulta" (click)="exportexcel()">
-        <img src="../../../../assets/img/272697_excel_icon.png" alt="" />
+        <img src="assets/img/272697_excel_icon.png" alt="" />
       </button>
     </div>
   </div>
