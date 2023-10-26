@@ -466,7 +466,7 @@
                 class="form-control"
                 placeholder="Ingrese el numero de compra"
                 [(ngModel)]="cabecera.cabPagoNoOrdenCompra"
-                [appSecureDisable]= "estadoSol"
+                [disabled]="cabecera.cabPagoEstadoTrack > 10"
               />
             </div>
           </div>

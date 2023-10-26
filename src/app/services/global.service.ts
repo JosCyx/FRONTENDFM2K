@@ -16,7 +16,7 @@ export class GlobalService {
   solView: string = 'crear';
   changePage: boolean = false;
   solID: number = 0;
-  setDestino: boolean = false;
+  //setDestino: boolean = false;
 
 
   rutaJSON: string = 'assets/configfm2k.json';

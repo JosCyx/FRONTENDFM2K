@@ -1504,6 +1504,17 @@ export class SolicotiComponent implements OnInit {
       throw error;
     }
   }
+
+  metodo(){
+    this.ruteoService.getRuteosByArea(this.deptSolTmp).subscribe(
+      response => {
+        console.log(response)
+      },
+      error => {
+        console.log(error)
+      }
+    )
+  }
   ///////////////////////////////////////////ANULACION DE SOLICITUD///////////////////////////////////////////////////
 
   anularSolicitud() {
