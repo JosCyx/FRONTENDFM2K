@@ -77,14 +77,14 @@ export class SpDestinoComponent implements OnInit {
   ngOnInit(): void {
     console.log('Detalles recibidos:', this.detalles);
     
-    this.sectoresService.getSectoresList().subscribe(
+    /*this.sectoresService.getSectoresList().subscribe(
       (data: any[]) => {
         this.sectores = data;
       },
       (error) => {
         console.log(error);
       }
-    );
+    );*/
 
     this.empleadoService.getEmpleadobyArea(this.areaSol).subscribe(
       (data: any[]) => {
@@ -98,6 +98,7 @@ export class SpDestinoComponent implements OnInit {
 
   //busca los empleados segun su area
   searchEmpleado(): void {
+    this.searchSectores();
     if (this.empleadoBusq.length > 2) {
       this.empleadoService
         .getEmpleadobyArea(this.areaSol)
@@ -129,6 +130,17 @@ export class SpDestinoComponent implements OnInit {
         this.empleadoDestino = 0;
       }
     }, 500); // Retraso de 1 segundo (ajusta el valor según tus necesidades)
+  }
+
+  searchSectores(){
+    this.sectoresService.getSectoresList().subscribe(
+      (data: any[]) => {
+        this.sectores = data;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   //guarda el id del item seleccionado para registrar su destino (se ejecuta en el click al tr)

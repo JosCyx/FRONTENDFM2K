@@ -1,7 +1,3 @@
 {
-    "APIUrl":"https://localhost:7086/api",
-    "Emails":{
-        "compras":"email de compras",
-        "financiero": "email de financiero"
-    }
+    "APIUrl":"http://192.168.1.234:9193/api"
 }

@@ -23,11 +23,11 @@ export class GlobalService{
 
   constructor(private http: HttpClient) {
     console.log("Servicio global corriendo...");
-    this.http.get(this.rutaJSON).subscribe((data: any) => {
+    /*this.http.get(this.rutaJSON).subscribe((data: any) => {
       this.configJSON = data;
       this.APIUrl = data.APIUrl;
       console.log("APIUrl:", this.APIUrl)
-    });
+    });*/
 
 
   }
