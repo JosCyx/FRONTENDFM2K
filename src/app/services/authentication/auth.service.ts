@@ -12,13 +12,23 @@ import { GlobalService } from '../global.service';
 export class AuthService {
 
   //COMUNICACION CON LA API PARA REALIZAR EL LOGIN
-  readonly APIurl = this.globalService.APIUrl;
+   APIurl = '';
 
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
     private globalService: GlobalService
-  ) { }
+  ) { 
+     
+    this.globalService.getConfigLoadedObservable().subscribe(
+      (configLoaded) => {
+        if (configLoaded) {
+          this.APIurl = this.globalService.getApiUrl();
+          console.log("Url impresa:",this.APIurl);
+          // Ahora puedes usar apiUrl de manera segura.
+        }
+      });
+  }
 
 
   login(user: string, pass: string) {
