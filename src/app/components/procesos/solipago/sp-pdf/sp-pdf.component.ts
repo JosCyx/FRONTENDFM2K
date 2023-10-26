@@ -35,6 +35,9 @@ export class SpPdfComponent implements OnInit {
   NivelRuta: any[] = [];
   combinarObJ: any = [];
 
+  Imagen:string='assets/img/icon.png';
+  copiaImgen:string='';
+
   constructor(
     private serviceGlobal: GlobalService,
     private cabPagoService: CabPagoService,
@@ -61,6 +64,7 @@ export class SpPdfComponent implements OnInit {
 
   clickPdf() {
     try {
+      this.traerdatos();
       this.cabPagoService.getSolPagobyId(this.solID).subscribe({
         next: (response) => {
           this.datosSP = response;
@@ -74,6 +78,12 @@ export class SpPdfComponent implements OnInit {
 
           const PDFSP: any = {
             content: [
+              {
+                image: this.copiaImgen,
+                width: 50,
+                height: 50,
+                margin: [0, 20],
+              },
               { text: 'FUNDACION MALECON 2000', style: 'header' },
               {
                 text: 'SOLICITUD DE PAGO',
@@ -450,5 +460,27 @@ export class SpPdfComponent implements OnInit {
   clear() {
     this.datosSP = { cabecera: {}, detalles: [] };
     this.combinarObJ = [];
+  }
+  async convertImageToDataUrl(imagePath: string): Promise<string> {
+    try {
+      const response = await fetch(imagePath);
+      const arrayBuffer = await response.arrayBuffer();
+      const base64Image = btoa(
+        new Uint8Array(arrayBuffer).reduce(
+          (data, byte) => data + String.fromCharCode(byte),
+          '',
+        ),
+      );
+      const dataUrl = `data:image/jpeg;base64,${base64Image}`;
+      return dataUrl;
+    } catch (error) {
+      console.error('Error al cargar y convertir la imagen:', error);
+      throw error; // Lanza el error para que sea manejado por la parte que llama a esta función.
+    }
+  }
+  traerdatos() {
+    this.convertImageToDataUrl(this.Imagen).then((dataurl) => {
+      this.copiaImgen = dataurl;
+    });
   }
 }
