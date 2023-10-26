@@ -83,7 +83,7 @@ export class SpPdfComponent implements OnInit {
               },
               {
                 text: this.datosSP.cabecera.cabPagoNumerico,
-                algnment: 'left',
+                alignment: 'right',
                 margin: [0, 0, 10, 5],
               },
               {

@@ -119,7 +119,7 @@ export class OcPdfComponent implements OnInit {
               },
               {
                 text: this.datosCabOC.cabecera.cabSolOCNumerico,
-                algnment: 'right',
+                alignment: 'right',
                 margin: [0, 0, 10, 5],
               },
               {
