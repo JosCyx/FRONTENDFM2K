@@ -274,15 +274,12 @@ export class SoliocComponent implements OnInit {
           this.cab_inspector = empleadoSeleccionado
             ? empleadoSeleccionado.empleadoIdNomina
             : null;
-          console.log('Inspector ID', this.cab_inspector);
+          //console.log('Inspector ID', this.cab_inspector);
         } else if (this.changeview == 'editar') {
           this.cabecera.cabSolOCInspector = empleadoSeleccionado
             ? empleadoSeleccionado.empleadoIdNomina
             : null;
-          console.log(
-            'Inspector id de Cabecera',
-            this.cabecera.cabSolOCInspector
-          );
+          //console.log(Inspector id de Cabecera', this.cabecera.cabSolOCInspector);
         }
       } else {
         this.cab_inspector = 0;
@@ -439,7 +436,7 @@ export class SoliocComponent implements OnInit {
       this.solTrckService.getLastSolicitud(this.trTipoSolicitud).subscribe(
         (resultado) => {
           if (resultado === 0) {
-            console.log('No se ha registrado ninguna solicitud de este tipo.');
+            //console.log('No se ha registrado ninguna solicitud de este tipo.');
             resolve(1);
           } else {
             const lastNoSol = resultado[0].solTrNumSol + 1;
@@ -471,10 +468,10 @@ export class SoliocComponent implements OnInit {
           solTrIdEmisor: this.trIdNomEmp,
         };
 
-        console.log('1. guardando tracking: ', dataTRK);
+        //console.log('1. guardando tracking: ', dataTRK);
         this.solTrckService.generateTracking(dataTRK).subscribe(
           () => {
-            console.log('Tracking guardado con éxito.');
+            //console.log('Tracking guardado con éxito.');
             resolve();
           },
           (error) => {
@@ -522,14 +519,14 @@ export class SoliocComponent implements OnInit {
     };
 
     //enviar datos de cabecera a la API
-    console.log('2. guardando solicitud...', dataCAB);
+    //console.log('2. guardando solicitud...', dataCAB);
     await this.cabOCService.addSolOC(dataCAB).subscribe(
       (response) => {
-        console.log('Cabecera agregada.');
-        console.log('Solicitud', this.solNumerico);
-        console.log('Agregando cuerpo de la cabecera...');
+        //console.log('Cabecera agregada.');
+        //console.log('Solicitud', this.solNumerico);
+        //console.log('Agregando cuerpo de la cabecera...');
         this.addBodySol();
-        console.log('Cuerpo agregado.');
+        //console.log('Cuerpo agregado.');
       },
       (error) => {
         console.log('error al guardar la cabecera: ', error);
@@ -567,7 +564,7 @@ export class SoliocComponent implements OnInit {
   IdDetalle:number=0;
   CapturarIdDetalle(id:number):number{
     this.IdDetalle=id;
-    console.log("idDetalle",this.IdDetalle);
+    //console.log("idDetalle",this.IdDetalle);
     return this.IdDetalle;
   }
   saveItemDet() {
@@ -586,7 +583,7 @@ export class SoliocComponent implements OnInit {
       //envia a la api el arreglo data por medio del metodo post
       this.detCotService.addDetalleCotizacion(data).subscribe(
         (response) => {
-          console.log('3. Detalle añadido exitosamente.');
+          //console.log('3. Detalle añadido exitosamente.');
         },
         (error) => {
           console.log('No se ha podido registrar el detalle, error: ', error);
@@ -607,7 +604,7 @@ export class SoliocComponent implements OnInit {
 
       this.itmSectService.addItemSector(data).subscribe(
         (response) => {
-          console.log('4. Item guardado exitosamente.');
+          //console.log('4. Item guardado exitosamente.');
         },
         (error) => {
           console.log(
@@ -645,13 +642,11 @@ export class SoliocComponent implements OnInit {
         .subscribe(
           (resultado) => {
             if (resultado === 0) {
-              console.log(
-                'No se ha registrado ningun detalle para esta solicitud. Se asigna 0.'
-              );
+              //console.log('No se ha registrado ningun detalle para esta solicitud. Se asigna 0.');
               resolve(1);
             } else {
               const lastDetCot = resultado[0].solCotID + 1;
-              console.log('Nuevo detalle: ', lastDetCot);
+              //console.log('Nuevo detalle: ', lastDetCot);
               resolve(lastDetCot);
             }
           },
@@ -708,7 +703,7 @@ export class SoliocComponent implements OnInit {
     //
     if (this.changeview == 'editar') {
       this.saveLocaltoResponse();
-      console.log('item a enviar a APi ');
+      //console.log('item a enviar a APi ');
     }
 
     this.det_descp = '';
@@ -735,9 +730,9 @@ export class SoliocComponent implements OnInit {
       (detalle) => detalle.det_id === id
     );
 
-    console.log(index);
+    //console.log(index);
     if (index !== -1) {
-      console.log('detalle eliminado');
+      //console.log('detalle eliminado');
       this.detalleList.splice(index, 1);
       this.idToIndexMap.delete(index);
     }
@@ -812,9 +807,9 @@ export class SoliocComponent implements OnInit {
   deleteItem(id: number) {
     const index = this.tmpItemSect.findIndex((item) => item.item_id === id);
 
-    console.log(index);
+    //console.log(index);
     if (index !== -1) {
-      console.log('item eliminado');
+      //console.log('item eliminado');
       this.tmpItemSect.splice(index, 1);
       this.idToIndexMap.delete(index);
     }
@@ -944,7 +939,7 @@ export class SoliocComponent implements OnInit {
     this.idDlt = idList;
     this.idItmDlt = idItem;
     this.idNSolDlt = idNSol;
-    console.log(this.idDlt, this.idItmDlt, this.idNSolDlt);
+    //console.log(this.idDlt, this.idItmDlt, this.idNSolDlt);
   }
   deleteItemSaved() {
     const index = this.item.findIndex((itm) => itm.itmID === this.idDlt);
@@ -981,7 +976,7 @@ export class SoliocComponent implements OnInit {
 
       this.itmSectService.addItemSector(data).subscribe(
         (response) => {
-          console.log('Item guardado exitosamente.');
+          //console.log('Item guardado exitosamente.');
         },
         (error) => {
           console.log('No se pudo guardar el item, error: ', error);
@@ -1025,12 +1020,12 @@ export class SoliocComponent implements OnInit {
       cabSolOCMotivoDev: this.cabecera. cabSolOCMotivoDev
     };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
-    console.log('2. guardando solicitud...', dataCAB);
+    //console.log('2. guardando solicitud...', dataCAB);
     this.cabOCService
       .updateOrdencompra(this.cabecera.cabSolOCID, dataCAB)
       .subscribe(
         (response) => {
-          console.log('Datos actualizados con éxito. ');
+          //console.log('Datos actualizados con éxito. ');
         },
         (error) => {
           console.log('error : ', error);
@@ -1051,14 +1046,10 @@ export class SoliocComponent implements OnInit {
         solCotCantidadTotal: detalle.solCotCantidadTotal,
         solCotPresupuesto: detalle.solCotPresupuesto
       };
-      console.log('Nuevo detalle: ', data);
+      //console.log('Nuevo detalle: ', data);
       this.detCotService.addDetalleCotizacion(data).subscribe(
         (response) => {
-          console.log(
-            'Nuevo detalle',
-            detalle.solCotIdDetalle,
-            ' guardado en la base'
-          );
+          //console.log('Nuevo detalle', detalle.solCotIdDetalle,' guardado en la base');
         },
         (error) => {
           console.log('No se ha podido registrar el detalle, error: ', error);
@@ -1077,7 +1068,7 @@ export class SoliocComponent implements OnInit {
           )
           .subscribe(
             (response) => {
-              console.log('Todos los detalles eliminados');
+              //console.log('Todos los detalles eliminados');
               resolve();
             },
             (error) => {
@@ -1104,16 +1095,11 @@ export class SoliocComponent implements OnInit {
         itmCantidad: item.itmCantidad,
         itmSector: item.itmSector,
       };
-      console.log('Nuevo item: ', data);
+      //console.log('Nuevo item: ', data);
 
       this.itmSectService.addItemSector(data).subscribe(
         (response) => {
-          console.log(
-            'Nuevo item guardado en la base, item:',
-            item.itmIdItem,
-            ', detalle:',
-            item.itmIdDetalle
-          );
+          //console.log(Nuevo item guardado en la base, item:',item.itmIdItem, , detalle:', item.itmIdDetalle);
         },
         (error) => {
           console.log(
@@ -1135,7 +1121,7 @@ export class SoliocComponent implements OnInit {
           )
           .subscribe(
             (response) => {
-              console.log('Todos los items eliminados');
+              //console.log('Todos los items eliminados');
               resolve();
             },
             (error) => {
@@ -1181,9 +1167,9 @@ export class SoliocComponent implements OnInit {
       );
 
       if (exists) {
-        console.log('El detalle ya existe, no se ha guardado');
+        //console.log('El detalle ya existe, no se ha guardado');
       } else {
-        console.log('Guardando detalle nuevo:', detalle.det_id);
+        //console.log('Guardando detalle nuevo:', detalle.det_id);
 
         const data = {
           solCotTipoSol: this.cabecera.cabSolOCTipoSolicitud,
@@ -1197,11 +1183,7 @@ export class SoliocComponent implements OnInit {
         //console.log("Nuevo detalle: ",data);
         this.detCotService.addDetalleCotizacion(data).subscribe(
           (response) => {
-            console.log(
-              'Nuevo detalle',
-              detalle.det_id,
-              ' guardado en la base'
-            );
+            
           },
           (error) => {
             console.log('No se ha podido registrar el detalle, error: ', error);
@@ -1225,12 +1207,7 @@ export class SoliocComponent implements OnInit {
       //console.log("Nuevo item: ",data);
       this.itmSectService.addItemSector(data).subscribe(
         (response) => {
-          console.log(
-            'Nuevo item guardado en la base, item:',
-            item.item_id,
-            ', detalle:',
-            item.det_id
-          );
+          
         },
         (error) => {
           console.log(
@@ -1285,7 +1262,7 @@ export class SoliocComponent implements OnInit {
     };
 
     this.item.push(data);
-    console.log(this.item);
+    //console.log(this.item);
     this.calcularIdItem();
     this.calcularCantDetalle();
     this.item_cant = 1;
@@ -1328,7 +1305,7 @@ export class SoliocComponent implements OnInit {
     const index = this.detalle.findIndex(
       (det) => det.solCotID === this.idDltDetList
     );
-    console.log('Detalle a eliminar numero ', index);
+    //console.log('Detalle a eliminar numero ', index);
 
     if (index !== -1) {
       this.detalle.splice(index, 1);
@@ -1357,7 +1334,7 @@ export class SoliocComponent implements OnInit {
         }
       }
     }
-    console.log(this.item);
+    //console.log(this.item);
   }
   openModalItem() {
     this.item_id = 1;
@@ -1381,7 +1358,7 @@ export class SoliocComponent implements OnInit {
         this.clear();
       }, 2500);
     } catch (error) {
-      console.log('Error:', error);
+      //console.log('Error:', error);
       this.showmsjerror = true;
       this.msjError =
         'No se ha podido guardar la solicitud, intente nuevamente.';
@@ -1395,11 +1372,11 @@ export class SoliocComponent implements OnInit {
   //Buscar Proveedor y guardar
   searchProveedor(datos: string): void {
     if (datos.length > 2) {
-      console.log('Buscar Proveedor: ', datos);
+      //console.log('Buscar Proveedor: ', datos);
       this.provService.getProveedorByNombre(datos).subscribe(
         (data) => {
           this.proveedores = data;
-          console.log('Proveedor ', this.proveedores);
+          //console.log('Proveedor ', this.proveedores);
           if (this.proveedores.length > 0) {
             if (this.changeview == 'crear') {
               this.cab_proveedor = this.proveedores[0].prov_nombre;
@@ -1427,27 +1404,20 @@ export class SoliocComponent implements OnInit {
   // metodo para buscar proveedor por RUC
   searchProveedorRuc(datos: string): void {
     try {
-      console.log('Buscar Proveedor por RUC: ', datos);
+      //console.log('Buscar Proveedor por RUC: ', datos);
       this.provService.getProveedorByRUC(datos).subscribe({
         next: (data) => {
-          console.log('mis datos ', data);
+          //console.log('mis datos ', data);
           if (data) {
             if (this.changeview == 'crear') {
               this.cab_proveedor = data[0].prov_nombre;
               this.cab_ruc_prov = data[0].prov_ruc;
-              console.log('Proveedor ', this.cab_proveedor);
-              console.log('RUC ', this.cab_ruc_prov);
+              //console.log('Proveedor ', this.cab_proveedor);
+              //console.log('RUC ', this.cab_ruc_prov);
             } else if (this.changeview == 'editar') {
               this.cabecera.cabSolOCProveedor = data[0].prov_nombre;
               this.cabecera.cabSolOCRUCProveedor = data[0].prov_ruc;
-              console.log(
-                'Proveedor  de cabecera',
-                this.cabecera.cabSolOCProveedor
-              );
-              console.log(
-                'Proveedor  de RUC CABECERA',
-                this.cabecera.cabSolOCRUCProveedor
-              );
+              
             }
           }
         },
@@ -1612,7 +1582,7 @@ export class SoliocComponent implements OnInit {
         setTimeout(() => {
           this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
-              console.log("Solicitud enviada");
+              //console.log("Solicitud enviada");
               this.showmsj = true;
               this.msjExito = `La solicitud ha sido enviada exitosamente.`;
 
@@ -1670,7 +1640,7 @@ export class SoliocComponent implements OnInit {
       (response: any) => {
         //console.log('Empleado: ', response);
         mailToNotify = response[0].empleadoCorreo;
-        console.log("Correo enviado a: ", mailToNotify)
+        //console.log("Correo enviado a: ", mailToNotify)
       },
       (error) => {
         console.log('Error al obtener el empleado: ', error);
@@ -1732,7 +1702,7 @@ export class SoliocComponent implements OnInit {
 
   async noAutorizar(){
     await this.getNivelRuteoArea();
-    console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
+    //console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
     
 
     for(let i = 0; i < this.nivelRuteotoAut.length; i++){
@@ -1792,7 +1762,7 @@ export class SoliocComponent implements OnInit {
 
 
   async sendNotify(nivelStr: number, nivelStatus: string) {
-    console.log("Nivel de ruteo: ", nivelStr);
+    //console.log("Nivel de ruteo: ", nivelStr);
 
     let mailToNotify = '';
     let depToSearch = 0;
@@ -1816,7 +1786,7 @@ export class SoliocComponent implements OnInit {
                   mailToNotify = response[0].empleadoCorreo;
                   //enviar la notificacion al correo guardado en mailnotify
                   this.sendMail(mailToNotify,1);
-                  console.log("Correo enviado a: ", mailToNotify)
+                  //console.log("Correo enviado a: ", mailToNotify)
                 },
                 (error) => {
                   console.log('Error al obtener el empleado: ', error);
@@ -1855,7 +1825,7 @@ export class SoliocComponent implements OnInit {
 
       this.sendMailService.sendMailto(data).subscribe(
         response => {
-          console.log("Exito, correo enviado");
+          //console.log("Exito, correo enviado");
           // this.showmsj = true;
           // this.msjExito = `Correos enviados exitosamente.`;
 
@@ -1883,7 +1853,7 @@ export class SoliocComponent implements OnInit {
   setAprobadoPor(id: string){
     this.cabOCService.updateAprobadoCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
       (response) => {
-        console.log('ACTUALIZADO CORRECTAMENTE');
+        //console.log('ACTUALIZADO CORRECTAMENTE');
       },
       (error) => {
         console.log('error : ', error);
@@ -1894,7 +1864,7 @@ export class SoliocComponent implements OnInit {
   setFinancieroPor(id: string){
     this.cabOCService.updateFinancieroCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
       (response) => {
-        console.log('ACTUALIZADO CORRECTAMENTE');
+        //console.log('ACTUALIZADO CORRECTAMENTE');
       },
       (error) => {
         console.log('error : ', error);

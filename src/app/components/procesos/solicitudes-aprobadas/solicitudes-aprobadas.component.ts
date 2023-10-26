@@ -85,9 +85,9 @@ export class SolicitudesAprobadasComponent implements OnInit {
   }
   //Paginacion 
   nextPage(): void {
-    console.log("nextPage",this.currentPage);
+    //console.log("nextPage",this.currentPage);
     if(  this.allSol.length <=10 ){
-      console.log("nextPage",this.currentPage," ",this.allSol.length/10,"",this.allSol);
+      //console.log("nextPage",this.currentPage," ",this.allSol.length/10,"",this.allSol);
       this.currentPage=1;
     }else if(this.currentPage >= this.allSol.length/10){
       this.currentPage=this.currentPage;
@@ -98,7 +98,7 @@ export class SolicitudesAprobadasComponent implements OnInit {
   //decrementa el valor de la variable que controla la pagina actual que se muestra
   prevPage(): void {
     if (this.currentPage > 1) {
-      console.log("prevPage",this.currentPage);
+      //console.log("prevPage",this.currentPage);
       this.currentPage--; // Disminuir currentPage en uno si no está en la primera página
     }
   }
@@ -119,7 +119,7 @@ export class SolicitudesAprobadasComponent implements OnInit {
           console.error('Error', error);
         },
         complete: () => {
-          console.log('subscribe finalizada correctamente');
+          //console.log('subscribe finalizada correctamente');
         },
       });
     } else if (this.AbierTipoSol == 2) {
@@ -134,7 +134,7 @@ export class SolicitudesAprobadasComponent implements OnInit {
           console.error('Error', error);
         },
         complete: () => {
-          console.log('subscribe finalizada correctamente');
+          //console.log('subscribe finalizada correctamente');
         },
       });
     } else if (this.AbierTipoSol == 3) {
@@ -149,14 +149,14 @@ export class SolicitudesAprobadasComponent implements OnInit {
           console.error('Error', error);
         },
         complete: () => {
-          console.log('subscribe finalizada correctamente');
+          //console.log('subscribe finalizada correctamente');
         },
       });
     }
   }
   //
   filterCotbyRol(data: any): void {
-    console.log('metodo de busqueda: ', this.metodoBusq);
+    //console.log('metodo de busqueda: ', this.metodoBusq);
     if(this.metodoBusq == 1){
       
       this.allSol = data.filter((sol: any) => sol.cabSolCotIdEmisor == parseInt(this.cookieService.get('userIdNomina')));
@@ -237,9 +237,7 @@ export class SolicitudesAprobadasComponent implements OnInit {
     let data = document.getElementById('table-data');
     const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(data);
     //Obtener el rango de las celda
-    console.log('sw ref', ws['!ref']);
     const ref: any = ws['!ref']; // Almacenar el valor en una variable
-    console.log('ref', ref);
     const range = XLSX.utils.decode_range(ref);
     ws['!autofilter'] = {
       ref: XLSX.utils.encode_range(range),
@@ -257,7 +255,6 @@ export class SolicitudesAprobadasComponent implements OnInit {
     //formato a las celdas a la primera fila
     for (let row = range.s.r; row <= range.e.r; ++row) {
       const rowAddress = XLSX.utils.encode_row(row);
-      console.log('rowAddress', rowAddress);
       for (let col = range.s.r; col <= range.e.c; ++col) {
         const colAddress = XLSX.utils.encode_col(col);
         const cellAddress = colAddress + rowAddress;

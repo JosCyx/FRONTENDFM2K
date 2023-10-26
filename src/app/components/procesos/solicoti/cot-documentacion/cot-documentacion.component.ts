@@ -42,14 +42,14 @@ export class CotDocumentacionComponent implements OnInit {
     }
 
   ngOnInit(): void {
-    console.log(this.noSol);
+    //console.log(this.noSol);
     
     this.GetfileView();
   }
   getFiles(event: any): void {
     try {
       this.filesAll = event.target.files[0];
-      console.log('Imprimir esto  Objetos de pdf ', this.filesAll);
+      //console.log('Imprimir esto  Objetos de pdf ', this.filesAll);
     } catch (error) {
       this.showError = true;
       this.msjError = 'Error al cargar el archivo';
@@ -70,7 +70,7 @@ export class CotDocumentacionComponent implements OnInit {
       .uploadFile(body, this.prefijo, this.tipoSol, this.noSol)
       .subscribe({
         next: (data) => {
-          console.log('este es mi data', data);
+          //console.log('este es mi data', data);
           this.showExito = true;
           this.msjExito = 'Archivo Subido Correctamente';
           setTimeout(() => {
@@ -100,7 +100,7 @@ export class CotDocumentacionComponent implements OnInit {
           }
         },
         complete: () => {
-          console.log('Proceso completado');
+          //console.log('Proceso completado');
         },
       });
   }
@@ -111,14 +111,14 @@ export class CotDocumentacionComponent implements OnInit {
         next:(blob) => {
           const file = new Blob([blob], { type: 'application/pdf' });
           const urlfile = URL.createObjectURL(file);
-          console.log('URL del documento: ', urlfile);
+          //console.log('URL del documento: ', urlfile);
           resolve(urlfile); // Resuelve la Promesa con el valor de urlfile
         },
         error:(error) => {
           reject(error); // Rechaza la Promesa si ocurre un error
         },
         complete:()=>{
-          console.log("Finalizacion del SUBSCRIBE");
+          //console.log("Finalizacion del SUBSCRIBE");
         }
     });
     });
@@ -137,11 +137,11 @@ export class CotDocumentacionComponent implements OnInit {
     try {
       this.uploadfile.getFile(this.tipoSol, this.noSol).subscribe({
         next: async (data) => {
-          console.log('este es mi data', data);
+          //console.log('este es mi data', data);
           for (let i = 0; i < data.length; i++) {
             try {
               const ruta = this.getNombreArchivo(data[i].docUrl);
-              console.log("Ruta:",ruta);
+              //console.log("Ruta:",ruta);
               const docUrl = await this.getUrlFile(ruta); // Espera a que se resuelva getUrlFile
               const pat: Path = {
                 docNombre: data[i].docNombre,
@@ -149,7 +149,7 @@ export class CotDocumentacionComponent implements OnInit {
                 docUrlComleta: data[i].docUrl,
               };
               this.paths.push(pat);
-              console.log('Esto son mis Paths guardados',this.paths);
+              //console.log('Esto son mis Paths guardados',this.paths);
             } catch (error) {
               console.error('Error al obtener la URL del archivo: ', error);
             }
@@ -159,7 +159,7 @@ export class CotDocumentacionComponent implements OnInit {
           console.error('Error al momento de obtener ', err);
         },
         complete: () => {
-          console.log('Proceso completado');
+          //console.log('Proceso completado');
         },
       });
     } catch (error) {
@@ -205,7 +205,7 @@ export class CotDocumentacionComponent implements OnInit {
       this.deleteFile(item.docUrlComleta);
     });
     this.paths = [];
-    console.log("metodo de eliminar todos los documentos");
+    //console.log("metodo de eliminar todos los documentos");
   }
 
   //emilima de la base de datos y del servidor el archivo que coincida con la url ingesada como parametro

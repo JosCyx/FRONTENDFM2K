@@ -124,7 +124,7 @@ export class RuteoComponent implements OnInit {
 
   //agrega un ruteo a la tabla, si el ruteo ya existe muestra un mensaje
   guardarRuteo() {
-    console.log("inicio de guardado");
+    //console.log("inicio de guardado");
 
     for (let nivel of this.nivelesList) {
       if (nivel.estado === true) {
@@ -133,7 +133,7 @@ export class RuteoComponent implements OnInit {
           (data: any) => {
             if (data) {
               // Si el ruteo ya existe se guardan los valores de los niveles en una lista para mostrarlos en un mensaje
-              console.log(`El ruteo para el nivel ${nivel.nivel} ya existe.`);
+              //console.log(`El ruteo para el nivel ${nivel.nivel} ya existe.`);
 
               this.nivGuardar = nivel.nivel;
 
@@ -158,7 +158,7 @@ export class RuteoComponent implements OnInit {
 
               this.rutAreaService.addRuteos(data).subscribe(
                 () => {
-                  console.log('Ruteo agregado exitosamente');
+                  //console.log('Ruteo agregado exitosamente');
                   this.mensajeExito = 'Niveles asignados exitosamente.';
                   setTimeout(() => {
                     this.mensajeExito = '';
@@ -221,7 +221,7 @@ export class RuteoComponent implements OnInit {
 
     //evalua si el nivel ya existe y muestra una respuesta
     if (this.nvRepetido) {
-      console.log("condicion, nivel repetido: ", parseInt(this.nvNivel));
+      //console.log("condicion, nivel repetido: ", parseInt(this.nvNivel));
       this.mensajeError = 'El nivel ya existe, ingrese otro valor.';
       setTimeout(() => {
         this.mensajeError = '';
@@ -230,7 +230,7 @@ export class RuteoComponent implements OnInit {
       }, 1000);
 
     } else {
-      console.log("else, nivel nuevo: ", parseInt(this.nvNivel, 10));
+      //console.log("else, nivel nuevo: ", parseInt(this.nvNivel, 10));
 
       const data = {
         nivel: this.nvNivel,
@@ -240,7 +240,7 @@ export class RuteoComponent implements OnInit {
 
       this.nivRuteoService.addnivelRuteo(data).subscribe(
         response => {
-          console.log("Nivel añadido correctamente.");
+          //console.log("Nivel añadido correctamente.");
           this.mensajeExito = 'Nivel registrado exitosamente.';
           setTimeout(() => {
             this.mensajeExito = '';

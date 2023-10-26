@@ -47,10 +47,10 @@ export class SPDocumentacionComponent implements OnInit {
     }, 100);
   }
   getFiles(event: any): void {
-    console.log('Imprimir esto ', event);
+    //console.log('Imprimir esto ', event);
     // const [files]=$event.target.files;
     this.filesAll = event.target.files[0];
-    console.log('Imprimir esto  Objetos de pdf ', this.filesAll);
+    //console.log('Imprimir esto  Objetos de pdf ', this.filesAll);
   }
   //Enviar archivos al servidor y guardar a  la base
   sendfile(): void {
@@ -59,7 +59,7 @@ export class SPDocumentacionComponent implements OnInit {
     body.append('archivos', this.filesAll);
     this.uploadfile.uploadFile(body, this.prefijo, this.tipoSol, this.noSol).subscribe({
       next: (data) => {
-        console.log('este es mi data', data);
+        //console.log('este es mi data', data);
         this.showExito = true;
         this.msjExito = 'Archivo Subido Correctamente';
         setTimeout(() => {
@@ -89,7 +89,7 @@ export class SPDocumentacionComponent implements OnInit {
         }
       },
       complete: () => {
-        console.log('Proceso completado');
+        //console.log('Proceso completado');
       },
     });
   }
@@ -100,7 +100,7 @@ export class SPDocumentacionComponent implements OnInit {
         next: (blob) => {
           const file = new Blob([blob], { type: 'application/pdf' });
           const urlfile = URL.createObjectURL(file);
-          console.log('URL del documento: ', urlfile);
+          //console.log('URL del documento: ', urlfile);
           resolve(urlfile); // Resuelve la Promesa con el valor de urlfile
         },
         error: (error) => {
@@ -141,14 +141,14 @@ export class SPDocumentacionComponent implements OnInit {
 
           await Promise.all(promises); // Espera a que todas las promesas se resuelvan
 
-          console.log('Lista de documentos: ', this.paths);
+          //console.log('Lista de documentos: ', this.paths);
         })
       ).subscribe({
         error: (err) => {
           console.error('Error al momento de obtener ', err);
         },
         complete: () => {
-          console.log('Proceso completado');
+          //console.log('Proceso completado');
         },
       });
     } catch (error) {
@@ -189,7 +189,7 @@ export class SPDocumentacionComponent implements OnInit {
         }, 2000);
       },
       complete: () => {
-        console.log('Proceso completado');
+        //console.log('Proceso completado');
       },
     });
 

@@ -93,7 +93,7 @@ export class OCDocumentacionComponent implements OnInit {
           }
         },
         complete: () => {
-          console.log('Proceso completado');
+          //console.log('Proceso completado');
         },
       });
   }
@@ -150,13 +150,13 @@ export class OCDocumentacionComponent implements OnInit {
           console.error('Error al momento de obtener ', err);
         },
         complete: () => {
-          console.log('Proceso completado');
+          //console.log('Proceso completado');
         },
       });
     } catch (error) {
       console.log('Error en el proceso de GetfileView', error);
     } finally {
-      console.log('FIN DEL  CATCH');
+      //console.log('FIN DEL  CATCH');
     }
   }
 
@@ -190,7 +190,7 @@ export class OCDocumentacionComponent implements OnInit {
         }, 2000);
       },
       complete: () => {
-        console.log('Proceso completado');
+        //console.log('Proceso completado');
       },
     });
   }

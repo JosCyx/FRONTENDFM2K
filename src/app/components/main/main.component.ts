@@ -46,6 +46,6 @@ export class MainComponent implements OnInit {
         this.cookieService.delete(cookieName);
       }
     }
-    console.log(cookies);
+    //console.log(cookies);
   }
 }

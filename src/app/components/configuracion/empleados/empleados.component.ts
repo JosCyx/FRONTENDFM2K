@@ -112,9 +112,9 @@ export class EmpleadosComponent implements OnInit {
 
   //incrementa el valor d la variable que controla la pagina actual que se muestra
   nextPage(): void {
-    console.log("nextPage",this.currentPage);
+    //console.log("nextPage",this.currentPage);
     if(this.empleados.length <=10 ){
-      console.log("nextPage",this.currentPage);
+      //console.log("nextPage",this.currentPage);
       this.currentPage=1;
     }else if(this.currentPage >= this.empleados.length/10){
       this.currentPage=this.currentPage;
@@ -147,11 +147,11 @@ export class EmpleadosComponent implements OnInit {
     if (this.checkSexo === 'M') {
       this.showOther = false;
       this.empSexo = this.checkSexo;
-      console.log(this.empSexo);
+      //console.log(this.empSexo);
     } else if (this.checkSexo === 'F') {
       this.showOther = false;
       this.empSexo = this.checkSexo;
-      console.log(this.empSexo);
+      //console.log(this.empSexo);
     } else if (this.checkSexo === 'otro') {
       this.empSexo = '';
       this.checkSexo = 'otro'
@@ -206,7 +206,7 @@ export class EmpleadosComponent implements OnInit {
     this.empService.addEmpleados(data).subscribe(
       response => {
         // Manejar la respuesta de la API aquí si es necesario
-        console.log('Empleado agregado exitosamente:', response);
+        //console.log('Empleado agregado exitosamente:', response);
         this.mensajeExito = 'Empleado registrado exitosamente.';
         setTimeout(() => {
           this.mensajeExito = '';
@@ -240,7 +240,7 @@ export class EmpleadosComponent implements OnInit {
         this.empSexo = response.empleadoSexo;
         this.empTelefono = response.empleadoTelefono;
         this.empEstado = response.empleadoEstado;
-        console.log(this.empDpto);
+        //console.log(this.empDpto);
       },
       error => {
         // Manejar cualquier error que ocurra durante la llamada a la API aquí
@@ -273,7 +273,7 @@ export class EmpleadosComponent implements OnInit {
     this.empService.updateEmpelado(this.empId, data).subscribe(
       response => {
         // Manejar la respuesta de la API aquí si es necesario
-        console.log('Empleado actualizado exitosamente:', response);
+        //console.log('Empleado actualizado exitosamente:', response);
 
         //muestra mensaje de exito y redirige a la otra vista luego de 1.5 segundo
         this.mensajeExito = 'Empleado editado exitosamente.';

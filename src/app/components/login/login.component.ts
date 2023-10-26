@@ -58,7 +58,7 @@ export class LoginComponent implements OnInit{
         this.cookieService.delete(cookieName);
       }
     }
-    console.log(cookies);
+    //console.log(cookies);
   }
     
 
@@ -98,7 +98,7 @@ export class LoginComponent implements OnInit{
             this.msjExito = '';
             this.router.navigate(['main']);
             //console.log("Cookies: ", this.cookieService.getAll());
-          }, 2000);
+          }, 1500);
 
         },
         error => {

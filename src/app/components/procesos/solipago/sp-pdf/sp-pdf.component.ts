@@ -70,7 +70,7 @@ export class SpPdfComponent implements OnInit {
           this.EstadoTracking();
           this.retornarTabla();
           this.Aprobado();
-          console.log('esta es mi respuesta', this.datosSP);
+          //console.log('esta es mi respuesta', this.datosSP);
 
           const PDFSP: any = {
             content: [

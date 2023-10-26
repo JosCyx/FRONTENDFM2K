@@ -200,7 +200,7 @@ export class SolicotiComponent implements OnInit {
 
 
   ngOnInit(): void {
-    console.log(this.cookieService.get('userRolNiveles'));
+    //console.log(this.cookieService.get('userRolNiveles'));
     this.areaUserCookie = this.cookieService.get('userArea');
     this.empService.getEmpleadosList().subscribe((data) => {
       this.empleadosEdit = data;
@@ -270,7 +270,7 @@ export class SolicotiComponent implements OnInit {
   saveIdInspector() {
     for (let insp of this.inspectoresEdit) {
       if ((insp.empleadoNombres + ' ' + insp.empleadoApellidos) == this.nameInspector) {
-        console.log(insp.empleadoIdNomina)
+        //console.log(insp.empleadoIdNomina)
         this.cabecera.cabSolCotInspector = insp.empleadoIdNomina;
       }
     }
@@ -286,7 +286,7 @@ export class SolicotiComponent implements OnInit {
       if (this.inspector) {
         const empleadoSeleccionado = this.inspectores.find(emp => (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.inspector);
         this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : 'No se ha encontrado el inspector';
-        console.log("Inspector ID", this.cab_inspector);
+        //console.log("Inspector ID", this.cab_inspector);
       } else {
         this.cab_inspector = '';
       }
@@ -405,7 +405,7 @@ export class SolicotiComponent implements OnInit {
       this.solTrckService.getLastSolicitud(this.trTipoSolicitud).subscribe(
         (resultado) => {
           if (resultado === 0) {
-            console.log('No se ha registrado ninguna solicitud de este tipo.');
+            //console.log('No se ha registrado ninguna solicitud de este tipo.');
             resolve(1);
           } else {
             const lastNoSol = resultado[0].solTrNumSol + 1;
@@ -488,14 +488,14 @@ export class SolicotiComponent implements OnInit {
 
 
     //enviar datos de cabecera a la API
-    console.log("2. guardando solicitud...", dataCAB);
+    //console.log("2. guardando solicitud...", dataCAB);
     await this.cabCotService.addSolCot(dataCAB).subscribe(
       response => {
-        console.log("Cabecera agregada.");
-        console.log("Solicitud", this.solNumerico);
-        console.log("Agregando cuerpo de la cabecera...");
+        //console.log("Cabecera agregada.");
+        //console.log("Solicitud", this.solNumerico);
+        //console.log("Agregando cuerpo de la cabecera...");
         this.addBodySol();
-        console.log("Cuerpo agregado.");
+        //console.log("Cuerpo agregado.");
       },
       error => {
         console.log("error al guardar la cabecera: ", error)
@@ -543,7 +543,7 @@ export class SolicotiComponent implements OnInit {
   IdDetalle: number = 0;
   CapturarIdDetalle(id: number): number {
     this.IdDetalle = id;
-    console.log("idDetalle", this.IdDetalle);
+    //console.log("idDetalle", this.IdDetalle);
     return this.IdDetalle;
   }
   saveDetItem() {
@@ -564,7 +564,7 @@ export class SolicotiComponent implements OnInit {
       //envia a la api el arreglo data por medio del metodo post
       this.detCotService.addDetalleCotizacion(data).subscribe(
         response => {
-          console.log("3. Detalle añadido exitosamente.");
+          //console.log("3. Detalle añadido exitosamente.");
         },
         error => {
           console.log("No se ha podido registrar el detalle, error: ", error);
@@ -588,7 +588,7 @@ export class SolicotiComponent implements OnInit {
 
       this.itmSectService.addItemSector(data).subscribe(
         response => {
-          console.log("4. Item guardado exitosamente.");
+          //console.log("4. Item guardado exitosamente.");
         },
         error => {
           console.log("No se pudo guardar el item no:" + item.item_id + ", error: ", error);
@@ -604,11 +604,11 @@ export class SolicotiComponent implements OnInit {
       this.detCotService.getLastDetalleCot(this.trTipoSolicitud, this.trLastNoSol).subscribe(
         (resultado) => {
           if (resultado === 0) {
-            console.log('No se ha registrado ningun detalle para esta solicitud. Se asigna 0.');
+            //console.log('No se ha registrado ningun detalle para esta solicitud. Se asigna 0.');
             resolve(1);
           } else {
             const lastDetCot = resultado[0].solCotID + 1;
-            console.log('Nuevo detalle: ', lastDetCot);
+            //console.log('Nuevo detalle: ', lastDetCot);
             resolve(lastDetCot);
           }
         },
@@ -710,9 +710,9 @@ export class SolicotiComponent implements OnInit {
   async deleteDetalle(id: number) {
     const index = this.detalleList.findIndex(detalle => detalle.det_id === id);
 
-    console.log(index)
+    //console.log(index)
     if (index !== -1) {
-      console.log("detalle eliminado")
+      //console.log("detalle eliminado")
       this.detalleList.splice(index, 1);
       this.idToIndexMap.delete(index);
     }
@@ -778,10 +778,10 @@ export class SolicotiComponent implements OnInit {
   deleteItem(id: number) {
     const index = this.tmpItemSect.findIndex(item => item.item_id === id);
 
-    console.log(index)
-    console.log(id)
+    //console.log(index)
+    //console.log(id)
     if (index !== -1) {
-      console.log("item eliminado")
+      //console.log("item eliminado")
       this.tmpItemSect.splice(index, 1);
       this.idToIndexMap.delete(index);
     }
@@ -813,7 +813,7 @@ export class SolicotiComponent implements OnInit {
 
     }
 
-    console.log("Items:", this.itemSectorList);
+    //console.log("Items:", this.itemSectorList);
 
   }
 
@@ -974,12 +974,12 @@ export class SolicotiComponent implements OnInit {
   confDeleteDet(idListDet: number, idDetalle: number) {
     this.idDltDetList = idListDet;
     this.idDltDet = idDetalle;
-    console.log(this.idDltDetList, this.idDltDet)
+    //console.log(this.idDltDetList, this.idDltDet)
   }
 
   deleteDetSaved() {//elimina el item de la lista local y llama al metodo que ejecuta los cambios en la base
     const index = this.detalle.findIndex(det => det.solCotID === this.idDltDetList);
-    console.log("Detalle a eliminar numero ", index)
+    //console.log("Detalle a eliminar numero ", index)
 
     if (index !== -1) {
       this.detalle.splice(index, 1);
@@ -1009,14 +1009,14 @@ export class SolicotiComponent implements OnInit {
         }
       }
     }
-    console.log(this.item);
+    //console.log(this.item);
   }
 
   confDeleteItm(idList: number, idItem: number, idNSol: number) {//abre el modal y guarda los datos del item en variables locales
     this.idDlt = idList;
     this.idItmDlt = idItem;
     this.idNSolDlt = idNSol;
-    console.log(this.idDlt, this.idItmDlt);
+    //console.log(this.idDlt, this.idItmDlt);
   }
 
   deleteItemSaved() {//elimina el item de la lista local y llama al metodo que ejecuta los cambios en la base
@@ -1043,7 +1043,7 @@ export class SolicotiComponent implements OnInit {
       item.itmIdItem = detailItemMap[detalle];
       detailItemMap[detalle]++;
     }
-    console.log(this.item);
+    //console.log(this.item);
   }
 
   openModalItem() {
@@ -1064,7 +1064,7 @@ export class SolicotiComponent implements OnInit {
 
     this.item.push(data);
 
-    console.log(this.item);
+    //console.log(this.item);
 
 
     this.calcularIdItem();
@@ -1151,10 +1151,10 @@ export class SolicotiComponent implements OnInit {
       cabSolCotFinancieroBy: this.financieropor
     };
 
-    console.log("Cabecera editada: ", this.cabecera.cabSolCotID, dataCAB);
+    //console.log("Cabecera editada: ", this.cabecera.cabSolCotID, dataCAB);
     this.cabCotService.updateCabCotizacion(this.cabecera.cabSolCotID, dataCAB).subscribe(
       (response) => {
-        console.log('CABECERA ACTUALIZADA CORRECTAMENTE');
+        //console.log('CABECERA ACTUALIZADA CORRECTAMENTE');
       },
       (error) => {
         console.log('error : ', error);
@@ -1180,10 +1180,10 @@ export class SolicotiComponent implements OnInit {
         solCotCantidadTotal: detalle.solCotCantidadTotal,
         solCotPresupuesto: detalle.solCotPresupuesto
       }
-      console.log("Nuevo detalle: ", data);
+      //console.log("Nuevo detalle: ", data);
       this.detCotService.addDetalleCotizacion(data).subscribe(
         response => {
-          console.log("Nuevo detalle", detalle.solCotIdDetalle, " guardado en la base");
+          //console.log("Nuevo detalle", detalle.solCotIdDetalle, " guardado en la base");
         },
         error => {
           console.log("No se ha podido registrar el detalle, error: ", error);
@@ -1198,7 +1198,7 @@ export class SolicotiComponent implements OnInit {
       try {
         this.detCotService.deleteAllDetBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
           response => {
-            console.log("Todos los detalles eliminados");
+            //console.log("Todos los detalles eliminados");
             resolve();
           },
           error => {
@@ -1228,11 +1228,11 @@ export class SolicotiComponent implements OnInit {
         itmCantidad: item.itmCantidad,
         itmSector: item.itmSector
       }
-      console.log("Nuevo item: ", data);
+      //console.log("Nuevo item: ", data);
 
       this.itmSectService.addItemSector(data).subscribe(
         response => {
-          console.log("Nuevo item guardado en la base, item:", item.itmIdItem, ", detalle:", item.itmIdDetalle);
+          //console.log("Nuevo item guardado en la base, item:", item.itmIdItem, ", detalle:", item.itmIdDetalle);
         },
         error => {
           console.log("No se pudo guardar el item no:" + item.itmIdItem + ", error: ", error);
@@ -1247,7 +1247,7 @@ export class SolicotiComponent implements OnInit {
       try {
         this.itmSectService.deleteAllItemBySol(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud).subscribe(
           response => {
-            console.log("Todos los items eliminados");
+            //console.log("Todos los items eliminados");
             resolve();
           },
           error => {
@@ -1457,7 +1457,7 @@ export class SolicotiComponent implements OnInit {
         setTimeout(() => {
           this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
-              console.log("Solicitud enviada");
+              //console.log("Solicitud enviada");
               this.showmsj = true;
               this.msjExito = `La solicitud ha sido enviada exitosamente.`;
 
@@ -1515,7 +1515,7 @@ export class SolicotiComponent implements OnInit {
       (response: any) => {
         //console.log('Empleado: ', response);
         mailToNotify = response[0].empleadoCorreo;
-        console.log("Correo enviado a: ", mailToNotify)
+        //console.log("Correo enviado a: ", mailToNotify)
       },
       (error) => {
         console.log('Error al obtener el empleado: ', error);
@@ -1578,7 +1578,7 @@ export class SolicotiComponent implements OnInit {
 
   async noAutorizar() {
     await this.getNivelRuteoArea();
-    console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
+    //console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
 
 
     for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
@@ -1639,7 +1639,7 @@ export class SolicotiComponent implements OnInit {
 
 
   async sendNotify(nivelStr: number, nivelStatus: string) {
-    console.log("Nivel de ruteo: ", nivelStr);
+    //console.log("Nivel de ruteo: ", nivelStr);
 
     let mailToNotify = '';
     let depToSearch = 0;
@@ -1702,7 +1702,7 @@ export class SolicotiComponent implements OnInit {
 
       this.sendMailService.sendMailto(data).subscribe(
         response => {
-          console.log("Exito, correo enviado");
+          //console.log("Exito, correo enviado");
           // this.showmsj = true;
           // this.msjExito = `Correos enviados exitosamente.`;
 
@@ -1739,7 +1739,7 @@ export class SolicotiComponent implements OnInit {
   setAprobadoPor(id: string) {
     this.cabCotService.updateAprobadoCotizacion(this.trTipoSolicitud, this.noSolTmp, id).subscribe(
       (response) => {
-        console.log('ACTUALIZADO CORRECTAMENTE');
+        //console.log('ACTUALIZADO CORRECTAMENTE');
       },
       (error) => {
         console.log('error : ', error);
@@ -1750,7 +1750,7 @@ export class SolicotiComponent implements OnInit {
   setFinancieroPor(id: string) {
     this.cabCotService.updateFinancieroCotizacion(this.trTipoSolicitud, this.noSolTmp, id).subscribe(
       (response) => {
-        console.log('ACTUALIZADO CORRECTAMENTE');
+        //console.log('ACTUALIZADO CORRECTAMENTE');
       },
       (error) => {
         console.log('error : ', error);

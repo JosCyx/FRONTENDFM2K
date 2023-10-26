@@ -85,9 +85,9 @@ export class AllrequestComponent implements OnInit {
   }
 
   nextPage(): void {
-    console.log("nextPage",this.currentPage);
+    //console.log("nextPage",this.currentPage);
     if(  this.allSol.length <=10 ){
-      console.log("nextPage",this.currentPage," ",this.allSol.length/10,"",this.allSol);
+      //console.log("nextPage",this.currentPage," ",this.allSol.length/10,"",this.allSol);
       this.currentPage=1;
     }else if(this.currentPage >= this.allSol.length/10){
       this.currentPage=this.currentPage;
@@ -100,7 +100,7 @@ export class AllrequestComponent implements OnInit {
   //decrementa el valor de la variable que controla la pagina actual que se muestra
   prevPage(): void {
     if (this.currentPage > 1) {
-      console.log("prevPage",this.currentPage);
+      //console.log("prevPage",this.currentPage);
       this.currentPage--; // Disminuir currentPage en uno si no está en la primera página
     }
   }
@@ -194,7 +194,7 @@ export class AllrequestComponent implements OnInit {
     } else if (this.metodoBusq == 2) {
       this.cabCotService.getCotizacionesbyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
-          console.log("Exito: ", response);
+          //console.log("Exito: ", response);
           this.allSol = response;
         },
         error => {
@@ -204,7 +204,7 @@ export class AllrequestComponent implements OnInit {
     } else if (this.metodoBusq == 3) {
       this.cabCotService.getAllCotizaciones().subscribe(
         response => {
-          console.log("Exito: ", response);
+          //console.log("Exito: ", response);
           this.allSol = response;
         },
         error => {
@@ -219,7 +219,7 @@ export class AllrequestComponent implements OnInit {
     if (this.metodoBusq == 1) {
        this.cabOCService.getOrdenCmpbyIdNomina(this.cookieService.get('userNomina')).subscribe(
         response => {
-          console.log("Exito: ", response);
+          //console.log("Exito: ", response);
           this.allSol = response;
         },
         error => {
@@ -229,7 +229,7 @@ export class AllrequestComponent implements OnInit {
     } else if(this.metodoBusq == 2){
       this.cabOCService.getOrdenCmpbyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
-          console.log("Exito: ", response);
+          //console.log("Exito: ", response);
           this.allSol = response;
         },
         error => {
@@ -240,7 +240,7 @@ export class AllrequestComponent implements OnInit {
     } else if(this.metodoBusq == 3){
        this.cabOCService.getAllOrdenCmp().subscribe(
         response => {
-          console.log("Exito: ", response);
+          //console.log("Exito: ", response);
           this.allSol = response;
         },
         error => {
@@ -256,7 +256,7 @@ export class AllrequestComponent implements OnInit {
     if (this.metodoBusq == 1) {
       this.cabPagoService.getPagobyIdNomina(this.cookieService.get('userNomina')).subscribe(
         response => {
-          console.log("Exito: ", response);
+          //console.log("Exito: ", response);
           this.allSol=response;
         },
         error => {
@@ -266,7 +266,7 @@ export class AllrequestComponent implements OnInit {
     } else if(this.metodoBusq == 2){
       this.cabPagoService.getPagobyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
-          console.log("Exito: ", response);
+          //console.log("Exito: ", response);
           this.allSol=response;
         },
         error => {
@@ -277,7 +277,7 @@ export class AllrequestComponent implements OnInit {
     } else if(this.metodoBusq == 3){
       this.cabPagoService.getAllPago().subscribe(
         response => {
-          console.log("Exito: ", response);
+          //console.log("Exito: ", response);
           this.allSol=response;
         },
         error => {

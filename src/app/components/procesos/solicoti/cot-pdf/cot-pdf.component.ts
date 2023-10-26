@@ -91,7 +91,7 @@ export class CotPdfComponent implements OnInit {
       this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
       next: (res) => {
         this.datosCabcot = res;
-        console.log("esto son mismos",this.datosCabcot)
+        //console.log("esto son mismos",this.datosCabcot)
           this.traerEmpleado();
           this.TraerArea();
           this.EstadoTracking();

@@ -75,7 +75,7 @@ export class SpDestinoComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log('Detalles recibidos:', this.detalles);
+    //console.log('Detalles recibidos:', this.detalles);
     
     /*this.sectoresService.getSectoresList().subscribe(
       (data: any[]) => {
@@ -222,7 +222,7 @@ export class SpDestinoComponent implements OnInit {
   }
 
   deleteArchivo(index: number) {
-    console.log(this.archivos);
+    //console.log(this.archivos);
     this.archivos.splice(index, 1);
   }
 
@@ -231,7 +231,7 @@ export class SpDestinoComponent implements OnInit {
   //guarda el archivo en la lista de archivos y resetea el input para agregar nuevos archivos
   getFiles(event: any): void {
     this.archivo = event.target.files[0];
-    console.log('tamañlan sd', this.archivo);
+    //console.log('tamañlan sd', this.archivo);
     //200KB
     if (this.archivo.type !== 'image/jpeg' && this.archivo.type !== 'image/jpg') {
       this.alert = true;
@@ -287,7 +287,7 @@ export class SpDestinoComponent implements OnInit {
                 destPagEvidencia: this.urlArchivo,
               };
 
-              console.log("Datos: ",data);
+              //console.log("Datos: ",data);
 
               this.destinoService.agregarEvidenciaPago(data).subscribe(
                 res => {

@@ -98,7 +98,7 @@ export class OcPdfComponent implements OnInit {
       this.cabOCService.getOrdenComprabyId(this.solID).subscribe({
         next: (resp: any) => {
           this.datosCabOC = resp;
-          console.log('este es mi daros ', this.datosCabOC);
+          //console.log('este es mi daros ', this.datosCabOC);
           this.traerEmpleado();
           this.TraerArea();
           this.EstadoTracking();

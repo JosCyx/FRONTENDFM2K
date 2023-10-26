@@ -255,7 +255,7 @@ export class CotProveedoresComponent implements OnInit {
 
     // Verificar si el proveedor ya está agregado a la lista
     if (this.verifyProvExists(prov)) {
-      console.log("El proveedor ya ha sido añadido a la lista.");
+      //console.log("El proveedor ya ha sido añadido a la lista.");
     } else {
       // Crear una nueva instancia de selectProveedor con valores de prov
       const nuevoProveedor: selectedProveedor = {
@@ -333,7 +333,7 @@ export class CotProveedoresComponent implements OnInit {
         validEmail: true,
         verify: 0
       }
-      console.log(this.dataForm.value)
+      //console.log(this.dataForm.value)
       this.proveedorListSelected.push(newPrv);
 
       //limpiar el formulario
@@ -352,7 +352,7 @@ export class CotProveedoresComponent implements OnInit {
 
   saveProvDB() {
     if (this.verifyPhoneEmailProv()) {
-      console.log(this.proveedorListSelected);
+      //console.log(this.proveedorListSelected);
       for (let prov of this.proveedorListSelected) {
 
         if (prov.validEmail === false) {
@@ -413,7 +413,7 @@ export class CotProveedoresComponent implements OnInit {
     this.assignedProvs$ = this.provCotService.getProvCot(this.tipoSol, this.noSol);
     this.assignedProvs$.subscribe(
       response => {
-        console.log("Consulta exitosa: ", response);
+        //console.log("Consulta exitosa: ", response);
         this.hasProvs = true;
 
         //guardar la lista de proveedores en una lista local
@@ -444,7 +444,7 @@ export class CotProveedoresComponent implements OnInit {
   deleteProvAssigned() {
     this.provCotService.deleteProvCot(this.idDltProv).subscribe(
       response => {
-        console.log("Proveedor eliminado: ", response);
+        //console.log("Proveedor eliminado: ", response);
         this.getProvCotizacion();
       },
       error => {
@@ -480,7 +480,7 @@ export class CotProveedoresComponent implements OnInit {
       }
       this.sendMailService.sendMailto(data).subscribe(
         response => {
-          console.log("Exito");
+          //console.log("Exito");
           this.showmsj = true;
           this.msjExito = `Correos enviados exitosamente.`;
 
@@ -518,7 +518,7 @@ export class CotProveedoresComponent implements OnInit {
       }
       this.sendMailService.sendMailto(data).subscribe(
         response => {
-          console.log(`Exito, se ha enviado el correo a ${cmp.identify}.`);
+          //console.log(`Exito, se ha enviado el correo a ${cmp.identify}.`);
           this.showmsj = true;
           this.msjExito = `Correos enviados exitosamente.`;
 
@@ -1073,10 +1073,10 @@ export class CotProveedoresComponent implements OnInit {
 RecorrerPro(){
   let a= this.assignedProvs;
   a.forEach(element => {
-    console.log("elemento ",element.cotProvId);
+    //console.log("elemento ",element.cotProvId);
     this.provCotService.deleteProvCot(element.cotProvId).subscribe({
       next: data => {
-        console.log('Eliminado con exito!');
+        //console.log('Eliminado con exito!');
         this.showmsj=true;
         this.msjExito="Solicitud Cancelada con exito";
         setTimeout(() => {
@@ -1105,10 +1105,10 @@ setProvId(id: number){
 }
 
 changeVerifyProv(){
-  console.log("id del provedor a verificar",this.id_prov);
+  //console.log("id del provedor a verificar",this.id_prov);
   this.provCotService.verifyProveedor(this.id_prov).subscribe(
     response => {
-      console.log('Verificado con exito!');
+      //console.log('Verificado con exito!');
       this.showmsj=true;
       this.msjExito="Proveedor verificado con exito";
       setTimeout(() => {
