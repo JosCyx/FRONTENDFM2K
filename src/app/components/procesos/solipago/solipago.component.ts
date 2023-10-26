@@ -506,6 +506,7 @@ export class SolipagoComponent implements OnInit {
                   this.detalleSolPagos = response.map((ini: any) => ({
                     idDetalle: ini.solCotIdDetalle,
                     itemDesc: ini.solCotDescripcion,
+                    itemCant: ini.solCotCantidadTotal
                   }));
 
                   //variables para controlar los datos ue se le pasan a destino

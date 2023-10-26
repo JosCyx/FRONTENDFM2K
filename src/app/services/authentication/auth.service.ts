@@ -12,22 +12,23 @@ import { GlobalService } from '../global.service';
 export class AuthService {
 
   //COMUNICACION CON LA API PARA REALIZAR EL LOGIN
-   APIurl = '';
+  APIurl = '';
 
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
     private globalService: GlobalService
-  ) { 
-     
+  ) {
+
     this.globalService.getConfigLoadedObservable().subscribe(
       (configLoaded) => {
         if (configLoaded) {
           this.APIurl = this.globalService.getApiUrl();
-          console.log("Url impresa:",this.APIurl);
+          //console.log("Url impresa:", this.APIurl);
           // Ahora puedes usar apiUrl de manera segura.
         }
-      });
+      }
+    );
   }
 
 
@@ -46,7 +47,7 @@ export class AuthService {
     const token = this.cookieService.get('authToken');
 
     if (!token) {
-      console.log("NO AUTENTICADO");
+      //console.log("NO AUTENTICADO");
       return false;
     }
 
@@ -61,7 +62,7 @@ export class AuthService {
         //console.log("SI AUTENTICADO");
         return true; // El token no ha expirado, el usuario está autenticado
       } else {
-        console.log("NO AUTENTICADO, EXPIRADO");
+        //console.log("NO AUTENTICADO, EXPIRADO");
         return false; // El token ha expirado, el usuario no está autenticado
       }
     } catch (error) {
@@ -75,7 +76,7 @@ export class AuthService {
   getAuthorization(login: string): Observable<string[]> {
     const url = `${this.APIurl}/Login/GetAuthorization?login=${login}`;
     return this.http.get<string[]>(url);
-  } 
+  }
 
   getRolNiveles(login: string): Observable<string[]> {
     const url = `${this.APIurl}/Login/GetRolesList?login=${login}`;
