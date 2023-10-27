@@ -145,7 +145,7 @@ export class SolipagoComponent implements OnInit {
     private nivGerenciaService: NivGerenciaService,
     private sharedService: SharedService
   ) {
-    this.setDestino = this.globalService.setDestino;
+    
     /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobarsp$.subscribe(() => {
       //console.log("Aprobando solicitud...");
@@ -215,7 +215,7 @@ export class SolipagoComponent implements OnInit {
         ) {
           this.trIdNomEmp = emp.empleadoIdNomina;
           //console.log("Empleado ID:",this.trIdNomEmp);
-          this.depSolTmp = emp.empleadoIdArea;
+          this.depSolTmp = emp.empleadoIdDpto;
           this.cab_id_dept = emp.empleadoIdDpto;
           this.cab_id_area = emp.empleadoIdArea;
           for (let area of this.areas) {
@@ -598,7 +598,7 @@ export class SolipagoComponent implements OnInit {
     this.cabecera = this.solicitudEdit.cabecera;
     this.noSolTmp = this.cabecera.cabPagoNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabPagoEstadoTrack;
-    this.depSolTmp = this.cabecera.cabPagoIdAreaSolicitante;
+    this.depSolTmp = this.cabecera.cabPagoIdDeptSolicitante;
     this.numericoSol = this.cabecera.cabPagoNumerico;
 
     this.estadoSol = this.cabecera.cabPagoEstadoTrack.toString();

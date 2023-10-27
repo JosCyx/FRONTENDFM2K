@@ -302,7 +302,7 @@ export class SoliocComponent implements OnInit {
           this.trIdNomEmp = emp.empleadoIdNomina;
           this.cab_id_area = emp.empleadoIdArea;
           this.cab_id_dept = emp.empleadoIdDpto;
-          this.depSolTmp = emp.empleadoIdArea;
+          this.depSolTmp = emp.empleadoIdDpto;
           for (let area of this.areas) {
             if (area.areaIdNomina == emp.empleadoIdArea) {
               
@@ -855,7 +855,7 @@ export class SoliocComponent implements OnInit {
     this.sharedNoSol=this.cabecera.cabSolOCNoSolicitud;
     this.noSolTmp = this.cabecera.cabSolOCNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabSolOCEstadoTracking;
-    this.depSolTmp = this.cabecera.cabSolOCIdArea;
+    this.depSolTmp = this.cabecera.cabSolOCIdDept;
 
     this.estadoSol = this.cabecera.cabSolOCEstadoTracking.toString();
 
@@ -1625,6 +1625,17 @@ export class SoliocComponent implements OnInit {
     } catch (error) {
       throw error;
     }
+  }
+
+  metodo(){
+    this.ruteoService.getRuteosByArea(this.depSolTmp).subscribe(
+      response => {
+        console.log(response)
+      },
+      error => {
+        console.log(error)
+      }
+    )
   }
 
 

@@ -6,6 +6,7 @@ import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/emp
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
 import { GlobalService } from 'src/app/services/global.service';
+import { SolipagoComponent } from '../solipago.component';
 
 interface Detalle {
   idDetalle: number;
@@ -71,7 +72,8 @@ export class SpDestinoComponent implements OnInit {
     private empleadoService: EmpleadosService,
     private uploadService: UploadFileService,
     private destinoService: DestinoPagoServiceService,
-    private globalService: GlobalService
+    private globalService: GlobalService,
+    private cabPago: SolipagoComponent
   ) { }
 
   ngOnInit(): void {
@@ -324,7 +326,7 @@ export class SpDestinoComponent implements OnInit {
 
       });
     });
-    this.globalService.setDestino = true;
+    this.cabPago.setDestino = true;
     this.archivos = [];
 }
   
