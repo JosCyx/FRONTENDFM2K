@@ -68,6 +68,7 @@ export class SpPdfComponent implements OnInit {
       this.cabPagoService.getSolPagobyId(this.solID).subscribe({
         next: (response) => {
           this.datosSP = response;
+          console.log("Cambios esto son",this.datosSP);
           this.traerEmpleado();
           this.traerRecibe();
           this.TraerArea();
@@ -155,7 +156,7 @@ export class SpPdfComponent implements OnInit {
                     ],
                     [
                       { text: 'APROBADO POR ', style: 'tableHeader' },
-                      { text: this.datosSP.cabecera.cabSolCotApprovedBy, colSpan: 4 },
+                      { text: this.datosSP.cabecera.cabPagoApprovedBy, colSpan: 4 },
                       '',
                       '',
                       '',
@@ -361,7 +362,7 @@ export class SpPdfComponent implements OnInit {
   traerEmpleado() {
     for (let iterator of this.empleadoedit) {
       if (
-        iterator.empleadoIdNomina == this.datosSP.cabecera.cabSolOCSolicitante
+        iterator.empleadoIdNomina == this.datosSP.cabecera.cabPagoSolicitante
       ) {
         this.empleados =
           iterator.empleadoNombres + ' ' + iterator.empleadoApellidos;
@@ -371,7 +372,7 @@ export class SpPdfComponent implements OnInit {
   TraerArea() {
     for (let listArea of this.area) {
       if (
-        listArea.areaIdNomina == this.datosSP.cabecera.cabPagoAreaSolicitante
+        listArea.areaIdNomina == this.datosSP.cabecera.cabPagoIdAreaSolicitante
       ) {
         this.areas = listArea.areaDecp;
       }
@@ -400,7 +401,6 @@ export class SpPdfComponent implements OnInit {
     const item = this.datosSP.detalles.sort(
       (a: any, b: any) => a.detPagoIdDetalle - b.detPagoIdDetalle
     );
-    console.log('dame esto ', item);
     let datosDetalles = item.map((item: any) => {
       return {
         detPagoIdDetalle: item.detPagoIdDetalle,
@@ -444,6 +444,7 @@ export class SpPdfComponent implements OnInit {
   }
   Aprobado(){
     if (this.datosSP.cabecera.cabPagoApprovedBy === '000000' ) {
+      console.log('entro', this.datosSP.cabecera.cabPagoApprovedBy);
       this.datosSP.cabecera.cabPagoApprovedBy = 'NIVEL NO ALCANZADO';
     } else {
       for (const iterator of this.empleadoedit) {

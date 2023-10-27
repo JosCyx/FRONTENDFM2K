@@ -229,8 +229,8 @@ export class SolipagoComponent implements OnInit {
               setTimeout(async () => {
                 this.trLastNoSol = await this.getLastSol();
                 this.getSolName(this.trLastNoSol);
-                //console.log(this.solNumerico);
-                //console.log(this.numericoSol);
+                console.log(this.solNumerico);
+                console.log(this.numericoSol);
               }, 1000);
 
               //console.log("Empleado area ID:",this.cab_area);
@@ -354,7 +354,7 @@ export class SolipagoComponent implements OnInit {
       this.solTrckService.getLastSolicitud(this.trTipoSolicitud).subscribe(
         (resultado) => {
           if (resultado === 0) {
-            //console.log('No se ha registrado ninguna solicitud de este tipo.');
+            console.log('No se ha registrado ninguna solicitud de este tipo.');
             resolve(1);
           } else {
             const lastNoSol = resultado[0].solTrNumSol + 1;
@@ -386,10 +386,10 @@ export class SolipagoComponent implements OnInit {
           solTrIdEmisor: this.trIdNomEmp,
         };
 
-        //console.log('1. guardando tracking: ', dataTRK);
+        console.log('1. guardando tracking: ', dataTRK);
         this.solTrckService.generateTracking(dataTRK).subscribe(
           () => {
-            //console.log('Tracking guardado con éxito.');
+            console.log('Tracking guardado con éxito.');
             resolve();
           },
           (error) => {
@@ -436,17 +436,17 @@ export class SolipagoComponent implements OnInit {
     };
 
     //enviar datos de cabecera a la API
-    //console.log('2. guardando solicitud...', dataCAB);
+    console.log('2. guardando solicitud...', dataCAB);
     await this.cabPagoService.addSolPag(dataCAB).subscribe(
       (response) => {
-        //console.log('Cabecera agregada.');
-        //console.log('Solicitud', this.solNumerico);
-        //console.log('Agregando cuerpo de la cabecera...');
+        console.log('Cabecera agregada.');
+        console.log('Solicitud', this.solNumerico);
+        console.log('Agregando cuerpo de la cabecera...');
         this.showmsj = true;
         this.msjExito = 'Solicitud de Pago Generada Exitosamente';
         //this.addBodySol();
         this.AddDetSolPago();
-        //console.log('Cuerpo agregado.');
+        console.log('Cuerpo agregado.');
       },
       (error) => {
         console.log('error al guardar la cabecera: ', error);
@@ -461,10 +461,6 @@ export class SolipagoComponent implements OnInit {
         //console.log("Empleado ID:",this.trIdNomEmp);
       }
     }
-    
-  }
-
-  saveReceptorEdit(){
     for (let emp of this.empleadoEdi) {
       if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
         this.cabecera.cabPagoReceptor = emp.empleadoIdNomina;
@@ -486,9 +482,9 @@ export class SolipagoComponent implements OnInit {
       this.detallesToDestino = [];
     } else {
       const partes = this.valorinput.match(/(\d+)-(\d+)/);
-      //console.log('partes', partes);
+      console.log('partes', partes);
       if (partes && partes.length === 3) {
-        //console.log("este mi partes ", partes[1]);
+        console.log("este mi partes ", partes[1]);
         if (partes[1] != '2') {
           this.alertBool = true;
           this.alertText = 'No se ha encontrado la solicitud';
@@ -498,7 +494,7 @@ export class SolipagoComponent implements OnInit {
             this.alertText = '';
           }, 1000);
         } else {
-          //console.log('tiene formato pasa por aqui');
+          console.log('tiene formato pasa por aqui');
           this.noSolicinput = parseInt(partes[2], 10);
           try {
             this.detSolService
@@ -555,10 +551,10 @@ export class SolipagoComponent implements OnInit {
         detPagoValUnitario: detPago.valorUnitario,
         detPagoSubtotal: detPago.subTotal,
       };
-      //console.log('listas', dataDetPag);
+      console.log('listas', dataDetPag);
       this.detPagoService.addSolDetPago(dataDetPag).subscribe(
         (response) => {
-          //console.log('Detalle Guardado ');
+          console.log('Detalle Guardado ');
         },
         (error) => {
           console.log('No se puede guardar el detalle', error);
@@ -571,7 +567,7 @@ export class SolipagoComponent implements OnInit {
     this.Total = 0;
     for (let PagoTotal of this.detalleSolPagos) {
       this.Total = this.Total + PagoTotal.subTotal;
-      //console.log(`el total es to  ${this.Total}`);
+      console.log(`el total es to  ${this.Total}`);
     }
   }
   //Calculo  Total de Edicion
@@ -580,7 +576,7 @@ export class SolipagoComponent implements OnInit {
     for (let PagoTotal of this.detallePago) {
       this.cabecera.cabpagototal =
         this.cabecera.cabpagototal + PagoTotal.detPagoSubtotal;
-      //console.log(`el total es to  ${this.cabecera.cabpagototal}`);
+      console.log(`el total es to  ${this.cabecera.cabpagototal}`);
     }
   }
   async editSolicitud() {
@@ -654,7 +650,7 @@ export class SolipagoComponent implements OnInit {
   //Guardar lo editado de  solicitud de pago
   async savePagoEdit() {
     try {
-      //console.log('Se guardo la edicion ');
+      console.log('Se guardo la edicion ');
       await this.saveEditCabeceraPago();
       await this.saveEditdetPago();
 
@@ -703,12 +699,12 @@ export class SolipagoComponent implements OnInit {
       cabPagoFinancieroBy: this.financieropor
     };
 
-    //console.log('esta guardo editada de cabecera solicitud ', dataCAB);
+    console.log('esta guardo editada de cabecera solicitud ', dataCAB);
     this.cabPagoService
       .updatecabPago(this.cabecera.cabPagoID, dataCAB)
       .subscribe(
         (response) => {
-          //console.log('Solicitud de Pago Editado');
+          console.log('Solicitud de Pago Editado');
         },
         (error) => {
           console.log('Error', error);
@@ -728,10 +724,10 @@ export class SolipagoComponent implements OnInit {
         detPagoValUnitario: Depago.detPagoValUnitario,
         detPagoSubtotal: Depago.detPagoSubtotal,
       };
-      //console.log('se edito detalle pago', data);
+      console.log('se edito detalle pago', data);
       this.detPagoService.updatedetpago(Depago.detPagoID, data).subscribe(
         (response) => {
-          //console.log('Detalle de pago actualizado');
+          console.log('Detalle de pago actualizado');
         },
         (error) => {
           console.log('Error', error);
@@ -751,11 +747,11 @@ export class SolipagoComponent implements OnInit {
   searchProveedor(datos: string): void {
     try {
       if (datos.length > 2) {
-        //console.log('Buscar Proveedor: ', datos);
+        console.log('Buscar Proveedor: ', datos);
         this.provService.getProveedorByNombre(datos).subscribe({
           next: (data) => {
             this.proveedores = data;
-            //console.log('Proveedor ', this.proveedores);
+            console.log('Proveedor ', this.proveedores);
             if (this.proveedores.length > 0) {
               if (this.changeview == 'crear') {
                 this.cab_proveedor = this.proveedores[0].prov_nombre;
@@ -781,20 +777,27 @@ export class SolipagoComponent implements OnInit {
   //Buscar proveedor por RUC
   searchProveedorRuc(datos: string): void {
     try {
-      //console.log('Buscar Proveedor por RUC: ', datos);
+      console.log('Buscar Proveedor por RUC: ', datos);
       this.provService.getProveedorByRUC(datos).subscribe({
         next: (data) => {
-          //console.log('mis datos ', data);
+          console.log('mis datos ', data);
           if (data) {
             if (this.changeview == 'crear') {
               this.cab_proveedor = data[0].prov_nombre;
               this.cab_rucproveedor = data[0].prov_ruc;
-              //console.log('Proveedor ', this.cab_proveedor);
-              //console.log('RUC ', this.cab_rucproveedor);
+              console.log('Proveedor ', this.cab_proveedor);
+              console.log('RUC ', this.cab_rucproveedor);
             } else if (this.changeview == 'editar') {
               this.cabecera.cabPagoProveedor = data[0].prov_nombre;
               this.cabecera.cabPagoRucProveedor = data[0].prov_ruc;
-              
+              console.log(
+                'Proveedor  de cabecera',
+                this.cabecera.cabPagoProveedor
+              );
+              console.log(
+                'Proveedor  de RUC CABECERA',
+                this.cabecera.cabPagoRucProveedor
+              );
             }
           }
         },
@@ -941,7 +944,7 @@ export class SolipagoComponent implements OnInit {
         setTimeout(() => {
           this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
-              //console.log("Solicitud enviada");
+              console.log("Solicitud enviada");
               this.showmsj = true;
               this.msjExito = `La solicitud ha sido enviada exitosamente.`;
 
@@ -1011,7 +1014,7 @@ export class SolipagoComponent implements OnInit {
       (response: any) => {
         //console.log('Empleado: ', response);
         mailToNotify = response[0].empleadoCorreo;
-        //console.log("Correo enviado a: ", mailToNotify)
+        console.log("Correo enviado a: ", mailToNotify)
       },
       (error) => {
         console.log('Error al obtener el empleado: ', error);
@@ -1073,7 +1076,7 @@ export class SolipagoComponent implements OnInit {
 
   async noAutorizar() {
     await this.getNivelRuteoArea();
-    //console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
+    console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
 
 
     for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
@@ -1132,7 +1135,7 @@ export class SolipagoComponent implements OnInit {
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
 
   async sendNotify(nivelStr: number, nivelStatus: string) {
-    //console.log("Nivel de ruteo: ", nivelStr);
+    console.log("Nivel de ruteo: ", nivelStr);
 
     let mailToNotify = '';
     let depToSearch = 0;
@@ -1156,7 +1159,7 @@ export class SolipagoComponent implements OnInit {
                   mailToNotify = response[0].empleadoCorreo;
                   //enviar la notificacion al correo guardado en mailnotify
                   this.sendMail(mailToNotify,1);
-                  //console.log("Correo enviado a: ", mailToNotify)
+                  console.log("Correo enviado a: ", mailToNotify)
                 },
                 (error) => {
                   console.log('Error al obtener el empleado: ', error);
@@ -1195,7 +1198,7 @@ export class SolipagoComponent implements OnInit {
 
       this.sendMailService.sendMailto(data).subscribe(
         response => {
-          //console.log("Exito, correo enviado");
+          console.log("Exito, correo enviado");
           // this.showmsj = true;
           // this.msjExito = `Correos enviados exitosamente.`;
 
@@ -1222,7 +1225,7 @@ export class SolipagoComponent implements OnInit {
   setAprobadoPor(id: string) {
     this.cabPagoService.updateAprobadoCotizacion(this.trTipoSolicitud, this.noSolTmp, id).subscribe(
       (response) => {
-        //console.log('ACTUALIZADO CORRECTAMENTE');
+        console.log('ACTUALIZADO CORRECTAMENTE');
       },
       (error) => {
         console.log('error : ', error);
@@ -1233,7 +1236,7 @@ export class SolipagoComponent implements OnInit {
   /* setFinancieroPor(id: number){
      this.cabPagoService.updateFinancieroCotizacion(this.trTipoSolicitud, this.noSolTmp,id).subscribe(
        (response) => {
-         //console.log('ACTUALIZADO CORRECTAMENTE');
+         console.log('ACTUALIZADO CORRECTAMENTE');
        },
        (error) => {
          console.log('error : ', error);
