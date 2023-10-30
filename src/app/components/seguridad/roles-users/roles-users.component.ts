@@ -49,31 +49,34 @@ export class RolesUsersComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.rolService.getRolsList().subscribe({
-      next: (response) => {
-        this.RolList = response.map((item: any) => {
-          return {
-            RCodigo: item.roCodigo,
-            RNombre: item.roNombre,
-            RCheck: false,
-          };
-        });
-      },
-      error: (error) => {
-        console.error(error);
-      },
-      complete: () => {},
-    });
-    this.usuarioservice.getUsuariosList().subscribe({
-      next: (response) => {
-        this.usuarioList = response;
-        console.log('este es mi response ', this.usuarioList);
-      },
-      error: (error) => {
-        console.error(error);
-      },
-      complete: () => {},
-    });
+    setTimeout(() => {
+      
+      this.rolService.getRolsList().subscribe({
+        next: (response) => {
+          this.RolList = response.map((item: any) => {
+            return {
+              RCodigo: item.roCodigo,
+              RNombre: item.roNombre,
+              RCheck: false,
+            };
+          });
+        },
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {},
+      });
+      this.usuarioservice.getUsuariosList().subscribe({
+        next: (response) => {
+          this.usuarioList = response;
+          console.log('este es mi response ', this.usuarioList);
+        },
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {},
+      });
+    }, 400);
   }
 
   //
@@ -119,6 +122,7 @@ export class RolesUsersComponent implements OnInit {
         next: (response) => {
           this.showmsj = true;
           this.msjExito = 'Se guardo correctamente';
+          this.rolUsuario = [];
           setTimeout(() => {
             this.clear();
             this.changeview = 'consulta';
@@ -144,6 +148,7 @@ export class RolesUsersComponent implements OnInit {
   }
 
   Buscar() {
+    this.rolConsuList = [];
     this.isMensaje = false;
     console.log('este s mi this ', this.rolAsignConsu);
     this.RolUsuarioservice.getUsuarioNombrebyRol(this.rolAsignConsu).subscribe({
