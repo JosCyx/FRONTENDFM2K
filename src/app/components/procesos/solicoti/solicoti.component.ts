@@ -212,7 +212,8 @@ export class SolicotiComponent implements OnInit {
     this.fechaMax=this.formatDateToYYYYMMDD(this.fechamaxima);
     this.fechaMin=this.formatDateToYYYYMMDD(this.fechaminina);
     //console.log(this.cookieService.get('userRolNiveles'));
-    this.areaUserCookie = this.cookieService.get('userArea');
+    setTimeout(()=>{
+      this.areaUserCookie = this.cookieService.get('userArea');
     this.empService.getEmpleadosList().subscribe((data) => {
       this.empleadosEdit = data;
     });
@@ -238,8 +239,7 @@ export class SolicotiComponent implements OnInit {
       this.presupuestos = data;
     });
 
-
-
+    },100)
     if (this.changeview == 'editar') {
       this.editSolicitud();
     }
@@ -286,7 +286,16 @@ export class SolicotiComponent implements OnInit {
       }
     }
   }
-
+  //
+  verificartexto(): void {
+    const patron: RegExp = /^[a-zA-Z\s]*$/;
+    if (!patron.test(this.inspector)) {
+      //borrar el ultimo caracter ingresado
+      console.log('El inspector no puede contener el número 1',this.inspector);
+      // this.inspector = this.inspector.substring(0, this.inspector.length - 1);
+      this.inspector = this.inspector.replace(/[^a-zA-Z\s]/g, '');
+    } 
+  }
   onInputChanged(): void {
     // Cancelamos el temporizador anterior antes de crear uno nuevo
     clearTimeout(this.inputTimer);
@@ -296,7 +305,7 @@ export class SolicotiComponent implements OnInit {
       // Coloca aquí la lógica que deseas ejecutar después de que el usuario haya terminado de modificar el input
       if (this.inspector) {
         const empleadoSeleccionado = this.inspectores.find(emp => (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.inspector);
-        this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : 'No se ha encontrado el inspector';
+        this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : '000000';
         //console.log("Inspector ID", this.cab_inspector);
       } else {
         this.cab_inspector = '';

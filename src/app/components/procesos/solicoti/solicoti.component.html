@@ -199,8 +199,8 @@
                     </div>
                     <div class="input-group">
                         <label class="input-group-text">Inspector:</label>
-                        <input type="text" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
-                            (keyup)="searchInspector()" (input)="onInputChanged()"
+                        <input type="text"   class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
+                            (keyup)="searchInspector()" (keydown)="verificartexto()" (input)="onInputChanged()"
                             placeholder="Ingrese el nombre del inspector" />
                         <datalist id="inspectores">
                             <ng-container *ngFor="let empOP of inspectores">
@@ -208,7 +208,7 @@
                             </ng-container>
                         </datalist>
                         <label class="input-group-text">Teléfono:</label>
-                        <input class="form-control" type="text" placeholder="Ingrese el teléfono del inspector"
+                        <input class="form-control"  max="15" type="text" placeholder="Ingrese el teléfono del inspector"
                             [(ngModel)]="cab_telef_insp" />
                     </div>
                     <div class="text-end">
