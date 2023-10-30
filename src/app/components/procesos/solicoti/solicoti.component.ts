@@ -198,6 +198,15 @@ export class SolicotiComponent implements OnInit {
     });*/
   }
 
+  validarNumero(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    const valorIngresado = parseInt(inputElement.value, 10);
+
+    if (valorIngresado < 1) {
+      inputElement.value = '1'; // Establecer el valor mínimo si es menor que 1
+    }
+  }
+
 
   ngOnInit(): void {
     //console.log(this.cookieService.get('userRolNiveles'));

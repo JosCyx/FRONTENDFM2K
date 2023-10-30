@@ -239,6 +239,7 @@
                   <td class="align-middle">
                     <input
                       type="number"
+                      (input)="validarNumero($event)"
                       min="1"
                       class="form-control text-center"
                       [(ngModel)]="det.itemCant"
@@ -248,6 +249,7 @@
                   <td class="align-middle" style="width: 150px">
                     <input
                       type="number"
+                      (input)="validarNumero($event)"
                       min="1"
                       class="form-control text-center"
                       [(ngModel)]="det.cantidadRecibid"
@@ -256,6 +258,7 @@
                   <td class="align-middle cel-prep">
                     <input
                       type="number"
+                      (input)="validarNumero($event)"
                       min="1"
                       class="form-control text-center"
                       [(ngModel)]="det.valorUnitario"
@@ -264,6 +267,7 @@
                   <td class="align-middle">
                     <input
                       type="number"
+                      (input)="validarNumero($event)"
                       min="1"
                       class="form-control text-center"
                       [(ngModel)]="det.subTotal"
@@ -276,6 +280,7 @@
                   <td class="align-middle text-end">
                     <input
                       type="number"
+                      (input)="validarNumero($event)"
                       min="1"
                       class="form-control text-center"
                       [(ngModel)]="Total"
@@ -324,6 +329,7 @@
             <input
               class="form-control"
               type="number"
+              (input)="validarNumero($event)"
               min="1"
               placeholder="Ingrese el valor a descontar"
               [(ngModel)]="cab_valordescontar"
@@ -332,6 +338,7 @@
             <input
               class="form-control"
               type="number"
+              (input)="validarNumero($event)"
               min="1"
               placeholder="Ingrese el valor Total"
               [(ngModel)]="cab_totalautorizado"
@@ -685,6 +692,7 @@
                 <td class="align-middle">
                   <input
                     type="number"
+                    (input)="validarNumero($event)"
                     min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoCantContratada"
@@ -694,6 +702,7 @@
                 <td class="align-middle" style="width: 150px">
                   <input
                     type="number"
+                    (input)="validarNumero($event)"
                     min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoCantRecibida"
@@ -703,6 +712,7 @@
                 <td class="align-middle cel-prep">
                   <input
                     type="number"
+                    (input)="validarNumero($event)"
                     min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoValUnitario"
@@ -712,6 +722,7 @@
                 <td class="align-middle">
                   <input
                     type="number"
+                    (input)="validarNumero($event)"
                     min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoSubtotal"
@@ -729,6 +740,7 @@
                 <td class="align-middle text-end">
                   <input
                     type="number"
+                    (input)="validarNumero($event)"
                     min="1"
                     class="form-control text-center"
                     [(ngModel)]="cabecera.cabpagototal"
@@ -766,6 +778,7 @@
             <input
               class="form-control"
               type="number"
+              (input)="validarNumero($event)"
               min="1"
               placeholder="Ingrese el valor a descontar"
               [(ngModel)]="cabecera.cabPagoValorMulta"
@@ -775,6 +788,7 @@
             <input
               class="form-control"
               type="number"
+              (input)="validarNumero($event)"
               min="1"
               placeholder="Ingrese el valor Total"
               [(ngModel)]="cabecera.cabPagoValorTotalAut"
