@@ -62,11 +62,11 @@
       <h3 class="font-weight-bold" style="padding-top: 20pt;">Consultar niveles asignados</h3>
   
       <form class="form-nivel d-flex row mb-5">
-        <label class="form-label">Area:</label>
+        <label class="form-label">Departamento:</label>
         <div class="form input-group">
           <select class="form-select" name="Area" [(ngModel)]="busqArea">
             <option disabled selected value=0>Seleccione una opción...</option>
-            <option *ngFor="let area of areaList$|async" [value]="area.areaIdNomina">{{area.areaDecp}}</option>
+            <option *ngFor="let dep of departamentos" [value]="dep.depIdNomina">{{dep.depDescp}}</option>
           </select>
           <button class="btn btn-outline-success" (click)="consultarRuteo()">Consultar</button>
         </div>
@@ -119,14 +119,21 @@
       <form class="form-nivel d-flex row mb-5">
         <div class="form col-md">
           <label class="form-label">Area:</label>
-          <select class="form-select" name="Area" [(ngModel)]="rutArea">
+          <select class="form-select" name="Area" [(ngModel)]="rutArea" (change)="searchDeptByArea()">
             <option disabled selected value=0>Seleccione una opción...</option>
             <option *ngFor="let area of areaList$|async" [value]="area.areaIdNomina">{{area.areaDecp}}</option>
           </select>
         </div>
         <div class="form col-md">
+          <label class="form-label">Departamento:</label>
+          <select class="form-select" name="Departamento" [(ngModel)]="rutDpto" [disabled]="disableDept" (change)="activeSol()">
+            <option disabled selected value=0>Seleccione una opción...</option>
+            <option *ngFor="let dep of departamentosFilter" [value]="dep.depIdNomina">{{dep.depDescp}}</option>
+          </select>
+        </div>
+        <div class="form col-md">
           <label class="form-label">Tipo de Solicitud:</label>
-          <select class="form-select" name="Area" [(ngModel)]="rutTipoSol">
+          <select class="form-select" name="tipoSol" [(ngModel)]="rutTipoSol" [disabled]="disableSol">
             <option disabled selected value=0>Seleccione una opción...</option>
             <option *ngFor="let tipsol of TipoSol$|async" [value]="tipsol.tipoSolId">{{tipsol.tipoSolNombre}}</option>
           </select>
@@ -162,7 +169,7 @@
           <ng-container *ngFor="let item of nivGuardados; let last=last">
             {{ item }}{{ !last ? ',' : '' }}
           </ng-container>
-          a la solicitud del área seleccionada.
+          a la solicitud del departamento seleccionado.
         </span>
       </div>
       <div>
@@ -182,15 +189,15 @@
   
       <form class="form-nivel d-flex  flex-column row mb-5">
         <div class="form cmp-form col">
-          <label class="form-label">Area:</label>
-          <select disabled class="form-select" name="Area" [(ngModel)]="dltArea">
+          <label class="form-label">Departamento:</label>
+          <select class="form-select" name="Area" [(ngModel)]="dltArea">
             <option disabled selected value=0>Seleccione una opción...</option>
-            <option *ngFor="let area of areaList$|async" [value]="area.areaIdNomina">{{area.areaDecp}}</option>
+            <option *ngFor="let dep of departamentos" [value]="dep.depIdNomina">{{dep.depDescp}}</option>
           </select>
         </div>
         <div class="form cmp-form col">
           <label class="form-label">Tipo de Solicitud</label>
-          <select class="form-select" name="solicitud" [(ngModel)]="dltTipoSol">
+          <select class="form-select" name="solicitud" [(ngModel)]="dltTipoSol" (change)="setNivelestoDlt()">
             <option disabled selected value=0>Seleccione una opción...</option>
             <option *ngFor="let tipsol of TipoSol$|async" [value]="tipsol.tipoSolId">{{tipsol.tipoSolNombre}}</option>
           </select>
@@ -199,7 +206,8 @@
           <label class="form-label">Nivel:</label>
           <select class="form-select" name="nivel" [(ngModel)]="dltNivel">
             <option disabled selected value=0>Seleccione una opción...</option>
-            <option *ngFor="let niv of nivelRut$|async" [value]="niv.nivel">{{niv.descRuteo}}</option>
+            <option *ngFor="let niv of nivelByDep" [value]="niv.rutareaNivel">
+              <ng-container *ngFor="let nivr of nivelRut$ |async"><span *ngIf="nivr.nivel ==  niv.rutareaNivel">{{nivr.descRuteo}}</span></ng-container></option>
           </select>
         </div>
         <div>

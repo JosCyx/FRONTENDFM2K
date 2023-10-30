@@ -56,7 +56,12 @@ export class RuteoAreaService {
 
   getRuteosByArea(rutArea: number): Observable<any> {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get<any>(this.APIUrl + `/RuteoAreas/${rutArea}`, { headers: headers });
+    return this.http.get<any>(this.APIUrl + `/RuteoAreas/GetRuteosbyDep?RutareaDept=${rutArea}`, { headers: headers });
+  }
+
+  getRuteoByDepSol(rutArea: number, rutTipoSol: number): Observable<any> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + `/RuteoAreas/GetRuteoByDepSol?dep=${rutArea}&sol=${rutTipoSol}`, { headers: headers });
   }
 
   //elimina un ruteo segun su area, tipo de solicitud y nivel
