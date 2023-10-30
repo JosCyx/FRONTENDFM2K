@@ -30,18 +30,21 @@ export class AplicacionesComponent implements OnInit {
   constructor(private appService: AplicacionesService) {}
 
   ngOnInit(): void {
-    this.appService.getAplicacionesList().subscribe({
-      next: (apps) => {
-        this.aplicacionesList = apps;
-        console.log(apps);
-      },
-      error: (err) => {
-        console.error(err);
-      },
-      complete: () => {
-        console.log('proceso completado');
-      },
-    });
+    setTimeout(() => {
+      
+      this.appService.getAplicacionesList().subscribe({
+        next: (apps) => {
+          this.aplicacionesList = apps;
+          console.log(apps);
+        },
+        error: (err) => {
+          console.error(err);
+        },
+        complete: () => {
+          console.log('proceso completado');
+        },
+      });
+    }, 100);
   }
 
   changeView(view: string): void {

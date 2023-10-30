@@ -39,21 +39,24 @@ export class RolesComponent implements OnInit {
      private nivelservice:NivelRuteoService) { }
 
   ngOnInit() {
-    this.rolService.getRolsList().subscribe({
-      next: rols => {
-        this.rolList= rols;
-      },
-      error:(err)=> {
+    setTimeout(() => {
+      
+      this.rolService.getRolsList().subscribe({
+        next: rols => {
+          this.rolList= rols;
+        },
+        error:(err)=> {
+            console.log ("error",err)
+        }
+      });
+      this.nivelservice.getNivelruteo().subscribe({
+        next: niveles => {
+          this.NivelesRuteo = niveles;
+        },error:(err)=> {
           console.log ("error",err)
       }
-    });
-    this.nivelservice.getNivelruteo().subscribe({
-      next: niveles => {
-        this.NivelesRuteo = niveles;
-      },error:(err)=> {
-        console.log ("error",err)
-    }
-    });
+      });
+    }, 100);
   }
 
   agregarRol(): void {

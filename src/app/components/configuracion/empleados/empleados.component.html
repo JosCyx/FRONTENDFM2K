@@ -124,6 +124,9 @@
   
       <div class="d-flex flex-column">
         <h3 class="font-weight-bold" style="padding-bottom: 5pt;">Empleados registrados</h3>
+        <div class="text-end">
+          <button class="btn btn-success" data-toggle="modal" data-target="#updateEmpleados">Actualizar empleados</button>
+        </div>
         <p >Buscar por:</p>
         <div class="busqueda d-flex justify-content-between">
           <div class="input-group mb-3">
@@ -250,4 +253,35 @@
       </div>
     </div>
   </ng-container>
+</div>
+
+
+<div class="modal fade" #exampleModal id="updateEmpleados" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea actualizar los empleados?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Esto seleccionará los empleados del sistema ONLYCONTROL y los guardará en la base de SOLICITUDES.</p>
+                <!-- seleccionar que tabla se desea afectar -->
+                <label for="tabla">Seleccione que tabla desea actualizar:</label>
+                <select class="form-select" name="tabla" [(ngModel)]="tabla" >
+                  <option value="empleados">Empleados</option>
+                  <option value="empleadosPrueba">Empleados de prueba</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="updateEmpleadosFrom230()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
 </div>

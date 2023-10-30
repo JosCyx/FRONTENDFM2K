@@ -57,40 +57,43 @@ export class OcPdfComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.empService.getEmpleadosList().subscribe((data) => {
-      this.empleadoedit = data;
-    });
-    this.areaService.getAreaList().subscribe((data) => {
-      this.area = data;
-    });
-    this.nivRuteService
-      .getNivelbyEstado('A')
-      .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)))
-      .subscribe((data) => {
-        this.NivelRuta = data;
+    setTimeout(() => {
+      
+      this.empService.getEmpleadosList().subscribe((data) => {
+        this.empleadoedit = data;
       });
-    this.prespService.getPresupuestos().subscribe({
-      next: (respuestas: any) => {
-        this.presupues = respuestas;
-      },
-    });
-    this.empService.getEmpleadobyArea(12).subscribe({
-      next: (res) => {
-        this.inspectoresEdit = res;
-      },
-    });
-    this.sectService
-      .getSectoresList()
-      .pipe(
-        map((sector) =>
-          sector.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre))
-        )
-      )
-      .subscribe({
+      this.areaService.getAreaList().subscribe((data) => {
+        this.area = data;
+      });
+      this.nivRuteService
+        .getNivelbyEstado('A')
+        .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)))
+        .subscribe((data) => {
+          this.NivelRuta = data;
+        });
+      this.prespService.getPresupuestos().subscribe({
         next: (respuestas: any) => {
-          this.sectores = respuestas;
+          this.presupues = respuestas;
         },
       });
+      this.empService.getEmpleadobyArea(12).subscribe({
+        next: (res) => {
+          this.inspectoresEdit = res;
+        },
+      });
+      this.sectService
+        .getSectoresList()
+        .pipe(
+          map((sector) =>
+            sector.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre))
+          )
+        )
+        .subscribe({
+          next: (respuestas: any) => {
+            this.sectores = respuestas;
+          },
+        });
+    }, 200);
   }
 
   ClickPDF() {

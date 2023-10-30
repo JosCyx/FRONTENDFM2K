@@ -87,15 +87,17 @@ export class SpDestinoComponent implements OnInit {
         console.log(error);
       }
     );*/
-
-    this.empleadoService.getEmpleadobyArea(this.areaSol).subscribe(
-      (data: any[]) => {
-        this.empleados = data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    setTimeout(() => {
+      
+      this.empleadoService.getEmpleadobyArea(this.areaSol).subscribe(
+        (data: any[]) => {
+          this.empleados = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }, 100);
   }
 
   //busca los empleados segun su area

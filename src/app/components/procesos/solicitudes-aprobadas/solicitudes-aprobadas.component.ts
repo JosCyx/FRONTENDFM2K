@@ -68,20 +68,23 @@ export class SolicitudesAprobadasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.tipoSolService.getTipoSolicitud().subscribe((data) => {
-      this.tipoSol = data;
-    });
-    this.areaService.getAreaList().subscribe((data) => {
-      this.areaList = data;
-    });
-    this.empService.getEmpleadosList().subscribe((data) => {
-      this.empleadoList = data;
-    });
-    this.nivRuteoService.getNivelruteo().subscribe((data) => {
-      this.trckList = data;
-    });
-
-    this.chooseSearchMethod();
+    setTimeout(() => {
+      
+      this.tipoSolService.getTipoSolicitud().subscribe((data) => {
+        this.tipoSol = data;
+      });
+      this.areaService.getAreaList().subscribe((data) => {
+        this.areaList = data;
+      });
+      this.empService.getEmpleadosList().subscribe((data) => {
+        this.empleadoList = data;
+      });
+      this.nivRuteoService.getNivelruteo().subscribe((data) => {
+        this.trckList = data;
+      });
+  
+      this.chooseSearchMethod();
+    }, 200);
   }
   //Paginacion 
   nextPage(): void {

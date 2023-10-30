@@ -47,13 +47,16 @@ export class UsuariosComponent {
   ) {}
 
   ngOnInit(): void {
-    //llama los datos de los usuarios desde la api
-    this.userList$ = this.usuarioService.getUsuariosList();
-
-    //guarda los usuarios en una lista local para un manejo mas sencillo
-    this.userList$.subscribe((data) => {
-      this.listUsers = data;
-    });
+    setTimeout(() => {
+      
+      //llama los datos de los usuarios desde la api
+      this.userList$ = this.usuarioService.getUsuariosList();
+  
+      //guarda los usuarios en una lista local para un manejo mas sencillo
+      this.userList$.subscribe((data) => {
+        this.listUsers = data;
+      });
+    }, 100);
   }
 
   agregarUsuario() {

@@ -51,22 +51,29 @@ export class EmpleadosComponent implements OnInit {
     private areaService: AreasService,
     private deptoService: DepartamentosService) { }
 
+    
+  tabla: string = '';
+  
+
   ngOnInit() {
-    //carga los datos de la tabla empleados en un observable
-    this.empleadoList$ = this.empService.getEmpleadosList();
-
-    //pasa los datos del observable de empleados a una lista
-    this.empleadoList$.subscribe((data) => {
-      this.empleados = data;
-    });
-
-    //carga los datos de la tabla area en un observable
-    this.areaList$ = this.areaService.getAreaList();
-
-    //carga el contenido de la tabla de departamentos en un observable ordenandolos en orden alfabético
-    this.dptoList$ = this.deptoService.getDepartamentos().pipe(
-      map(departamentos => departamentos.sort((a, b) => a.depDescp.localeCompare(b.depDescp)))
-    );
+    setTimeout(() => {
+      
+      //carga los datos de la tabla empleados en un observable
+      this.empleadoList$ = this.empService.getEmpleadosList();
+  
+      //pasa los datos del observable de empleados a una lista
+      this.empleadoList$.subscribe((data) => {
+        this.empleados = data;
+      });
+  
+      //carga los datos de la tabla area en un observable
+      this.areaList$ = this.areaService.getAreaList();
+  
+      //carga el contenido de la tabla de departamentos en un observable ordenandolos en orden alfabético
+      this.dptoList$ = this.deptoService.getDepartamentos().pipe(
+        map(departamentos => departamentos.sort((a, b) => a.depDescp.localeCompare(b.depDescp)))
+      );
+    }, 100);
 
     /*recorre la lista de empleados y guarda el ultimo id de nomina que sea menor a 10000 luego de un tiempo 
     para asegurarse que los datos ya esten cargados en la lista*/
@@ -78,9 +85,22 @@ export class EmpleadosComponent implements OnInit {
           this.lastIdnomina = empleado.empleadoIdNomina;
         }
       }
-    }, 100);
+    }, 200);
   }
 
+  updateEmpleadosFrom230() {
+    this.empService.updateEmpleados(this.tabla).subscribe(
+      response => {
+        // Manejar la respuesta de la API aquí si es necesario
+        console.log('Empleados actualizados exitosamente:', response);
+      },
+      error => {
+        // Manejar cualquier error que ocurra durante la llamada a la API aquí
+        console.error('Error:', error);
+      }
+    );
+  }
+  
   //busca en la lista empleados segun el termino de busqueda proporcionado por la variable terminoBusqueda
   search() {
     this.currentPage = 1;
@@ -113,15 +133,15 @@ export class EmpleadosComponent implements OnInit {
   //incrementa el valor d la variable que controla la pagina actual que se muestra
   nextPage(): void {
     //console.log("nextPage",this.currentPage);
-    if(this.empleados.length <=10 ){
+    if (this.empleados.length <= 10) {
       //console.log("nextPage",this.currentPage);
-      this.currentPage=1;
-    }else if(this.currentPage >= this.empleados.length/10){
-      this.currentPage=this.currentPage;
-    }else{
+      this.currentPage = 1;
+    } else if (this.currentPage >= this.empleados.length / 10) {
+      this.currentPage = this.currentPage;
+    } else {
       this.currentPage++
     }
-    
+
   }
 
   //decrementa el valor de la variable que controla la pagina actual que se muestra

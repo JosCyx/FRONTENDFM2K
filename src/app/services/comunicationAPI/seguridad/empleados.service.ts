@@ -52,7 +52,12 @@ export class EmpleadosService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(this.APIUrl + '/Empleadoes', data, { headers: headers });
   }
-
+  
+  updateEmpleados(tabla: string){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(this.APIUrl + `/Empleadoes/UpdateEmpleados?nombreTabla=${tabla}`, { headers: headers });
+  }
+  
   getEmpleadoById(empleadoId: number): Observable<any> {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any>(this.APIUrl + `/Empleadoes/${empleadoId}`, { headers: headers });
@@ -67,4 +72,5 @@ export class EmpleadosService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any[]>(`${this.APIUrl}/Empleadoes/GetEmpleadobyNomina?nomina=${nomina}`, { headers: headers });
   }
+
 }

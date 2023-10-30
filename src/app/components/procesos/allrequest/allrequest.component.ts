@@ -65,23 +65,26 @@ export class AllrequestComponent implements OnInit {
     private cookieService: CookieService) { }
 
   ngOnInit(): void {
-    this.tipoSol$ = this.tipoSolService.getTipoSolicitud();
-
-    this.empleadoList$ = this.empService.getEmpleadosList();
-    this.empleadoList$.subscribe((data) => {
-      this.empleados = data;
-    });
-
-    this.areaList$ = this.areaService.getAreaList();
-    this.areaList$.subscribe((data) => {
-      this.areas = data;
-    });
-
-    this.sectores$ = this.sectService.getSectoresList();
-
-    this.trckList$ = this.nivRuteoService.getNivelruteo();
-
-    this.chooseSearchMethod();
+    setTimeout(() => {
+      
+      this.tipoSol$ = this.tipoSolService.getTipoSolicitud();
+  
+      this.empleadoList$ = this.empService.getEmpleadosList();
+      this.empleadoList$.subscribe((data) => {
+        this.empleados = data;
+      });
+  
+      this.areaList$ = this.areaService.getAreaList();
+      this.areaList$.subscribe((data) => {
+        this.areas = data;
+      });
+  
+      this.sectores$ = this.sectService.getSectoresList();
+  
+      this.trckList$ = this.nivRuteoService.getNivelruteo();
+  
+      this.chooseSearchMethod();
+    }, 200);
   }
 
   nextPage(): void {

@@ -47,13 +47,16 @@ export class SpPdfComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.empService.getEmpleadosList().subscribe((data) => {
-      this.empleadoedit = data;
-    });
-
-    this.areaService.getAreaList().subscribe((data) => {
-      this.area = data;
-    });
+    setTimeout(() => {
+      
+      this.empService.getEmpleadosList().subscribe((data) => {
+        this.empleadoedit = data;
+      });
+  
+      this.areaService.getAreaList().subscribe((data) => {
+        this.area = data;
+      });
+    }, 100);
     this.nivRuteService
       .getNivelbyEstado('A')
       .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)))

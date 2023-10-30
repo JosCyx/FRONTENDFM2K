@@ -40,18 +40,21 @@ export class SolicitudesNoAprobadasComponent implements OnInit {
     private cabPagoService: CabPagoService
   ) {}
   ngOnInit(): void {
-    this.tipoSolService.getTipoSolicitud().subscribe((data) => {
-      this.tipoSol = data;
-    });
-    this.areaService.getAreaList().subscribe((data) => {
-      this.areaList = data;
-    });
-    this.empService.getEmpleadosList().subscribe((data) => {
-      this.empleadoList = data;
-    });
-    this.nivRuteoService.getNivelruteo().subscribe((data) => {
-      this.trckList = data;
-    });
+    setTimeout(() => {
+      
+      this.tipoSolService.getTipoSolicitud().subscribe((data) => {
+        this.tipoSol = data;
+      });
+      this.areaService.getAreaList().subscribe((data) => {
+        this.areaList = data;
+      });
+      this.empService.getEmpleadosList().subscribe((data) => {
+        this.empleadoList = data;
+      });
+      this.nivRuteoService.getNivelruteo().subscribe((data) => {
+        this.trckList = data;
+      });
+    }, 200);
   }
 
     //Consultar solicitudes

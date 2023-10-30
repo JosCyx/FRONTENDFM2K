@@ -30,28 +30,31 @@ export class TransaccionesComponent implements OnInit {
     private appService: AplicacionesService
   ) {}
   ngOnInit(): void {
-    this.appService.getAplicacionesList().subscribe({
-      next: (apps) => {
-        this.appList = apps;
-      },
-      error: (err) => {
-        console.error('error', err);
-      },
-      complete: () => {
-        console.log('proceso completado');
-      },
-    });
-    this.transService.getTransaccionesList().subscribe({
-      next: (trans) => {
-        this.transaccionesList = trans;
-      },
-      error: (err) => {
-        console.error('error', err);
-      },
-      complete: () => {
-        console.log('proceso completado');
-      },
-    });
+    setTimeout(() => {
+      
+      this.appService.getAplicacionesList().subscribe({
+        next: (apps) => {
+          this.appList = apps;
+        },
+        error: (err) => {
+          console.error('error', err);
+        },
+        complete: () => {
+          console.log('proceso completado');
+        },
+      });
+      this.transService.getTransaccionesList().subscribe({
+        next: (trans) => {
+          this.transaccionesList = trans;
+        },
+        error: (err) => {
+          console.error('error', err);
+        },
+        complete: () => {
+          console.log('proceso completado');
+        },
+      });
+    }, 100);
   }
   //
   nextPage(): void {
