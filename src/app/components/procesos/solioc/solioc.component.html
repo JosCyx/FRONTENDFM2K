@@ -297,6 +297,7 @@
             <input
               class="form-control"
               type="number"
+              (input)="validarNumero($event)"
               min="1"
               placeholder="Cantidad"
               [(ngModel)]="cab_ncot"
@@ -828,6 +829,7 @@
             <input
               class="form-control"
               type="number"
+              (input)="validarNumero($event)"
               min="1"
               [(ngModel)]="cabecera.cabSolOCNumCotizacion"
               [disabled]="cabecera.cabSolOCEstadoTracking > 10"
@@ -952,7 +954,7 @@
                                 <td class="align-middle">{{ item.det_id }}</td>
                                 <td class="align-middle">{{ item.det_descp }}</td>
                                 <td class="align-middle">{{ item.item_id }}</td>
-                                <td class="align-middle"><input type="number" min="1" class="form-control" name="item_cant" value="{{ item.item_cant }}"></td>
+                                <td class="align-middle"><input type="number" (input)="validarNumero($event)" min="1" class="form-control" name="item_cant" value="{{ item.item_cant }}"></td>
                             <ng-container *ngFor="let sect of sectores$ | async">
                                 <!-- <td *ngIf="sect.sectIdNomina == item.item_sector" class="align-middle">
                                     {{ sect.sectNombre }}
@@ -1060,6 +1062,7 @@
                       [(ngModel)]="item_cant"
                       min="1"
                       type="number"
+                      (input)="validarNumero($event)"
                       placeholder="Cantidad"
                     />
                   </div>
@@ -1223,6 +1226,7 @@
                     [(ngModel)]="item_cant"
                     min="1"
                     type="number"
+                    (input)="validarNumero($event)"
                     placeholder="Cantidad"
                   />
                 </div>
