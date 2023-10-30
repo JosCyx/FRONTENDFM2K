@@ -75,7 +75,7 @@
                     </div>
                     <div class="input-group mb-1">
                         <label class="input-group-text">Asunto*:</label>
-                        <input type="text" class="form-control" placeholder="Ingrese el asunto"
+                        <input type="text" class="form-control" maxlength="500"  placeholder="Ingrese el asunto"
                             [(ngModel)]="cab_asunto" />
                     </div>
                 </div>
@@ -208,7 +208,7 @@
                             </ng-container>
                         </datalist>
                         <label class="input-group-text">Teléfono:</label>
-                        <input class="form-control"  max="15" type="text" placeholder="Ingrese el teléfono del inspector"
+                        <input class="form-control"  maxlength="15"  type="text" placeholder="Ingrese el teléfono del inspector"
                             [(ngModel)]="cab_telef_insp" />
                     </div>
                     <div class="text-end">

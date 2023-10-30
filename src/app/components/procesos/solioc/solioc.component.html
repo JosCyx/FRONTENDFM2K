@@ -328,6 +328,7 @@
               id="busqueda"
               list="inspectores"
               [(ngModel)]="inspector"
+              (keydown)="verificartexto()"
               (keyup)="searchInspector()"
               (input)="onInputChanged()"
               placeholder="Ingrese el nombre del inspector"
@@ -344,6 +345,7 @@
               class="form-control"
               type="text"
               placeholder="Ingrese el teléfono del inspector"
+              maxlength="15"
               [(ngModel)]="cab_telef_insp"
             />
           </div>

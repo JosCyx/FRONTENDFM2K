@@ -81,7 +81,7 @@ export class SoliocComponent implements OnInit {
   cab_estado: string = 'A'; //estado inicial Activo
   cab_plazo!: Date;
   cab_fechaMax!: Date;
-  cab_inspector!: number;
+  cab_inspector!: string;
   cab_telef_insp!: string;
   cab_ruc_prov!: string;
   cab_proveedor!: string;
@@ -206,36 +206,40 @@ export class SoliocComponent implements OnInit {
     this.fechamaxima=new Date(new Date().getFullYear(),new Date().getMonth()+6,new Date().getDate());
     this.fechaMax=this.formatDateToYYYYMMDD(this.fechamaxima);
     this.fechaMin=this.formatDateToYYYYMMDD(this.fechaminina);
+    setTimeout(() => {
+  
+      this.empService.getEmpleadosList().subscribe((data) => {
+        this.empleadoedit = data;
+      });
+  
+      this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
+      this.inspectores$.subscribe((data) => {
+        this.inspectoresEdit = data;
+      });
+      this.nivelRut$ = this.nivRuteService
+        .getNivelruteo()
+        .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
+      this.sectores$ = this.sectService
+        .getSectoresList()
+        .pipe(
+          map((sectores) =>
+            sectores.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre))
+          )
+        );
+  
+      this.areaList$ = this.areaService.getAreaList();
+  
+      this.areaList$.subscribe((data) => {
+        this.areas = data;
+      });
+  
+      this.prespService.getPresupuestos().subscribe((data : any) => {
+        this.presupuestos = data;
+      });
+    }, 100);
     this. areaUserCookie= this.cookieService.get('userArea');
     
-    this.empService.getEmpleadosList().subscribe((data) => {
-      this.empleadoedit = data;
-    });
-
-    this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
-    this.inspectores$.subscribe((data) => {
-      this.inspectoresEdit = data;
-    });
-    this.nivelRut$ = this.nivRuteService
-      .getNivelruteo()
-      .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
-    this.sectores$ = this.sectService
-      .getSectoresList()
-      .pipe(
-        map((sectores) =>
-          sectores.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre))
-        )
-      );
-
-    this.areaList$ = this.areaService.getAreaList();
-
-    this.areaList$.subscribe((data) => {
-      this.areas = data;
-    });
-
-    this.prespService.getPresupuestos().subscribe((data : any) => {
-      this.presupuestos = data;
-    });
+    
 
     if (this.changeview == 'editar') {
       this.editSolicitud();
@@ -268,7 +272,15 @@ export class SoliocComponent implements OnInit {
       this.inspectores = [];
     }
   }
-
+  verificartexto(): void {
+    const patron: RegExp = /^[a-zA-Z\s]*$/;
+    if (!patron.test(this.inspector)) {
+      //borrar el ultimo caracter ingresado
+      console.log('El inspector no puede contener el número 1',this.inspector);
+      // this.inspector = this.inspector.substring(0, this.inspector.length - 1);
+      this.inspector = this.inspector.replace(/[^a-zA-Z\s]/g, '');
+    } 
+  }
   onInputChanged(): void {
     // Cancelamos el temporizador anterior antes de crear uno nuevo
     clearTimeout(this.inputTimer);
@@ -284,16 +296,16 @@ export class SoliocComponent implements OnInit {
         if (this.changeview == 'crear') {
           this.cab_inspector = empleadoSeleccionado
             ? empleadoSeleccionado.empleadoIdNomina
-            : null;
+            : "000000";
           //console.log('Inspector ID', this.cab_inspector);
         } else if (this.changeview == 'editar') {
           this.cabecera.cabSolOCInspector = empleadoSeleccionado
             ? empleadoSeleccionado.empleadoIdNomina
-            : null;
+            : "000000";
           //console.log(Inspector id de Cabecera', this.cabecera.cabSolOCInspector);
         }
       } else {
-        this.cab_inspector = 0;
+        this.cab_inspector ="";
         this.cabecera.cabSolOCInspector = 0;
       }
     }, 500); // Retraso de 1 segundo (ajusta el valor según tus necesidades)

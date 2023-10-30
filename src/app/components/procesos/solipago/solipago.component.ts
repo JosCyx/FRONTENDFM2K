@@ -146,7 +146,6 @@ export class SolipagoComponent implements OnInit {
     private serviceGlobal: GlobalService,
     private cookieService: CookieService,
     private ruteoService: RuteoAreaService,
-    private globalService: GlobalService,
     private sendMailService: SendEmailService,
     private nivGerenciaService: NivGerenciaService,
     private sharedService: SharedService
@@ -177,28 +176,36 @@ export class SolipagoComponent implements OnInit {
     this.fechaMax=this.formatDateToYYYYMMDD(this.fechamaxima);
     this.fechaMin=this.formatDateToYYYYMMDD(this.fechaminina);
     //console.log(this.sharedNoSol);
-
-    this.empService.getEmpleadosList().subscribe((data) => {
-      this.empleadoEdi = data;
-    });
-
-    this.areaList$ = this.areaService.getAreaList();
-
-    this.nivelRut$ = this.nivRuteService
-      .getNivelruteo()
-      .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
-
-    this.areaList$.subscribe((data) => {
-      this.areas = data;
-    });
-
+    setTimeout(() => {
+      this.empService.getEmpleadosList().subscribe((data) => {
+        this.empleadoEdi = data;
+      });
+  
+      this.areaList$ = this.areaService.getAreaList();
+  
+      this.nivelRut$ = this.nivRuteService
+        .getNivelruteo()
+        .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
+  
+      this.areaList$.subscribe((data) => {
+        this.areas = data;
+      });
+    }, 100);
     if (this.changeview == 'editar') {
       this.editSolicitud();
     }
 
 
   }
-
+  verificartexto(): void {
+    const patron: RegExp = /^[a-zA-Z\s]*$/;
+    if (!patron.test(this.receptor)) {
+      //borrar el ultimo caracter ingresado
+      console.log('El inspector no puede contener el número',this.receptor);
+      // this.inspector = this.inspector.substring(0, this.inspector.length - 1);
+      this.receptor = this.receptor.replace(/[^a-zA-Z\s]/g, '');
+    } 
+  }
   searchEmpleado(): void {
     if (this.empleado.length > 2) {
       this.empService.getEmpleadobyArea(parseInt(this.cookieService.get('userArea'))).subscribe((data) => {

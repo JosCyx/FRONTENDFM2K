@@ -58,6 +58,7 @@
             <div class="input-group col mb-1">
               <label class="input-group-text">No orden de compra :</label>
               <input
+              maxlength="10"
                 type="text"
                 class="form-control"
                 placeholder="Ingrese el numero de compra"
@@ -103,6 +104,7 @@
               <label class="input-group-text">No factura:</label>
               <input
                 type="text"
+                maxlength="15"
                 class="form-control"
                 placeholder="Ingrese el numero Factura"
                 [(ngModel)]="cab_nofactura"
@@ -143,6 +145,7 @@
                 *ngIf="tipobusqueda == 'ruc'"
                 [(ngModel)]="buscarProveedor"
                 type="text"
+                maxlength="15"
                 class="form-control"
                 list="proveedor"
                 placeholder="Ingrese el RUC del proveedor"
@@ -168,6 +171,7 @@
               <input
                 type="text"
                 class="form-control"
+                maxlength="15"
                 *ngIf="tipobusqueda == 'nombre'"
                 [(ngModel)]="cab_rucproveedor"
               />
@@ -347,6 +351,7 @@
               list="sugerencias"
               [(ngModel)]="receptor"
               (keyup)="searchEmpleado()"
+              (input)="verificartexto()"
               placeholder="Ingrese el nombre del empleado"
             />
             <datalist id="sugerencias">
