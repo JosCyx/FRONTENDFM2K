@@ -124,6 +124,12 @@ export class SolipagoComponent implements OnInit {
     this.setDestino = this.globalService.setDestino;
   }*/
 
+   //Variables para validacion de fecha 
+   fechaminina: Date = new Date();
+   fechamaxima: Date = new Date();
+ 
+   fechaMin: string = '';
+   fechaMax: string = '';
   areaUserCookie: number = Number(this.cookieService.get('userArea'));
 
 
@@ -166,7 +172,10 @@ export class SolipagoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.fechaminina=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate());
+    this.fechamaxima=new Date(new Date().getFullYear(),new Date().getMonth()+6,new Date().getDate());
+    this.fechaMax=this.formatDateToYYYYMMDD(this.fechamaxima);
+    this.fechaMin=this.formatDateToYYYYMMDD(this.fechaminina);
     //console.log(this.sharedNoSol);
 
     this.empService.getEmpleadosList().subscribe((data) => {

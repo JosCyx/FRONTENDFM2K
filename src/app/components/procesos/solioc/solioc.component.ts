@@ -156,6 +156,13 @@ export class SoliocComponent implements OnInit {
 
   areaUserCookie: string = '';
 
+   //Variables para validacion de fecha 
+   fechaminina: Date = new Date();
+   fechamaxima: Date = new Date();
+ 
+   fechaMin: string = '';
+   fechaMax: string = '';
+
   constructor(
     private empService: EmpleadosService,
     private sectService: SectoresService,
@@ -195,6 +202,10 @@ export class SoliocComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.fechaminina=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate());
+    this.fechamaxima=new Date(new Date().getFullYear(),new Date().getMonth()+6,new Date().getDate());
+    this.fechaMax=this.formatDateToYYYYMMDD(this.fechamaxima);
+    this.fechaMin=this.formatDateToYYYYMMDD(this.fechaminina);
     this. areaUserCookie= this.cookieService.get('userArea');
     
     this.empService.getEmpleadosList().subscribe((data) => {

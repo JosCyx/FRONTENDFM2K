@@ -160,6 +160,12 @@ export class SolicotiComponent implements OnInit {
   areaUserCookie: string = '';
 
   setMotivo: string = 'NO';
+  //Variables para validacion de fecha 
+  fechaminina: Date = new Date();
+  fechamaxima: Date = new Date();
+
+  fechaMin: string = '';
+  fechaMax: string = '';
 
 
   constructor(private router: Router,
@@ -200,6 +206,11 @@ export class SolicotiComponent implements OnInit {
 
 
   ngOnInit(): void {
+    //fechas 
+    this.fechaminina=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate());
+    this.fechamaxima=new Date(new Date().getFullYear(),new Date().getMonth()+6,new Date().getDate());
+    this.fechaMax=this.formatDateToYYYYMMDD(this.fechamaxima);
+    this.fechaMin=this.formatDateToYYYYMMDD(this.fechaminina);
     //console.log(this.cookieService.get('userRolNiveles'));
     this.areaUserCookie = this.cookieService.get('userArea');
     this.empService.getEmpleadosList().subscribe((data) => {

@@ -113,6 +113,7 @@
               <input
                 type="date"
                 class="form-control"
+                [max]="fechaMax" [min]="fechaMin"
                 [(ngModel)]="cab_fechafactura"
               />
             </div>
@@ -360,6 +361,7 @@
               class="form-control"
               type="date"
               for="fechamaxima"
+              [max]="fechaMax" [min]="fechaMin"
               [(ngModel)]="cab_fechaInspeccion"
             />
           </div>

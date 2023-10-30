@@ -308,6 +308,7 @@
               class="form-control"
               type="date"
               for="plazoentrega"
+              [max]="fechaMax" [min]="fechaMin" 
               [(ngModel)]="cab_plazo"
             />
             <label class="input-group-text">Fecha máxima de entrega*:</label>
@@ -315,6 +316,7 @@
               class="form-control"
               type="date"
               for="fechamaxima"
+              [max]="fechaMax" [min]="fechaMin"
               [(ngModel)]="cab_fechaMax"
             />
           </div>

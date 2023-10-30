@@ -193,9 +193,9 @@
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text">Plazo de entrega*:</label>
-                        <input class="form-control" type="date" for="plazoentrega" [(ngModel)]="cab_plazo" />
+                        <input class="form-control" type="date" for="plazoentrega" [max]="fechaMax" [min]="fechaMin"  [(ngModel)]="cab_plazo" />
                         <label class="input-group-text">Fecha máxima de entrega*:</label>
-                        <input class="form-control" type="date" for="fechamaxima" [(ngModel)]="cab_fechaMax" />
+                        <input class="form-control" type="date" for="fechamaxima" [max]="fechaMax" [min]="fechaMin"  [(ngModel)]="cab_fechaMax" />
                     </div>
                     <div class="input-group">
                         <label class="input-group-text">Inspector:</label>
