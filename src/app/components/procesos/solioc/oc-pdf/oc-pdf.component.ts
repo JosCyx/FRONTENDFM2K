@@ -516,7 +516,7 @@ export class OcPdfComponent implements OnInit {
     }
   }
   Aprobado(){
-    if (this.datosCabOC.cabecera.cabSolOCApprovedBy === '000000' ) {
+    if (this.datosCabOC.cabecera.cabSolOCApprovedBy === 'XXXXXX' ) {
       this.datosCabOC.cabecera.cabSolOCApprovedBy = 'NIVEL NO ALCANZADO';
     } else {
       for (const iterator of this.empleadoedit) {
@@ -531,7 +531,7 @@ export class OcPdfComponent implements OnInit {
     }
   }
   financiero(){
-    if (this.datosCabOC.cabecera.cabSolOCFinancieroBy === '000000') {
+    if (this.datosCabOC.cabecera.cabSolOCFinancieroBy === 'XXXXXX') {
       this.datosCabOC.cabecera.cabSolOCFinancieroBy = 'NIVEL NO ALCANZADO';
     }else{
       for(const itera of this.empleadoedit){

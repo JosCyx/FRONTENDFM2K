@@ -477,7 +477,7 @@
           <div class="row mb-1">
             <div class="input-group col">
               <label class="input-group-text">Aprobado por:</label>
-              <ng-container *ngIf="cabecera.cabSolOCApprovedBy === '000000'; else showValue">
+              <ng-container *ngIf="cabecera.cabSolOCApprovedBy === 'XXXXXX'; else showValue">
                 <input type="text" class="form-control" value="Nivel no alcanzado." disabled />
             </ng-container>
             <ng-template #showValue>
@@ -490,7 +490,7 @@
             </div>
             <div class="input-group col">
               <label class="input-group-text">Apr. Financiera:</label>
-              <ng-container *ngIf="cabecera.cabSolOCFinancieroBy === '000000'; else showValue">
+              <ng-container *ngIf="cabecera.cabSolOCFinancieroBy === 'XXXXXX'; else showValue">
                 <input type="text" class="form-control" value="Nivel no alcanzado." disabled />
               </ng-container>
               <ng-template #showValue>

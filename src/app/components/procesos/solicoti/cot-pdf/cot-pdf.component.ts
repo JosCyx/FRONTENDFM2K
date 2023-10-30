@@ -511,7 +511,7 @@ export class CotPdfComponent implements OnInit {
     }
   }
   Aprobado(){
-    if (this.datosCabcot.cabecera.cabSolCotApprovedBy === '000000' ) {
+    if (this.datosCabcot.cabecera.cabSolCotApprovedBy === 'XXXXXX' ) {
       this.datosCabcot.cabecera.cabSolCotApprovedBy = 'NIVEL NO ALCANZADO';
     } else {
       for (const iterator of this.empleadosEdit) {
@@ -526,7 +526,7 @@ export class CotPdfComponent implements OnInit {
     }
   }
   financiero(){
-    if (this.datosCabcot.cabecera.cabSolCotFinancieroBy === '000000') {
+    if (this.datosCabcot.cabecera.cabSolCotFinancieroBy === 'XXXXXX') {
       this.datosCabcot.cabecera.cabSolCotFinancieroBy = 'NIVEL NO ALCANZADO';
     }else{
       for(const itera of this.empleadosEdit){

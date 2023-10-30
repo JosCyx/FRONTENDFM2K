@@ -457,7 +457,7 @@ export class SolipagoComponent implements OnInit {
       cabPagoEstado: this.cab_estado,
       cabPagoEstadoTrack: this.trNivelEmision,
       cabPagoIdEmisor: this.cookieService.get('userIdNomina'),
-      cabPagoApprovedBy: '000000'
+      cabPagoApprovedBy: 'XXXXXX'
     };
 
     //enviar datos de cabecera a la API
@@ -887,8 +887,8 @@ export class SolipagoComponent implements OnInit {
   depSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
 
-  aprobadopor: string = '000000';
-  financieropor: string = '000000';
+  aprobadopor: string = 'XXXXXX';
+  financieropor: string = 'XXXXXX';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
     //verifica los niveles de aprobacion y financiero para asignar el usuario que envia la solicitud para guardar el empleado quien autoriza

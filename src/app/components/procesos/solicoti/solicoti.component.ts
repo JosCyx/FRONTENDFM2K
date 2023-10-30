@@ -314,7 +314,7 @@ export class SolicotiComponent implements OnInit {
       // Coloca aquí la lógica que deseas ejecutar después de que el usuario haya terminado de modificar el input
       if (this.inspector) {
         const empleadoSeleccionado = this.inspectores.find(emp => (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.inspector);
-        this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : '000000';
+        this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : 'XXXXXX';
         //console.log("Inspector ID", this.cab_inspector);
       } else {
         this.cab_inspector = '';
@@ -509,8 +509,8 @@ export class SolicotiComponent implements OnInit {
       cabSolCotTelefInspector: this.cab_telef_insp,
       cabSolCotNumerico: this.solNumerico,
       cabSolCotIdEmisor: this.cookieService.get('userIdNomina'),
-      cabSolCotApprovedBy: '000000',
-      cabSolCotFinancieroBy: '000000',
+      cabSolCotApprovedBy: 'XXXXXX',
+      cabSolCotFinancieroBy: 'XXXXXX',
       cabSolCotAprobPresup: 'SI',
       cabSolCotMtovioDev: '',
     }
@@ -1404,8 +1404,8 @@ export class SolicotiComponent implements OnInit {
   estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
   deptSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
-  aprobadopor: string = '000000';
-  financieropor: string = '000000';
+  aprobadopor: string = 'XXXXXX';
+  financieropor: string = 'XXXXXX';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
     //verifica los niveles de aprobacion y financiero para asignar el usuario que envia la solicitud para guardar el empleado quien autoriza

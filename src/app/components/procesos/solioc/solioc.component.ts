@@ -305,12 +305,12 @@ export class SoliocComponent implements OnInit {
         if (this.changeview == 'crear') {
           this.cab_inspector = empleadoSeleccionado
             ? empleadoSeleccionado.empleadoIdNomina
-            : "000000";
+            : "XXXXXX";
           //console.log('Inspector ID', this.cab_inspector);
         } else if (this.changeview == 'editar') {
           this.cabecera.cabSolOCInspector = empleadoSeleccionado
             ? empleadoSeleccionado.empleadoIdNomina
-            : "000000";
+            : "XXXXXX";
           //console.log(Inspector id de Cabecera', this.cabecera.cabSolOCInspector);
         }
       } else {
@@ -544,8 +544,8 @@ export class SoliocComponent implements OnInit {
       cabSolOCProveedor: this.cab_proveedor,
       cabSolOCRUCProveedor: this.cab_ruc_prov,
       cabSolOCIdEmisor: this.cookieService.get('userIdNomina'),
-      cabSolOCApprovedBy: '000000',
-      cabSolOCFinancieroBy: '000000',
+      cabSolOCApprovedBy: 'XXXXXX',
+      cabSolOCFinancieroBy: 'XXXXXX',
       cabSolOCAprobPresup: 'SI',
       cabSolOCMotivoDev: ''
     };
@@ -1532,8 +1532,8 @@ export class SoliocComponent implements OnInit {
   depSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
 
-  aprobadopor: string = '000000';
-  financieropor: string = '000000';
+  aprobadopor: string = 'XXXXXX';
+  financieropor: string = 'XXXXXX';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
     //verifica los niveles de aprobacion y financiero para asignar el usuario que envia la solicitud para guardar el empleado quien autoriza

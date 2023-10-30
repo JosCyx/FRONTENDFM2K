@@ -443,7 +443,7 @@ export class SpPdfComponent implements OnInit {
     }
   }
   Aprobado(){
-    if (this.datosSP.cabecera.cabPagoApprovedBy === '000000' ) {
+    if (this.datosSP.cabecera.cabPagoApprovedBy === 'XXXXXX' ) {
       console.log('entro', this.datosSP.cabecera.cabPagoApprovedBy);
       this.datosSP.cabecera.cabPagoApprovedBy = 'NIVEL NO ALCANZADO';
     } else {
