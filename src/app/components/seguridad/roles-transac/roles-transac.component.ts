@@ -45,29 +45,34 @@ export class RolesTransacComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.transacService.getTransaccionesList().subscribe(
-      (response) => {
-        this.transacList = response.map((item: any) => {
-          return {
-            trCodigo: item.trCodigo,
-            trNombre: item.trNombre,
-            trCheck: false,
-          };
-        });
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    setTimeout(() => {
 
-    this.rolService.getRolsList().subscribe(
-      (response) => {
-        this.rolList = response;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+      this.rolService.getRolsList().subscribe(
+        (response) => {
+          this.rolList = response;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+      
+      this.transacService.getTransaccionesList().subscribe(
+        (response) => {
+          this.transacList = response.map((item: any) => {
+            return {
+              trCodigo: item.trCodigo,
+              trNombre: item.trNombre,
+              trCheck: false,
+            };
+          });
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }, 400);
+
+    
   }
   //incrementa el valor d la variable que controla la pagina actual que se muestra
   nextPage(): void {
@@ -115,6 +120,7 @@ export class RolesTransacComponent implements OnInit {
           console.log('response', response);
           this.showmsj = true;
           this.msjExito = 'Se guardo correctamente';
+          this.rolTransacList = [];//vaciar la lista de roltransac
           setTimeout(() => {
             this.clear();
             this.changeview = 'consulta';
@@ -134,7 +140,11 @@ export class RolesTransacComponent implements OnInit {
       });
     });
   }
-  Buscar() {
+
+
+  async Buscar() {
+
+    this.rolConsuList = [];
     this.isMensaje = false;
     // Filtra rolConsuList para mostrar solo los datos del rol seleccionado
     this.rolTservice.getTransaccionesbyRol(this.rolAsignConsu).subscribe({

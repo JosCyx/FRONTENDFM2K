@@ -239,6 +239,7 @@
                   <td class="align-middle">
                     <input
                       type="number"
+                      min="1"
                       class="form-control text-center"
                       [(ngModel)]="det.itemCant"
                       disabled
@@ -247,6 +248,7 @@
                   <td class="align-middle" style="width: 150px">
                     <input
                       type="number"
+                      min="1"
                       class="form-control text-center"
                       [(ngModel)]="det.cantidadRecibid"
                     />
@@ -254,6 +256,7 @@
                   <td class="align-middle cel-prep">
                     <input
                       type="number"
+                      min="1"
                       class="form-control text-center"
                       [(ngModel)]="det.valorUnitario"
                     />
@@ -261,6 +264,7 @@
                   <td class="align-middle">
                     <input
                       type="number"
+                      min="1"
                       class="form-control text-center"
                       [(ngModel)]="det.subTotal"
                       (input)="calculoTotal()"
@@ -272,6 +276,7 @@
                   <td class="align-middle text-end">
                     <input
                       type="number"
+                      min="1"
                       class="form-control text-center"
                       [(ngModel)]="Total"
                       disabled
@@ -319,6 +324,7 @@
             <input
               class="form-control"
               type="number"
+              min="1"
               placeholder="Ingrese el valor a descontar"
               [(ngModel)]="cab_valordescontar"
             />
@@ -326,6 +332,7 @@
             <input
               class="form-control"
               type="number"
+              min="1"
               placeholder="Ingrese el valor Total"
               [(ngModel)]="cab_totalautorizado"
             />
@@ -678,6 +685,7 @@
                 <td class="align-middle">
                   <input
                     type="number"
+                    min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoCantContratada"
                     [disabled]="cabecera.cabPagoEstadoTrack > 10"
@@ -686,6 +694,7 @@
                 <td class="align-middle" style="width: 150px">
                   <input
                     type="number"
+                    min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoCantRecibida"
                     [disabled]="cabecera.cabPagoEstadoTrack > 10"
@@ -694,6 +703,7 @@
                 <td class="align-middle cel-prep">
                   <input
                     type="number"
+                    min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoValUnitario"
                     [disabled]="cabecera.cabPagoEstadoTrack > 10"
@@ -702,6 +712,7 @@
                 <td class="align-middle">
                   <input
                     type="number"
+                    min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoSubtotal"
                     (input)="calculoEditotal()"
@@ -718,6 +729,7 @@
                 <td class="align-middle text-end">
                   <input
                     type="number"
+                    min="1"
                     class="form-control text-center"
                     [(ngModel)]="cabecera.cabpagototal"
                     [disabled]="cabecera.cabPagoEstadoTrack > 10"
@@ -754,6 +766,7 @@
             <input
               class="form-control"
               type="number"
+              min="1"
               placeholder="Ingrese el valor a descontar"
               [(ngModel)]="cabecera.cabPagoValorMulta"
               [disabled]="cabecera.cabPagoEstadoTrack > 10"
@@ -762,6 +775,7 @@
             <input
               class="form-control"
               type="number"
+              min="1"
               placeholder="Ingrese el valor Total"
               [(ngModel)]="cabecera.cabPagoValorTotalAut"
               [disabled]="cabecera.cabPagoEstadoTrack > 10"

@@ -125,7 +125,12 @@
             </tr>
           </thead>
           <tbody>
-            <tr
+            <tr *ngIf="rolConsuList.length == 0">
+              <td class="align-middle text-danger" colspan="2">No hay transacciones asignadas a este rol</td>
+            </tr>
+            <ng-container *ngIf="rolConsuList.length != 0">
+              <tr
+              
               *ngFor="
                 let trsc of rolConsuList
                   | paginate : { itemsPerPage: 10, currentPage: currentPage }
@@ -154,6 +159,8 @@
                 </td>
               </ng-container>
             </tr>
+            </ng-container>
+            
           </tbody>
         </table>
       </div>

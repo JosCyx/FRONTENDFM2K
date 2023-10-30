@@ -189,7 +189,7 @@
                             <option value="NO" selected>No</option>
                         </select>
                         <label class="input-group-text">Número de cotizaciones:</label>
-                        <input class="form-control" type="number" placeholder="Cantidad" [(ngModel)]="cab_ncot" />
+                        <input class="form-control" type="number" placeholder="Cantidad" min="1" [(ngModel)]="cab_ncot" />
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text">Plazo de entrega*:</label>
@@ -556,7 +556,7 @@
                             <option value="NO" selected>No</option>
                         </select>
                         <label class="input-group-text">Número de cotizaciones:</label>
-                        <input class="form-control" type="number" [(ngModel)]="cabecera.cabSolCotNumCotizacion"
+                        <input class="form-control" type="number" min="1" [(ngModel)]="cabecera.cabSolCotNumCotizacion"
                         [disabled]="cabecera.cabSolCotEstadoTracking > 10"/>
                     </div>
                     <div class="input-group mb-3">
@@ -641,7 +641,7 @@
                                 <td class="align-middle">{{ item.det_id }}</td>
                                 <td class="align-middle">{{ item.det_descp }}</td>
                                 <td class="align-middle">{{ item.item_id }}</td>
-                                <td class="align-middle"><input type="number" class="form-control" name="item_cant" value="{{ item.item_cant }}"></td>
+                                <td class="align-middle"><input type="number" min="1" class="form-control" name="item_cant" value="{{ item.item_cant }}"></td>
                             
                             
                             <!-- <td class="align-middle">
