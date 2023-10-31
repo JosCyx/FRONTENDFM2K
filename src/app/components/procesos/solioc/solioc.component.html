@@ -861,13 +861,14 @@
               id="busqueda"
               list="inspectores"
               [(ngModel)]="inspector"
+              (keydown)="verificartexto()"
               (keyup)="searchInspector()"
               (input)="onInputChanged()"
               [disabled]="cabecera.cabSolOCEstadoTracking > 10"
             />
             <datalist id="inspectores">
-              <ng-container *ngFor="let empOP of inspectores">
-                <option
+              <ng-container *ngFor="let empOP of inspectoresEdit">
+                <option 
                   [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"
                 ></option>
               </ng-container>
