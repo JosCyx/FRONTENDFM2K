@@ -209,4 +209,10 @@ export class RolesUsersComponent implements OnInit {
     return this.RolList.some((item) => item.RCheck=== true);
 
   }
+
+  disableButton: boolean = true;
+
+  setdisableButton(){
+    this.disableButton = false;
+  }
 }

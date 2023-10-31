@@ -196,7 +196,13 @@ export class RolesTransacComponent implements OnInit {
       element.trCheck = false;
     });
   }
+
+  disableButton: boolean = true;
   ElementoSeleccionado(): boolean {
     return this.transacList.some((item) => item.trCheck === true);
+  }
+
+  setdisableButton(){
+    this.disableButton = false;
   }
 }
