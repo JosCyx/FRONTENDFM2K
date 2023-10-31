@@ -174,6 +174,9 @@ export class SolipagoComponent implements OnInit {
     const valorIngresado = parseInt(inputElement.value, 10);
     if (valorIngresado > det.itemCant) {
       inputElement.value = det.itemCant.toString(); // Establecer el valor mínimo si es menor que 1
+      //QUE EL ELEMENTO DE LA LISTA OBTENGA EL MISMO VALOR 
+      det.cantidadRecibid = det.itemCant;
+
     }
   }
   validarNumero(event: Event): void {
@@ -573,7 +576,6 @@ export class SolipagoComponent implements OnInit {
   }
   //* Agregamos los detalles de pago a base
   AddDetSolPago() {
-    console.log('3. guardando .',this.detalleSolPagos);
     for (let detPago of this.detalleSolPagos) {
       const dataDetPag = {
         detPagoTipoSol: this.trTipoSolicitud,
@@ -586,14 +588,14 @@ export class SolipagoComponent implements OnInit {
         detPagoSubtotal: detPago.subTotal,
       };
       console.log('listas', dataDetPag);
-      // this.detPagoService.addSolDetPago(dataDetPag).subscribe(
-      //   (response) => {
-      //     console.log('Detalle Guardado ');
-      //   },
-      //   (error) => {
-      //     console.log('No se puede guardar el detalle', error);
-      //   }
-      // );
+      this.detPagoService.addSolDetPago(dataDetPag).subscribe(
+        (response) => {
+          console.log('Detalle Guardado ');
+        },
+        (error) => {
+          console.log('No se puede guardar el detalle', error);
+        }
+      );
     }
   }
   //Calculo de Total
