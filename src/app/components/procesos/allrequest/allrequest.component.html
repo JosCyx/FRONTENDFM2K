@@ -1,6 +1,7 @@
 <app-menu></app-menu>
 <div class="container">
   <h2 class="font-weight-bolt ruteo">Todas las solicitudes</h2>
+  <button class="btn btn-primary m-2" (click)="setEncargado(40,99)">Encargado</button>
   <!-- <app-breadcrumb></app-breadcrumb> -->
 
   <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 30px;" >
@@ -93,7 +94,7 @@
                   {{ trck.descRuteo }}
                 </td>
               </ng-container>
-              <td class="align-middle">EMPLEADO ENCARGADO</td>
+              <td class="align-middle">{{sol.encargado}}</td>
             </tr>
           </ng-container>
 
@@ -128,7 +129,7 @@
                   {{ trck.descRuteo }}
                 </td>
               </ng-container>
-              <td class="align-middle">EMPLEADO ENCARGADO</td>
+              <td class="align-middle">{{sol.encargado}}</td>
             </tr>
           </ng-container>
 
@@ -163,7 +164,7 @@
                   {{ trck.descRuteo }}
                 </td>
               </ng-container>
-              <td class="align-middle">EMPLEADO ENCARGADO</td>
+              <td class="align-middle">{{sol.encargado}}</td>
             </tr>
           </ng-container>
         </tbody>
