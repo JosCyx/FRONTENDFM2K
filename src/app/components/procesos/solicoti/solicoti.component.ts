@@ -228,9 +228,9 @@ export class SolicotiComponent implements OnInit {
     });
 
     this.inspectores$ = this.empService.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
-    /*this.inspectores$.subscribe((data) => {
+    this.inspectores$.subscribe((data) => {
       this.inspectoresEdit = data;
-    });*/
+    });
 
     this.sectores$ = this.sectService.getSectoresList().pipe(
       map(sectores => sectores.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre)))
@@ -920,16 +920,9 @@ export class SolicotiComponent implements OnInit {
     this.noSolTmp = this.cabecera.cabSolCotNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabSolCotEstadoTracking;
     this.deptSolTmp = this.cabecera.cabSolCotIdDept;
-
-    //asigna el nivel de tracking de la solicitud a una variable para controlar la edicion
     this.estadoSol = this.cabecera.cabSolCotEstadoTracking.toString();
 
-    for (let emp of this.empleadosEdit) {
-      if (emp.empleadoIdNomina == this.cabecera.cabSolCotInspector) {
-        this.nameInspector = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
-      }
-    }
-
+    //asigna el nivel de tracking de la solicitud a una variable para controlar la edicion
     for (let det of this.solicitudEdit.detalles) {
       this.detalle.push(det as DetalleCotizacion);
     }
@@ -969,6 +962,13 @@ export class SolicotiComponent implements OnInit {
     this.item.sort((a, b) => a.itmIdDetalle - b.itmIdDetalle);
 
     this.setView();
+     setTimeout(() => {
+      for (let emp of this.empleadosEdit) {
+        if (emp.empleadoIdNomina == this.cabecera.cabSolCotInspector) {
+          this.nameInspector = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
+        }
+      }
+    }, 200); 
   }
 
   get estadoTexto(): string {

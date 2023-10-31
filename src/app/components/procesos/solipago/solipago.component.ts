@@ -469,9 +469,12 @@ export class SolipagoComponent implements OnInit {
         console.log('Agregando cuerpo de la cabecera...');
         this.showmsj = true;
         this.msjExito = 'Solicitud de Pago Generada Exitosamente';
-        //this.addBodySol();
         this.AddDetSolPago();
-        console.log('Cuerpo agregado.');
+        setTimeout(()=>{
+          this.showmsj=false;
+          this.msjExito='';
+          this.router.navigate(['allrequest']);
+        },2000)
       },
       (error) => {
         console.log('error al guardar la cabecera: ', error);
@@ -653,11 +656,15 @@ export class SolipagoComponent implements OnInit {
       parseISO(this.cabecera.cabPagoFechaFactura),
       'yyyy-MM-dd'
     );
-    for (let empl of this.empleadoEdi) {
-      if (empl.empleadoIdNomina == this.cabecera.cabPagoReceptor) {
-        this.receptor = empl.empleadoNombres + ' ' + empl.empleadoApellidos;
-      }
-    }
+
+    setTimeout(() => {
+      for (let empl of this.empleadoEdi) {
+        if (empl.empleadoIdNomina == this.cabecera.cabPagoReceptor) {
+          this.receptor = empl.empleadoNombres + ' ' + empl.empleadoApellidos;
+        }
+      }  
+    }, 200);
+    
   }
   //
   get estadoTexto(): string {

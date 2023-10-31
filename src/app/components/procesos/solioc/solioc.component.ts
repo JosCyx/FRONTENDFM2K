@@ -281,6 +281,7 @@ export class SoliocComponent implements OnInit {
       this.inspectores = [];
     }
   }
+ 
   verificartexto(): void {
     const patron: RegExp = /^[a-zA-Z\s]*$/;
     if (!patron.test(this.inspector)) {
@@ -580,7 +581,8 @@ export class SoliocComponent implements OnInit {
         this.msjExito = '';
         this.showmsj = false;
         this.clear();
-      }, 4000);
+        this.router.navigate(['allrequest']);
+      }, 2000);
     } catch (error) {
       this.showmsjerror = true;
       this.msjError =
@@ -925,11 +927,14 @@ export class SoliocComponent implements OnInit {
       parseISO(this.cabecera.cabSolOCFechaMaxentrega),
       'yyyy-MM-dd'
     );
-    for (let empl of this.inspectoresEdit) {
-      if (empl.empleadoIdNomina == this.cabecera.cabSolOCInspector) {
-        this.inspector = empl.empleadoNombres + ' ' + empl.empleadoApellidos;
+    setTimeout(() => {
+      for (let empl of this.inspectoresEdit) {
+        if (empl.empleadoIdNomina == this.cabecera.cabSolOCInspector) {
+          this.inspector = empl.empleadoNombres + ' ' + empl.empleadoApellidos;
+        }
       }
-    }
+    }, 200);
+    
 
     // Formatear el plazo de entrega en formato 'yyyy-MM-dd'
     this.cabecera.cabSolOCPlazoEntrega = format(
