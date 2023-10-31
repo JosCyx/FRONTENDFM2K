@@ -51,16 +51,17 @@
             <th class="align-middle cab-x">Fecha</th>
             <th class="align-middle cab-x">Estado</th>
             <th class="align-middle cab-x">Tracking</th>
+            <th class="align-middle cab-x">Encargado</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngIf="!isConsulta">
-            <td class="text-danger" colspan="8">
+            <td class="text-danger" colspan="9">
               Aún no se han consultado solicitudes
             </td>
           </tr>
           <tr *ngIf="!isSolicitud">
-            <td class="text-danger" colspan="8">
+            <td class="text-danger" colspan="9">
               No se han registrado items para esta solicitud
             </td>
           </tr>
@@ -92,6 +93,7 @@
                   {{ trck.descRuteo }}
                 </td>
               </ng-container>
+              <td class="align-middle">EMPLEADO ENCARGADO</td>
             </tr>
           </ng-container>
 
@@ -126,6 +128,7 @@
                   {{ trck.descRuteo }}
                 </td>
               </ng-container>
+              <td class="align-middle">EMPLEADO ENCARGADO</td>
             </tr>
           </ng-container>
 
@@ -160,6 +163,7 @@
                   {{ trck.descRuteo }}
                 </td>
               </ng-container>
+              <td class="align-middle">EMPLEADO ENCARGADO</td>
             </tr>
           </ng-container>
         </tbody>
