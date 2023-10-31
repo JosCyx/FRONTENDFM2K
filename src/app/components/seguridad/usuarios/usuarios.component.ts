@@ -88,8 +88,13 @@ export class UsuariosComponent {
       },
       error: (error) => {
         console.log('Error: ', error);
-        this.showmsjerror = true;
-        this.msjError = 'Error al crear el usuario';
+        if (error.status == 409){
+          this.showmsjerror = true;
+          this.msjError = 'Error, el usuario ya existe.';
+        } else {
+          this.showmsjerror = true;
+          this.msjError = 'Error al crear el usuario';
+        }
         setTimeout(() => {
           this.showmsjerror = false;
           this.msjError = '';
@@ -99,8 +104,6 @@ export class UsuariosComponent {
         console.log('Proceso completado');
       },
     });
-    //regresa a la vista consulta donde se muestran todos los roles
-    this.changeview = 'consulta';
   }
   //formeatea la fecha para que sea compatible con el formato de la base de datos
   formatDateToYYYYMMDD(date: Date): string {
