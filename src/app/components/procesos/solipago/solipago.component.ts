@@ -169,7 +169,13 @@ export class SolipagoComponent implements OnInit {
       this.noAutorizar();
     });*/
   }
-
+  validarCantidad(det:any,event:Event){
+    const inputElement = event.target as HTMLInputElement;
+    const valorIngresado = parseInt(inputElement.value, 10);
+    if (valorIngresado > det.itemCant) {
+      inputElement.value = det.itemCant.toString(); // Establecer el valor mínimo si es menor que 1
+    }
+  }
   validarNumero(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = parseInt(inputElement.value, 10);
@@ -522,7 +528,6 @@ export class SolipagoComponent implements OnInit {
             this.alertText = '';
           }, 1000);
         } else {
-          console.log('tiene formato pasa por aqui');
           this.noSolicinput = parseInt(partes[2], 10);
           try {
             this.detSolService
@@ -568,26 +573,27 @@ export class SolipagoComponent implements OnInit {
   }
   //* Agregamos los detalles de pago a base
   AddDetSolPago() {
+    console.log('3. guardando .',this.detalleSolPagos);
     for (let detPago of this.detalleSolPagos) {
       const dataDetPag = {
         detPagoTipoSol: this.trTipoSolicitud,
         detPagoNoSol: this.trLastNoSol,
         detPagoIdDetalle: detPago.idDetalle,
         detPagoItemDesc: detPago.itemDesc,
-        detPagoCantContratada: detPago.cantidadContrat,
+        detPagoCantContratada: detPago.itemCant,
         detPagoCantRecibida: detPago.cantidadRecibid,
         detPagoValUnitario: detPago.valorUnitario,
         detPagoSubtotal: detPago.subTotal,
       };
       console.log('listas', dataDetPag);
-      this.detPagoService.addSolDetPago(dataDetPag).subscribe(
-        (response) => {
-          console.log('Detalle Guardado ');
-        },
-        (error) => {
-          console.log('No se puede guardar el detalle', error);
-        }
-      );
+      // this.detPagoService.addSolDetPago(dataDetPag).subscribe(
+      //   (response) => {
+      //     console.log('Detalle Guardado ');
+      //   },
+      //   (error) => {
+      //     console.log('No se puede guardar el detalle', error);
+      //   }
+      // );
     }
   }
   //Calculo de Total

@@ -255,6 +255,7 @@
                     <input
                       type="number"
                       (input)="validarNumero($event)"
+                      (input)="validarCantidad(det,$event)"
                       min="1"
                       class="form-control text-center"
                       [(ngModel)]="det.cantidadRecibid"
@@ -353,6 +354,7 @@
             <label class="input-group-text">Recibe:</label>
             <input
               type="text"
+              maxlength="30"
               class="form-control"
               id="busqueda"
               list="sugerencias"
