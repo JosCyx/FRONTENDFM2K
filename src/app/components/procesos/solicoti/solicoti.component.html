@@ -199,7 +199,7 @@
                     </div>
                     <div class="input-group">
                         <label class="input-group-text">Inspector:</label>
-                        <input type="text"   class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
+                        <input type="text"   maxlength="100" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
                             (keyup)="searchInspector()" (keydown)="verificartexto()" (input)="onInputChanged()"
                             placeholder="Ingrese el nombre del inspector" />
                         <datalist id="inspectores">

@@ -217,6 +217,7 @@
           </div>
     
           <div class="detalle" *ngIf="showItDt == 'items'">
+            <button (click)="AddDetSolPago()" >ADD</button>
             <table class="table table-striped text-center">
               <thead>
                 <tr>
@@ -255,8 +256,7 @@
                     <input
                       type="number"
                       (input)="validarNumero($event)"
-                      (input)="validarCantidad(det,$event)"
-                      min="1"
+                      (input)="validarCantidad(det,$event)"   
                       class="form-control text-center"
                       [(ngModel)]="det.cantidadRecibid"
                     />
@@ -354,7 +354,7 @@
             <label class="input-group-text">Recibe:</label>
             <input
               type="text"
-              maxlength="30"
+              maxlength="100"
               class="form-control"
               id="busqueda"
               list="sugerencias"
@@ -705,7 +705,7 @@
                     min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoCantContratada"
-                    [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                    disabled
                   />
                 </td>
                 <td class="align-middle" style="width: 150px">
