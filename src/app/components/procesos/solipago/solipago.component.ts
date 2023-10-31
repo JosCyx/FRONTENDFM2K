@@ -169,7 +169,16 @@ export class SolipagoComponent implements OnInit {
       this.noAutorizar();
     });*/
   }
+  validarCantidad(det:any,event:Event){
+    const inputElement = event.target as HTMLInputElement;
+    const valorIngresado = parseInt(inputElement.value, 10);
+    if (valorIngresado > det.itemCant) {
+      inputElement.value = det.itemCant.toString(); // Establecer el valor mínimo si es menor que 1
+      //QUE EL ELEMENTO DE LA LISTA OBTENGA EL MISMO VALOR 
+      det.cantidadRecibid = det.itemCant;
 
+    }
+  }
   validarNumero(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = parseInt(inputElement.value, 10);
@@ -522,7 +531,6 @@ export class SolipagoComponent implements OnInit {
             this.alertText = '';
           }, 1000);
         } else {
-          console.log('tiene formato pasa por aqui');
           this.noSolicinput = parseInt(partes[2], 10);
           try {
             this.detSolService
@@ -574,7 +582,7 @@ export class SolipagoComponent implements OnInit {
         detPagoNoSol: this.trLastNoSol,
         detPagoIdDetalle: detPago.idDetalle,
         detPagoItemDesc: detPago.itemDesc,
-        detPagoCantContratada: detPago.cantidadContrat,
+        detPagoCantContratada: detPago.itemCant,
         detPagoCantRecibida: detPago.cantidadRecibid,
         detPagoValUnitario: detPago.valorUnitario,
         detPagoSubtotal: detPago.subTotal,
