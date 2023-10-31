@@ -371,7 +371,15 @@ export class AllrequestComponent implements OnInit {
 
 
   async setEncargado(nivel: number, dep: number) {
-    try {
+    if (nivel == 0) {
+      return 'FINALIZADO'
+    } else if (nivel == 9999) {
+      return 'ANULADO'
+    } else if (nivel == 10) {
+      return this.cookieService.get('userName');
+    } else {
+
+      try {
         let nivelEmpleados: any[] = [];
         let nivProceso: string = '';
         let encargado: string = '';
@@ -406,23 +414,37 @@ export class AllrequestComponent implements OnInit {
           console.log(error);
         }
         return encargado;
-    } catch (error) {
+      } catch (error) {
         console.log(error);
         return null; // Manejo de errores, puedes ajustarlo según tus necesidades
+      }
     }
-}
-
-async searchEmpleadobyId(id: string): Promise<string> {
-  try {
-    const response = await this.empService.getEmpleadoByNomina(id).toPromise();
-    const nombres = response && response[0] ? response[0].empleadoNombres + ' ' + response[0].empleadoApellidos : '';
-    //console.log("nombres: ", nombres);
-    return nombres;
-  } catch (error) {
-    console.log(error);
-    return '';
   }
-}
+
+  async searchEmpleadobyId(id: string): Promise<string> {
+    try {
+      const response = await this.empService.getEmpleadoByNomina(id).toPromise();
+
+      if (response && response[0]) {
+        const fullName = response[0].empleadoNombres + ' ' + response[0].empleadoApellidos;
+        const namesArray = fullName.split(' '); // Divide el nombre completo en un array por espacios
+
+        const firstName = namesArray[0] ? namesArray[0] : ''; // Obtiene el segundo elemento (índice 1) que sería el primer nombre
+        const lastName = namesArray[2] ? namesArray[2] : ''; // Obtiene el cuarto elemento (índice 3) que sería el primer apellido
+
+        const formattedName = firstName + (lastName ? ' ' + lastName : ''); // Concatena el primer nombre y primer apellido si existe
+
+        return formattedName;
+      } else {
+        return '';
+      }
+    } catch (error) {
+      console.log(error);
+      return '';
+    }
+  }
+
+
 
 
 

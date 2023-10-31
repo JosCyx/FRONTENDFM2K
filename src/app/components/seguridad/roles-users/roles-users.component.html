@@ -23,7 +23,7 @@
         <!-- <label class="form-label">Tipo de solicitud</label> -->
         <div class="form input-group">
           <label class="input-group-text">Nombre:</label>
-          <select class="form-select" name="tipoSol" [(ngModel)]="usuariosign">
+          <select class="form-select" name="tipoSol" [(ngModel)]="usuariosign" (change)="setdisableButton()">
             <option disabled selected value="0">Seleccione un usuario</option>
             <option *ngFor="let rol of usuarioList" [value]="rol.usLogin">
               {{ rol.usNombre }}
@@ -68,7 +68,7 @@
           data-toggle="modal"
           data-target="#enviarGuardada"
           (click)="seleccionarUsuario()"
-          [disabled]="!ElementoSeleccionado()"
+          [disabled]="!ElementoSeleccionado() || disableButton"
         >
           Guardar autorización
         </button>

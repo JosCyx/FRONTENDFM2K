@@ -22,7 +22,7 @@
         <!-- <label class="form-label">Tipo de solicitud</label> -->
         <div class="form input-group">
           <label class="input-group-text">Rol:</label>
-          <select class="form-select" name="tipoSol" [(ngModel)]="rolAsign">
+          <select class="form-select" name="tipoSol" [(ngModel)]="rolAsign" (change)="setdisableButton()">
             <option disabled selected value="0">Seleccione un rol...</option>
             <option *ngFor="let rol of rolList" [value]="rol.roCodigo">
               {{ rol.roNombre }}
@@ -67,7 +67,7 @@
           data-toggle="modal"
           data-target="#enviarTransacGuardada"
           (click)="seleccionarTrans()"
-          [disabled]="!ElementoSeleccionado()"
+          [disabled]="!ElementoSeleccionado() || disableButton"
         >
           Guardar autorización
         </button>

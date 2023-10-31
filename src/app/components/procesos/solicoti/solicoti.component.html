@@ -75,7 +75,7 @@
                     </div>
                     <div class="input-group mb-1">
                         <label class="input-group-text">Asunto*:</label>
-                        <input type="text" class="form-control" maxlength="500"  placeholder="Ingrese el asunto"
+                        <input type="text" class="form-control" maxlength="500" placeholder="Ingrese el asunto"
                             [(ngModel)]="cab_asunto" />
                     </div>
                 </div>
@@ -102,8 +102,8 @@
                                 </ng-container>
                                 <td class="align-middle">
                                     <button class="btn btn-outline-primary" data-toggle="modal"
-                                    (click)="CapturarIdDetalle(det.det_id)"
-                                    data-target="#itemsectorview" >Editar</button>
+                                        (click)="CapturarIdDetalle(det.det_id)"
+                                        data-target="#itemsectorview">Editar</button>
                                 </td>
                                 <td class="align-middle">{{ det.det_unidad }}</td>
                                 <td class="align-middle">
@@ -189,17 +189,20 @@
                             <option value="NO" selected>No</option>
                         </select>
                         <label class="input-group-text">Número de cotizaciones:</label>
-                        <input class="form-control" type="number" (input)="validarNumero($event)" placeholder="Cantidad" min="1" [(ngModel)]="cab_ncot" />
+                        <input class="form-control" type="number" (input)="validarNumero($event)" placeholder="Cantidad"
+                            min="1" [(ngModel)]="cab_ncot" />
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text">Plazo de entrega*:</label>
-                        <input class="form-control" type="date" for="plazoentrega" [max]="fechaMax" [min]="fechaMin"  [(ngModel)]="cab_plazo" />
+                        <input class="form-control" type="date" for="plazoentrega" [max]="fechaMax" [min]="fechaMin"
+                            [(ngModel)]="cab_plazo" />
                         <label class="input-group-text">Fecha máxima de entrega*:</label>
-                        <input class="form-control" type="date" for="fechamaxima" [max]="fechaMax" [min]="fechaMin"  [(ngModel)]="cab_fechaMax" />
+                        <input class="form-control" type="date" for="fechamaxima" [max]="fechaMax" [min]="fechaMin"
+                            [(ngModel)]="cab_fechaMax" />
                     </div>
                     <div class="input-group">
                         <label class="input-group-text">Inspector:</label>
-                        <input type="text"   class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
+                        <input type="text" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
                             (keyup)="searchInspector()" (keydown)="verificartexto()" (input)="onInputChanged()"
                             placeholder="Ingrese el nombre del inspector" />
                         <datalist id="inspectores">
@@ -208,8 +211,8 @@
                             </ng-container>
                         </datalist>
                         <label class="input-group-text">Teléfono:</label>
-                        <input class="form-control"  maxlength="15"  type="text" placeholder="Ingrese el teléfono del inspector"
-                            [(ngModel)]="cab_telef_insp" />
+                        <input class="form-control" maxlength="15" type="text"
+                            placeholder="Ingrese el teléfono del inspector" [(ngModel)]="cab_telef_insp" />
                     </div>
                     <div class="text-end">
                         <p class="tip">*Campos obligatorios</p>
@@ -234,8 +237,11 @@
                 itemSectorList.length === 0" data-toggle="modal" data-target="#guardarCotizacion" *appAuthorize="'25'">
                         Guardar
                     </button>
-                    <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud"
-                        *appAuthorize="'27'">
+                    <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" [disabled]="
+                !empleado ||
+                !cab_asunto ||
+                detalleList.length === 0 ||
+                itemSectorList.length === 0" *appAuthorize="'27'">
                         Guardar y enviar
                     </button>
                     <button class="btn btn-danger m-2" (click)="cancelarAll()">
@@ -335,8 +341,8 @@
                             <ng-template #showValue>
                                 <ng-container *ngFor="let emp of empleadosEdit">
                                     <input *ngIf="emp.empleadoIdNomina == cabecera.cabSolCotFinancieroBy" type="text"
-                                        class="form-control" 
-                                        [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled />
+                                        class="form-control" [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+                                        disabled />
                                 </ng-container>
                             </ng-template>
                         </div>
@@ -353,7 +359,7 @@
                         <div class="input-group col">
                             <label class="input-group-text">Asunto:</label>
                             <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotAsunto"
-                                 [disabled]="cabecera.cabSolCotEstadoTracking > 10"/>
+                                [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
                         </div>
                     </div>
 
@@ -419,7 +425,7 @@
                                         [disabled]="cabecera.cabSolCotEstadoTracking > 10"></textarea>
                                 <td class="align-middle">
                                     <select class="form-control" [(ngModel)]="det.solCotPresupuesto"
-                                    [disabled]="cabecera.cabSolCotEstadoTracking > 10">
+                                        [disabled]="cabecera.cabSolCotEstadoTracking > 10">
                                         <option value="" selected disabled>>presupuesto...</option>
                                         <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                                             {{prep.prespNombre}}</option>
@@ -430,7 +436,7 @@
                                         [disabled]="cabecera.cabSolCotEstadoTracking > 10">Editar</button></td>
                                 <td class="align-middle">
                                     <select class="form-control" [(ngModel)]="det.solCotUnidad"
-                                    [disabled]="cabecera.cabSolCotEstadoTracking > 10">
+                                        [disabled]="cabecera.cabSolCotEstadoTracking > 10">
                                         <option value="Unidad">Unidad</option>
                                         <option value="Sacos">Sacos</option>
                                         <option value="Paquete">Paquete</option>
@@ -521,11 +527,13 @@
                             <div class="text-center">
                                 <div class="row buttons-ruteo">
                                     <ng-container *appAuthorize="'54'">
-                                        <button *ngIf="setMotivo == 'NO'" class="btn btn-success col m-2" data-toggle="modal"
-                                            data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
+                                        <button *ngIf="setMotivo == 'NO'" class="btn btn-success col m-2"
+                                            data-toggle="modal" data-target="#aprobarSolicitud"
+                                            [appSecureDisable]="estadoSol">Aprobar</button>
                                     </ng-container>
                                     <button *appAuthorize="'57'" class="btn btn-warning col m-2" data-toggle="modal"
-                                        data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>
+                                        data-target="#rechazarSolicitud"
+                                        [appSecureDisable]="estadoSol">Devolver</button>
                                     <button *appAuthorize="'60'" class="btn btn-danger col m-2" data-toggle="modal"
                                         data-target="#anularSolicitud" [appSecureDisable]="estadoSol">Anular</button>
                                 </div>
@@ -540,38 +548,43 @@
                 <div class="foot-cabecera">
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="floatingInput"
-                            [(ngModel)]="cabecera.cabSolCotProcedimiento" [disabled]="cabecera.cabSolCotEstadoTracking > 10"/>
+                            [(ngModel)]="cabecera.cabSolCotProcedimiento"
+                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
                         <label for="floatingInput">Materiales y procedimientos a seguir:</label>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="floatingInput"
-                            [(ngModel)]="cabecera.cabSolCotObervaciones" [disabled]="cabecera.cabSolCotEstadoTracking > 10"/>
+                            [(ngModel)]="cabecera.cabSolCotObervaciones"
+                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
                         <label for="floatingInput">Observaciones:</label>
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text">Adjunto cotizaciones:</label>
                         <select class="form-control" [(ngModel)]="cabecera.cabSolCotAdjCot"
-                        [disabled]="cabecera.cabSolCotEstadoTracking > 10">
+                            [disabled]="cabecera.cabSolCotEstadoTracking > 10">
                             <option value="SI">Sí</option>
                             <option value="NO" selected>No</option>
                         </select>
                         <label class="input-group-text">Número de cotizaciones:</label>
-                        <input class="form-control" type="number" (input)="validarNumero($event)" min="1" [(ngModel)]="cabecera.cabSolCotNumCotizacion"
-                        [disabled]="cabecera.cabSolCotEstadoTracking > 10"/>
+                        <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
+                            [(ngModel)]="cabecera.cabSolCotNumCotizacion"
+                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text">Plazo de entrega:</label>
                         <input class="form-control" type="text" for="plazoentrega"
-                            [(ngModel)]="cabecera.cabSolCotPlazoEntrega" [disabled]="cabecera.cabSolCotEstadoTracking > 10"/>
+                            [(ngModel)]="cabecera.cabSolCotPlazoEntrega"
+                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
                         <label class="input-group-text">Fecha máxima de entrega:</label>
                         <input class="form-control" type="text" for="fechamaxima"
-                            [(ngModel)]="cabecera.cabSolCotFechaMaxentrega" [disabled]="cabecera.cabSolCotEstadoTracking > 10"/>
+                            [(ngModel)]="cabecera.cabSolCotFechaMaxentrega"
+                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
                     </div>
                     <div class="input-group mb-1">
                         <label class="input-group-text">Inspector:</label>
                         <input type="text" class="form-control" id="busqueda" list="inspectores"
                             [(ngModel)]="nameInspector" (keyup)="searchInspectorEdit()"
-                            [disabled]="cabecera.cabSolCotEstadoTracking > 10"/>
+                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
                         <datalist id="inspectores">
                             <ng-container *ngFor="let empOP of inspectoresEdit">
                                 <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>
@@ -579,7 +592,7 @@
                         </datalist>
                         <label class="input-group-text">Teléfono:</label>
                         <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolCotTelefInspector"
-                        [disabled]="cabecera.cabSolCotEstadoTracking > 10"/>
+                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
                     </div>
                     <div class="row justify-content-between ">
                         <app-cot-pdf class="text-end"></app-cot-pdf>
@@ -637,35 +650,37 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let item of itemSectorList">
-                            <ng-container  *ngIf="item.det_id == IdDetalle" >
+                            <ng-container *ngIf="item.det_id == IdDetalle">
                                 <td class="align-middle">{{ item.det_id }}</td>
                                 <td class="align-middle">{{ item.det_descp }}</td>
                                 <td class="align-middle">{{ item.item_id }}</td>
-                                <td class="align-middle"><input type="number" (input)="validarNumero($event)" min="1" class="form-control" name="item_cant" value="{{ item.item_cant }}"></td>
-                            
-                            
-                            <!-- <td class="align-middle">
+                                <td class="align-middle"><input type="number" (input)="validarNumero($event)" min="1"
+                                        class="form-control" name="item_cant" value="{{ item.item_cant }}"></td>
+
+
+                                <!-- <td class="align-middle">
                                 {{ item.item_sector
                                 }}<button class="btn text-danger" (click)="deleteItem(item.item_id)">
                                     <i class="bi bi-x-circle"></i>
                                 </button>
                             </td> -->
-                            <ng-container *ngFor="let sect of sectores$ | async">
-                                <!-- <td *ngIf="sect.sectIdNomina == item.item_sector" class="align-middle">
+                                <ng-container *ngFor="let sect of sectores$ | async">
+                                    <!-- <td *ngIf="sect.sectIdNomina == item.item_sector" class="align-middle">
                                     {{ sect.sectNombre }}
                                 </td> -->
-                                <td *ngIf="sect.sectIdNomina == item.item_sector" class="align-middle">
-                                    <select class="form-select" name="item_sector" [(ngModel)]="item.item_sector">
-                                      <option selected disabled value="0">Selecciona un sector...</option>
-                                      <option *ngFor="let sect of sectores$ | async" [value]="sect.sectIdNomina">{{ sect.sectNombre }}</option>
-                                    </select>
-                                  </td>
+                                    <td *ngIf="sect.sectIdNomina == item.item_sector" class="align-middle">
+                                        <select class="form-select" name="item_sector" [(ngModel)]="item.item_sector">
+                                            <option selected disabled value="0">Selecciona un sector...</option>
+                                            <option *ngFor="let sect of sectores$ | async" [value]="sect.sectIdNomina">
+                                                {{ sect.sectNombre }}</option>
+                                        </select>
+                                    </td>
+                                </ng-container>
+                                <td>
+                                    <button class="btn text-danger" (click)="deleteItem(item.item_id)">
+                                        <i class="bi bi-x-circle"></i></button>
+                                </td>
                             </ng-container>
-                            <td>
-                                <button class="btn text-danger" (click)="deleteItem(item.item_id)">
-                                    <i class="bi bi-x-circle"></i></button>
-                            </td>
-                        </ng-container>
                         </tr>
                     </tbody>
                 </table>
@@ -733,7 +748,8 @@
                             </td>
                             <td class="align-middle">
                                 <div class="cel-prep">
-                                    <input class="form-control" [(ngModel)]="item_cant" (input)="validarNumero($event)" min="1" type="number" placeholder="Cantidad" />
+                                    <input class="form-control" [(ngModel)]="item_cant" (input)="validarNumero($event)"
+                                        min="1" type="number" placeholder="Cantidad" />
                                 </div>
                             </td>
                             <td class="align-middle" style="width: 150px" colspan="2">
