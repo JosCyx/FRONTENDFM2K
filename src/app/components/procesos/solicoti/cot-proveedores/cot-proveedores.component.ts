@@ -1079,6 +1079,7 @@ RecorrerPro(){
         //console.log('Eliminado con exito!');
         this.showmsj=true;
         this.msjExito="Solicitud Cancelada con exito";
+        this.getProvCotizacion();
         setTimeout(() => {
           this.showmsj=false;
           this.msjExito="";
@@ -1087,7 +1088,7 @@ RecorrerPro(){
       error: error => {
         console.error('Error al Eliminar!', error);
         this.showmsjerror=true;
-        this.msjError="Error al cancelar la solicitud";
+        this.msjError="Error, ya se han eliminado los proveedores.";
         setTimeout(() => {
           this.showmsjerror=false;
           this.msjError="";
