@@ -18,7 +18,7 @@ export class CabeceraPago {
   public cabPagoAplicarMulta: string | null;
   public cabPagoValorMulta: number;
   public cabPagoValorTotalAut: number;
-  public cabPagoReceptor: number;
+  public cabPagoReceptor: string;
   public cabPagoFechaInspeccion: string;
   public cabPagoCancelacionOrden: string | null;
   public cabPagoEstado: string;

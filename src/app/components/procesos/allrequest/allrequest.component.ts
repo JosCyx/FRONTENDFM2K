@@ -339,7 +339,7 @@ export class AllrequestComponent implements OnInit {
         // Puedes manejar el error como sea apropiado para tu aplicación
       }
     }
-    console.log("Lista allSol con encargados mapeados:", this.allSol);
+    //console.log("Lista allSol con encargados mapeados:", this.allSol);
   }
 
   async saveEncargadoOrdenCompra() {
@@ -352,7 +352,7 @@ export class AllrequestComponent implements OnInit {
         // Puedes manejar el error como sea apropiado para tu aplicación
       }
     }
-    console.log("Lista allSol con encargados mapeados:", this.allSol);
+    //console.log("Lista allSol con encargados mapeados:", this.allSol);
   }
 
   async saveEncargadoPago() {
@@ -365,7 +365,7 @@ export class AllrequestComponent implements OnInit {
         // Puedes manejar el error como sea apropiado para tu aplicación
       }
     }
-    console.log("Lista allSol con encargados mapeados:", this.allSol);
+    //console.log("Lista allSol con encargados mapeados:", this.allSol);
   }
 
 
@@ -409,7 +409,7 @@ export class AllrequestComponent implements OnInit {
             encargado = await this.searchEmpleadobyId(dato);
           }
 
-          console.log("encargado: ", encargado);
+          //console.log("encargado: ", encargado);
         } catch (error) {
           console.log(error);
         }

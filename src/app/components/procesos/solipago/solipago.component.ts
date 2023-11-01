@@ -84,7 +84,7 @@ export class SolipagoComponent implements OnInit {
   cab_aplicarmult!: string;
   cab_valordescontar!: 0;
   cab_totalautorizado!: number;
-  cab_recibe!: number;
+  cab_recibe!: string;
   cab_fechaInspeccion!: Date;
   cab_cancelarOrden!: string;
   cab_estado: string = 'A'; //estado inicial Activo
@@ -347,7 +347,7 @@ export class SolipagoComponent implements OnInit {
     this.cab_aplicarmult = '';
     this.cab_valordescontar = 0;
     this.cab_totalautorizado = 0;
-    this.cab_recibe = 0;
+    this.cab_recibe = '';
     this.cab_fechaInspeccion = new Date();
     this.cab_cancelarOrden = '';
   }

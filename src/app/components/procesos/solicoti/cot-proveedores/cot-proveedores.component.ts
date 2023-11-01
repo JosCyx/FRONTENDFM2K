@@ -308,7 +308,7 @@ export class CotProveedoresComponent implements OnInit {
       if (i == index) {
         //console.log(element.correo);
         element.validEmail = this.verifyValidEmail(element.correo);
-        console.log(element);
+        //console.log(element);
       }
 
     }
