@@ -8,11 +8,7 @@
     font-weight: bold;
 }
 
-.galeria-evidencias {
-    display: grid;
-    grid-gap: 20px;
-    grid-template-columns: repeat(3, 1fr);
-}
+
 
 .table-rounded {
     border-radius: 5pt;

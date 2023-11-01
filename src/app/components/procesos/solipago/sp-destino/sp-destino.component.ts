@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { I, co } from '@fullcalendar/core/internal-common';
-import { Observable, map } from 'rxjs';
+import { Observable, forkJoin, map } from 'rxjs';
 import { DestinoPagoServiceService } from 'src/app/services/comunicationAPI/seguridad/destino-pago-service.service';
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -18,7 +18,7 @@ interface ItemDestino {
   dtTipoSol: number;
   dtNoSol: number;
   dtIdItem: number;
-  dtEmpleado: number;
+  dtEmpleado: string;
   dtSector: number;
   dtObservaciones: string;
 }
@@ -60,7 +60,7 @@ export class SpDestinoComponent implements OnInit {
 
   //variables para guardar los datos del destino
   sectorDestino: number = 9999;
-  empleadoDestino!: number;
+  empleadoDestino!: string;
   observacionesDestino!: string;
 
   showExito: boolean = false;
@@ -73,12 +73,12 @@ export class SpDestinoComponent implements OnInit {
     private uploadService: UploadFileService,
     private destinoService: DestinoPagoServiceService,
     private globalService: GlobalService,
-    private cabPago: SolipagoComponent
-  ) { }
+    private cabPago: SolipagoComponent,
+    private sectorServices: SectoresService) { }
 
   ngOnInit(): void {
     //console.log('Detalles recibidos:', this.detalles);
-    
+
     /*this.sectoresService.getSectoresList().subscribe(
       (data: any[]) => {
         this.sectores = data;
@@ -88,7 +88,25 @@ export class SpDestinoComponent implements OnInit {
       }
     );*/
     setTimeout(() => {
-      
+
+      this.empleadoService.getEmpleadosList().subscribe(
+        (data: any[]) => {
+          this.empleadosEv = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+
+      this.sectoresService.getSectoresList().subscribe(
+        (data: any[]) => {
+          this.sectorEv = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+
       this.empleadoService.getEmpleadobyArea(this.areaSol).subscribe(
         (data: any[]) => {
           this.empleados = data;
@@ -98,7 +116,14 @@ export class SpDestinoComponent implements OnInit {
         }
       );
     }, 100);
+
+    setTimeout(() => {
+      this.viewFile();
+    }, 500);
   }
+
+  empleadosEv: any[] = [];
+  sectorEv: any[] = [];
 
   //busca los empleados segun su area
   searchEmpleado(): void {
@@ -131,12 +156,12 @@ export class SpDestinoComponent implements OnInit {
           ? empleadoSeleccionado.empleadoIdNomina
           : 'No se ha encontrado el inspector';
       } else {
-        this.empleadoDestino = 0;
+        this.empleadoDestino = 'XXXXXX';
       }
     }, 500); // Retraso de 1 segundo (ajusta el valor según tus necesidades)
   }
 
-  searchSectores(){
+  searchSectores() {
     this.sectoresService.getSectoresList().subscribe(
       (data: any[]) => {
         this.sectores = data;
@@ -173,7 +198,7 @@ export class SpDestinoComponent implements OnInit {
 
     //limpiar las variables
     this.sectorDestino = 9999;
-    this.empleadoDestino = 0;
+    this.empleadoDestino = 'XXXXXX';
     this.observacionesDestino = '';
     this.empleadoBusq = '';
     this.idItem = 0;
@@ -207,7 +232,7 @@ export class SpDestinoComponent implements OnInit {
     //limpiar las variables usadas en el modal del destino y la variable idItem
     this.deleteArchivoModal(this.idItem);
     this.sectorDestino = 9999;
-    this.empleadoDestino = 0;
+    this.empleadoDestino = 'XXXXXX';
     this.observacionesDestino = '';
     this.empleadoBusq = '';
     this.archivo = null as any;
@@ -220,7 +245,7 @@ export class SpDestinoComponent implements OnInit {
       if (this.archivos[i].evIdDetalle === idDlt) {
         //console.log('Archivo a eliminar:', this.archivos[i]);
         this.archivos.splice(i, 1);
-       
+
       }
     }
   }
@@ -276,7 +301,7 @@ export class SpDestinoComponent implements OnInit {
         if (arch.evIdDetalle === item.dtIdItem) {
           //guardar el archivo en el servidor
 
-          
+
           this.sendfile(arch.evArchivo, item.dtIdItem.toString()).subscribe(
             (url) => {
               this.urlArchivo = url;
@@ -298,7 +323,7 @@ export class SpDestinoComponent implements OnInit {
                   //console.log("Exito: ",res);
                   this.showExito = true;
                   this.msjExito = 'Se ha agregado el destino correctamente.';
-  
+
                   setTimeout(() => {
                     this.showExito = false;
                     this.msjExito = '';
@@ -308,7 +333,7 @@ export class SpDestinoComponent implements OnInit {
                   console.log("Error: ", error);
                   this.showError = true;
                   this.msjError = 'No se ha podido agregar el destino, intente nuevamente.';
-  
+
                   setTimeout(() => {
                     this.showError = false;
                     this.msjError = '';
@@ -318,20 +343,20 @@ export class SpDestinoComponent implements OnInit {
 
               this.urlArchivo = '';
             }
-            
-            
+
+
           );
-          
-          
-          
+
+
+
         }
 
       });
     });
     this.cabPago.setDestino = true;
     this.archivos = [];
-}
-  
+  }
+
 
 
 
@@ -350,9 +375,41 @@ export class SpDestinoComponent implements OnInit {
       );
   }
 
+  evidenciasConsultadas: any[] = [];
   //visualizar los archivos registrados
   viewFile() {
-
+    this.destinoService.getEvidenciasBySolicitud(this.tipoSol, this.noSol).subscribe(
+      (data: any[]) => {
+        this.evidenciasConsultadas = data;
+        this.setImages();
+        console.log("Evidencias: ", this.evidenciasConsultadas);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
+
+  setImages() {
+    const observables = this.evidenciasConsultadas.map(ev => this.destinoService.getImage(ev.destPagEvidencia));
+  
+    forkJoin(observables).subscribe(
+      (data: any[]) => {
+        //console.log('Imágenes obtenidas:', data);
+        data.forEach((blob, index) => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64data = reader.result as string;
+            this.evidenciasConsultadas[index].image = base64data;
+          };
+          reader.readAsDataURL(blob);
+        });
+      },
+      error => {
+        console.log('Error al obtener las imágenes:', error);
+      }
+    );
+  }
+  
 
 }
