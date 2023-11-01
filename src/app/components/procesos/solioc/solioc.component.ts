@@ -162,6 +162,7 @@ export class SoliocComponent implements OnInit {
  
    fechaMin: string = '';
    fechaMax: string = '';
+   fechaMinPlazo: string = '';
 
   constructor(
     private empService: EmpleadosService,
@@ -254,7 +255,10 @@ export class SoliocComponent implements OnInit {
       this.editSolicitud();
     }
   }
-
+  Validacionfecha():void{
+    const fechpl=this.cab_plazo;
+    this.fechaMinPlazo=fechpl.toString();
+  }
   showDoc: boolean = false;
   async setNoSolDocumentacion(){
     this.sharedNoSol = await this.getLastSol();

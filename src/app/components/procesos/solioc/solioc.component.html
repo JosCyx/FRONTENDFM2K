@@ -306,6 +306,7 @@
           <div class="input-group mb-3">
             <label class="input-group-text">Plazo de entrega*:</label>
             <input
+            (change)="Validacionfecha()"
               class="form-control"
               type="date"
               for="plazoentrega"
@@ -317,7 +318,7 @@
               class="form-control"
               type="date"
               for="fechamaxima"
-              [max]="fechaMax" [min]="fechaMin"
+              [max]="fechaMax" [min]="fechaMinPlazo"
               [(ngModel)]="cab_fechaMax"
             />
           </div>
