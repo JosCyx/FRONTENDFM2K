@@ -166,6 +166,7 @@ export class SolicotiComponent implements OnInit {
 
   fechaMin: string = '';
   fechaMax: string = '';
+  fechaMinPlazo: string = '';
 
 
   constructor(private router: Router,
@@ -253,6 +254,10 @@ export class SolicotiComponent implements OnInit {
       this.editSolicitud();
     }
 
+  }
+  Validacionfecha():void{
+    const fechpl=this.cab_plazo;
+    this.fechaMinPlazo=fechpl.toString();
   }
 
   //guarda los datos de los empleados en una lista local dependiendo del tamaño de la variable de busqueda, esto se controla con un keyup

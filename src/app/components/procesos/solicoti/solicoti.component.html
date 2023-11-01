@@ -195,14 +195,14 @@
                     <div class="input-group mb-3">
                         <label class="input-group-text">Plazo de entrega*:</label>
                         <input class="form-control" type="date" for="plazoentrega" [max]="fechaMax" [min]="fechaMin"
-                            [(ngModel)]="cab_plazo" />
+                            [(ngModel)]="cab_plazo" (change)="Validacionfecha()" />
                         <label class="input-group-text">Fecha máxima de entrega*:</label>
-                        <input class="form-control" type="date" for="fechamaxima" [max]="fechaMax" [min]="fechaMin"
-                            [(ngModel)]="cab_fechaMax" />
+                        <input class="form-control" type="date" for="fechamaxima" [max]="fechaMax" [min]="fechaMinPlazo"
+                            [(ngModel)]="cab_fechaMax"   />
                     </div>
                     <div class="input-group">
                         <label class="input-group-text">Inspector:</label>
-                        <input type="text"   maxlength="100" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
+                        <input type="text"  maxlength="100" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
                             (keyup)="searchInspector()" (keydown)="verificartexto()" (input)="onInputChanged()"
                             placeholder="Ingrese el nombre del inspector" />
                         <datalist id="inspectores">
