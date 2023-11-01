@@ -180,12 +180,12 @@ export class SolipagoComponent implements OnInit {
     }
   }
   validarNumero(event: Event): void {
-    const patron: RegExp=/^[0-9]*$/;
+    const patron: RegExp=/([0-9])\w+/g;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
 
     if (!patron.test(valorIngresado)) {
-      inputElement.value = '1'; // Establecer el valor mínimo si es menor que 1
+      inputElement.value = '0'; // Establecer el valor mínimo si es menor que 1
     }
   }
   
