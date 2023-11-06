@@ -236,12 +236,20 @@ export class CotProveedoresComponent implements OnInit {
   }
 
   nextPage(): void {
-    this.page++;
+    console.log("nextPage", this.page);
+    if(this.proveedoresList.length <= 10 ){
+      this.page=1;
+    }else if(this.page >= this.proveedoresList.length/10){
+      this.page=this.page;
+    }else{
+      this.page++
+    }
   }
 
   //decrementa el valor de la variable que controla la pagina actual que se muestra
   prevPage(): void {
     if (this.page > 1) {
+      console.log("prevPage", this.page);
       this.page--; // Disminuir currentPage en uno si no está en la primera página
     }
   }
