@@ -168,7 +168,7 @@ export class CotProveedoresComponent implements OnInit {
 
   searchProveedor() {
     this.page = 1;
-    if (this.terminoBusq == '') {
+    if (this.terminoBusq.trim() == '') {
       this.proveedoresList = [];
       this.isSearched = false;
 
