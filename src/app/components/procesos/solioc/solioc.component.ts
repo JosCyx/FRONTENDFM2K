@@ -203,12 +203,12 @@ export class SoliocComponent implements OnInit {
   }
 
   validarNumero(event: Event): void {
-    const patron: RegExp=/([0-9])\w+/g;
+    const patron: RegExp=/([0-9])*$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
 
     if (!patron.test(valorIngresado)) {
-      inputElement.value = '0'; // Establecer el valor mínimo si es menor que 1
+      inputElement.value = ''; // Establecer el valor mínimo si es menor que 1
     }
   }
 
