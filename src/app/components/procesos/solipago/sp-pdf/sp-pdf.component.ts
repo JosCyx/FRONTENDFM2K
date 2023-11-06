@@ -129,9 +129,7 @@ export class SpPdfComponent implements OnInit {
                     [
                       { text: 'FECHA DE FACTURA', style: 'tableHeader' },
                       {
-                        text: this.formatDateToSpanish(
-                          new Date(this.datosSP.cabecera.cabPagoFechaFactura)
-                        ),
+                        text: (this.datosSP.cabecera.cabPagoFechaFactura=format(parseISO(this.datosSP.cabecera.cabPagoFechaFactura),'yyyy-MM-dd'))
                       },
                       { text: 'NO DE FACTURA ', style: 'tableHeader' },
                       {
