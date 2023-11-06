@@ -59,8 +59,8 @@ export class UsuariosService {
     return this.http.post(this.APIUrl + '/Usuarios', data, { headers: headers });
   }
 
-  editUsuario(idNomina: number,data: any) {
+  editUsuario(idNomina: number,UsId:string,data: any) {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.put(this.APIUrl + `/Usuarios/${idNomina}`, data, { headers: headers });
+    return this.http.put(this.APIUrl + `/Usuarios/${idNomina}?UsId=${UsId}`, data, { headers: headers });
   }
 }

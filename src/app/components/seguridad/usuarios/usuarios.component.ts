@@ -313,7 +313,7 @@ export class UsuariosComponent {
           this.CalcularFechaFin(new Date())
         ),
       };
-      this.usuarioService.editUsuario(this.newNomina, editData).subscribe(
+      this.usuarioService.editUsuario(this.newNomina, this.newUserId,editData).subscribe(
         (response) => {
           this.showmsj = true;
           this.msjExito = 'Usuario editado con exito';
