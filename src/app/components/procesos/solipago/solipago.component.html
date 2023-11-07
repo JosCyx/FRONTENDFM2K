@@ -115,7 +115,7 @@
               <input
                 type="date"
                 class="form-control"
-                [max]="fechaMax" [min]="fechaMin"
+                [max]="fechaMax" 
                 [(ngModel)]="cab_fechafactura"
               />
             </div>
@@ -383,12 +383,16 @@
             />
           </div>
           <div class="input-group mb-3">
-            <label class="input-group-text">Cancelación de orden :</label>
-            <select class="form-select" [(ngModel)]="cab_cancelarOrden">
-              <option disabled selected>Seleccione un opcion....</option>
+            <label class="input-group-text">Cancelación de orden:</label>
+            <select class="form-select" [(ngModel)]="cab_cancelarOrden" (change)="setCancelacionOrden(cab_cancelarOrden)">
+              <option disabled selected value="">Seleccione un opcion....</option>
               <option value="TTL">TOTAL</option>
               <option value="PCL">PARCIAL</option>
             </select>
+          </div>
+          <div class="input-group mb-3" *ngIf="showCancelacion">
+            <label class="input-group-text">Comentarios de orden:</label>
+            <textarea type="text" class="form-control" cols="2" [(ngModel)]="cab_observCancelacion"></textarea>
           </div>
           <div class="text-end">
             <p class="tip">*Campos obligatorios</p>
@@ -640,7 +644,7 @@
                 />
               </div>
               <div class="input-group col">
-                <label class="input-group-text">Traking:</label>
+                <label class="input-group-text">Tracking:</label>
                 <ng-container *ngFor="let nvTRK of nivelRut$ | async">
                   <input
                     *ngIf="nvTRK.nivel === cabecera.cabPagoEstadoTrack"
@@ -834,16 +838,22 @@
             />
           </div>
           <div class="input-group mb-3">
-            <label class="input-group-text">Cancelación de orden :</label>
+            <label class="input-group-text">Cancelación de orden:</label>
             <select
+              (change)="setCancelacionOrden(cabecera.cabPagoCancelacionOrden)"
               class="form-select"
               [(ngModel)]="cabecera.cabPagoCancelacionOrden"
               [disabled]="cabecera.cabPagoEstadoTrack > 10"
             >
-              <option disabled selected>Seleccione un opcion....</option>
+              <option disabled selected value="">Seleccione un opcion....</option>
               <option value="TTL">TOTAL</option>
               <option value="PCL">PARCIAL</option>
             </select>
+          </div>
+          <div class="input-group mb-3" *ngIf="showCancelacion">
+            <label class="input-group-text">Comentarios de orden:</label>
+            <textarea type="text" class="form-control" cols="2" [(ngModel)]="cabecera.cabPagoObservCancelacion" 
+            [disabled]="cabecera.cabPagoEstadoTrack > 10"></textarea>
           </div>
           <div class="text-end">
             <app-sp-pdf  ></app-sp-pdf>

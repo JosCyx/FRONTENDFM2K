@@ -20,11 +20,12 @@ export class CabeceraPago {
   public cabPagoValorTotalAut: number;
   public cabPagoReceptor: string;
   public cabPagoFechaInspeccion: string;
-  public cabPagoCancelacionOrden: string | null;
+  public cabPagoCancelacionOrden: string;
   public cabPagoEstado: string;
   public cabPagoEstadoTrack: number;
   public cabPagoIdEmisor: string;
   public cabPagoApprovedBy: string;
+  public cabPagoObservCancelacion: string;
 
   constructor(data: any) {
     this.cabPagoID = data.cabPagoID;
@@ -53,5 +54,6 @@ export class CabeceraPago {
     this.cabPagoEstadoTrack = data.cabPagoEstadoTrack;
     this.cabPagoIdEmisor = data.cabPagoIdEmisor;
     this.cabPagoApprovedBy = data.cabPagoApprovedBy;
+    this.cabPagoObservCancelacion = data.cabPagoObservCancelacion;
   }
 }

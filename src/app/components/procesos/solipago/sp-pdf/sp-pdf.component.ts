@@ -71,7 +71,7 @@ export class SpPdfComponent implements OnInit {
       this.cabPagoService.getSolPagobyId(this.solID).subscribe({
         next: (response) => {
           this.datosSP = response;
-          console.log("Cambios esto son",this.datosSP);
+          //console.log("Cambios esto son",this.datosSP);
           this.traerEmpleado();
           this.traerRecibe();
           this.TraerArea();
@@ -79,7 +79,7 @@ export class SpPdfComponent implements OnInit {
           this.retornarTabla();
           this.Aprobado();
           //console.log('esta es mi respuesta', this.datosSP);
-
+          
           const PDFSP: any = {
             content: [
               {
@@ -270,7 +270,7 @@ export class SpPdfComponent implements OnInit {
                     ],
                     [
                       {
-                        text: 'CANCELA ORDEN',
+                        text: 'CANCELACION DE ORDEN',
                         style: 'tableHeader',
                         colSpan: 2,
                       },
@@ -279,6 +279,21 @@ export class SpPdfComponent implements OnInit {
                         text: this.CancelarOrden(
                           this.datosSP.cabecera.cabPagoCancelacionOrden
                         ),
+                        colSpan: 4,
+                      },
+                      '',
+                      '',
+                      '',
+                    ],
+                    [
+                      {
+                        text: 'COMENTARIOS DE CANCELACION',
+                        style: 'tableHeader',
+                        colSpan: 2,
+                      },
+                      '',
+                      {
+                        text: this.datosSP.cabecera.cabPagoObservCancelacion,
                         colSpan: 4,
                       },
                       '',
@@ -445,7 +460,7 @@ export class SpPdfComponent implements OnInit {
   }
   Aprobado(){
     if (this.datosSP.cabecera.cabPagoApprovedBy === 'XXXXXX' ) {
-      console.log('entro', this.datosSP.cabecera.cabPagoApprovedBy);
+      //console.log('entro', this.datosSP.cabecera.cabPagoApprovedBy);
       this.datosSP.cabecera.cabPagoApprovedBy = 'NIVEL NO ALCANZADO';
     } else {
       for (const iterator of this.empleadoedit) {
@@ -485,4 +500,6 @@ export class SpPdfComponent implements OnInit {
       this.copiaImgen = dataurl;
     });
   }
+
+
 }
