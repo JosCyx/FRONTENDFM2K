@@ -836,6 +836,7 @@ export class SolicotiComponent implements OnInit {
     const index=this.itemSectorList.findIndex(item=>item.item_id===this.itemViewid);
     if(index!==-1){
       this.itemSectorList.splice(index,1);
+      this.reorderAndSaveItemView();
       this.calculardetalleview();
       this.calcularIdItemView();
     }
@@ -860,6 +861,20 @@ export class SolicotiComponent implements OnInit {
 
         }
       }
+
+    }
+  }
+
+  async reorderAndSaveItemView(){
+    const itemmap :{[key:number]:number}={};
+
+    for(const item of this.itemSectorList){
+      const det = item.det_id;
+      if(!itemmap[det]){
+        itemmap[det]=1;
+      }
+      item.item_id=itemmap[det];
+      itemmap[det]++;
 
     }
   }
@@ -1159,7 +1174,7 @@ export class SolicotiComponent implements OnInit {
 
   calcularCantDetalle() {
     for (let det of this.detalle) {
-      if (det.solCotIdDetalle === this.idDetEdit) {
+      if (det.solCotIdDetalle === this.idDetEdit) { 
         det.solCotCantidadTotal = 0; // Reiniciar la cantidad total del detalle
         for (let itm of this.item) {
           if (itm.itmIdDetalle === det.solCotIdDetalle) {
