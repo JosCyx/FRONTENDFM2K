@@ -178,7 +178,6 @@ export class SpDestinoComponent implements OnInit {
     this.empleadoBusq = '';
     this.idItem = 0;
     this.archivo = null as any;
-
     this.checkDestinos();
     this.resetInputFile();
   }
@@ -213,6 +212,10 @@ export class SpDestinoComponent implements OnInit {
     this.archivo = null as any;
     this.resetInputFile();
     this.idItem = 0;
+    this.detalles.forEach((det) => {
+        det.destinoDetalle = false;
+  
+    });
   }
 
   deleteArchivoModal(idDlt: number) {
