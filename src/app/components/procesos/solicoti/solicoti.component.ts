@@ -786,7 +786,6 @@ export class SolicotiComponent implements OnInit {
     this.item_cant = 1;
     this.item_sector = 0;
   }
-
   calcularSumaItems() {
     this.det_cantidad = 0;
     for (let itm of this.tmpItemSect) {
@@ -795,10 +794,6 @@ export class SolicotiComponent implements OnInit {
       }
     }
   }
-
-
-  //agregar la opcion para eliminar los items de los detalles, lista ItemSectorList
-
   //Icrementa el valor Item 
   incrementItemID() {
     //aumemta eL valor de los ITEM
@@ -830,6 +825,43 @@ export class SolicotiComponent implements OnInit {
     this.incrementItemID();
 
 
+  }
+  itemViewid!:number;
+  deleteview(id:number){
+    this.itemViewid=id;
+    console.log("fsdf",this.itemViewid);
+  }
+  deleteViewSave(){
+    console.log("listas",this.itemSectorList)
+    const index=this.itemSectorList.findIndex(item=>item.item_id===this.itemViewid);
+    if(index!==-1){
+      this.itemSectorList.splice(index,1);
+      this.calculardetalleview();
+      this.calcularIdItemView();
+    }
+  }
+  calcularIdItemView(){
+    for(let item of this.itemSectorList){
+      if(item.det_id === this.det_id){
+        this.item_id = item.item_id + 1;
+      }
+    }
+  }
+  calculardetalleview(){
+    console.log("este es mi lista de detalle",this.detalleList);
+    for(let det of this.itemSectorList){
+      if(det.det_id === this.det_id){
+        console.log("entre crack")
+        det.item_cant = 0;
+        for(let it of this.itemSectorList){
+          if(it.det_id === this.det_id){
+            det.item_cant += it.item_cant;
+          }
+
+        }
+      }
+
+    }
   }
 
 
