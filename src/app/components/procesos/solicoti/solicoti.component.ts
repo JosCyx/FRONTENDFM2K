@@ -826,21 +826,33 @@ export class SolicotiComponent implements OnInit {
 
 
   }
+
   itemViewid!:number;
-  deleteview(id:number){
+  itemDetalleView!:number;
+  deleteview(id:number, detalle:number){
     this.itemViewid=id;
-    console.log("fsdf",this.itemViewid);
+    this.itemDetalleView=detalle;
+    //console.log("fsdf",this.itemViewid);
   }
+
   deleteViewSave(){
     console.log("listas",this.itemSectorList)
-    const index=this.itemSectorList.findIndex(item=>item.item_id===this.itemViewid);
+    const index = this.itemSectorList.findIndex(item=>item.item_id===this.itemViewid && item.det_id===this.itemDetalleView);
     if(index!==-1){
+      //elimina el elemento que se ha seleccionado
       this.itemSectorList.splice(index,1);
+
+      //reordena la lista para evitar problemas con el id
       this.reorderAndSaveItemView();
+
+      //calcula la cantidad total de los items de todos los detalles
       this.calculardetalleview();
+
+      //calcula el id del item a agregar (no se utiliza en esta parte)
       this.calcularIdItemView();
     }
   }
+
   calcularIdItemView(){
     for(let item of this.itemSectorList){
       if(item.det_id === this.det_id){
