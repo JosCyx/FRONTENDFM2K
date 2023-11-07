@@ -19,6 +19,7 @@ import { SPDocumentacionComponent } from './sp-documentacion/sp-documentacion.co
 import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
 import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { SpDestinoComponent } from './sp-destino/sp-destino.component';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -112,6 +113,7 @@ export class SolipagoComponent implements OnInit {
   proveedores: any[] = [];
   //variables compartidas con los demas componentes
   @ViewChild(SPDocumentacionComponent) spDocumentacion!: SPDocumentacionComponent;
+  @ViewChild(SpDestinoComponent) spDestino!: SpDestinoComponent;
   @Input() sharedTipoSol: number = 3;
   @Input() sharedNoSol!: number;
   estadoSol: string = '10';
@@ -180,12 +182,12 @@ export class SolipagoComponent implements OnInit {
     }
   }
   validarNumero(event: Event): void {
-    const patron: RegExp=/([0-9])\w+/g;
+    const patron: RegExp=/([0-9])*$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
 
     if (!patron.test(valorIngresado)) {
-      inputElement.value = '0'; // Establecer el valor mínimo si es menor que 1
+      inputElement.value = ''; // Establecer el valor mínimo si es menor que 1
     }
   }
   
@@ -213,8 +215,10 @@ export class SolipagoComponent implements OnInit {
     if (this.changeview == 'editar') {
       this.editSolicitud();
     }
-
-
+  }
+  cancelarDes(){
+    console.log("cancelar destino")
+    this.spDestino.cancelarDestino();
   }
   verificartexto(): void {
     const patron: RegExp = /^[a-zA-Z\s]*$/;
