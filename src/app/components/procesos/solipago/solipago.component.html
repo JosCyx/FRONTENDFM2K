@@ -129,7 +129,7 @@
                 (ngModelChange)="limpiarCampos()"
               >
                 <option value="nombre" selected>Proveedor</option>
-                <option value="ruc">Ruc</option>
+                <option value="ruc" >Ruc</option>
               </select>
               <!--  -->
               <input
@@ -148,7 +148,7 @@
                 maxlength="15"
                 class="form-control"
                 list="proveedor"
-                placeholder="Ingrese el RUC del proveedor"
+                placeholder="Ingrese el RUC"
               />
               <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'">
                 <ng-container *ngFor="let prov of proveedores">
@@ -172,6 +172,8 @@
                 type="text"
                 class="form-control"
                 maxlength="15"
+                disabled
+                placeholder="-----"
                 *ngIf="tipobusqueda == 'nombre'"
                 [(ngModel)]="cab_rucproveedor"
               />
@@ -179,6 +181,8 @@
                 type="text "
                 class="form-control"
                 *ngIf="tipobusqueda == 'ruc'"
+                disabled
+                placeholder="-----"
                 [(ngModel)]="cab_proveedor"
               />
             </div>
@@ -208,7 +212,7 @@
           <div class="tabs-edit" *ngIf="destinoIO">
             <ul class="nav nav-tabs">
                 <li class="nav-item nav-items">
-                    <a class="nav-link" [ngClass]="{'active': showItDt === 'items'}" (click)="setID('items')">Items</a>
+                    <a class="nav-link" [ngClass]="{'active': showItDt === 'items'}" (click)="setID('items')" (click)="cancelarDes()" >Items</a>
                 </li>
                 <li class="nav-item nav-items">
                   <a class="nav-link" [ngClass]="{'active': showItDt === 'destino'}" (click)="setID('destino')">Destino</a>

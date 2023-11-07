@@ -150,7 +150,6 @@ export class RolesTransacComponent implements OnInit {
     this.rolTservice.getTransaccionesbyRol(this.rolAsignConsu).subscribe({
       next: (response) => {
         this.rolConsuList = response;
-        console.log('rolConsuList', this.rolConsuList);
       },
       error: (error) => {
         console.log(error);

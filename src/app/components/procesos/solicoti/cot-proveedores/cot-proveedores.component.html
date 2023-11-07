@@ -345,7 +345,7 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <form [formGroup]="dataForm" (ngSubmit)="addProveedor()">
+                <form [formGroup]="dataForm" >
                     <div class="row mb-2">
                         <div class="input-group col">
                             <label class="input-group-text" for="ruc">Ruc*:</label>
@@ -446,13 +446,16 @@
                         <p class="tip">*Campos obligatorios</p>
                     </div>
                 </form>
+                <button type="button" class="btn btn-success"  [disabled]="!FormularioVacio()"  (click)="addProveedor()"  #miModal>
+                    Agregar Proveedor
+                </button>
+            </div>
+            <div *ngIf="showmsjerror" class="alert alert-danger text-center" style="width: 50%; margin: 0 auto;"  role="alert">
+                <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="addProveedor()">
-                    Confirmar
-                </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="clearNewPrv()">
-                    Cancelar
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="clearNewPrv()">
+                    Cerrar
                 </button>
             </div>
         </div>

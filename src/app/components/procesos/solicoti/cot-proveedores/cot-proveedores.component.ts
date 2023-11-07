@@ -36,6 +36,7 @@ export class CotProveedoresComponent implements OnInit {
   @Input() noSol: number = 0;
   @Input() viewElement!: boolean;
   @Input() estadoSol!: string;
+  @ViewChild('miModal') miModal: any;
   userId: string = this.coockieService.get('userIdNomina');
 
   //variables para controlar comportamiento de la pagina
@@ -168,7 +169,7 @@ export class CotProveedoresComponent implements OnInit {
 
   searchProveedor() {
     this.page = 1;
-    if (this.terminoBusq == '') {
+    if (this.terminoBusq.trim() == '') {
       this.proveedoresList = [];
       this.isSearched = false;
 
@@ -236,12 +237,20 @@ export class CotProveedoresComponent implements OnInit {
   }
 
   nextPage(): void {
-    this.page++;
+    console.log("nextPage", this.page);
+    if(this.proveedoresList.length <= 10 ){
+      this.page=1;
+    }else if(this.page >= this.proveedoresList.length/10){
+      this.page=this.page;
+    }else{
+      this.page++
+    }
   }
 
   //decrementa el valor de la variable que controla la pagina actual que se muestra
   prevPage(): void {
     if (this.page > 1) {
+      console.log("prevPage", this.page);
       this.page--; // Disminuir currentPage en uno si no está en la primera página
     }
   }
@@ -335,15 +344,30 @@ export class CotProveedoresComponent implements OnInit {
       }
       //console.log(this.dataForm.value)
       this.proveedorListSelected.push(newPrv);
-
+      this.miModal.nativeElement.modal('hide');
       //limpiar el formulario
       this.clearNewPrv();
-
-
     } else {
+      this.showmsjerror=true
+      this.msjError = 'Error, no se han completado todos los datos necesarios.';
+      setTimeout(() => {
+        this.showmsjerror=false
+        this.msjError = '';
+      }, 2500)
       // Muestra una alerta o mensaje de error al usuario indicando que los campos deben llenarse.
-      alert('Error, no se han completado todos los datos necesarios.');
     }
+  }
+
+  FormularioVacio(): boolean {
+    const formControls: { [key: string]: any } = this.dataForm.controls;
+    let formularioCompleto = true;
+
+    Object.keys(formControls).forEach(controlName => {
+      if (formControls[controlName].value === '' || formControls[controlName].value === null ) {
+        formularioCompleto = false;
+      }
+    });
+    return formularioCompleto;
   }
 
   clearNewPrv() {
