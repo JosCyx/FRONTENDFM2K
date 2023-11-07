@@ -207,7 +207,7 @@ export class SolicotiComponent implements OnInit {
 
   validarNumero(event: Event): void {
     ///([0-9])\w+/g
-    const patron: RegExp=/([0-9])*$/;
+    const patron: RegExp=/(^[0-9])+$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
 
@@ -786,7 +786,6 @@ export class SolicotiComponent implements OnInit {
     this.item_cant = 1;
     this.item_sector = 0;
   }
-
   calcularSumaItems() {
     this.det_cantidad = 0;
     for (let itm of this.tmpItemSect) {
@@ -795,10 +794,6 @@ export class SolicotiComponent implements OnInit {
       }
     }
   }
-
-
-  //agregar la opcion para eliminar los items de los detalles, lista ItemSectorList
-
   //Icrementa el valor Item 
   incrementItemID() {
     //aumemta eL valor de los ITEM
@@ -830,6 +825,58 @@ export class SolicotiComponent implements OnInit {
     this.incrementItemID();
 
 
+  }
+  itemViewid!:number;
+  deleteview(id:number){
+    this.itemViewid=id;
+    console.log("fsdf",this.itemViewid);
+  }
+  deleteViewSave(){
+    console.log("listas",this.itemSectorList)
+    const index=this.itemSectorList.findIndex(item=>item.item_id===this.itemViewid);
+    if(index!==-1){
+      this.itemSectorList.splice(index,1);
+      this.reorderAndSaveItemView();
+      this.calculardetalleview();
+      this.calcularIdItemView();
+    }
+  }
+  calcularIdItemView(){
+    for(let item of this.itemSectorList){
+      if(item.det_id === this.det_id){
+        this.item_id = item.item_id + 1;
+      }
+    }
+  }
+  calculardetalleview(){
+    console.log("este es mi lista de detalle",this.detalleList);
+    for(let det of this.itemSectorList){
+      if(det.det_id === this.det_id){
+        console.log("entre crack")
+        det.item_cant = 0;
+        for(let it of this.itemSectorList){
+          if(it.det_id === this.det_id){
+            det.item_cant += it.item_cant;
+          }
+
+        }
+      }
+
+    }
+  }
+
+  async reorderAndSaveItemView(){
+    const itemmap :{[key:number]:number}={};
+
+    for(const item of this.itemSectorList){
+      const det = item.det_id;
+      if(!itemmap[det]){
+        itemmap[det]=1;
+      }
+      item.item_id=itemmap[det];
+      itemmap[det]++;
+
+    }
   }
 
 
@@ -1127,7 +1174,7 @@ export class SolicotiComponent implements OnInit {
 
   calcularCantDetalle() {
     for (let det of this.detalle) {
-      if (det.solCotIdDetalle === this.idDetEdit) {
+      if (det.solCotIdDetalle === this.idDetEdit) { 
         det.solCotCantidadTotal = 0; // Reiniciar la cantidad total del detalle
         for (let itm of this.item) {
           if (itm.itmIdDetalle === det.solCotIdDetalle) {
