@@ -207,7 +207,7 @@ export class SolicotiComponent implements OnInit {
 
   validarNumero(event: Event): void {
     ///([0-9])\w+/g
-    const patron: RegExp=/([0-9])*$/;
+    const patron: RegExp=/(^[0-9])+$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
 
