@@ -206,13 +206,11 @@ export class SolicotiComponent implements OnInit {
   }
 
   validarNumero(event: Event): void {
-    ///([0-9])\w+/g
-    const patron: RegExp=/(^[0-9])+$/;
+    const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
-
     if (!patron.test(valorIngresado)) {
-      inputElement.value = ''; // Establecer el valor mínimo si es menor que 1
+      inputElement.value = inputElement.defaultValue; 
     }
   }
 
