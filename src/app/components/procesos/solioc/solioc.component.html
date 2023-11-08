@@ -699,9 +699,8 @@
                     (click)="selectDet(det)"
                     data-toggle="modal"
                     data-target="#itemsectorEdit"
-                    [disabled]="cabecera.cabSolOCEstadoTracking > 10"
                   >
-                    Editar
+                  Ver Desglose
                   </button>
                 </td>
                 <td class="align-middle">
@@ -724,7 +723,7 @@
                     (click)="confDeleteDet(det.solCotID, det.solCotIdDetalle)"
                     data-toggle="modal"
                     data-target="#dltDetSaved"
-                    [disabled]="cabecera.cabSolOCEstadoTracking > 10"
+                    *ngIf="cabecera.cabSolOCEstadoTracking == 10"
                   >
                     <i class="bi bi-x-circle"></i>
                   </button>
@@ -744,7 +743,7 @@
                 </td>
                 <td class="align-middle">
                   <select class="form-control" [(ngModel)]="det_presupuesto">
-                      <option value="0" selected disabled>Presupuesto</option>
+                      <option value="0" selected disabled>presupuesto...</option>
                       <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                           {{prep.prespNombre}}</option>
                   </select>
@@ -1188,7 +1187,7 @@
                     {{ sect.sectNombre }}
                   </td>
                 </ng-container>
-                <td>
+                <td *ngIf="cabecera.cabSolOCEstadoTracking <= 10">
                   <button
                     class="btn text-danger"
                     data-toggle="modal"
@@ -1202,7 +1201,7 @@
                 </td>
               </ng-container>
             </tr>
-            <tr>
+            <tr *ngIf="cabecera.cabSolOCEstadoTracking <= 10">
               <td class="align-middle">{{ det_id_edit }}</td>
               <td class="align-middle">
                 <input
@@ -1251,7 +1250,7 @@
                 </div>
               </td>
             </tr>
-            <tr>
+            <tr *ngIf="cabecera.cabSolOCEstadoTracking <= 10">
               <td colspan="6" class="align-middle text-end">
                 <button class="btn btn-success" (click)="addNewItem()">
                   <i class="bi bi-check"></i>
