@@ -181,13 +181,27 @@ export class SolipagoComponent implements OnInit {
 
     }
   }
-  validarNumero(event: Event): void {
-    const patron: RegExp=/(^[0-9])+$/;
+  ValidarcantidadRe(event: Event):void{
+    const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
+    console.log("este son mis valores digitados ",valorIngresado);
 
     if (!patron.test(valorIngresado)) {
-      inputElement.value = ''; // Establecer el valor mínimo si es menor que 1
+      console.log("entro ");
+      inputElement.value = inputElement.defaultValue; 
+    }
+
+  }
+  validarNumero(event: Event): void {
+    const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
+    const inputElement = event.target as HTMLInputElement;
+    const valorIngresado = inputElement.value;
+    console.log("este son mis valores digitados ",valorIngresado);
+
+    if (!patron.test(valorIngresado)) {
+      console.log("entro ");
+      inputElement.value = inputElement.defaultValue; 
     }
   }
   
