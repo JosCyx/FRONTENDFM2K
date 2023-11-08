@@ -204,12 +204,16 @@ export class SolicotiComponent implements OnInit {
       this.noAutorizar();
     });*/
   }
+  
 
   validarNumero(event: Event): void {
-    const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
+    const patron: RegExp=/^[0-9]+$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
+    console.log("este son mis valores digitados ",valorIngresado);
+
     if (!patron.test(valorIngresado)) {
+      console.log("entro ");
       inputElement.value = inputElement.defaultValue; 
     }
   }

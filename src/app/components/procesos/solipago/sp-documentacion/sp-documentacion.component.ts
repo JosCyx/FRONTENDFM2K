@@ -154,7 +154,7 @@ export class SPDocumentacionComponent implements OnInit {
     } catch (error) {
       console.log('Error en el proceso de GetfileView', error);
     } finally {
-      console.log("Finalizando el bloque try-catch-finally");
+      console.log("Finalizado");
     }
   }
 

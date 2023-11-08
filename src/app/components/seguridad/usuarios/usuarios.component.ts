@@ -147,14 +147,6 @@ export class UsuariosComponent {
   nextPage(): void {
     console.log('nextPage', this.currentPage);
     if (this.listUsers.length <= 10) {
-      console.log(
-        'nextPage',
-        this.currentPage,
-        ' ',
-        this.listUsers.length / 10,
-        '',
-        this.listUsers
-      );
       this.currentPage = 1;
     } else if (this.currentPage >= this.listUsers.length / 10) {
       this.currentPage = this.currentPage;
