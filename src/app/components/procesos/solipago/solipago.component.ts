@@ -88,6 +88,7 @@ export class SolipagoComponent implements OnInit {
   cab_recibe!: string;
   cab_fechaInspeccion!: Date;
   cab_cancelarOrden!: string;
+  cab_observCancelacion: string = '';
   cab_estado: string = 'A'; //estado inicial Activo
   //*
   cabecera!: CabeceraPago;
@@ -482,6 +483,7 @@ export class SolipagoComponent implements OnInit {
       cabPagoReceptor: this.cab_recibe,
       cabPagoFechaInspeccion: this.cab_fechaInspeccion,
       cabPagoCancelacionOrden: this.cab_cancelarOrden,
+      cabPagoObservCancelacion: this.cab_observCancelacion,
       cabPagoEstado: this.cab_estado,
       cabPagoEstadoTrack: this.trNivelEmision,
       cabPagoIdEmisor: this.cookieService.get('userIdNomina'),
@@ -592,6 +594,7 @@ export class SolipagoComponent implements OnInit {
       }
 
     }
+    this.setNoSolDocumentacion();
   }
   //* Agregamos los detalles de pago a base
   AddDetSolPago() {
@@ -655,6 +658,8 @@ export class SolipagoComponent implements OnInit {
     this.estadoTrkTmp = this.cabecera.cabPagoEstadoTrack;
     this.depSolTmp = this.cabecera.cabPagoIdDeptSolicitante;
     this.numericoSol = this.cabecera.cabPagoNumerico;
+
+    this.setCancelacionOrden(this.cabecera.cabPagoCancelacionOrden);
 
     this.estadoSol = this.cabecera.cabPagoEstadoTrack.toString();
     this.sharedTipoSol = this.cabecera.cabPagoTipoSolicitud;
@@ -751,6 +756,7 @@ export class SolipagoComponent implements OnInit {
       cabPagoReceptor: this.cabecera.cabPagoReceptor,
       cabPagoFechaInspeccion: this.cabecera.cabPagoFechaInspeccion,
       cabPagoCancelacionOrden: this.cabecera.cabPagoCancelacionOrden,
+      cabPagoObservCancelacion: this.cabecera.cabPagoObservCancelacion,
       cabPagoEstado: this.cabecera.cabPagoEstado,
       cabPagoEstadoTrack: this.cabecera.cabPagoEstadoTrack,
       cabPagoIdEmisor: this.cookieService.get('userIdNomina'),
@@ -806,11 +812,11 @@ export class SolipagoComponent implements OnInit {
   searchProveedor(datos: string): void {
     try {
       if (datos.length > 2) {
-        console.log('Buscar Proveedor: ', datos);
+        //console.log('Buscar Proveedor: ', datos);
         this.provService.getProveedorByNombre(datos).subscribe({
           next: (data) => {
             this.proveedores = data;
-            console.log('Proveedor ', this.proveedores);
+            //console.log('Proveedor ', this.proveedores);
             if (this.proveedores.length > 0) {
               if (this.changeview == 'crear') {
                 this.cab_proveedor = this.proveedores[0].prov_nombre;
@@ -1302,4 +1308,17 @@ export class SolipagoComponent implements OnInit {
        }
      );
    }*/
-}
+
+   ///////////////////////////////////////////CANCELACION DE ORDEN///////////////////////////////////////////////////
+
+   showCancelacion: boolean = false;
+
+   setCancelacionOrden(valor: string){
+    if(valor == 'TTL'){
+      this.showCancelacion = false;
+    } else if(valor == 'PCL'){
+      this.showCancelacion = true;
+    }
+   }
+  
+  }

@@ -37,9 +37,19 @@ export class DestinoPagoServiceService {
     });
   }
 
-
   agregarEvidenciaPago(data: any){
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(`${this.APIUrl}/DestinoSolPagos`,data,{headers:headers}); 
+  }
+
+  getEvidenciasBySolicitud(tiposol: number, nosol: number):Observable<any[]>{
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<[]>(`${this.APIUrl}/DestinoSolPagos/GetDestinoPagoBySolicitud?tiposol=${tiposol}&nosol=${nosol}`,{headers:headers}); 
+
+  }
+
+  getImage(path: string):Observable<any>{
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get(`${this.APIUrl}/DestinoSolPagos/GetImage?filePath=${path}`,{headers:headers, responseType: 'blob'}); 
   }
 }

@@ -676,17 +676,17 @@
                                         </select>
                                     </td>
                                 </ng-container>
-                                <td>
-                                    <button class="btn text-danger"  data-toggle="modal" data-target="#dltItemView" (click)="deleteview(item.item_id)">
+                                <!-- <td>
+                                    <button class="btn text-danger"  data-toggle="modal" data-target="#dltItemView" (click)="deleteview(item.item_id, item.det_id)">
                                         <i class="bi bi-x-circle"></i></button>
-                                </td>
+                                </td> -->
                             </ng-container>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal">
+                <button type="button" class="btn btn-success" data-dismiss="modal" (click)="calculardetalleview()">
                     Aceptar
                 </button>
             </div>

@@ -35,30 +35,44 @@
     </div>
 
     <!-- iterar la lista de evidencias y mostrar su contenido -->
-    <!-- <div>
+    <div>
         <div>
             <h3 class="strong">Evidencias registradas</h3>
         </div>
-        <div class="galeria-evidencias text-center">
-            <table class="table table-bordered">
+        <div >
+            <table class="table table-bordered" id="tabla-evidencias">
                 <tbody>
-                    <tr>
-                        <td rowspan="4">Imagen</td>
-                        <td>Item</td>
-                    </tr>
-                    <tr>
-                        <td>Empleado</td>
-                    </tr>
-                    <tr>
-                        <td>Sector</td>
-                    </tr>
-                    <tr>
-                        <td>Obervaciones</td>
-                    </tr>
+                    <ng-container *ngFor="let ev of evidenciasConsultadas let i=index">
+                        <tr *ngIf="evidenciasConsultadas.length == 0">
+                            <th class="text-danger">No se han registrado evidencias para esta solicitud</th>
+                        </tr>
+                        <ng-container *ngIf="evidenciasConsultadas.length != 0">
+                            <tr>
+                                <td rowspan="4"><img width="400" [src]="ev.image" alt="Imagen"></td>
+                                <th>Item {{i+1}}</th>
+                            </tr>
+                            <tr>
+                                <ng-container *ngFor="let emp of empleadosEv">
+                                    <td *ngIf="emp.empleadoIdNomina == ev.destPagEmpleado">
+                                        <b>Empleado: </b>{{emp.empleadoNombres + ' ' + emp.empleadoApellidos}}
+                                    </td>
+                                </ng-container>
+                            </tr>
+                            <tr>
+                                <ng-container *ngFor="let sect of sectorEv">
+                                    <td *ngIf="sect.sectIdNomina == ev.destPagSector"><b>Sector: </b>{{sect.sectNombre}}</td>
+                                </ng-container>
+                            </tr>
+                            <tr>
+                                <td><b>Observaciones: </b>{{ev.destPagObervacion}}</td>
+                            </tr>
+                            <tr><td colspan="2"></td></tr>
+                        </ng-container>
+                    </ng-container>
                 </tbody>
             </table>
         </div>
-    </div> -->
+    </div>
 </div>
 
 <!-- Modal para verificar el envío de la solcitud guardada-->
