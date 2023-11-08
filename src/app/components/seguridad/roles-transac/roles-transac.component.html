@@ -108,10 +108,10 @@
       </div>
       <div *ngIf="!isMensaje">
         <div class="align-items-center input-group mb-3 justify-content-end">
-          <button class="btn btn-primary" (click)="prevPage()">
+          <button class="btn btn-primary" (click)="prevPageCon()">
             <i class="bi bi-arrow-left"></i>
           </button>
-          <button class="btn btn-primary" (click)="nextPage()">
+          <button class="btn btn-primary" (click)="nextPageCon()">
             <i class="bi bi-arrow-right"></i>
           </button>
         </div>
@@ -133,7 +133,7 @@
               
               *ngFor="
                 let trsc of rolConsuList
-                  | paginate : { itemsPerPage: 10, currentPage: currentPage }
+                  | paginate : { itemsPerPage: 10, currentPage: currentPageConsul }
               "
               class="tr-trsc"
             >

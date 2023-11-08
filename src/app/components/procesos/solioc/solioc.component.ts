@@ -201,12 +201,10 @@ export class SoliocComponent implements OnInit {
       this.noAutorizar();
     });*/
   }
-
   validarNumero(event: Event): void {
-    const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
+    const patron: RegExp=/^[0-9]+$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
-
     if (!patron.test(valorIngresado)) {
       inputElement.value = inputElement.defaultValue; 
     }

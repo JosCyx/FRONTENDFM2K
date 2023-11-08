@@ -29,6 +29,7 @@ export class RolesTransacComponent implements OnInit {
 
   changeview: string = 'consulta';
   currentPage: number = 1;
+  currentPageConsul: number = 1;
   idAuthDele: number = 0;
   //mensajes
   showmsj: boolean = false;
@@ -76,9 +77,7 @@ export class RolesTransacComponent implements OnInit {
   }
   //incrementa el valor d la variable que controla la pagina actual que se muestra
   nextPage(): void {
-    console.log('nextPage', this.currentPage);
     if (this.transacList.length <= 10) {
-      console.log('nextPage', this.currentPage);
       this.currentPage = 1;
     } else if (this.currentPage >= this.transacList.length / 10) {
       this.currentPage = this.currentPage;
@@ -90,6 +89,21 @@ export class RolesTransacComponent implements OnInit {
   prevPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--; // Disminuir currentPage en uno si no está en la primera página
+    }
+  }
+  nextPageCon(): void {
+    if (this.rolConsuList.length <= 10) {
+      this.currentPageConsul = 1;
+    } else if (this.currentPageConsul >= this.rolConsuList.length / 10) {
+      this.currentPageConsul = this.currentPageConsul;
+    } else {
+      this.currentPageConsul++;
+    }
+  }
+  //decrementa el valor de la variable que controla la pagina actual que se muestra
+  prevPageCon(): void {
+    if (this.currentPageConsul > 1) {
+      this.currentPageConsul--; // Disminuir currentPage en uno si no está en la primera página
     }
   }
   changeView(view: string) {
