@@ -52,4 +52,9 @@ export class DestinoPagoServiceService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get(`${this.APIUrl}/DestinoSolPagos/GetImage?filePath=${path}`,{headers:headers, responseType: 'blob'}); 
   }
+
+  deleteEvidencia(tipoSol: number, noSol: number){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(`${this.APIUrl}/DestinoSolPagos/DeleteDestinoSolPagoBySolicitud?tiposol=${tipoSol}&nosol=${noSol}`,{headers:headers});
+  }
 }

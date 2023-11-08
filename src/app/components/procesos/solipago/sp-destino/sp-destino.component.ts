@@ -238,10 +238,37 @@ export class SpDestinoComponent implements OnInit {
     this.archivo = null as any;
     this.resetInputFile();
     this.idItem = 0;
-    this.detalles.forEach((det) => {
+    if (this.detalles != undefined) {
+      this.detalles.forEach((det) => {
         det.destinoDetalle = false;
-  
-    });
+
+      });
+
+    }
+  }
+
+ deleteFilesUnsaved() {
+    //eliminar de la base los archivos que se hayan creado pero no se hayan guardado
+    this.destinoService.deleteEvidencia(this.tipoSol, this.noSol).subscribe(
+      res => {
+        console.log("Se han eliminado correctamente las evidencias de la base: ", res);
+        //eliminar del servidor la carpeta que se haya creado pero no se haya guardado
+
+        this.uploadService.deleteFolder(this.numericoSol).subscribe(
+          res => {
+            console.log("Se ha eliminado la carpeta creada de esta solicitud: ", res);
+          },
+          error => {
+            console.log("Error: ", error);
+          }
+        );
+      },
+      error => {
+        console.log("Error: ", error);
+      }
+    );
+
+
   }
 
   deleteArchivoModal(idDlt: number) {
@@ -397,7 +424,7 @@ export class SpDestinoComponent implements OnInit {
 
   setImages() {
     const observables = this.evidenciasConsultadas.map(ev => this.destinoService.getImage(ev.destPagEvidencia));
-  
+
     forkJoin(observables).subscribe(
       (data: any[]) => {
         //console.log('Imágenes obtenidas:', data);
@@ -415,6 +442,6 @@ export class SpDestinoComponent implements OnInit {
       }
     );
   }
-  
+
 
 }

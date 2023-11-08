@@ -71,4 +71,9 @@ export class UploadFileService {
     return this.http.delete(`${this.APIUrl}/Documento/DeleteFile?url=${filesNombres}`, { headers: headers });
   }
 
+  deleteFolder(folderName: string){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(`${this.APIUrl}/Documento/DeleteFolder?prefijo=${folderName}`, { headers: headers });
+  }
+
 }

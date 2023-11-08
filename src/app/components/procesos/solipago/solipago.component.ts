@@ -217,10 +217,12 @@ export class SolipagoComponent implements OnInit {
       this.editSolicitud();
     }
   }
+
   cancelarDes(){
-    console.log("cancelar destino")
+    //console.log("cancelar destino")
     this.spDestino.cancelarDestino();
   }
+
   verificartexto(): void {
     const patron: RegExp = /^[a-zA-Z\s]*$/;
     if (!patron.test(this.receptor)) {
@@ -334,6 +336,8 @@ export class SolipagoComponent implements OnInit {
     this.ngOnInit();
     this.sharedService.spDocumentacionChange();
     this.spDocumentacion.deleteAllDocs();
+    //this.spDestino.cancelarDestino();
+    //this.spDestino.deleteFilesUnsaved();
   }
   //Limpiar en modulo Editar
   cancelarEdi(): void {
