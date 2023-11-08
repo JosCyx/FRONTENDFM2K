@@ -830,14 +830,13 @@ export class SolicotiComponent implements OnInit {
   itemViewid!:number;
   itemDetalleView!:number;
   deleteview(id:number, detalle:number){
-    this.itemViewid=id;
-    this.itemDetalleView=detalle;
-    //console.log("fsdf",this.itemViewid);
+    this.itemViewid=id;//guarda el id del item que se va a eliminar
+    this.itemDetalleView=detalle;//guarda el id del detalle al que pertenece el item que se va a eliminar
   }
 
   deleteViewSave(){
     console.log("listas",this.itemSectorList)
-    const index = this.itemSectorList.findIndex(item=>item.item_id===this.itemViewid && item.det_id===this.itemDetalleView);
+    const index = this.itemSectorList.findIndex(item=>item.item_id === this.itemViewid && item.det_id === this.itemDetalleView);
     if(index!==-1){
       //elimina el elemento que se ha seleccionado
       this.itemSectorList.splice(index,1);
@@ -853,6 +852,22 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
+  async reorderAndSaveItemView(){
+    const itemmap :{[key:number]:number} = {};
+
+    for(const item of this.itemSectorList){
+      const det = item.det_id;
+
+      if(!itemmap[det]){
+        itemmap[det] = 1;
+      }
+
+      item.item_id = itemmap[det];
+      itemmap[det]++;
+
+    }
+  }
+
   calcularIdItemView(){
     for(let item of this.itemSectorList){
       if(item.det_id === this.det_id){
@@ -860,15 +875,14 @@ export class SolicotiComponent implements OnInit {
       }
     }
   }
+
   calculardetalleview(){
-    console.log("este es mi lista de detalle",this.detalleList);
-    for(let det of this.itemSectorList){
+    for(let det of this.detalleList){
       if(det.det_id === this.det_id){
-        console.log("entre crack")
-        det.item_cant = 0;
+        det.det_cantidad = 0;
         for(let it of this.itemSectorList){
           if(it.det_id === this.det_id){
-            det.item_cant += it.item_cant;
+            det.det_cantidad += it.item_cant;
           }
 
         }
@@ -877,19 +891,7 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
-  async reorderAndSaveItemView(){
-    const itemmap :{[key:number]:number}={};
-
-    for(const item of this.itemSectorList){
-      const det = item.det_id;
-      if(!itemmap[det]){
-        itemmap[det]=1;
-      }
-      item.item_id=itemmap[det];
-      itemmap[det]++;
-
-    }
-  }
+  
 
 
   //agregar los items de la lista temporal a la lista definitiva
@@ -1114,7 +1116,7 @@ export class SolicotiComponent implements OnInit {
     //console.log(this.idDlt, this.idItmDlt);
   }
 
-  deleteItemSaved() {//elimina el item de la lista local y llama al metodo que ejecuta los cambios en la base
+  deleteItemSaved() {//elimina el item de la lista local 
     const index = this.item.findIndex(itm => itm.itmID === this.idDlt);
 
     if (index !== -1) {

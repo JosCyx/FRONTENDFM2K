@@ -87,6 +87,7 @@ export class SpDestinoComponent implements OnInit {
         console.log(error);
       }
     );*/
+    console.log(this.tipoSol, this.noSol)
     setTimeout(() => {
 
       this.empleadoService.getEmpleadosList().subscribe(
@@ -358,6 +359,10 @@ export class SpDestinoComponent implements OnInit {
     });
     this.cabPago.setDestino = true;
     this.archivos = [];
+
+    setTimeout(() => {
+      this.viewFile();
+    }, 200);
   }
 
 

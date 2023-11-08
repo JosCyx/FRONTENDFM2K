@@ -580,6 +580,7 @@ export class SolipagoComponent implements OnInit {
       }
 
     }
+    this.setNoSolDocumentacion();
   }
   //* Agregamos los detalles de pago a base
   AddDetSolPago() {
