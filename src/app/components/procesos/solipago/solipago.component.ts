@@ -798,11 +798,11 @@ export class SolipagoComponent implements OnInit {
   searchProveedor(datos: string): void {
     try {
       if (datos.length > 2) {
-        console.log('Buscar Proveedor: ', datos);
+        //console.log('Buscar Proveedor: ', datos);
         this.provService.getProveedorByNombre(datos).subscribe({
           next: (data) => {
             this.proveedores = data;
-            console.log('Proveedor ', this.proveedores);
+            //console.log('Proveedor ', this.proveedores);
             if (this.proveedores.length > 0) {
               if (this.changeview == 'crear') {
                 this.cab_proveedor = this.proveedores[0].prov_nombre;

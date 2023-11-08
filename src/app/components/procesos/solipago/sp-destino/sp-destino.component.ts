@@ -329,6 +329,7 @@ export class SpDestinoComponent implements OnInit {
                   this.msjExito = 'Se ha agregado el destino correctamente.';
 
                   setTimeout(() => {
+                    this.viewFile();
                     this.showExito = false;
                     this.msjExito = '';
                   }, 2000);
@@ -359,10 +360,6 @@ export class SpDestinoComponent implements OnInit {
     });
     this.cabPago.setDestino = true;
     this.archivos = [];
-
-    setTimeout(() => {
-      this.viewFile();
-    }, 200);
   }
 
 
