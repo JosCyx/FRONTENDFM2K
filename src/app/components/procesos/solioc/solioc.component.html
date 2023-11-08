@@ -8,7 +8,7 @@
           <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">
             Crear
           </button> -->
-          <!-- <button (click)="metodo()">boton</button>  -->
+          
         </div>
       </div>
     </nav>
@@ -24,7 +24,9 @@
 </div>
 
   <ng-container *appAuthorize="'28'">
+    
     <div class="form-cot" *ngIf="changeview == 'crear'">
+      
       <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
       <h3 class="font-weight-bold" style="padding-top: 20pt">
         Registrar nueva Orden de Compra
@@ -1187,8 +1189,9 @@
                     {{ sect.sectNombre }}
                   </td>
                 </ng-container>
-                <td *ngIf="cabecera.cabSolOCEstadoTracking <= 10">
+                <td>
                   <button
+                  *ngIf="showEdicionItem"
                     class="btn text-danger"
                     data-toggle="modal"
                     data-target="#dltItemSaved"
@@ -1201,7 +1204,7 @@
                 </td>
               </ng-container>
             </tr>
-            <tr *ngIf="cabecera.cabSolOCEstadoTracking <= 10">
+            <tr *ngIf="showEdicionItem"><!-- Aqui hay que controlar que no se muestre en edicion -->
               <td class="align-middle">{{ det_id_edit }}</td>
               <td class="align-middle">
                 <input
@@ -1250,7 +1253,7 @@
                 </div>
               </td>
             </tr>
-            <tr *ngIf="cabecera.cabSolOCEstadoTracking <= 10">
+            <tr  *ngIf="showEdicionItem"><!-- Aqui hay que controlar que no se muestre en edicion -->
               <td colspan="6" class="align-middle text-end">
                 <button class="btn btn-success" (click)="addNewItem()">
                   <i class="bi bi-check"></i>

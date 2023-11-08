@@ -887,6 +887,7 @@ export class SoliocComponent implements OnInit {
     }
   }
 
+  showEdicionItem: boolean = true;
   async saveData() {
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
     this.cabecera = this.solicitudEdit.cabecera;
@@ -895,6 +896,10 @@ export class SoliocComponent implements OnInit {
     this.noSolTmp = this.cabecera.cabSolOCNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabSolOCEstadoTracking;
     this.depSolTmp = this.cabecera.cabSolOCIdDept;
+
+    if(this.cabecera.cabSolOCEstadoTracking > 10){
+      this.showEdicionItem = false;
+    }
 
     this.estadoSol = this.cabecera.cabSolOCEstadoTracking.toString();
 
@@ -1946,5 +1951,8 @@ export class SoliocComponent implements OnInit {
       }
       //this.setMotivo = !this.setMotivo;
     }
+
+  
+
     
 }

@@ -975,6 +975,7 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
+  showEdicionItem: boolean = true;
   async saveData() {
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
     //console.log(this.solicitudEdit)
@@ -987,6 +988,10 @@ export class SolicotiComponent implements OnInit {
     this.estadoTrkTmp = this.cabecera.cabSolCotEstadoTracking;
     this.deptSolTmp = this.cabecera.cabSolCotIdDept;
     this.estadoSol = this.cabecera.cabSolCotEstadoTracking.toString();
+
+    if(this.cabecera.cabSolCotEstadoTracking > 10){
+      this.showEdicionItem = false;
+    }
 
     //asigna el nivel de tracking de la solicitud a una variable para controlar la edicion
     for (let det of this.solicitudEdit.detalles) {

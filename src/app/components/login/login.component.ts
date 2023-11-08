@@ -97,7 +97,7 @@ export class LoginComponent implements OnInit{
             this.loading = false;
             this.msjExito = '';
             this.router.navigate(['main']);
-            //console.log("Cookies: ", this.cookieService.getAll());
+            console.log("Cookies: ", this.cookieService.getAll());
           }, 1500);
 
         },

@@ -855,7 +855,7 @@
                                         {{ sect.sectNombre }}
                                     </td>
                                 </ng-container>
-                                <td *ngIf="cabecera.cabSolCotEstadoTracking <= 10">
+                                <td *ngIf="showEdicionItem"><!-- Aqui hay que controlar que no se muestre en edicion -->
                                     <button class="btn text-danger" data-toggle="modal" data-target="#dltItemSaved"
                                         (click)="confDeleteItm(itm.itmID, itm.itmIdItem, itm.itmNumSol)">
                                         <i class="bi bi-x-circle"></i></button>
@@ -863,7 +863,7 @@
                             </ng-container>
 
                         </tr>
-                        <tr *ngIf="cabecera.cabSolCotEstadoTracking <= 10">
+                        <tr *ngIf="showEdicionItem"><!-- Aqui hay que controlar que no se muestre en edicion -->
                             <td class="align-middle">{{ det_id_edit }}</td>
                             <td class="align-middle">
                                 <input class="form-control" type="text" value="Descripción" [(ngModel)]="det_descp_edit"
@@ -888,7 +888,7 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr *ngIf="cabecera.cabSolCotEstadoTracking <= 10">
+                        <tr *ngIf="showEdicionItem"><!-- Aqui hay que controlar que no se muestre en edicion -->
                             <td colspan="6" class="align-middle text-end">
                                 <button class="btn btn-success" (click)="addNewItem()">
                                     <i class="bi bi-check"></i></button>
