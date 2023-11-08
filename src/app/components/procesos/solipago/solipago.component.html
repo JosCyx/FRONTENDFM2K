@@ -344,7 +344,7 @@
               placeholder="Ingrese el valor a descontar"
               [(ngModel)]="cab_valordescontar"
             />
-            <label class="input-group-text">Pago total autorizado:</label>
+            <label class="input-group-text">Pago total autorizado*:</label>
             <input
               class="form-control"
               type="number"
@@ -355,7 +355,7 @@
             />
           </div>
           <div class="input-group mb-3">
-            <label class="input-group-text">Recibe:</label>
+            <label class="input-group-text">Recibe*:</label>
             <input
               type="text"
               maxlength="100"
@@ -384,7 +384,7 @@
             />
           </div>
           <div class="input-group mb-3">
-            <label class="input-group-text">Cancelación de orden:</label>
+            <label class="input-group-text">Cancelación de orden*:</label>
             <select class="form-select" [(ngModel)]="cab_cancelarOrden" (change)="setCancelacionOrden(cab_cancelarOrden)">
               <option disabled selected value="">Seleccione un opcion....</option>
               <option value="TTL">TOTAL</option>
@@ -392,7 +392,7 @@
             </select>
           </div>
           <div class="input-group mb-3" *ngIf="showCancelacion">
-            <label class="input-group-text">Comentarios de orden:</label>
+            <label class="input-group-text">Comentarios de orden*:</label>
             <textarea type="text" class="form-control" cols="2" [(ngModel)]="cab_observCancelacion"></textarea>
           </div>
           <div class="text-end">
@@ -427,7 +427,7 @@
           >
             Guardar
           </button>
-          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" *appAuthorize="'27'" >
+          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" *appAuthorize="'27'" (click)="saveReceptor()">
             Guardar y enviar
         </button>
           <button class="btn btn-danger m-2" (click)="cancelar()">
@@ -802,7 +802,7 @@
               [(ngModel)]="cabecera.cabPagoValorMulta"
               [disabled]="cabecera.cabPagoEstadoTrack > 10"
             />
-            <label class="input-group-text">Pago total autorizado:</label>
+            <label class="input-group-text">Pago total autorizado*:</label>
             <input
               class="form-control"
               type="number"
@@ -814,7 +814,7 @@
             />
           </div>
           <div class="input-group mb-3">
-            <label class="input-group-text">Recibe:</label>
+            <label class="input-group-text">Recibe*:</label>
             <input
               type="text"
               class="form-control"
@@ -840,7 +840,7 @@
             />
           </div>
           <div class="input-group mb-3">
-            <label class="input-group-text">Cancelación de orden:</label>
+            <label class="input-group-text">Cancelación de orden*:</label>
             <select
               (change)="setCancelacionOrden(cabecera.cabPagoCancelacionOrden)"
               class="form-select"
@@ -853,7 +853,7 @@
             </select>
           </div>
           <div class="input-group mb-3" *ngIf="showCancelacion">
-            <label class="input-group-text">Comentarios de orden:</label>
+            <label class="input-group-text">Comentarios de orden*:</label>
             <textarea type="text" class="form-control" cols="2" [(ngModel)]="cabecera.cabPagoObservCancelacion" 
             [disabled]="cabecera.cabPagoEstadoTrack > 10"></textarea>
           </div>

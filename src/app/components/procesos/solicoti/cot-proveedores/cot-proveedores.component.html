@@ -142,8 +142,8 @@
                     <th class="align-middle">Teléfono*</th>
                     <th class="align-middle">Correo*</th>
                     <th class="align-middle">Dirección</th>
-                    <th class="align-middle">Verificado</th>
-                    <th class="align-middle">Eliminar</th>
+                    <th class="align-middle" *appAuthorize="'64'">Verificado</th> <!-- AGREGAR TRANSACCION DE VERIFICAR PROVEEDOR -->
+                    <th class="align-middle" *appAuthorize="'65'">Eliminar</th> <!-- AGREGAR TRANSACCION DE ELIMINAR PROVEEDOR -->
                 </tr>
             </thead>
             <tbody>
@@ -157,13 +157,13 @@
                     <td class="align-middle">{{prov.cotProvTelefono}}</td>
                     <td class="align-middle">{{prov.cotProvCorreo}}</td>
                     <td class="align-middle">{{prov.cotProvDireccion}}</td>
-                    <td class="align-middle" [ngSwitch]="prov.cotProvVerify">
+                    <td class="align-middle" *appAuthorize="'64'" [ngSwitch]="prov.cotProvVerify"><!-- AGREGAR TRANSACCION DE VERIFICAR PROVEEDOR -->
                         <span *ngSwitchCase="1">Verificado</span>
                         <span *ngSwitchCase="0">Nuevo Proveedor<br><a class="link-primary link-underline a-verify"
                                 data-toggle="modal" data-target="#verifyProvAssigned"
                                 (click)="setProvId(prov.cotProvId)">Verificar</a></span>
                     </td>
-                    <td class="align-middle">
+                    <td class="align-middle" *appAuthorize="'65'"> <!-- AGREGAR TRANSACCION DE ELIMINAR PROVEEDOR -->
                         <button class="btn btn-border btn-prov" data-toggle="modal" data-target="#deleteProvAssigned"
                             (click)="selectIdDltProv(prov.cotProvId)" [appSecureDisable]="estadoSol">
                             <i class="bi bi-x-circle-fill text-danger m-3"></i></button>
