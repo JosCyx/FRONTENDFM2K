@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { GlobalService } from 'src/app/services/global.service'; 
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
 
 @Component({
   selector: 'app-menu',
@@ -15,7 +16,8 @@ export class MenuComponent {
 
   constructor(private globalService: GlobalService,
     private router: Router, 
-    private cookieService: CookieService) { }
+    private cookieService: CookieService,
+    private documentService: UploadFileService) { }
 
   isSidebarVisible = false;
 
@@ -71,4 +73,17 @@ export class MenuComponent {
       this.router.navigate(['solipago']);
     },1);
   }
+
+  getUserManual(){
+    this.documentService.getUserManual().subscribe(
+      (data) => {
+        //mostrar el pdf en una nueva pestaña
+        //window.open(data, '_blank');
+      },
+      (error) => {
+        console.log('error', error);
+      }
+    );
+  }
+
 }

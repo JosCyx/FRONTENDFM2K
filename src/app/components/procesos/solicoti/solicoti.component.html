@@ -198,13 +198,13 @@
                             [(ngModel)]="cab_plazo" (change)="Validacionfecha()" />
                         <label class="input-group-text">Fecha máxima de entrega*:</label>
                         <input class="form-control" type="date" for="fechamaxima" [max]="fechaMax" [min]="fechaMinPlazo"
-                            [(ngModel)]="cab_fechaMax"   />
+                            [(ngModel)]="cab_fechaMax" />
                     </div>
                     <div class="input-group">
                         <label class="input-group-text">Inspector:</label>
-                        <input type="text"  maxlength="100" class="form-control" id="busqueda" list="inspectores" [(ngModel)]="inspector"
-                            (keyup)="searchInspector()" (keydown)="verificartexto()" (input)="onInputChanged()"
-                            placeholder="Ingrese el nombre del inspector" />
+                        <input type="text" maxlength="100" class="form-control" id="busqueda" list="inspectores"
+                            [(ngModel)]="inspector" (keyup)="searchInspector()" (keydown)="verificartexto()"
+                            (input)="onInputChanged()" placeholder="Ingrese el nombre del inspector" />
                         <datalist id="inspectores">
                             <ng-container *ngFor="let empOP of inspectores">
                                 <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>
@@ -359,7 +359,7 @@
                         <div class="input-group col">
                             <label class="input-group-text">Asunto:</label>
                             <input type="text" class="form-control" [(ngModel)]="cabecera.cabSolCotAsunto"
-                                [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
+                            [appSecureDisable]="estadoSol" />
                         </div>
                     </div>
 
@@ -422,21 +422,21 @@
                                     <!-- <input type="text" class="form-control" [(ngModel)]="det.solCotDescripcion"></td> -->
                                     <textarea name="descripcion" class="form-control  limited-textarea" rows="2"
                                         cols="15" placeholder="Descripción" [(ngModel)]="det.solCotDescripcion"
-                                        [disabled]="cabecera.cabSolCotEstadoTracking > 10"></textarea>
+                                        [appSecureDisable]="estadoSol" ></textarea>
                                 <td class="align-middle">
                                     <select class="form-control" [(ngModel)]="det.solCotPresupuesto"
-                                        [disabled]="cabecera.cabSolCotEstadoTracking > 10">
+                                    [appSecureDisable]="estadoSol" >
                                         <option value="" selected disabled>presupuesto...</option>
                                         <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                                             {{prep.prespNombre}}</option>
                                     </select>
                                 </td>
                                 <td class="align-middle"><button class="btn btn-outline-primary"
-                                        (click)="selectDet(det)" data-toggle="modal" data-target="#itemsectorEdit"
-                                        >Ver Desglose</button></td>
+                                        (click)="selectDet(det)" data-toggle="modal" data-target="#itemsectorEdit">Ver
+                                        Desglose</button></td>
                                 <td class="align-middle">
                                     <select class="form-control" [(ngModel)]="det.solCotUnidad"
-                                        [disabled]="cabecera.cabSolCotEstadoTracking > 10">
+                                    [appSecureDisable]="estadoSol" >
                                         <option value="Unidad">Unidad</option>
                                         <option value="Sacos">Sacos</option>
                                         <option value="Paquete">Paquete</option>
@@ -452,13 +452,13 @@
                                     {{ det.solCotCantidadTotal }}
                                     <button class="btn text-danger btn-border"
                                         (click)="confDeleteDet(det.solCotID, det.solCotIdDetalle)" data-toggle="modal"
-                                        data-target="#dltDetSaved" *ngIf="cabecera.cabSolCotEstadoTracking == 10">
+                                        data-target="#dltDetSaved" *appAuthorize="'66'" [appSecureDisable]="estadoSol">
                                         <i class="bi bi-x-circle"></i>
                                     </button>
                                 </td>
                             </tr>
 
-                            <tr *ngIf="cabecera.cabSolCotEstadoTracking == 10">
+                            <tr *appAuthorize="'66'">
                                 <th class="align-middle">{{ det_id }}</th>
                                 <td class="align-middle">
                                     <textarea name="descripcion" class="form-control  limited-textarea" rows="2"
@@ -466,7 +466,7 @@
                                         [appSecureDisable]="estadoSol"></textarea>
                                 </td>
                                 <td class="align-middle">
-                                    <select class="form-control" [(ngModel)]="det_presupuesto">
+                                    <select class="form-control" [(ngModel)]="det_presupuesto" [appSecureDisable]="estadoSol" >
                                         <option value="0" selected disabled>presupuesto...</option>
                                         <option *ngFor="let prep of presupuestos" [value]="prep.prespId">
                                             {{prep.prespNombre}}</option>
@@ -498,7 +498,7 @@
                                         disabled [appSecureDisable]="estadoSol" />
                                 </td>
                             </tr>
-                            <tr *ngIf="cabecera.cabSolCotEstadoTracking == 10">
+                            <tr *appAuthorize="'66'">
                                 <td colspan="6" class="align-middle text-end">
                                     <button class="btn btn-success" [disabled]="!det_descp || tmpItemSect.length === 0"
                                         (click)="addDetalle()" [appSecureDisable]="estadoSol">
@@ -527,8 +527,13 @@
                             <div class="text-center">
                                 <div class="row buttons-ruteo">
                                     <ng-container *appAuthorize="'54'">
-                                        <button *ngIf="setMotivo == 'NO'" class="btn btn-success col m-2"
-                                            data-toggle="modal" data-target="#aprobarSolicitud"
+                                        <button *ngIf="setMotivo == 'NO' && estadoSol == '70'"
+                                            class="btn btn-success col m-2" data-toggle="modal"
+                                            data-target="#aprobarSolicitud"
+                                            [appSecureDisable]="estadoSol">Finalizar</button>
+                                        <button *ngIf="setMotivo == 'NO' && estadoSol != '70'"
+                                            class="btn btn-success col m-2" data-toggle="modal"
+                                            data-target="#aprobarSolicitud"
                                             [appSecureDisable]="estadoSol">Aprobar</button>
                                     </ng-container>
                                     <button *appAuthorize="'57'" class="btn btn-warning col m-2" data-toggle="modal"
@@ -549,42 +554,42 @@
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="floatingInput"
                             [(ngModel)]="cabecera.cabSolCotProcedimiento"
-                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
+                            [appSecureDisable]="estadoSol" />
                         <label for="floatingInput">Materiales y procedimientos a seguir:</label>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="floatingInput"
                             [(ngModel)]="cabecera.cabSolCotObervaciones"
-                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
+                            [appSecureDisable]="estadoSol"  />
                         <label for="floatingInput">Observaciones:</label>
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text">Adjunto cotizaciones:</label>
                         <select class="form-control" [(ngModel)]="cabecera.cabSolCotAdjCot"
-                            [disabled]="cabecera.cabSolCotEstadoTracking > 10">
+                        [appSecureDisable]="estadoSol" >
                             <option value="SI">Sí</option>
                             <option value="NO" selected>No</option>
                         </select>
                         <label class="input-group-text">Número de cotizaciones:</label>
                         <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
                             [(ngModel)]="cabecera.cabSolCotNumCotizacion"
-                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
+                            [appSecureDisable]="estadoSol" />
                     </div>
                     <div class="input-group mb-3">
                         <label class="input-group-text">Plazo de entrega:</label>
                         <input class="form-control" type="text" for="plazoentrega"
                             [(ngModel)]="cabecera.cabSolCotPlazoEntrega"
-                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
+                            [appSecureDisable]="estadoSol" />
                         <label class="input-group-text">Fecha máxima de entrega:</label>
                         <input class="form-control" type="text" for="fechamaxima"
                             [(ngModel)]="cabecera.cabSolCotFechaMaxentrega"
-                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
+                            [appSecureDisable]="estadoSol" />
                     </div>
                     <div class="input-group mb-1">
                         <label class="input-group-text">Inspector:</label>
                         <input type="text" class="form-control" id="busqueda" list="inspectores"
                             [(ngModel)]="nameInspector" (keyup)="searchInspectorEdit()"
-                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
+                            [appSecureDisable]="estadoSol"  />
                         <datalist id="inspectores">
                             <ng-container *ngFor="let empOP of inspectoresEdit">
                                 <option [value]="empOP.empleadoNombres + ' ' + empOP.empleadoApellidos"></option>
@@ -592,7 +597,7 @@
                         </datalist>
                         <label class="input-group-text">Teléfono:</label>
                         <input class="form-control" type="text" [(ngModel)]="cabecera.cabSolCotTelefInspector"
-                            [disabled]="cabecera.cabSolCotEstadoTracking > 10" />
+                        [appSecureDisable]="estadoSol" />
                     </div>
                     <div class="row justify-content-between ">
                         <app-cot-pdf class="text-end"></app-cot-pdf>
@@ -863,7 +868,7 @@
                             </ng-container>
 
                         </tr>
-                        <tr *ngIf="showEdicionItem"><!-- Aqui hay que controlar que no se muestre en edicion -->
+                        <tr *appAuthorize="'66'"><!-- Aqui hay que controlar que no se muestre en edicion -->
                             <td class="align-middle">{{ det_id_edit }}</td>
                             <td class="align-middle">
                                 <input class="form-control" type="text" value="Descripción" [(ngModel)]="det_descp_edit"
@@ -875,12 +880,12 @@
                             <td class="align-middle">
                                 <div class="cel-prep">
                                     <input class="form-control" [(ngModel)]="item_cant" min="1" type="number"
-                                        placeholder="Cantidad" />
+                                        placeholder="Cantidad" [appSecureDisable]="estadoSol"/>
                                 </div>
                             </td>
                             <td class="align-middle" style="width: 150px" colspan="2">
                                 <div class="cel-prep">
-                                    <select class="form-select" name="item_sector" [(ngModel)]="item_sector">
+                                    <select class="form-select" name="item_sector" [(ngModel)]="item_sector" [appSecureDisable]="estadoSol">
                                         <option *ngFor="let sect of sectores$ | async" [value]="sect.sectIdNomina">
                                             {{ sect.sectNombre }}
                                         </option>
@@ -888,9 +893,9 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr *ngIf="showEdicionItem"><!-- Aqui hay que controlar que no se muestre en edicion -->
+                        <tr *appAuthorize="'66'"><!-- Aqui hay que controlar que no se muestre en edicion -->
                             <td colspan="6" class="align-middle text-end">
-                                <button class="btn btn-success" (click)="addNewItem()">
+                                <button class="btn btn-success" (click)="addNewItem()" [appSecureDisable]="estadoSol">
                                     <i class="bi bi-check"></i></button>
                             </td>
                         </tr>
@@ -1076,7 +1081,7 @@
     </div>
 </div>
 
-<!-- Modal para verificar el envío de la soliitud recien registrada-->
+<!-- Modal para verificar el envío de la solicitud recien registrada-->
 <div class="modal fade" #exampleModal id="aprobarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">

@@ -159,35 +159,35 @@ export class SolicitudesAprobadasComponent implements OnInit {
   }
   //
   filterCotbyRol(data: any): void {
-    //console.log('metodo de busqueda: ', this.metodoBusq);
+    
     if(this.metodoBusq == 1){
-      
-      this.allSol = data.filter((sol: any) => sol.cabSolCotIdEmisor == parseInt(this.cookieService.get('userIdNomina')));
+      this.allSol = data.filter((sol: any) => sol.cabSolCotIdEmisor == this.cookieService.get('userIdNomina'));
       
     } else if(this.metodoBusq == 2){
-      
-      this.allSol = data.filter((sol: any) => sol.cabSolCotArea == parseInt(this.cookieService.get('userArea')));
+      this.allSol = data.filter((sol: any) => sol.cabSolCotIdArea == parseInt(this.cookieService.get('userArea')));
     } else if(this.metodoBusq == 3){
       
       this.allSol = data;
     }
   }
+
   //
   filterOCbyRol(data: any): void {
     if(this.metodoBusq == 1){
-      this.allSol = data.filter((sol: any) => sol.cabSolOCIdEmisor == parseInt(this.cookieService.get('userIdNomina')));
+      this.allSol = data.filter((sol: any) => sol.cabSolOCIdEmisor == this.cookieService.get('userIdNomina'));
     } else if(this.metodoBusq == 2){
-      this.allSol = data.filter((sol: any) => sol.cabSolOCArea == parseInt(this.cookieService.get('userArea')));
+      this.allSol = data.filter((sol: any) => sol.cabSolOCIdArea == parseInt(this.cookieService.get('userArea')));
     } else if(this.metodoBusq == 3){
       this.allSol = data;
     }
   }
   //
   filterPagobyRol(data: any): void {
+    console.log(data)
     if(this.metodoBusq == 1){
-      this.allSol = data.filter((sol: any) => sol.cabPagoAreaSolicitante == parseInt(this.cookieService.get('userIdNomina')));
+      this.allSol = data.filter((sol: any) => sol.cabPagoIdEmisor == this.cookieService.get('userIdNomina'));
     } else if(this.metodoBusq == 2){
-      this.allSol = data.filter((sol: any) => sol.cabPagoIdEmisor == parseInt(this.cookieService.get('userArea')));
+      this.allSol = data.filter((sol: any) => sol.cabPagoIdAreaSolicitante == parseInt(this.cookieService.get('userArea')));
     } else if(this.metodoBusq == 3){
       this.allSol = data;
     }

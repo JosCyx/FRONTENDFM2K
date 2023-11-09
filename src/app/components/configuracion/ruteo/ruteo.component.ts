@@ -169,7 +169,7 @@ export class RuteoComponent implements OnInit {
     for (let nivel of this.nivelesList) {
       if (nivel.estado === true) {
 
-        this.rutAreaService.checkRuteoExistence(this.rutTipoSol, this.rutArea, nivel.nivel).subscribe(
+        this.rutAreaService.checkRuteoExistence(this.rutTipoSol, this.rutDpto, nivel.nivel).subscribe(
           (data: any) => {
             if (data) {
               // Si el ruteo ya existe se guardan los valores de los niveles en una lista para mostrarlos en un mensaje

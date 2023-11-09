@@ -76,4 +76,9 @@ export class UploadFileService {
     return this.http.delete(`${this.APIUrl}/Documento/DeleteFolder?prefijo=${folderName}`, { headers: headers });
   }
 
+  getUserManual(){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get(`${this.APIUrl}/Documento/GetUserManual`, {responseType:'blob'});
+  }
+
 }

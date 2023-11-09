@@ -344,6 +344,8 @@ export class CotProveedoresComponent implements OnInit {
       }
       //console.log(this.dataForm.value)
       this.proveedorListSelected.push(newPrv);
+
+      //ESTO NO FUNCIONAA
       this.miModal.nativeElement.modal('hide');
       //limpiar el formulario
       this.clearNewPrv();

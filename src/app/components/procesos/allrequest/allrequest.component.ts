@@ -184,14 +184,30 @@ export class AllrequestComponent implements OnInit {
     }
   }
 
+  reorderCotizaciones(): void {
+    //reordenar las solicitudes segun el campo cabSolCotNoSolicitud de mayor a menor
+    this.allSol.sort((a, b) => b.cabSolCotNoSolicitud - a.cabSolCotNoSolicitud);
+  }
+
+  reorderOrdenCompra(): void {
+    //reordenar las solicitudes segun el campo cabSolOCNoSolicitud de mayor a menor
+    this.allSol.sort((a, b) => b.cabSolOCNoSolicitud - a.cabSolOCNoSolicitud);
+  }
+
+  reorderOrdenPago(): void {
+    //reordenar las solicitudes segun el campo cabPagoNoSolicitud de mayor a menor
+    this.allSol.sort((a, b) => b.cabPagoNoSolicitud - a.cabPagoNoSolicitud);
+  }
+
 
   //CONSULTA TODAS LAS SOLICITUDES DEPENDIENDO DEL METODO DE BUSQUEDA DEL USUARIO
   getAllCotizaciones(): void {
     if (this.metodoBusq == 1) {
-      this.cabCotService.getCotizacionesByIdNomina(this.cookieService.get('userNomina')).subscribe(
+      this.cabCotService.getCotizacionesByIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
           // console.log("Exito: ", response);
           this.allSol = response;
+          this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
         },
         error => {
@@ -203,6 +219,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response;
+          this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
         },
         error => {
@@ -214,6 +231,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response;
+          this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
         },
         error => {
@@ -226,10 +244,11 @@ export class AllrequestComponent implements OnInit {
 
   getAllOrdenCompras(): void {
     if (this.metodoBusq == 1) {
-      this.cabOCService.getOrdenCmpbyIdNomina(this.cookieService.get('userNomina')).subscribe(
+      this.cabOCService.getOrdenCmpbyIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
           //console.log("Exito: ", response);
           this.allSol = response;
+          this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
         },
         error => {
@@ -241,6 +260,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response;
+          this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
 
         },
@@ -254,6 +274,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response;
+          this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
         },
         error => {
@@ -267,10 +288,11 @@ export class AllrequestComponent implements OnInit {
 
   getAllOrdenPagos(): void {
     if (this.metodoBusq == 1) {
-      this.cabPagoService.getPagobyIdNomina(this.cookieService.get('userNomina')).subscribe(
+      this.cabPagoService.getPagobyIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
           //console.log("Exito: ", response);
           this.allSol = response;
+          this.reorderOrdenPago();
           this.saveEncargadoPago();
         },
         error => {
@@ -282,6 +304,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response;
+          this.reorderOrdenPago();
           this.saveEncargadoPago();
         },
         error => {
@@ -294,6 +317,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response;
+          this.reorderOrdenPago();
           this.saveEncargadoPago();
         },
         error => {
