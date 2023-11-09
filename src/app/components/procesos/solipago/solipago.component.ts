@@ -542,6 +542,12 @@ export class SolipagoComponent implements OnInit {
       this.detalleSolPagos = [];
       this.destinoIO = false;
       this.detallesToDestino = [];
+      this.alertBool = true;
+      this.alertText = 'El campo no puede estar vacio';
+          setTimeout(() => {
+            this.alertBool = false;
+            this.alertText = '';
+          }, 1000);
     } else {
       const partes = this.valorinput.match(/(\d+)-(\d+)/);
       console.log('partes', partes);
@@ -833,8 +839,8 @@ export class SolipagoComponent implements OnInit {
               }
             }
           },
-          error: (error) => {
-            console.error('error en buscar proveedor: ', error);
+          error: (error) => {;
+            console.error('error en buscar proveedor: ', error.error.title);
           },
           complete: () => console.info('completado'),
         });

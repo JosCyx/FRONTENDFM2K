@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { BreadcrumbServicesService } from './services/breadcrumb-services.service';
 
 
 @Component({
@@ -10,33 +10,15 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 export class BreadcrumbComponent {
   breadcrumbs: any[] = [];
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.breadcrumbs = this.createBreadcrumbs(this.activatedRoute.root);
-      }
-    })
+  constructor(private BreadCrSer:BreadcrumbServicesService) {
   }
 
   ngOnInit(): void {
-    
+    this.BreadCrSer.breadcrumbs$.subscribe((breadcrumbs) => {
+      console.log("esta es ",breadcrumbs)
+      this.breadcrumbs = breadcrumbs;
+    });
+    // this.breadcrumbs = this.BreadCrSer.getBreadcrumbs();
   }
-  createBreadcrumbs(route: ActivatedRoute, url: string = '', breadcrumbs: any[] = []): any[] {
-    const children: ActivatedRoute[] = route.children;
-
-    if (children.length === 0) {
-      return breadcrumbs;
-    }
-
-    for (const child of children) {
-      const routeURL: string = child.snapshot.url.map(segment => segment.path).join('/');
-      if (routeURL !== '') {
-        url += `/${routeURL}`;
-      }
-
-      breadcrumbs.push({ label: child.snapshot.data['breadcrumb'], url: url });
-      return this.createBreadcrumbs(child, url, breadcrumbs);
-    }
-    return breadcrumbs;
-  }
+  
 }
