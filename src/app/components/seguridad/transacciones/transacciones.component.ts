@@ -60,13 +60,10 @@ export class TransaccionesComponent implements OnInit {
   nextPage(): void {
     console.log('nextPage', this.currentPage);
     if (this.transaccionesList.length <= 10) {
-      console.log('condicion1');
       this.currentPage = 1;
     } else if (this.currentPage >= this.transaccionesList.length / 10) {
       this.currentPage = this.currentPage;
-      console.log('condicion2');
     } else {
-      console.log('condicion3');
       this.currentPage++;
     }
   }

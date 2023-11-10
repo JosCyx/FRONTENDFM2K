@@ -1858,7 +1858,7 @@ export class SoliocComponent implements OnInit {
     }, 100);
   }
 
-  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
+  emailContent: string = `Estimado,<br>Hemos recibido una nueva Solicitud de Orden de Compra.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
 
   emailContent2: string = `Estimado,<br>Le notificamos que la solicitud de orden de compra generada ha sido anulada, si desea conocer más detalles pónganse en contacto con el departamento de compras o financiero.`;
 
@@ -1875,7 +1875,7 @@ export class SoliocComponent implements OnInit {
       const data = {
         destinatario: mailToNotify,
         //destinatario: 'joseguillermojm.jm@gmail.com',
-        asunto: 'Nueva Solicitud Recibida - Acción Requerida',
+        asunto: 'Nueva Solicitud de Orden de Compra Recibida - Acción Requerida',
         contenido: contenidoMail
       }
 

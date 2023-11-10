@@ -1413,7 +1413,7 @@ export class SolicotiComponent implements OnInit {
   aprobPreps: boolean = false;
 
   checkAprobPrep(nivel: number) {
-    if (nivel >= 60) {
+    if (nivel == 60) {
       this.aprobPreps = true;
     } else {
       this.aprobPreps = false;
@@ -1719,8 +1719,8 @@ export class SolicotiComponent implements OnInit {
             this.showmsj = true;
             this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel anterior.`;
 
-            //notificar al nivel anterior del devolucion de la solicitud
-            this.sendNotify(newEstado, newestadoSt);
+            //extraer el correo del empleado del nivel anterior y enviar el correo con sendMail al empleado
+            ////////////////////////////////////PENDIENTE///////////////////////////////////////////////
 
             setTimeout(() => {
               this.showmsj = false;
@@ -1794,24 +1794,35 @@ export class SolicotiComponent implements OnInit {
     }, 100);
   }
 
-  emailContent: string = `Estimado,<br>Hemos recibido una nueva solicitud.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app SOLICITUDES para acceder a la solicitud.`;
+  asunto: string = 'Nueva Solicitud de Cotización Recibida - Acción Requerida';
+  emailContent: string = `Estimado,<br>Hemos recibido una nueva Solicitud de Cotización.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
 
-  emailContent2: string = `Estimado,<br>Le notificamos que la solicitud de cotización generada ha sido anulada, si desea conocer más detalles pónganse en contacto con el departamento de compras o financiero.`;
+  asuntoDevuelto: string = 'Notificación - Solicitud de Cotización Devuelta';
+  emailContent1: string = `Estimado,<br>Le notificamos que la solicitud de cotización generada ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
+
+  asuntoAnulado: string = 'Notificación - Solicitud de Cotización Anulada';
+  emailContent2: string = `Estimado,<br>Le notificamos que la solicitud de cotización generada ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
 
   sendMail(mailToNotify: string, type: number) {
     let contenidoMail = '';
+    let asuntoMail = '';
 
     if(type == 1){
+      asuntoMail = this.asunto;
       contenidoMail = this.emailContent;
     } else if(type == 2){
+      asuntoMail = this.asuntoAnulado;
       contenidoMail = this.emailContent2;
+    } else if(type == 3){
+      asuntoMail = this.asuntoDevuelto;
+      contenidoMail = this.emailContent1;
     }
 
     setTimeout(() => {
       const data = {
         destinatario: mailToNotify,
         //destinatario: 'joseguillermojm.jm@gmail.com',
-        asunto: 'Nueva Solicitud Recibida - Acción Requerida',
+        asunto: asuntoMail,
         contenido: contenidoMail
       }
 

@@ -344,7 +344,7 @@
               placeholder="Ingrese el valor a descontar"
               [(ngModel)]="cab_valordescontar"
             />
-            <label class="input-group-text">Pago total autorizado:</label>
+            <label class="input-group-text">Pago total autorizado*:</label>
             <input
               class="form-control"
               type="number"
@@ -355,7 +355,7 @@
             />
           </div>
           <div class="input-group mb-3">
-            <label class="input-group-text">Recibe:</label>
+            <label class="input-group-text">Recibe*:</label>
             <input
               type="text"
               maxlength="100"
@@ -384,7 +384,7 @@
             />
           </div>
           <div class="input-group mb-3">
-            <label class="input-group-text">Cancelación de orden:</label>
+            <label class="input-group-text">Cancelación de orden*:</label>
             <select class="form-select" [(ngModel)]="cab_cancelarOrden" (change)="setCancelacionOrden(cab_cancelarOrden)">
               <option disabled selected value="">Seleccione un opcion....</option>
               <option value="TTL">TOTAL</option>
@@ -392,8 +392,8 @@
             </select>
           </div>
           <div class="input-group mb-3" *ngIf="showCancelacion">
-            <label class="input-group-text">Comentarios de orden:</label>
-            <textarea type="text" class="form-control" cols="2" [(ngModel)]="cab_observCancelacion"></textarea>
+            <label class="input-group-text">Comentarios de orden*:</label>
+            <textarea style="max-height: 200px;" type="text" class="form-control" cols="2" [(ngModel)]="cab_observCancelacion"></textarea>
           </div>
           <div class="text-end">
             <p class="tip">*Campos obligatorios</p>
@@ -427,7 +427,7 @@
           >
             Guardar
           </button>
-          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" *appAuthorize="'27'" >
+          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitud" *appAuthorize="'27'" (click)="saveReceptor()">
             Guardar y enviar
         </button>
           <button class="btn btn-danger m-2" (click)="cancelar()">
@@ -498,7 +498,7 @@
                 class="form-control"
                 placeholder="Ingrese el numero de compra"
                 [(ngModel)]="cabecera.cabPagoNoOrdenCompra"
-                [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                [appSecureDisable]="estadoSol"
               />
             </div>
           </div>
@@ -557,7 +557,7 @@
                 class="form-control"
                 placeholder="Ingrese el numero Factura"
                 [(ngModel)]="cabecera.cabPagoNumFactura"
-                [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                [appSecureDisable]="estadoSol"
               />
             </div>
             <div class="input-group col mb-1">
@@ -566,7 +566,7 @@
                 type="text"
                 class="form-control"
                 [(ngModel)]="cabecera.cabPagoFechaFactura"
-                [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                [appSecureDisable]="estadoSol"
               />
             </div>
           </div>
@@ -578,7 +578,7 @@
                 style="background-color: #d6d6d6"
                 [(ngModel)]="tipobusqueda"
                 (ngModelChange)="limpiarCampos()"
-                [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                [appSecureDisable]="estadoSol"
               >
                 <option value="nombre" selected>Proveedor</option>
                 <option value="ruc">Ruc</option>
@@ -590,7 +590,7 @@
                 class="form-control"
                 list="proveedor"
                 (keyup)="searchProveedor(cabecera.cabPagoProveedor)"
-                [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                [appSecureDisable]="estadoSol"
               />
               <input
                 [(ngModel)]="cabecera.cabPagoRucProveedor"
@@ -598,7 +598,7 @@
                 type="text"
                 class="form-control"
                 list="proveedor"
-                [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                [appSecureDisable]="estadoSol"
               />
               <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'">
                 <ng-container *ngFor="let prov of proveedores">
@@ -609,7 +609,7 @@
                 *ngIf="tipobusqueda == 'ruc'"
                 class="btn btn-success"
                 (click)="searchProveedorRuc(cabecera.cabPagoRucProveedor)"
-                [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                [appSecureDisable]="estadoSol"
               >
                 <i class="bi bi-check-lg"></i>
               </button>
@@ -624,14 +624,14 @@
                 class="form-control"
                 *ngIf="tipobusqueda == 'nombre'"
                 [(ngModel)]="cabecera.cabPagoRucProveedor"
-                [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                [appSecureDisable]="estadoSol"
               />
               <input
                 type="text "
                 class="form-control"
                 *ngIf="tipobusqueda == 'ruc'"
                 [(ngModel)]="cabecera.cabPagoProveedor"
-                [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                [appSecureDisable]="estadoSol"
               />
             </div>
           </div>
@@ -668,7 +668,13 @@
                   <h2>Autorización de solicitud</h2>
                   <div class="text-center">
                       <div class="row buttons-ruteo">
-                          <button *appAuthorize="'56'" class="btn btn-success col m-2" data-toggle="modal" data-target="#enviarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
+                          
+                          <ng-container *appAuthorize="'56'" >
+                            <button *ngIf="estadoSol == '70'" class="btn btn-success col m-2" data-toggle="modal"
+                              data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Finalizar</button>
+                            <button *ngIf="estadoSol != '70'" class="btn btn-success col m-2" data-toggle="modal"
+                              data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
+                          </ng-container>
                           <button *appAuthorize="'59'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>
                           <button *appAuthorize="'62'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud" [appSecureDisable]="estadoSol">Anular</button>
                       </div>
@@ -724,7 +730,7 @@
                     min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoCantRecibida"
-                    [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                    [appSecureDisable]="estadoSol"
                   />
                 </td>
                 <td class="align-middle cel-prep">
@@ -734,7 +740,7 @@
                     min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoValUnitario"
-                    [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                    [appSecureDisable]="estadoSol"
                   />
                 </td>
                 <td class="align-middle">
@@ -745,7 +751,7 @@
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoSubtotal"
                     (input)="calculoEditotal()"
-                    [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                    [appSecureDisable]="estadoSol"
                   />
                 </td>
               </tr>
@@ -762,7 +768,7 @@
                     min="1"
                     class="form-control text-center"
                     [(ngModel)]="cabecera.cabpagototal"
-                    [disabled]="cabecera.cabPagoEstadoTrack > 10"
+                    [appSecureDisable]="estadoSol"
                   />
                 </td>
               </tr>
@@ -777,7 +783,7 @@
               class="form-control"
               id="floatingInput"
               [(ngModel)]="cabecera.cabPagoObservaciones"
-              [disabled]="cabecera.cabPagoEstadoTrack > 10"
+              [appSecureDisable]="estadoSol"
             />
             <label for="floatingInput">Observaciones:</label>
           </div>
@@ -787,7 +793,7 @@
               class="form-control"
               id="floatingInput"
               [(ngModel)]="cabecera.cabPagoAplicarMulta"
-              [disabled]="cabecera.cabPagoEstadoTrack > 10"
+              [appSecureDisable]="estadoSol"
             />
             <label for="floatingInput">Aplicar multa:</label>
           </div>
@@ -800,9 +806,9 @@
               min="1"
               placeholder="Ingrese el valor a descontar"
               [(ngModel)]="cabecera.cabPagoValorMulta"
-              [disabled]="cabecera.cabPagoEstadoTrack > 10"
+              [appSecureDisable]="estadoSol"
             />
-            <label class="input-group-text">Pago total autorizado:</label>
+            <label class="input-group-text">Pago total autorizado*:</label>
             <input
               class="form-control"
               type="number"
@@ -810,18 +816,18 @@
               min="1"
               placeholder="Ingrese el valor Total"
               [(ngModel)]="cabecera.cabPagoValorTotalAut"
-              [disabled]="cabecera.cabPagoEstadoTrack > 10"
+              [appSecureDisable]="estadoSol"
             />
           </div>
           <div class="input-group mb-3">
-            <label class="input-group-text">Recibe:</label>
+            <label class="input-group-text">Recibe*:</label>
             <input
               type="text"
               class="form-control"
               list="sugerenciasEdit"
               [(ngModel)]="receptor"
               (keyup)="searchEmpleado()"
-              [disabled]="cabecera.cabPagoEstadoTrack > 10"
+              [appSecureDisable]="estadoSol"
             />
             <datalist id="sugerenciasEdit">
               <ng-container *ngFor="let emp of empleadoEdi">
@@ -836,16 +842,16 @@
               type="text"
               for="fechamaxima"
               [(ngModel)]="cabecera.cabPagoFechaInspeccion"
-              [disabled]="cabecera.cabPagoEstadoTrack > 10"
+              [appSecureDisable]="estadoSol"
             />
           </div>
           <div class="input-group mb-3">
-            <label class="input-group-text">Cancelación de orden:</label>
+            <label class="input-group-text">Cancelación de orden*:</label>
             <select
               (change)="setCancelacionOrden(cabecera.cabPagoCancelacionOrden)"
               class="form-select"
               [(ngModel)]="cabecera.cabPagoCancelacionOrden"
-              [disabled]="cabecera.cabPagoEstadoTrack > 10"
+              [appSecureDisable]="estadoSol"
             >
               <option disabled selected value="">Seleccione un opcion....</option>
               <option value="TTL">TOTAL</option>
@@ -853,9 +859,9 @@
             </select>
           </div>
           <div class="input-group mb-3" *ngIf="showCancelacion">
-            <label class="input-group-text">Comentarios de orden:</label>
-            <textarea type="text" class="form-control" cols="2" [(ngModel)]="cabecera.cabPagoObservCancelacion" 
-            [disabled]="cabecera.cabPagoEstadoTrack > 10"></textarea>
+            <label class="input-group-text">Comentarios de orden*:</label>
+            <textarea style="max-height: 200px;" type="text" class="form-control" cols="2" [(ngModel)]="cabecera.cabPagoObservCancelacion" 
+            [appSecureDisable]="estadoSol" ></textarea>
           </div>
           <div class="text-end">
             <app-sp-pdf  ></app-sp-pdf>
@@ -880,18 +886,21 @@
         </div>
   
         <div class="col text-end">
-          <button
-            class="btn btn-primary m-2"
-            data-toggle="modal"
-            data-target="#guardarEdicion"
-            (click)="saveReceptor()"
-            [appSecureDisable]= "estadoSol"
-          >
-            Guardar
+          <ng-container *ngIf="cabecera.cabPagoEstadoTrack == 10">
+
+            <button
+              class="btn btn-primary m-2"
+              data-toggle="modal"
+              data-target="#guardarEdicion"
+              (click)="saveReceptor()"
+              [appSecureDisable]= "estadoSol"
+            >
+              Guardar
+            </button>
+            <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitudGuardada" *appAuthorize="'33'" [appSecureDisable]= "estadoSol">
+              Guardar y enviar
           </button>
-          <button class="btn btn-success m-2" data-toggle="modal" data-target="#enviarSolicitudGuardada" *appAuthorize="'33'" [appSecureDisable]= "estadoSol">
-            Guardar y enviar
-        </button>
+          </ng-container>
           <button class="btn btn-danger m-2" (click)="cancelarEdi()">
             Cancelar
           </button>
@@ -1058,7 +1067,7 @@
 
 
 <!-- Modal para verificar el envío de la soliitud recien registrada-->
-<div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
+<div class="modal fade" #exampleModal id="aprobarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
