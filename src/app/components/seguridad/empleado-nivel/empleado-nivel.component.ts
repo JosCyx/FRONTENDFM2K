@@ -300,6 +300,8 @@ export class EmpleadoNivelComponent implements OnInit {
   }
 
   clear(){
+    this.terminoBusqueda = '';
+    this.empNivList = this.empNivList2;
     this.departamento = '';
     this.nivel = '';
     this.empleado = '';
