@@ -301,7 +301,7 @@ export class EmpleadosComponent implements OnInit {
           // Restablecer las variables locales a sus valores iniciales
           this.clear();
           this.changeview = 'consulta';
-        }, 1500);
+        }, 3000);
 
         this.ngOnInit();
       },

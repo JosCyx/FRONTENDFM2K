@@ -205,7 +205,7 @@ export class RuteoComponent implements OnInit {
                     this.mensajeExito = '';
                     this.clear();
                     this.changeview = 'consultar';
-                  }, 1500);
+                  }, 3000);
                 },
                 error => {
                   this.mensajeError = 'Error intente de nuevo.';
@@ -280,7 +280,7 @@ export class RuteoComponent implements OnInit {
         this.mensajeError = '';
         this.nvNivel = '';
         this.nvRepetido = false;
-      }, 1000);
+      }, 3000);
 
     } else {
       //console.log("else, nivel nuevo: ", parseInt(this.nvNivel, 10));
@@ -301,14 +301,14 @@ export class RuteoComponent implements OnInit {
             this.ngOnInit();
             this.changeview = 'consultar';
 
-          }, 1500);
+          }, 3000);
         },
         error => {
           this.mensajeError = 'Error intente de nuevo.';
           setTimeout(() => {
             this.mensajeError = '';
             this.clear();
-          }, 1500);
+          }, 3000);
           console.log("Error al añadir el nivel: ", error);
         }
       );
@@ -323,7 +323,7 @@ export class RuteoComponent implements OnInit {
         setTimeout(() => {
           this.mensajeExito = '';
           this.changeview = 'consultar';
-        }, 1500);
+        }, 3000);
       },
       error => {
 
@@ -336,7 +336,7 @@ export class RuteoComponent implements OnInit {
         console.log("Error: ", error)
         setTimeout(() => {
           this.mensajeError = '';
-        }, 2500);
+        }, 3000);
       }
     );
     
