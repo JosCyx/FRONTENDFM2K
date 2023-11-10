@@ -139,7 +139,7 @@ export class RolesTransacComponent implements OnInit {
             this.clear();
             this.changeview = 'consulta';
             this.ngOnInit();
-          }, 1000);
+          }, 3000);
         },
         error: (error) => {
           console.log(error);
@@ -149,7 +149,7 @@ export class RolesTransacComponent implements OnInit {
             this.showmsjerror = false;
             this.msjError = '';
             this.changeview = 'consulta';
-          }, 2000);
+          }, 3000);
         },
       });
     });
@@ -183,7 +183,7 @@ export class RolesTransacComponent implements OnInit {
             this.clear();
             this.changeview = 'consulta';
             this.ngOnInit();
-          }, 1000);
+          }, 3000);
       },
       error: (error) => {
         console.log(error);

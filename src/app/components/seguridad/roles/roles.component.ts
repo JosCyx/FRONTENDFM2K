@@ -80,7 +80,7 @@ export class RolesComponent implements OnInit {
           this.msjError='';
           this.changeview = 'consulta';
           this.ngOnInit();
-          }, 1000);
+          }, 3000);
 
       },
       error => {
@@ -161,7 +161,7 @@ export class RolesComponent implements OnInit {
       this.msjError='';
       this.changeview = 'consulta';
       this.ngOnInit();
-      }, 1000);
+      }, 3000);
   }
   
   /*elimina un rol de la tabla roles de la base de datos, no se usa por el momento ya que la eliminacion de los elementos debe ser lógica

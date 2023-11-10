@@ -585,7 +585,7 @@ export class SoliocComponent implements OnInit {
         this.showmsj = false;
         this.clear();
         this.router.navigate(['allrequest']);
-      }, 2000);
+      }, 3000);
     } catch (error) {
       this.showmsjerror = true;
       this.msjError =
@@ -594,7 +594,7 @@ export class SoliocComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = '';
-      }, 2500);
+      }, 3000);
     }
   }
   //
@@ -717,7 +717,7 @@ export class SoliocComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = '';
-      }, 2500);
+      }, 3000);
     }
   }
   //agrega los detalles a la lista detalles
@@ -1401,7 +1401,7 @@ export class SoliocComponent implements OnInit {
         this.showmsj = false;
         this.router.navigate(['allrequest']);
         this.clear();
-      }, 2500);
+      }, 3000);
     } catch (error) {
       //console.log('Error:', error);
       this.showmsjerror = true;
@@ -1411,7 +1411,7 @@ export class SoliocComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = '';
-      }, 2500);
+      }, 3000);
     }
   }
   //Buscar Proveedor y guardar
@@ -1518,7 +1518,7 @@ export class SoliocComponent implements OnInit {
         setTimeout(() => {
           this.showmsjerror = false;
           this.msjError = "";
-        }, 2500);
+        }, 3000);
       }
     }
   
@@ -1536,7 +1536,7 @@ export class SoliocComponent implements OnInit {
         setTimeout(() => {
           this.showmsjerror = false;
           this.msjError = "";
-        }, 2500);
+        }, 3000);
       }
     }
 
@@ -1585,7 +1585,7 @@ export class SoliocComponent implements OnInit {
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
                     this.router.navigate(['allrequest']);
-                  }, 2000);
+                  }, 3000);
                 },
                 (error) => {
                   console.log('Error al actualizar el estado: ', error);
@@ -1640,7 +1640,7 @@ export class SoliocComponent implements OnInit {
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
                 this.router.navigate(['allrequest']);
-              }, 2000);
+              }, 3000);
             },
             (error) => {
               console.log('Error al actualizar el estado: ', error);
@@ -1739,7 +1739,7 @@ export class SoliocComponent implements OnInit {
             this.clear();
             this.serviceGlobal.solView = 'crear';
             this.router.navigate(['allrequest']);
-          }, 2500);
+          }, 3000);
         }
       }, 500);
 
@@ -1750,7 +1750,7 @@ export class SoliocComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = '';
-      }, 2500);
+      }, 3000);
     }
 
   }
@@ -1793,7 +1793,7 @@ export class SoliocComponent implements OnInit {
               this.clear();
               this.serviceGlobal.solView = 'crear';
               this.router.navigate(['allrequest']);
-            }, 2500);
+            }, 3000);
           },
           (error) => {
             console.log('Error al actualizar el estado: ', error);
@@ -1803,7 +1803,7 @@ export class SoliocComponent implements OnInit {
             setTimeout(() => {
               this.showmsjerror = false;
               this.msjError = '';
-            }, 2500);
+            }, 3000);
           }
         );
         
@@ -1899,7 +1899,7 @@ export class SoliocComponent implements OnInit {
           setTimeout(() => {
             this.showmsjerror = false;
             this.msjError = '';
-          }, 4000)
+          }, 3000)
         }
       );
     }, 500);

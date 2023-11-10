@@ -84,7 +84,7 @@ export class UsuariosComponent {
           this.clear();
           this.changeView('consulta');
           this.ngOnInit();
-        }, 1000);
+        }, 3000);
       },
       error: (error) => {
         console.log('Error: ', error);
@@ -98,7 +98,7 @@ export class UsuariosComponent {
         setTimeout(() => {
           this.showmsjerror = false;
           this.msjError = '';
-        }, 2000);
+        }, 3000);
       },
       complete: () => {
         console.log('Proceso completado');
@@ -313,7 +313,7 @@ export class UsuariosComponent {
             this.clear();
             this.changeView('consulta');
             this.ngOnInit();
-          }, 1000);
+          }, 3000);
         },
         (error) => {
           console.log('Error: ', error);
@@ -322,7 +322,7 @@ export class UsuariosComponent {
           setTimeout(() => {
             this.showmsjerror = false;
             this.msjError = '';
-          }, 2000);
+          }, 3000);
         }
       );
       console.log('usuario: ', editData);

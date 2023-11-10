@@ -508,7 +508,7 @@ export class SolipagoComponent implements OnInit {
           this.showmsj=false;
           this.msjExito='';
           this.router.navigate(['allrequest']);
-        },2000)
+        },3000)
       },
       (error) => {
         console.log('error al guardar la cabecera: ', error);
@@ -734,7 +734,7 @@ export class SolipagoComponent implements OnInit {
         this.msjExito = '';
         this.showmsj = false;
         this.router.navigate(['allrequest']);
-      }, 2500);
+      }, 3000);
     } catch (error) {
       console.error('Error: ' + error);
       this.showmsjerror = true;
@@ -909,7 +909,7 @@ export class SolipagoComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = "";
-      }, 2500);
+      }, 3000);
     }
   }
 
@@ -928,7 +928,7 @@ export class SolipagoComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = "";
-      }, 2500);
+      }, 3000);
     }
   }
 
@@ -977,7 +977,7 @@ export class SolipagoComponent implements OnInit {
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
                     this.router.navigate(['allrequest']);
-                  }, 2000);
+                  }, 3000);
                 },
                 (error) => {
                   console.log('Error al actualizar el estado: ', error);
@@ -1032,7 +1032,7 @@ export class SolipagoComponent implements OnInit {
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
                 this.router.navigate(['allrequest']);
-              }, 2000);
+              }, 3000);
             },
             (error) => {
               console.log('Error al actualizar el estado: ', error);
@@ -1132,9 +1132,9 @@ export class SolipagoComponent implements OnInit {
             this.clear();
             this.serviceGlobal.solView = 'crear';
             this.router.navigate(['allrequest']);
-          }, 2500);
+          }, 3000);
         }
-      }, 500);
+      }, 1000);
 
     } catch (error) {
       console.log('Error:', error);
@@ -1143,7 +1143,7 @@ export class SolipagoComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = '';
-      }, 2500);
+      }, 3000);
     }
 
   }
@@ -1186,7 +1186,7 @@ export class SolipagoComponent implements OnInit {
               this.clear();
               this.serviceGlobal.solView = 'crear';
               this.router.navigate(['allrequest']);
-            }, 2500);
+            }, 3000);
           },
           (error) => {
             console.log('Error al actualizar el estado: ', error);
@@ -1196,7 +1196,7 @@ export class SolipagoComponent implements OnInit {
             setTimeout(() => {
               this.showmsjerror = false;
               this.msjError = '';
-            }, 2500);
+            }, 3000);
           }
         );
 
@@ -1291,7 +1291,7 @@ export class SolipagoComponent implements OnInit {
           setTimeout(() => {
             this.showmsjerror = false;
             this.msjError = '';
-          }, 4000)
+          }, 3000)
         }
       );
     }, 500);

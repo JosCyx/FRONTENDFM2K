@@ -112,7 +112,7 @@ export class TransaccionesComponent implements OnInit {
           this.msjError = '';
           this.changeview = 'consulta';
           this.ngOnInit();
-        }, 1000);
+        }, 3000);
       },
       error: (err) => {
         console.error(err);
@@ -125,7 +125,7 @@ export class TransaccionesComponent implements OnInit {
           this.msjError = '';
           this.changeview = 'consulta';
           this.ngOnInit();
-        }, 2000);
+        }, 3000);
       },
       complete: () => {
         console.log('proceso completado');
@@ -161,7 +161,7 @@ export class TransaccionesComponent implements OnInit {
           this.msjError = '';
           this.changeview = 'consulta';
           this.ngOnInit();
-        }, 1000);
+        }, 3000);
       },
       error: (err) => {
         console.error(err);
@@ -174,7 +174,7 @@ export class TransaccionesComponent implements OnInit {
           this.msjError = '';
           this.changeview = 'consulta';
           this.ngOnInit();
-        }, 2000);
+        }, 3000);
       },
       complete: () => {
         console.log('proceso completado');

@@ -180,7 +180,7 @@ export class CotProveedoresComponent implements OnInit {
         this.isSearched = true;
         this.showmsj = false;
         this.msjError = '';
-      }, 2500)
+      }, 3000)
 
 
     } else {
@@ -201,7 +201,7 @@ export class CotProveedoresComponent implements OnInit {
               setTimeout(() => {
                 this.showmsj = false;
                 this.msjError = '';
-              }, 2500)
+              }, 3000)
             }
             this.proveedoresList = [];
             console.log("Error:", error);
@@ -226,7 +226,7 @@ export class CotProveedoresComponent implements OnInit {
 
                 this.showmsj = false;
                 this.msjError = '';
-              }, 2500)
+              }, 3000)
             }
             this.proveedoresList = [];
             console.log("Error:", error);
@@ -355,7 +355,7 @@ export class CotProveedoresComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror=false
         this.msjError = '';
-      }, 2500)
+      }, 3000)
       // Muestra una alerta o mensaje de error al usuario indicando que los campos deben llenarse.
     }
   }
@@ -411,7 +411,7 @@ export class CotProveedoresComponent implements OnInit {
                   this.isSearched = true;
                   this.showadv = false;
                   this.msjError = '';
-                }, 5000)
+                }, 3000)
 
               } else {
                 console.log("Error:", error);
@@ -513,7 +513,7 @@ export class CotProveedoresComponent implements OnInit {
           setTimeout(() => {
             this.showmsj = false;
             this.msjExito = '';
-          }, 4000)
+          }, 3000)
 
         },
         error => {
@@ -524,7 +524,7 @@ export class CotProveedoresComponent implements OnInit {
           setTimeout(() => {
             this.showmsjerror = false;
             this.msjError = '';
-          }, 4000)
+          }, 3000)
         }
       );
     }
@@ -551,7 +551,7 @@ export class CotProveedoresComponent implements OnInit {
           setTimeout(() => {
             this.showmsj = false;
             this.msjExito = '';
-          }, 4000)
+          }, 3000)
 
         },
         error => {
@@ -562,7 +562,7 @@ export class CotProveedoresComponent implements OnInit {
           setTimeout(() => {
             this.showmsjerror = false;
             this.msjError = '';
-          }, 4000)
+          }, 3000)
         }
       );
     }
@@ -1109,7 +1109,7 @@ RecorrerPro(){
         setTimeout(() => {
           this.showmsj=false;
           this.msjExito="";
-        }, 1000);
+        }, 3000);
       },
       error: error => {
         console.error('Error al Eliminar!', error);
@@ -1118,7 +1118,7 @@ RecorrerPro(){
         setTimeout(() => {
           this.showmsjerror=false;
           this.msjError="";
-        }, 1000);
+        }, 3000);
       }
     })
 
@@ -1142,7 +1142,7 @@ changeVerifyProv(){
         this.showmsj=false;
         this.msjExito="";
         this.getProvCotizacion();
-      }, 2500);
+      }, 3000);
     },
     error => {
       console.error('Error al verificar!', error);
@@ -1151,7 +1151,7 @@ changeVerifyProv(){
       setTimeout(() => {
         this.showmsjerror=false;
         this.msjError="";
-      }, 2500);
+      }, 3000);
     }
   );
 }

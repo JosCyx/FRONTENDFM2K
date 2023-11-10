@@ -359,7 +359,7 @@ export class SpDestinoComponent implements OnInit {
                     this.viewFile();
                     this.showExito = false;
                     this.msjExito = '';
-                  }, 2000);
+                  }, 3000);
                 },
                 error => {
                   console.log("Error: ", error);
@@ -369,7 +369,7 @@ export class SpDestinoComponent implements OnInit {
                   setTimeout(() => {
                     this.showError = false;
                     this.msjError = '';
-                  }, 2000);
+                  }, 3000);
                 }
               );
 

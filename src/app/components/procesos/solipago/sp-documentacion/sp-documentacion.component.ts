@@ -65,7 +65,7 @@ export class SPDocumentacionComponent implements OnInit {
         setTimeout(() => {
           this.showExito = false;
           this.msjExito = '';
-        }, 2000);
+        }, 3000);
         this.GetfileView();
       },
       error: (error) => {
@@ -76,7 +76,7 @@ export class SPDocumentacionComponent implements OnInit {
           setTimeout(() => {
             this.showError = false;
             this.msjError = '';
-          }, 2000);
+          }, 3000);
         } else {
           console.error('este es mi error', error);
           this.showError = true;
@@ -85,7 +85,7 @@ export class SPDocumentacionComponent implements OnInit {
           setTimeout(() => {
             this.showError = false;
             this.msjError = '';
-          }, 2000);
+          }, 3000);
         }
       },
       complete: () => {
@@ -176,7 +176,7 @@ export class SPDocumentacionComponent implements OnInit {
         setTimeout(() => {
           this.showExito = false;
           this.msjExito = '';
-        }, 2000);
+        }, 3000);
         this.GetfileView();
       },
       error: (error) => {
@@ -186,7 +186,7 @@ export class SPDocumentacionComponent implements OnInit {
         setTimeout(() => {
           this.showError = false;
           this.msjError = '';
-        }, 2000);
+        }, 3000);
       },
       complete: () => {
         //console.log('Proceso completado');

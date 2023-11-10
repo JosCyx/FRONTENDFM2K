@@ -127,7 +127,7 @@ export class RolesUsersComponent implements OnInit {
             this.clear();
             this.changeview = 'consulta';
             this.ngOnInit();
-          }, 1000);
+          }, 3000);
           
          
         },
@@ -139,7 +139,7 @@ export class RolesUsersComponent implements OnInit {
             this.showmsjerror = false;
             this.msjError = '';
             this.changeview = 'consulta';
-          }, 2000);
+          }, 3000);
         },
         complete: () => {},
       });
@@ -176,13 +176,17 @@ export class RolesUsersComponent implements OnInit {
             this.clear();
             this.changeview = 'consulta';
             this.ngOnInit();
-          }, 1000);
+          }, 3000);
         this.rolConsuList = [];
       },
       error: (error) => {
         console.error(error);
         this.showmsjerror = true;
         this.msjError = 'Error al Eliminar';
+        setTimeout(() => {
+          this.showmsjerror = false;
+          this.msjError = '';
+        }, 3000);
       },
     });
   }
