@@ -1632,7 +1632,7 @@ export class SoliocComponent implements OnInit {
               this.msjExito = `La solicitud ha sido enviada exitosamente.`;
 
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
-              this.sendNotify(newEstado, newestadoSt);
+              this.sendNotify(newEstado, newestadoSt, 1);
 
               setTimeout(() => {
                 this.showmsj = false;
@@ -1785,7 +1785,7 @@ export class SoliocComponent implements OnInit {
             this.msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido devuelta al nivel anterior.`;
 
             //notificar al nivel anterior del devolucion de la solicitud
-            this.sendNotify(newEstado, newestadoSt);
+            this.sendNotify(newEstado, newestadoSt, 3);
 
             setTimeout(() => {
               this.showmsj = false;
@@ -1817,7 +1817,10 @@ export class SoliocComponent implements OnInit {
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL//////////////////////////////////////////////////
 
 
-  async sendNotify(nivelStr: number, nivelStatus: string) {
+  async sendNotify(nivelStr: number, nivelStatus: string, tipoNotificacion: number) {
+    //nivelStr: numero del nivel de ruteo al que se le va a enviar la notificacion
+    //nivelStatus: tipo de proceso del nivel de ruteo al que se le va a enviar la notificacion
+    //tipoNotificacion: tipo de notificacion que se va a enviar (1: solicitud nueva, 2: solicitud anulada, 3: solicitud devuelta)
     //console.log("Nivel de ruteo: ", nivelStr);
 
     let mailToNotify = '';
@@ -1841,7 +1844,7 @@ export class SoliocComponent implements OnInit {
                   //console.log('Empleado: ', response);
                   mailToNotify = response[0].empleadoCorreo;
                   //enviar la notificacion al correo guardado en mailnotify
-                  this.sendMail(mailToNotify,1);
+                  this.sendMail(mailToNotify,tipoNotificacion);
                   //console.log("Correo enviado a: ", mailToNotify)
                 },
                 (error) => {
@@ -1858,24 +1861,34 @@ export class SoliocComponent implements OnInit {
     }, 100);
   }
 
-  emailContent: string = `Estimado,<br>Hemos recibido una nueva Solicitud de Orden de Compra.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
+  asunto: string = 'Nueva Solicitud de Orden de Compra Recibida - Acción Requerida';
+  emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Orden de Compra.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
 
-  emailContent2: string = `Estimado,<br>Le notificamos que la solicitud de orden de compra generada ha sido anulada, si desea conocer más detalles pónganse en contacto con el departamento de compras o financiero.`;
+  asuntoDevuelto: string = 'Notificación - Solicitud de Orden de Compra Devuelta';
+  emailContent1: string = `Estimado(a), le notificamos que la solicitud de orden de compra autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
+
+  asuntoAnulado: string = 'Notificación - Solicitud de Orden de Compra Anulada';
+  emailContent2: string = `Estimado(a), le notificamos que la solicitud de orden de compra generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
 
   sendMail(mailToNotify: string, type: number) {
     let contenidoMail = '';
+    let asuntoMail = '';
 
     if(type == 1){
+      asuntoMail = this.asunto;
       contenidoMail = this.emailContent;
     } else if(type == 2){
+      asuntoMail = this.asuntoAnulado;
       contenidoMail = this.emailContent2;
+    } else if(type == 3){
+      asuntoMail = this.asuntoDevuelto;
+      contenidoMail = this.emailContent1;
     }
 
     setTimeout(() => {
       const data = {
         destinatario: mailToNotify,
-        //destinatario: 'joseguillermojm.jm@gmail.com',
-        asunto: 'Nueva Solicitud de Orden de Compra Recibida - Acción Requerida',
+        asunto: asuntoMail,
         contenido: contenidoMail
       }
 

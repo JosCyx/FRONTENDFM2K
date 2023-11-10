@@ -1566,7 +1566,7 @@ export class SolicotiComponent implements OnInit {
               this.msjExito = `La solicitud ha sido enviada exitosamente.`;
 
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
-              this.sendNotify(newEstado, newestadoSt);
+              this.sendNotify(newEstado, newestadoSt, 1);
 
               setTimeout(() => {
                 this.showmsj = false;
@@ -1692,6 +1692,7 @@ export class SolicotiComponent implements OnInit {
   ///////////////////////////////////////////NO AUTORIZAR SOLICITUD///////////////////////////////////////////////////
 
   async noAutorizar() {
+    //extrae la lista de niveles de ruteo asignados a la solicitud
     await this.getNivelRuteoArea();
     //console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
 
@@ -1699,10 +1700,11 @@ export class SolicotiComponent implements OnInit {
     for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
       let niv = this.nivelRuteotoAut[i];
       if (niv.rutareaNivel == this.estadoTrkTmp) {
+        //extrae el nivel al que se va a retroceder la solicitud
         let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
         let newestadoSt = '';
 
-        //extrae el tipo de proceso del nivel actual
+        //extrae el tipo de proceso del nivel al que se va a retroceder la solicitud
         this.nivRuteService.getNivelInfo(newEstado).subscribe(
           (response) => {
             newestadoSt = response[0].procesoRuteo;
@@ -1713,6 +1715,7 @@ export class SolicotiComponent implements OnInit {
           }
         );
 
+        //cambia el estado de la solicitud al nivel anterior
         this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
           (response) => {
             //console.log('Estado de tracknig actualizado exitosamente');
@@ -1720,7 +1723,7 @@ export class SolicotiComponent implements OnInit {
             this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel anterior.`;
 
             //extraer el correo del empleado del nivel anterior y enviar el correo con sendMail al empleado
-            ////////////////////////////////////PENDIENTE///////////////////////////////////////////////
+            this.sendNotify(newEstado, newestadoSt, 3); 
 
             setTimeout(() => {
               this.showmsj = false;
@@ -1753,7 +1756,10 @@ export class SolicotiComponent implements OnInit {
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
 
 
-  async sendNotify(nivelStr: number, nivelStatus: string) {
+  async sendNotify(nivelStr: number, nivelStatus: string, tipoNotificacion: number) {
+    //nivelStr: numero del nivel de ruteo al que se le va a enviar la notificacion
+    //nivelStatus: tipo de proceso del nivel de ruteo al que se le va a enviar la notificacion
+    //tipoNotificacion: tipo de notificacion que se va a enviar (1: solicitud nueva, 2: solicitud anulada, 3: solicitud devuelta)
     //console.log("Nivel de ruteo: ", nivelStr);
 
     let mailToNotify = '';
@@ -1777,7 +1783,7 @@ export class SolicotiComponent implements OnInit {
                   //console.log('Empleado: ', response);
                   mailToNotify = response[0].empleadoCorreo;
                   //enviar la notificacion al correo guardado en mailnotify
-                  this.sendMail(mailToNotify, 1);
+                  this.sendMail(mailToNotify, tipoNotificacion);
                   console.log("Correo enviado a: ", mailToNotify)
                 },
                 (error) => {
@@ -1795,13 +1801,13 @@ export class SolicotiComponent implements OnInit {
   }
 
   asunto: string = 'Nueva Solicitud de Cotización Recibida - Acción Requerida';
-  emailContent: string = `Estimado,<br>Hemos recibido una nueva Solicitud de Cotización.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
+  emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Cotización.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
 
   asuntoDevuelto: string = 'Notificación - Solicitud de Cotización Devuelta';
-  emailContent1: string = `Estimado,<br>Le notificamos que la solicitud de cotización generada ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
+  emailContent1: string = `Estimado(a), le notificamos que la solicitud de cotización autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
 
   asuntoAnulado: string = 'Notificación - Solicitud de Cotización Anulada';
-  emailContent2: string = `Estimado,<br>Le notificamos que la solicitud de cotización generada ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
+  emailContent2: string = `Estimado(a), le notificamos que la solicitud de cotización generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
 
   sendMail(mailToNotify: string, type: number) {
     let contenidoMail = '';
@@ -1821,7 +1827,6 @@ export class SolicotiComponent implements OnInit {
     setTimeout(() => {
       const data = {
         destinatario: mailToNotify,
-        //destinatario: 'joseguillermojm.jm@gmail.com',
         asunto: asuntoMail,
         contenido: contenidoMail
       }
