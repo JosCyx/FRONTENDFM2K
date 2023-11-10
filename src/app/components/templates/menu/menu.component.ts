@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { GlobalService } from 'src/app/services/global.service'; 
+import { GlobalService } from 'src/app/services/global.service';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
@@ -7,17 +7,19 @@ import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css']
+  styleUrls: ['./menu.component.css'],
 })
 export class MenuComponent {
   userName: string = this.cookieService.get('userName');
   isLogin: boolean = false;
   showSB: boolean = false;
 
-  constructor(private globalService: GlobalService,
-    private router: Router, 
+  constructor(
+    private globalService: GlobalService,
+    private router: Router,
     private cookieService: CookieService,
-    private documentService: UploadFileService) { }
+    private documentService: UploadFileService
+  ) {}
 
   isSidebarVisible = false;
 
@@ -26,7 +28,7 @@ export class MenuComponent {
     //this.isSidebarVisible = !this.isSidebarVisible;
   }
 
-  backToMain():void{
+  backToMain(): void {
     //this.globalService.toggleAppSelected();
     //this.globalService.appSelected = false;
 
@@ -34,7 +36,7 @@ export class MenuComponent {
   }
 
   //destruye la cookie
-  logOut(){
+  logOut() {
     this.cookieService.delete('authToken');
     this.cookieService.delete('userLogin');
     this.cookieService.delete('userIdNomina');
@@ -44,46 +46,45 @@ export class MenuComponent {
     this.cookieService.delete('userArea');
     this.router.navigate(['login']);
     //console.log('Token vacio', this.cookieService.get('authToken'))
-
   }
 
-  routToCot(){
+  routToCot() {
     this.globalService.solView = 'crear';
     this.router.navigate(['allrequest']);
 
-    setTimeout(()=>{
+    setTimeout(() => {
       this.router.navigate(['solicoti']);
-    },1);
+    }, 1);
   }
 
-  routToOC(){
+  routToOC() {
     this.globalService.solView = 'crear';
     this.router.navigate(['allrequest']);
 
-    setTimeout(()=>{
+    setTimeout(() => {
       this.router.navigate(['solioc']);
-    },1);
+    }, 1);
   }
 
-  routToPago(){
+  routToPago() {
     this.globalService.solView = 'crear';
     this.router.navigate(['allrequest']);
 
-    setTimeout(()=>{
+    setTimeout(() => {
       this.router.navigate(['solipago']);
-    },1);
+    }, 1);
   }
 
-  getUserManual(){
+  getUserManual() {
     this.documentService.getUserManual().subscribe(
       (data) => {
-        //mostrar el pdf en una nueva pestaña
-        //window.open(data, '_blank');
+        const file = new Blob([data], { type: 'application/pdf' });
+        const urlfile = URL.createObjectURL(file);
+        window.open(urlfile, '_blank');
       },
       (error) => {
         console.log('error', error);
       }
     );
   }
-
 }
