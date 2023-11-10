@@ -69,7 +69,7 @@ export class CotPdfComponent implements OnInit {
         this.area = data;
       });
       this.nivRuteService
-        .getNivelbyEstado('A')
+        .getNivelruteo()
         .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)))
         .subscribe((data) => {
           this.NivelRuta = data;

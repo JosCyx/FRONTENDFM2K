@@ -562,7 +562,7 @@ export class SolicotiComponent implements OnInit {
         this.showmsj = false;
         this.clear();
         this.router.navigate(['allrequest']);
-      }, 2000);
+      }, 3000);
     }
     catch (error) {
       this.showmsjerror = true;
@@ -572,7 +572,7 @@ export class SolicotiComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = "";
-      }, 2500);
+      }, 3000);
     }
 
 
@@ -681,7 +681,7 @@ export class SolicotiComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = "";
-      }, 2500);
+      }, 3000);
     }
   }
 
@@ -1382,7 +1382,7 @@ export class SolicotiComponent implements OnInit {
         this.clear();
         this.serviceGlobal.solView = 'crear';
         this.router.navigate(['allrequest']);
-      }, 2500);
+      }, 3000);
 
     } catch (error) {
       console.log('Error:', error);
@@ -1392,7 +1392,7 @@ export class SolicotiComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = "";
-      }, 2500);
+      }, 3000);
     }
   }
 
@@ -1451,7 +1451,7 @@ export class SolicotiComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = "";
-      }, 2500);
+      }, 3000);
     }
   }
 
@@ -1471,7 +1471,7 @@ export class SolicotiComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = "";
-      }, 2500);
+      }, 3000);
     }
   }
 
@@ -1519,7 +1519,7 @@ export class SolicotiComponent implements OnInit {
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
                     this.router.navigate(['allrequest']);
-                  }, 2000);
+                  }, 3000);
                 },
                 (error) => {
                   console.log('Error al actualizar el estado: ', error);
@@ -1574,7 +1574,7 @@ export class SolicotiComponent implements OnInit {
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
                 this.router.navigate(['allrequest']);
-              }, 2000);
+              }, 3000);
             },
             (error) => {
               console.log('Error al actualizar el estado: ', error);
@@ -1674,7 +1674,7 @@ export class SolicotiComponent implements OnInit {
             this.clear();
             this.serviceGlobal.solView = 'crear';
             this.router.navigate(['allrequest']);
-          }, 2500);
+          }, 3000);
         }
       }, 1000);
 
@@ -1685,7 +1685,7 @@ export class SolicotiComponent implements OnInit {
       setTimeout(() => {
         this.showmsjerror = false;
         this.msjError = '';
-      }, 2500);
+      }, 3000);
     }
 
   }
@@ -1731,7 +1731,7 @@ export class SolicotiComponent implements OnInit {
               this.clear();
               this.serviceGlobal.solView = 'crear';
               this.router.navigate(['allrequest']);
-            }, 2500);
+            }, 3000);
           },
           (error) => {
             console.log('Error al actualizar el estado: ', error);
@@ -1741,7 +1741,7 @@ export class SolicotiComponent implements OnInit {
             setTimeout(() => {
               this.showmsjerror = false;
               this.msjError = '';
-            }, 2500);
+            }, 3000);
           }
         );
 
@@ -1851,7 +1851,7 @@ export class SolicotiComponent implements OnInit {
           setTimeout(() => {
             this.showmsjerror = false;
             this.msjError = '';
-          }, 4000)
+          }, 3000)
         }
       );
     }, 500);
