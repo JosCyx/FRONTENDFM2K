@@ -1502,6 +1502,9 @@
                
             </div>
             <div class="modal-footer">
+                <button *appAuthorize="'67'" type="button" class="btn btn-warning" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
+                  Guardar y confirmar
+                </button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="enviarSolicitud()">
                     Confirmar
                 </button>

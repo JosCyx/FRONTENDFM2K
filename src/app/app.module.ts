@@ -47,6 +47,7 @@ import { OcAnulacionComponent } from './components/procesos/solioc/oc-anulacion/
 import { SpAnulacionComponent } from './components/procesos/solipago/sp-anulacion/sp-anulacion.component';
 import { OcPdfComponent } from './components/procesos/solioc/oc-pdf/oc-pdf.component';
 import { SpPdfComponent } from './components/procesos/solipago/sp-pdf/sp-pdf.component';
+import { EmpleadoNivelComponent } from './components/seguridad/empleado-nivel/empleado-nivel.component';
 
 
 @NgModule({
@@ -87,7 +88,8 @@ import { SpPdfComponent } from './components/procesos/solipago/sp-pdf/sp-pdf.com
     OcAnulacionComponent,
     SpAnulacionComponent,
     OcPdfComponent,
-    SpPdfComponent
+    SpPdfComponent,
+    EmpleadoNivelComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,193 @@
+<app-menu-admin></app-menu-admin>
+<div class="container">
+    <h1 class="font-weight-bold">Asignar niveles de autorizacion</h1>
+
+    <div class="">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <button class="btn btn-primary m-2" (click)="changeView('consultar')">
+                        Consultar
+                    </button>
+                    <button class="btn btn-primary m-2" (click)="changeView('crear')">
+                        Crear
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <div class="seccion" *ngIf="changeview == 'consultar'">
+        <div class="p-3" style="width: 80%; margin: 0 auto">
+            <p>Buscar por:</p>
+            <div class="busqueda d-flex justify-content-between">
+                <div class="input-group mb-3">
+                    <select class="form-select" name="buscarOpcion" [(ngModel)]="buscarOpcion">
+                        <option selected value="dep">Departamento</option>
+                        <option value="name">Nombre</option>
+                        <option value="nivel">Nivel</option>
+                    </select>
+                    <input type="text" class="form-control" placeholder="Término de busqueda" name="terminoBusqueda"
+                        [(ngModel)]="terminoBusqueda" (input)="search()">
+                    <button class="btn btn-outline-danger" (click)="clearSearch()">Cancelar</button>
+                </div>
+                <div class="align-items-center input-group mb-3 justify-content-end">
+                    <button class="btn btn-primary" (click)="prevPage()"><i class="bi bi-arrow-left"></i></button>
+                    <button class="btn btn-primary" (click)="nextPage()"><i class="bi bi-arrow-right"></i></button>
+                </div>
+            </div>
+            <table class="table table-bordered text-center table-hover" *ngIf="empNivList.length != 0">
+                <thead>
+                    <tr>
+                        <th>Empleado asignado</th>
+                        <th>Departamento autorizado</th>
+                        <th>Nivel</th>
+                        <th>Importancia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr (click)="setElemento(element)" 
+                        *ngFor="let element of empNivList | paginate: { itemsPerPage: 10, currentPage: currentPage } let i=index">
+                        <td>{{element.empNivEmpelado}}</td>
+                        <td>{{element.empNivDeptAutorizado}}</td>
+                        <td>{{element.empNivRuteo}}</td>
+                        <td>{{element.empNivImp}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="seccion" *ngIf="changeview == 'crear'">
+        <div class="p-3" style="width: 80%; margin: 0 auto">
+            <h3 class="font-weight-bold" style="padding-top: 20pt">
+                Asignar nuevo nivel
+            </h3>
+            <form class="form-rol">
+                <div class="form m-4">
+                    <label class="form-label">Departamento a autorizar:</label>
+                    <select class="form-control" name="dep" id="dep" [(ngModel)]="departamento">
+                        <option disabled selected value="">Seleccione un departamento...</option>
+                        <option *ngFor="let dep of depList" [value]="dep.depIdNomina">
+                            {{ dep.depDescp }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form m-4">
+                    <label class="form-label">Empleado:</label>
+                    <input type="text" class="form-control" id="busqueda" list="sugerencias" name="empleado"
+                        [(ngModel)]="empBusqueda" (keyup)="searchEmpleado()" (input)="onInputChanged()"
+                        placeholder="Ingrese el nombre del empleado" />
+                    <datalist id="sugerencias">
+                        <ng-container *ngFor="let emp of empleados">
+                            <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+                        </ng-container>
+                    </datalist>
+                </div>
+    
+                <div class="form m-4">
+                    <label class="form-label">Nivel de Ruteo:</label>
+                    <select class="form-control" name="niv" id="niv" [(ngModel)]="nivel">
+                        <option disabled selected value="">Seleccione un nivel...</option>
+                        <option *ngFor="let app of nivelList" [value]="app.nivel">
+                            {{ app.descRuteo }}
+                        </option>
+                    </select>
+                </div>
+    
+                <div class="form m-4">
+                    <label class="form-label">Niv. de Importancia:</label>
+                    <select class="form-select" name="estado" [(ngModel)]="empleadoImp">
+                        <option disabled selected value="">Selecciona un estado...</option>
+                        <option value="T">Titular</option>
+                        <option value="S">Suplente</option>
+                    </select>
+                </div>
+            </form>
+            <div class="text-end">
+                <button class="btn btn-primary" (click)="enviar()">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="seccion" *ngIf="changeview == 'editar'">
+        <div class="p-3" style="width: 80%; margin: 0 auto">
+            <h3 class="font-weight-bold" style="padding-top: 20pt">
+                Asignar nuevo nivel
+            </h3>
+            <form class="form-rol">
+                <div class="form m-4">
+                    <label class="form-label">Departamento a autorizar:</label>
+                    <select class="form-control" name="dep" id="dep" [(ngModel)]="departamento">
+                        <option disabled selected value="">Seleccione un departamento...</option>
+                        <option *ngFor="let dep of depList" [value]="dep.depDescp">
+                            {{ dep.depDescp }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form m-4">
+                    <label class="form-label">Empleado:</label>
+                    <input type="text" class="form-control" id="busqueda" list="sugerencias" name="empleado"
+                        [(ngModel)]="empBusqueda" (keyup)="searchEmpleado()" (input)="onInputChanged()"
+                        placeholder="Ingrese el nombre del empleado" />
+                    <datalist id="sugerencias">
+                        <ng-container *ngFor="let emp of empleados">
+                            <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+                        </ng-container>
+                    </datalist>
+                </div>
+    
+                <div class="form m-4">
+                    <label class="form-label">Nivel de Ruteo:</label>
+                    <select class="form-control" name="niv" id="niv" [(ngModel)]="nivel">
+                        <option disabled selected value="">Seleccione un nivel...</option>
+                        <option *ngFor="let app of nivelList" [value]="app.descRuteo">
+                            {{ app.descRuteo }}
+                        </option>
+                    </select>
+                </div>
+    
+                <div class="form m-4">
+                    <label class="form-label">Niv. de Importancia:</label>
+                    <select class="form-select" name="estado" [(ngModel)]="empleadoImp">
+                        <option disabled selected value="">Selecciona un estado...</option>
+                        <option value="T">Titular</option>
+                        <option value="S">Suplente</option>
+                    </select>
+                </div>
+            </form>
+            <div class="text-end">
+                <button class="btn btn-primary m-3" (click)="guardaredidion()">Guardar edición</button>
+                <button class="btn btn-warning m-3" (click)="clear()">Cancelar</button>
+                <button class="btn btn-danger m-3" data-toggle="modal" data-target="#eliminarNivel">Eliminar nivel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para confirmar eliminacion de detalle-->
+<div class="modal fade" #exampleModal id="eliminarNivel" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea eliminar esta asignación?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Esta acción no se puede deshacer.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="eliminar()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

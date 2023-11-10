@@ -47,4 +47,19 @@ export class NivGerenciaService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any>(this.APIUrl + `/EmplNivels/GetEmplByDep?dep=${dep}&nivel=${niv}`, { headers: headers });
   }
+
+  addNivGerencia(data: any) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(this.APIUrl + '/EmplNivels', data, { headers: headers });
+  }
+
+  deleteNivGerencia(id: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(this.APIUrl + '/EmplNivels/' + id, { headers: headers });
+  }
+
+  updateNivGerencia(data: any, id: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + '/EmplNivels/' + id, data, { headers: headers });
+  }
 }

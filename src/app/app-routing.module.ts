@@ -21,6 +21,7 @@ import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes
 import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitudes-no-aprobadas/solicitudes-no-aprobadas.component';
 import { RolesTransacComponent } from './components/seguridad/roles-transac/roles-transac.component';
 import { RolesUsersComponent } from './components/seguridad/roles-users/roles-users.component';
+import { EmpleadoNivelComponent } from './components/seguridad/empleado-nivel/empleado-nivel.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -43,7 +44,8 @@ const routes: Routes = [
   {path: 'solNoAprob', component: SolicitudesNoAprobadasComponent, data: { breadcrumb: 'Solicitudes No Aprobadas' }, canActivate: [AuthGuard] },
   {path: 'allrequest', component: AllrequestComponent, data: { breadcrumb: 'Todas las solicitudes' }, canActivate: [AuthGuard] },
   {path: 'rolTransc', component: RolesTransacComponent, data: { breadcrumb: 'Roles-Transacciones' }, canActivate: [AuthGuard] },
-  {path: 'rolUser', component: RolesUsersComponent, data: { breadcrumb: 'Roles-Usuarios' }, canActivate: [AuthGuard] }
+  {path: 'rolUser', component: RolesUsersComponent, data: { breadcrumb: 'Roles-Usuarios' }, canActivate: [AuthGuard] },
+  {path: 'empnivel', component: EmpleadoNivelComponent, data: { breadcrumb: 'Empleado-Nivel' }, canActivate: [AuthGuard] }
 ];
 
 @NgModule({
