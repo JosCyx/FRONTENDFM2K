@@ -1690,9 +1690,10 @@ export class SoliocComponent implements OnInit {
    anularSolicitud() {
     let exito: boolean = false;
     let exitotrk: boolean = false;
+
     let mailToNotify: string = '';
 
-    this.empService.getEmpleadoByNomina(this.cabecera.cabSolOCSolicitante).subscribe(
+    this.empService.getEmpleadoByNomina(this.cabecera.cabSolOCIdEmisor).subscribe(
       (response: any) => {
         //console.log('Empleado: ', response);
         mailToNotify = response[0].empleadoCorreo;
@@ -1702,6 +1703,7 @@ export class SoliocComponent implements OnInit {
         console.log('Error al obtener el empleado: ', error);
       }
     );
+
     try {
       this.cabOCService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'C').subscribe(
         (response) => {
@@ -1760,6 +1762,18 @@ export class SoliocComponent implements OnInit {
     await this.getNivelRuteoArea();
     //console.log("Niveles de ruteo asignados: ", this.nivelRuteotoAut);
     
+    let mailToNotify: string = '';
+
+    this.empService.getEmpleadoByNomina(this.cabecera.cabSolOCIdEmisor).subscribe(
+      (response: any) => {
+        //console.log('Empleado: ', response);
+        mailToNotify = response[0].empleadoCorreo;
+        //console.log("Correo enviado a: ", mailToNotify)
+      },
+      (error) => {
+        console.log('Error al obtener el empleado: ', error);
+      }
+    );
 
     for(let i = 0; i < this.nivelRuteotoAut.length; i++){
       let niv = this.nivelRuteotoAut[i];
@@ -1784,8 +1798,14 @@ export class SoliocComponent implements OnInit {
             this.showmsj = true;
             this.msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido devuelta al nivel anterior.`;
 
-            //notificar al nivel anterior del devolucion de la solicitud
-            this.sendNotify(newEstado, newestadoSt, 3);
+            if(newEstado == 10){
+              //notificar al emisor
+              this.sendMail(mailToNotify,3);
+
+            } else {
+              //notificar al nivel correspondiente
+              this.sendNotify(newEstado, newestadoSt, 3); 
+            }
 
             setTimeout(() => {
               this.showmsj = false;
