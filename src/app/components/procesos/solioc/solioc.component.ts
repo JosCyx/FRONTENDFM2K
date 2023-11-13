@@ -860,6 +860,73 @@ export class SoliocComponent implements OnInit {
     //setTimeout(() => {}, 500);
   }
   //
+
+  itemViewid!:number;
+  itemDetalleView!:number;
+  deleteview(id:number, detalle:number){
+    this.itemViewid=id;//guarda el id del item que se va a eliminar
+    this.itemDetalleView=detalle;//guarda el id del detalle al que pertenece el item que se va a eliminar
+  }
+
+  deleteViewSave(){
+    console.log("listas",this.itemSectorList)
+    const index = this.itemSectorList.findIndex(item=>item.item_id === this.itemViewid && item.det_id === this.itemDetalleView);
+    if(index!==-1){
+      //elimina el elemento que se ha seleccionado
+      this.itemSectorList.splice(index,1);
+
+      //reordena la lista para evitar problemas con el id
+      this.reorderAndSaveItemView();
+
+      //calcula la cantidad total de los items de todos los detalles
+      this.calculardetalleview();
+
+      //calcula el id del item a agregar (no se utiliza en esta parte)
+      this.calcularIdItemView();
+    }
+  }
+
+  async reorderAndSaveItemView(){
+    const itemmap :{[key:number]:number} = {};
+
+    for(const item of this.itemSectorList){
+      const det = item.det_id;
+
+      if(!itemmap[det]){
+        itemmap[det] = 1;
+      }
+
+      item.item_id = itemmap[det];
+      itemmap[det]++;
+
+    }
+  }
+
+  calcularIdItemView(){
+    for(let item of this.itemSectorList){
+      if(item.det_id === this.det_id){
+        this.item_id = item.item_id + 1;
+      }
+    }
+  }
+
+
+  calculardetalleview(){
+    for(let det of this.detalleList){
+      if(det.det_id === this.IdDetalle){
+        det.det_cantidad = 0;
+        for(let it of this.itemSectorList){
+          
+          if(it.det_id === this.IdDetalle){
+            det.det_cantidad += it.item_cant;
+          }
+
+        }
+      }
+
+    }
+  }
+  //
   async editSolicitud() {
     this.clearSolGuardada();
     await this.getSolicitud();

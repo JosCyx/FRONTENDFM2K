@@ -345,8 +345,6 @@ export class CotProveedoresComponent implements OnInit {
       //console.log(this.dataForm.value)
       this.proveedorListSelected.push(newPrv);
 
-      //ESTO NO FUNCIONAA
-      this.miModal.nativeElement.modal('hide');
       //limpiar el formulario
       this.clearNewPrv();
     } else {
@@ -496,37 +494,40 @@ export class CotProveedoresComponent implements OnInit {
   //enviar el correo al proveedor seleccionado
   sendMailtoProv() {
     for (let prov of this.assignedProvs) {
-      this.setTemplate(prov.cotProvNombre);
-      
+      if(prov.cotProvVerify == 1){
 
-      const data = {
-        destinatario: prov.cotProvCorreo,
-        asunto: this.mail_asunto,
-        contenido: this.emailContent
-      }
-      this.sendMailService.sendMailto(data).subscribe(
-        response => {
-          //console.log("Exito");
-          this.showmsj = true;
-          this.msjExito = `Correos enviados exitosamente.`;
-
-          setTimeout(() => {
-            this.showmsj = false;
-            this.msjExito = '';
-          }, 3000)
-
-        },
-        error => {
-          console.log(`Error, no se ha podido enviar el correo al proveedor ${prov.cotProvNombre}`, error)
-          this.showmsjerror = true;
-          this.msjError = `Error, no se ha podido enviar el correo al proveedor ${prov.cotProvNombre}, intente nuevamente.`;
-
-          setTimeout(() => {
-            this.showmsjerror = false;
-            this.msjError = '';
-          }, 3000)
+        this.setTemplate(prov.cotProvNombre);
+        
+  
+        const data = {
+          destinatario: prov.cotProvCorreo,
+          asunto: this.mail_asunto,
+          contenido: this.emailContent
         }
-      );
+        this.sendMailService.sendMailto(data).subscribe(
+          response => {
+            //console.log("Exito");
+            this.showmsj = true;
+            this.msjExito = `Correos enviados exitosamente.`;
+  
+            setTimeout(() => {
+              this.showmsj = false;
+              this.msjExito = '';
+            }, 3000)
+  
+          },
+          error => {
+            console.log(`Error, no se ha podido enviar el correo al proveedor ${prov.cotProvNombre}`, error)
+            this.showmsjerror = true;
+            this.msjError = `Error, no se ha podido enviar el correo al proveedor ${prov.cotProvNombre}, intente nuevamente.`;
+  
+            setTimeout(() => {
+              this.showmsjerror = false;
+              this.msjError = '';
+            }, 3000)
+          }
+        );
+      }
     }
     
     //enviar correo a compras

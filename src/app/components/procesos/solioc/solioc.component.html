@@ -971,7 +971,7 @@
                                 <td class="align-middle">{{ item.det_id }}</td>
                                 <td class="align-middle">{{ item.det_descp }}</td>
                                 <td class="align-middle">{{ item.item_id }}</td>
-                                <td class="align-middle"><input type="number" (input)="validarNumero($event)" min="1" class="form-control" name="item_cant" value="{{ item.item_cant }}"></td>
+                                <td class="align-middle"><input type="number" (input)="validarNumero($event)" min="1" class="form-control" name="item_cant" [(ngModel)]="item.item_cant"></td>
                             <ng-container *ngFor="let sect of sectores$ | async">
                                 <!-- <td *ngIf="sect.sectIdNomina == item.item_sector" class="align-middle">
                                     {{ sect.sectNombre }}
@@ -983,17 +983,17 @@
                                     </select>
                                   </td>
                             </ng-container>
-                            <td>
+                            <!-- <td>
                                 <button class="btn text-danger" (click)="deleteItem(item.item_id)">
                                     <i class="bi bi-x-circle"></i></button>
-                            </td>
+                            </td> -->
                         </ng-container>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" data-dismiss="modal">
+                <button type="button" class="btn btn-success" data-dismiss="modal" (click)="calculardetalleview()">
                     Aceptar
                 </button>
             </div>

@@ -655,12 +655,12 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let item of itemSectorList">
-                            <ng-container *ngIf="item.det_id == IdDetalle">
+                            <ng-container *ngIf="item.det_id == IdDetalleEdicion">
                                 <td class="align-middle">{{ item.det_id }}</td>
                                 <td class="align-middle">{{ item.det_descp }}</td>
                                 <td class="align-middle">{{ item.item_id }}</td>
                                 <td class="align-middle"><input type="number" (input)="validarNumero($event)" min="1"
-                                        class="form-control" name="item_cant" value="{{ item.item_cant }}"></td>
+                                        class="form-control" name="item_cant" [(ngModel)]="item.item_cant"></td>
 
 
                                 <!-- <td class="align-middle">

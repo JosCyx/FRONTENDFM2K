@@ -6,7 +6,7 @@
     </div>
 
     <div>
-      <button class="btn btn-primary mr-5" (click)="getUserManual()">FAQ</button>
+      <button class="btn btn-primary mr-5" (mouseover)="showString()" (click)="getUserManual()"><i class="bi bi-filetype-pdf"> {{manualString}}</i></button>
       <button class="btn btn-primary ml-2 text-end" (click)="logOut()">Cerrar sesión <i
           class="bi bi-person-circle"></i></button>
     </div>

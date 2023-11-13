@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DepartamentosService } from 'src/app/services/comunicationAPI/seguridad/departamentos.service';
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
+import { CabCotizacionService } from 'src/app/services/comunicationAPI/solicitudes/cab-cotizacion.service';
 import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
 
 

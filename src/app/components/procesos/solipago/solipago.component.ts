@@ -186,7 +186,7 @@ export class SolipagoComponent implements OnInit {
     const patron: RegExp=/^[0-9]+$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
-    console.log("este son mis valores digitados ",valorIngresado);
+    //console.log("este son mis valores digitados ",valorIngresado);
 
     if (!patron.test(valorIngresado)) {
       console.log("entro ");
@@ -198,7 +198,7 @@ export class SolipagoComponent implements OnInit {
     const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
-    console.log("este son mis valores digitados ",valorIngresado);
+    //console.log("este son mis valores digitados ",valorIngresado);
 
     if (!patron.test(valorIngresado)) {
       console.log("entro ");

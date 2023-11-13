@@ -210,7 +210,7 @@ export class SolicotiComponent implements OnInit {
     const patron: RegExp=/^[0-9]+$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
-    console.log("este son mis valores digitados ",valorIngresado);
+    //console.log("este son mis valores digitados ",valorIngresado);
 
     if (!patron.test(valorIngresado)) {
       console.log("entro ");
@@ -578,11 +578,11 @@ export class SolicotiComponent implements OnInit {
 
 
   }
-  IdDetalle: number = 0;
+  IdDetalleEdicion: number = 0;
   CapturarIdDetalle(id: number): number {
-    this.IdDetalle = id;
-    //console.log("idDetalle", this.IdDetalle);
-    return this.IdDetalle;
+    this.IdDetalleEdicion = id;
+    console.log("idDetalle", this.IdDetalleEdicion);
+    return this.IdDetalleEdicion;
   }
   saveDetItem() {
     //enviar la lista detalle a la api para registrarla
@@ -878,12 +878,14 @@ export class SolicotiComponent implements OnInit {
     }
   }
 
+
   calculardetalleview(){
     for(let det of this.detalleList){
-      if(det.det_id === this.det_id){
+      if(det.det_id === this.IdDetalleEdicion){
         det.det_cantidad = 0;
         for(let it of this.itemSectorList){
-          if(it.det_id === this.det_id){
+          
+          if(it.det_id === this.IdDetalleEdicion){
             det.det_cantidad += it.item_cant;
           }
 

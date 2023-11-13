@@ -87,4 +87,13 @@ export class MenuComponent {
       }
     );
   }
+
+  manualString: string = '';
+  showString(){
+    this.manualString = 'Manual de Usuario'
+
+    setTimeout(() => {
+      this.manualString = ''
+    }, 2000);
+  }
 }
