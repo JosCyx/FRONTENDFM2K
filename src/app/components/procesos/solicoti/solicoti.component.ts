@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, OnDestroy } from '@angular/core';
 //servicios de comunicacion
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -45,7 +45,7 @@ interface SolicitudData {
   templateUrl: './solicoti.component.html',
   styleUrls: ['./solicoti.component.css']
 })
-export class SolicotiComponent implements OnInit {
+export class SolicotiComponent implements OnInit, OnDestroy {
   cabecera!: CabeceraCotizacion;
   detalle: DetalleCotizacion[] = [];
   item: ItemCotizacion[] = [];
@@ -259,6 +259,14 @@ export class SolicotiComponent implements OnInit {
     }
 
   }
+
+  ngOnDestroy(): void {
+    this.cancelar();
+    this.cancelarAll();
+    this.cancelarItem();
+    console.log("destruido");
+  }
+
   Validacionfecha():void{
     const fechpl=this.cab_plazo;
     this.fechaMinPlazo=fechpl.toString();

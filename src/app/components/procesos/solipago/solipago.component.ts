@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, OnDestroy } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
@@ -43,7 +43,7 @@ interface SolicitudData {
   templateUrl: './solipago.component.html',
   styleUrls: ['./solipago.component.css'],
 })
-export class SolipagoComponent implements OnInit {
+export class SolipagoComponent implements OnInit, OnDestroy {
   empleado: string = '';
   empleados: any[] = [];
   showArea: string = '';
@@ -232,6 +232,12 @@ export class SolipagoComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.cancelar();
+    this.cancelarEdi();
+    this.cancelarDes();
+  }
+
   cancelarDes(){
     //console.log("cancelar destino")
     this.spDestino.cancelarDestino();
@@ -358,6 +364,8 @@ export class SolipagoComponent implements OnInit {
     this.router.navigate(['allrequest']);
     this.clear();
   }
+
+
   //
   clear(): void {
     this.empleado = '';
@@ -573,7 +581,10 @@ export class SolipagoComponent implements OnInit {
                   this.detalleSolPagos = response.map((ini: any) => ({
                     idDetalle: ini.solCotIdDetalle,
                     itemDesc: ini.solCotDescripcion,
-                    itemCant: ini.solCotCantidadTotal
+                    itemCant: ini.solCotCantidadTotal,
+                    cantidadRecibid : undefined,
+                    valorUnitario: undefined,
+                    subTotal: undefined
                   }));
 
                   //variables para controlar los datos ue se le pasan a destino
@@ -632,19 +643,16 @@ export class SolipagoComponent implements OnInit {
   }
   //Calculo de Total
   calculoTotal() {
-    this.Total = 0;
-    for (let PagoTotal of this.detalleSolPagos) {
-      this.Total = this.Total + PagoTotal.subTotal;
-      console.log(`el total es to  ${this.Total}`);
-    }
+      this.Total = 0;
+      for (let PagoTotal of this.detalleSolPagos) {
+        this.Total = this.Total + PagoTotal.subTotal;
+      }
   }
   //Calculo  Total de Edicion
   calculoEditotal() {
     this.cabecera.cabpagototal = 0;
     for (let PagoTotal of this.detallePago) {
-      this.cabecera.cabpagototal =
-        this.cabecera.cabpagototal + PagoTotal.detPagoSubtotal;
-      console.log(`el total es to  ${this.cabecera.cabpagototal}`);
+      this.cabecera.cabpagototal =  this.cabecera.cabpagototal + PagoTotal.detPagoSubtotal;
     }
   }
   async editSolicitud() {
@@ -1363,4 +1371,19 @@ export class SolipagoComponent implements OnInit {
     }
    }
   
+   calculateSubtotal(id:number){
+    for(let detalle of this.detalleSolPagos){
+      if(detalle.idDetalle == id){
+        detalle.subTotal = detalle.cantidadRecibid * detalle.valorUnitario;
+      }
+    }
+   }
+
+   calculateSubtotalEdit(id:number){
+    for(let detalle of this.detallePago){
+      if(detalle.detPagoIdDetalle == id){
+        detalle.detPagoSubtotal = detalle.detPagoCantRecibida * detalle.detPagoValUnitario;
+      }
+    }
+   }
   }

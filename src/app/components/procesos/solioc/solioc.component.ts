@@ -1,4 +1,4 @@
-import { Component, OnInit,Input, ViewChild } from '@angular/core';
+import { Component, OnInit,Input, ViewChild, OnDestroy } from '@angular/core';
 
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -43,7 +43,7 @@ interface SolicitudData {
   templateUrl: './solioc.component.html',
   styleUrls: ['./solioc.component.css'],
 })
-export class SoliocComponent implements OnInit {
+export class SoliocComponent implements OnInit, OnDestroy {
   empleado: string = '';
   inspector: string = '';
   showArea: string = '';
@@ -254,6 +254,14 @@ export class SoliocComponent implements OnInit {
       this.editSolicitud();
     }
   }
+
+
+  ngOnDestroy(): void {
+    this.cancelar();
+    this.cancelarAll();
+    this.cancelarItem();
+  }
+
   Validacionfecha():void{
     const fechpl=this.cab_plazo;
     this.fechaMinPlazo=fechpl.toString();

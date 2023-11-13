@@ -280,9 +280,15 @@
                       (input)="validarNumero($event)"
                       min="1"
                       class="form-control text-center"
+                      [value]="calculateSubtotal(det.idDetalle)"
                       [(ngModel)]="det.subTotal"
-                      (input)="calculoTotal()"
+                      disabled
                     />
+                  </td>
+                </tr>
+                <tr *ngIf="detalleSolPagos.length != 0">
+                  <td class="align-middle text-end" colspan="6">
+                    <button class="btn btn-outline-primary" (click)="calculoTotal()">Calcular total</button>
                   </td>
                 </tr>
                 <tr>
@@ -745,14 +751,20 @@
                 </td>
                 <td class="align-middle">
                   <input
+                    disabled
                     type="number"
                     (input)="validarNumero($event)"
                     min="1"
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoSubtotal"
                     (input)="calculoEditotal()"
-                    [appSecureDisable]="estadoSol"
+                    [value]="calculateSubtotalEdit(det.detPagoIdDetalle)"
                   />
+                </td>
+              </tr>
+              <tr>
+                <td class="align-middle text-end" colspan="6">
+                  <button class="btn btn-outline-primary" (click)="calculoEditotal()">Calcular total</button>
                 </td>
               </tr>
               <tr>
@@ -763,12 +775,12 @@
                 <td class="align-middle text-end">Total</td>
                 <td class="align-middle text-end">
                   <input
+                  disabled
                     type="number"
                     (input)="validarNumero($event)"
                     min="1"
                     class="form-control text-center"
                     [(ngModel)]="cabecera.cabpagototal"
-                    [appSecureDisable]="estadoSol"
                   />
                 </td>
               </tr>
