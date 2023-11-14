@@ -5,6 +5,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from 'src/app/services/authentication/auth.service';
 import { AppAuthorizeTransactionDirective } from 'src/app/directives/app-authorize-transaction.directive';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
+import { DialogServiceService } from 'src/app/services/dialog-service.service';
 
 @Component({
   selector: 'app-main',
@@ -18,11 +19,16 @@ export class MainComponent implements OnInit {
     private router: Router,
     private cookieService: CookieService,
     private authService: AuthService,
-    private documentService: UploadFileService) { }
+    private documentService: UploadFileService,
+    private dialogService: DialogServiceService) { }
 
     
   ngOnInit(): void {
 
+  }
+
+  callMensaje(mensaje: string, type: boolean){
+    this.dialogService.openAlertDialog(mensaje, type);
   }
 
   logOut() {

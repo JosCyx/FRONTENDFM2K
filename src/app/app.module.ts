@@ -3,6 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 //Dependencias  Angular PDF View
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -48,6 +50,8 @@ import { SpAnulacionComponent } from './components/procesos/solipago/sp-anulacio
 import { OcPdfComponent } from './components/procesos/solioc/oc-pdf/oc-pdf.component';
 import { SpPdfComponent } from './components/procesos/solipago/sp-pdf/sp-pdf.component';
 import { EmpleadoNivelComponent } from './components/seguridad/empleado-nivel/empleado-nivel.component';
+import { DialogComponentComponent } from './components/templates/dialog-component/dialog-component.component';
+import { DialogServiceService } from './services/dialog-service.service';
 
 
 @NgModule({
@@ -89,7 +93,9 @@ import { EmpleadoNivelComponent } from './components/seguridad/empleado-nivel/em
     SpAnulacionComponent,
     OcPdfComponent,
     SpPdfComponent,
-    EmpleadoNivelComponent
+    EmpleadoNivelComponent,
+    DialogComponentComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -99,8 +105,9 @@ import { EmpleadoNivelComponent } from './components/seguridad/empleado-nivel/em
     ReactiveFormsModule,
     HttpClientModule,
     NgxPaginationModule,
+    MatDialogModule
   ],
-  providers: [AuthService],
+  providers: [AuthService, MatDialog, DialogServiceService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
