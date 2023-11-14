@@ -202,6 +202,7 @@ export class AllrequestComponent implements OnInit {
 
   //CONSULTA TODAS LAS SOLICITUDES DEPENDIENDO DEL METODO DE BUSQUEDA DEL USUARIO
   getAllCotizaciones(): void {
+    this.allSol = [];
     if (this.metodoBusq == 1) {
       this.cabCotService.getCotizacionesByIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
@@ -243,6 +244,7 @@ export class AllrequestComponent implements OnInit {
   }
 
   getAllOrdenCompras(): void {
+    this.allSol = [];
     if (this.metodoBusq == 1) {
       this.cabOCService.getOrdenCmpbyIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
@@ -287,6 +289,7 @@ export class AllrequestComponent implements OnInit {
 
 
   getAllOrdenPagos(): void {
+    this.allSol = [];
     if (this.metodoBusq == 1) {
       this.cabPagoService.getPagobyIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
