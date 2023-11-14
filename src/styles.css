@@ -1,5 +1,6 @@
 @import '~bootstrap/dist/css/bootstrap.min.css';
 @import '~bootstrap-icons/font/bootstrap-icons.min.css';
+@import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
@@ -89,3 +90,5 @@ header {
   
 
   
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

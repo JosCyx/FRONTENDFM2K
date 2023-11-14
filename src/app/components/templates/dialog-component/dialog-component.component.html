@@ -1,0 +1,18 @@
+<div *ngIf="data.type">
+    <h2 mat-dialog-title>Mensaje</h2>
+    <div mat-dialog-content>
+        <p>{{ data.message }}</p>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-raised-button (click)="onCloseClick()">Cerrar</button>
+    </div>
+</div>
+<div *ngIf="!data.type">
+    <h2 mat-dialog-title>Error</h2>
+    <div mat-dialog-content>
+        <p>{{ data.message }}</p>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-raised-button (click)="onCloseClick()">Cerrar</button>
+    </div>
+</div>

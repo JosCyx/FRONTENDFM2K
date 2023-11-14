@@ -7,6 +7,10 @@ import { NgxPaginationModule } from 'ngx-pagination';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 //-------
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -50,6 +54,8 @@ import { SpAnulacionComponent } from './components/procesos/solipago/sp-anulacio
 import { OcPdfComponent } from './components/procesos/solioc/oc-pdf/oc-pdf.component';
 import { SpPdfComponent } from './components/procesos/solipago/sp-pdf/sp-pdf.component';
 import { EmpleadoNivelComponent } from './components/seguridad/empleado-nivel/empleado-nivel.component';
+import { DialogComponentComponent } from './components/templates/dialog-component/dialog-component.component';
+import { DialogServiceService } from './services/dialog-service.service';
 
 
 @NgModule({
@@ -92,6 +98,8 @@ import { EmpleadoNivelComponent } from './components/seguridad/empleado-nivel/em
     OcPdfComponent,
     SpPdfComponent,
     EmpleadoNivelComponent,
+    DialogComponentComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -102,9 +110,10 @@ import { EmpleadoNivelComponent } from './components/seguridad/empleado-nivel/em
     HttpClientModule,
     NgxPaginationModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatDialogModule
   ],
-  providers: [AuthService],
+  providers: [AuthService, MatDialog, DialogServiceService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
