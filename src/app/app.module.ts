@@ -3,8 +3,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 //Dependencias  Angular PDF View
-
-
+//Material UI Angular
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+//-------
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -89,7 +91,7 @@ import { EmpleadoNivelComponent } from './components/seguridad/empleado-nivel/em
     SpAnulacionComponent,
     OcPdfComponent,
     SpPdfComponent,
-    EmpleadoNivelComponent
+    EmpleadoNivelComponent,
   ],
   imports: [
     BrowserModule,
@@ -99,6 +101,8 @@ import { EmpleadoNivelComponent } from './components/seguridad/empleado-nivel/em
     ReactiveFormsModule,
     HttpClientModule,
     NgxPaginationModule,
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]
