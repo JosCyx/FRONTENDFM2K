@@ -261,10 +261,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.cancelar();
-    this.cancelarAll();
-    this.cancelarItem();
-    console.log("destruido");
+    //this.cancelar();
+    //this.cancelarAll();
+    //this.cancelarItem();
   }
 
   Validacionfecha():void{

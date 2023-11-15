@@ -257,9 +257,9 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
 
   ngOnDestroy(): void {
-    this.cancelar();
-    this.cancelarAll();
-    this.cancelarItem();
+    //this.cancelar();
+    //this.cancelarAll();
+    //this.cancelarItem();
   }
 
   Validacionfecha():void{

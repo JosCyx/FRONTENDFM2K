@@ -233,9 +233,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.cancelar();
-    this.cancelarEdi();
-    this.cancelarDes();
+    //this.cancelar();
+    //this.cancelarEdi();
+    //this.cancelarDes();
   }
 
   cancelarDes(){
