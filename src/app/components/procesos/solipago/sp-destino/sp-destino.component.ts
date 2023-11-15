@@ -7,6 +7,7 @@ import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sect
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { SolipagoComponent } from '../solipago.component';
+import { SharedService } from 'src/app/services/shared.service';
 
 interface Detalle {
   idDetalle: number;
@@ -74,7 +75,13 @@ export class SpDestinoComponent implements OnInit {
     private destinoService: DestinoPagoServiceService,
     private globalService: GlobalService,
     private cabPago: SolipagoComponent,
-    private sectorServices: SectoresService) { }
+    private sectorServices: SectoresService,
+    private sharedSerive: SharedService) {
+      this.sharedSerive.spDestino$.subscribe(() =>{
+        this.cancelarDestino();
+        this.deleteFilesUnsaved();
+      })
+     }
 
   ngOnInit(): void {
     //console.log('Detalles recibidos:', this.detalles);

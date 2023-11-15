@@ -37,7 +37,17 @@ export class SharedService {
   spDocumentacionChange(){
     this.spDocumentacion.next();
   }
+
+  //EJECUTAR METODOS DE DESTINO DESDE SOLICITUD DE PAGO
+  private spDestino = new Subject<void>();
+
+  spDestino$ = this.spDestino.asObservable();
+
+  spDestinoChange(){
+    this.spDestino.next();
+  }
   
+  /*
   //EJECUTAR METODOS DE SOLICITUD DE COTIZACION DESDE ANULACION
   private aprobarsubject = new Subject<void>();
   private anularsubject = new Subject<void>();
@@ -100,5 +110,5 @@ export class SharedService {
   noautorizarsp(){
     this.noautorizarspsubject.next();
   }
-
+*/
 }

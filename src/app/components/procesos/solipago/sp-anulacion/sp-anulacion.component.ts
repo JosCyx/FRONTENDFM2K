@@ -14,7 +14,7 @@ export class SpAnulacionComponent {
 
   constructor(private sharedService: SharedService) {}
 
-  enviarCotizacion(){
+  /*enviarCotizacion(){
     this.sharedService.aprobarsp();
   }
 
@@ -24,6 +24,6 @@ export class SpAnulacionComponent {
 
   noAutorizarCotizacion(){
     this.sharedService.noautorizarsp();
-  }
+  }*/
 
 }
