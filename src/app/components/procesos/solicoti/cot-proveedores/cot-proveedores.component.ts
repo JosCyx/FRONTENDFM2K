@@ -10,6 +10,7 @@ import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/Detalle
 import { ParamsConfigService } from 'src/app/services/comunicationAPI/seguridad/params-config.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { CookieService } from 'ngx-cookie-service';
+import { DialogServiceService } from 'src/app/services/dialog-service.service';
 
 interface selectedProveedor {
   ruc: string,
@@ -136,7 +137,7 @@ export class CotProveedoresComponent implements OnInit {
     private sendMailService: SendEmailService,
     private paramService: ParamsConfigService,
     private sharedService: SharedService,
-    private coockieService: CookieService) { 
+    private coockieService: CookieService,private dialogService:DialogServiceService) { 
       this.sharedService.cotProveedores$.subscribe(() =>{
         this.RecorrerPro();
       });
@@ -173,13 +174,11 @@ export class CotProveedoresComponent implements OnInit {
       this.proveedoresList = [];
       this.isSearched = false;
 
-      this.showmsj = true;
-      this.msjError = 'Ingrese un nombre o ruc para buscar proveedores.';
+      const msjError = 'Ingrese un nombre o ruc para buscar proveedores.';
+      this.callMensaje(msjError,false)
 
       setTimeout(() => {
         this.isSearched = true;
-        this.showmsj = false;
-        this.msjError = '';
       }, 3000)
 
 
@@ -195,13 +194,8 @@ export class CotProveedoresComponent implements OnInit {
           },
           error => {
             if (error.status == 404) {
-              this.showmsj = true;
-              this.msjError = 'No se han encontrado proveedores con el dato ingresado, intente nuevamente.';
-
-              setTimeout(() => {
-                this.showmsj = false;
-                this.msjError = '';
-              }, 3000)
+              const msjError = 'No se han encontrado proveedores con el dato ingresado, intente nuevamente.';
+              this.callMensaje(msjError,false)
             }
             this.proveedoresList = [];
             console.log("Error:", error);
@@ -219,14 +213,8 @@ export class CotProveedoresComponent implements OnInit {
           },
           error => {
             if (error.status == 404) {
-              this.showmsj = true;
-              this.msjError = 'No se han encontrado proveedores con el dato ingresado, intente nuevamente.';
-
-              setTimeout(() => {
-
-                this.showmsj = false;
-                this.msjError = '';
-              }, 3000)
+              const msjError = 'No se han encontrado proveedores con el dato ingresado, intente nuevamente.';
+              this.callMensaje(msjError,false)
             }
             this.proveedoresList = [];
             console.log("Error:", error);
@@ -348,12 +336,8 @@ export class CotProveedoresComponent implements OnInit {
       //limpiar el formulario
       this.clearNewPrv();
     } else {
-      this.showmsjerror=true
-      this.msjError = 'Error, no se han completado todos los datos necesarios.';
-      setTimeout(() => {
-        this.showmsjerror=false
-        this.msjError = '';
-      }, 3000)
+      const msjError = 'Error, no se han completado todos los datos necesarios.';
+      this.callMensaje(msjError,false)
       // Muestra una alerta o mensaje de error al usuario indicando que los campos deben llenarse.
     }
   }
@@ -380,7 +364,8 @@ export class CotProveedoresComponent implements OnInit {
       for (let prov of this.proveedorListSelected) {
 
         if (prov.validEmail === false) {
-          alert(`Error al asignar el proveedor ${prov.nombre}, el correo ingresado no es válido, por favor intente nuevamente.`)
+          const error=`Error al asignar el proveedor ${prov.nombre}, el correo ingresado no es válido, por favor intente nuevamente.`;
+          this.callMensaje(error,false)
         } else {
           const data = {
             cotProvTipoSolicitud: this.tipoSol,
@@ -401,14 +386,11 @@ export class CotProveedoresComponent implements OnInit {
             error => {
               if (error.status == 409) {
                 //console.log("Error, este proveedor ya se ha asignado:", error);
-                this.showadv = true;
-                this.msjError = `El proveedor ${data.cotProvNombre} ya está asignado a esta solicitud.`;
-
+                const msjError = `El proveedor ${data.cotProvNombre} ya está asignado a esta solicitud.`;
+                this.callMensaje(msjError,false)
                 setTimeout(() => {
                   this.actionProv = 'consultar';
                   this.isSearched = true;
-                  this.showadv = false;
-                  this.msjError = '';
                 }, 3000)
 
               } else {
@@ -493,7 +475,9 @@ export class CotProveedoresComponent implements OnInit {
 
   //enviar el correo al proveedor seleccionado
   sendMailtoProv() {
-    for (let prov of this.assignedProvs) {
+    let exito:number=0;
+    for (let i=0;  i < this.assignedProvs.length; i++) {
+      const prov = this.assignedProvs[i];
       if(prov.cotProvVerify == 1){
 
         this.setTemplate(prov.cotProvNombre);
@@ -506,34 +490,26 @@ export class CotProveedoresComponent implements OnInit {
         }
         this.sendMailService.sendMailto(data).subscribe(
           response => {
-            //console.log("Exito");
-            this.showmsj = true;
-            this.msjExito = `Correos enviados exitosamente.`;
-  
-            setTimeout(() => {
-              this.showmsj = false;
-              this.msjExito = '';
-            }, 3000)
-  
+            if(i == this.assignedProvs.length-1){
+              exito=1;
+              const msjExito = 'Correos enviados exitosamente.';
+              this.callMensaje(msjExito,true);
+              console.log("Ultimo correo enviado ")
+            }
+            console.log("Exito",response);
+
           },
           error => {
             console.log(`Error, no se ha podido enviar el correo al proveedor ${prov.cotProvNombre}`, error)
-            this.showmsjerror = true;
-            this.msjError = `Error, no se ha podido enviar el correo al proveedor ${prov.cotProvNombre}, intente nuevamente.`;
-  
-            setTimeout(() => {
-              this.showmsjerror = false;
-              this.msjError = '';
-            }, 3000)
+            exito=0;
+            const msjError = `Error, no se ha podido enviar el correo al proveedor ${prov.cotProvNombre}, intente nuevamente.`;
+            this.callMensaje(msjError,false)
           }
         );
       }
     }
-    
-    //enviar correo a compras
     this.sendMailCompras();
   }
-
   sendMailCompras(){
     for(let cmp of this.comprasData){
       this.setTemplate(cmp.identify);
@@ -546,24 +522,13 @@ export class CotProveedoresComponent implements OnInit {
       this.sendMailService.sendMailto(data).subscribe(
         response => {
           //console.log(`Exito, se ha enviado el correo a ${cmp.identify}.`);
-          this.showmsj = true;
-          this.msjExito = `Correos enviados exitosamente.`;
-
-          setTimeout(() => {
-            this.showmsj = false;
-            this.msjExito = '';
-          }, 3000)
-
+          // const msjExito = `Correos enviados exitosamente.`;
+          // this.callMensaje(this.msjExito,true)
         },
         error => {
           console.log(`Error, no se ha podido enviar el correo al proveedor ${cmp.identify}`, error)
-          this.showmsjerror = true;
-          this.msjError = `Error, no se ha podido enviar el correo al proveedor ${cmp.identify}, intente nuevamente.`;
-
-          setTimeout(() => {
-            this.showmsjerror = false;
-            this.msjError = '';
-          }, 3000)
+          const msjError = `Error, no se ha podido enviar el correo al proveedor ${cmp.identify}, intente nuevamente.`;
+          this.callMensaje(this.msjError,false);
         }
       );
     }
@@ -1104,22 +1069,12 @@ RecorrerPro(){
     this.provCotService.deleteProvCot(element.cotProvId).subscribe({
       next: data => {
         //console.log('Eliminado con exito!');
-        this.showmsj=true;
-        this.msjExito="Solicitud Cancelada con exito";
+        const msjExito="Solicitud Cancelada con exito";
+        this.callMensaje(msjExito,true);
         this.getProvCotizacion();
-        setTimeout(() => {
-          this.showmsj=false;
-          this.msjExito="";
-        }, 3000);
       },
       error: error => {
         console.error('Error al Eliminar!', error);
-        this.showmsjerror=true;
-        this.msjError="Error, ya se han eliminado los proveedores.";
-        setTimeout(() => {
-          this.showmsjerror=false;
-          this.msjError="";
-        }, 3000);
       }
     })
 
@@ -1137,24 +1092,21 @@ changeVerifyProv(){
   this.provCotService.verifyProveedor(this.id_prov).subscribe(
     response => {
       //console.log('Verificado con exito!');
-      this.showmsj=true;
-      this.msjExito="Proveedor verificado con exito";
+      const msjExito="Proveedor verificado con exito";
+      this.callMensaje(msjExito,true);
       setTimeout(() => {
-        this.showmsj=false;
-        this.msjExito="";
         this.getProvCotizacion();
       }, 3000);
     },
     error => {
       console.error('Error al verificar!', error);
-      this.showmsjerror=true;
-      this.msjError="Error al verificar el proveedor";
-      setTimeout(() => {
-        this.showmsjerror=false;
-        this.msjError="";
-      }, 3000);
+      const msjError="Error al verificar el proveedor";
+      this.callMensaje(msjError,false);
     }
   );
+}
+callMensaje(mensaje: string, type: boolean){
+  this.dialogService.openAlertDialog(mensaje, type);
 }
 
 }

@@ -1,18 +1,24 @@
-<div *ngIf="data.type">
-    <h2 mat-dialog-title>Mensaje</h2>
+<div *ngIf="data.type" class="text-center" >
+   <div >
+     <h2 mat-dialog-title>Mensaje</h2>
+   </div>
+   <hr style="color:rgb(0,255,0); opacity: 1;" >
     <div mat-dialog-content>
         <p>{{ data.message }}</p>
     </div>
-    <div mat-dialog-actions>
+    <div mat-dialog-actions style="justify-content: center;" >
         <button mat-raised-button (click)="onCloseClick()">Cerrar</button>
     </div>
 </div>
-<div *ngIf="!data.type">
-    <h2 mat-dialog-title>Error</h2>
+<div *ngIf="!data.type"  class="text-center" >
+    <div >
+        <h2 mat-dialog-title>Error</h2>
+    </div>
+    <hr style="color: rgb(255, 0,0); opacity: 1;" >
     <div mat-dialog-content>
         <p>{{ data.message }}</p>
     </div>
-    <div mat-dialog-actions>
-        <button mat-raised-button (click)="onCloseClick()">Cerrar</button>
+    <div mat-dialog-actions style="justify-content: center;" >
+        <button mat-raised-button   (click)="onCloseClick()">Cerrar</button>
     </div>
 </div>

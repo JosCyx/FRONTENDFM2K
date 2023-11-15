@@ -28,6 +28,7 @@ import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes
 import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
 import { CotAnulacionComponent } from './cot-anulacion/cot-anulacion.component';
 import { SharedService } from 'src/app/services/shared.service';
+import { DialogServiceService } from 'src/app/services/dialog-service.service';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -184,7 +185,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     private prespService: PresupuestoService,
     private nivGerenciaService: NivGerenciaService,
     private sendMailService: SendEmailService,
-    private sharedService: SharedService) {
+    private sharedService: SharedService,
+    private dialogService:DialogServiceService) {
     /*  
     //se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobar$.subscribe(() => {
@@ -267,6 +269,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     console.log("destruido");
   }
 
+  callMensaje(mensaje: string, type: boolean){
+    this.dialogService.openAlertDialog(mensaje, type);
+  }
   Validacionfecha():void{
     const fechpl=this.cab_plazo;
     this.fechaMinPlazo=fechpl.toString();
@@ -534,14 +539,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
 
     //enviar datos de cabecera a la API
-    //console.log("2. guardando solicitud...", dataCAB);
     await this.cabCotService.addSolCot(dataCAB).subscribe(
       response => {
         //console.log("Cabecera agregada.");
         //console.log("Solicitud", this.solNumerico);
         //console.log("Agregando cuerpo de la cabecera...");
         this.addBodySol();
-        //console.log("Cuerpo agregado.");
       },
       error => {
         console.log("error al guardar la cabecera: ", error)
@@ -562,25 +565,18 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
       this.getSolName(this.trLastNoSol);
       this.showmsj = true;
-      this.msjExito = `Solicitud N° ${this.solNumerico} generada exitosamente.`;
-
-
-      setTimeout(() => {
-        this.msjExito = "";
-        this.showmsj = false;
+      const msjExito = `Solicitud N° ${this.solNumerico} generada exitosamente.`;
+      this.callMensaje(msjExito,true);
+      setTimeout(() => {      
         this.clear();
         this.router.navigate(['allrequest']);
       }, 3000);
     }
     catch (error) {
       this.showmsjerror = true;
-      this.msjError = "No se ha podido generar la solicitud, intente nuevamente.";
+      const msjError = "No se ha podido generar la solicitud, intente nuevamente.";
+      this.callMensaje(msjError,false);
       console.log("Error al generar la solicitud: ", error);
-
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = "";
-      }, 3000);
     }
 
 
@@ -684,12 +680,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       this.generarSolicitud();
     } else {
       this.showmsjerror = true;
-      this.msjError = "Error, asegúrese de ingresar todos los detalles antes de registrar la solicitud.";
-
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = "";
-      }, 3000);
+      const msjError = "Error, asegúrese de ingresar todos los detalles antes de registrar la solicitud.";
+      this.callMensaje(msjError,false)
     }
   }
 
@@ -710,9 +702,6 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     this.detalleList.push(detalle);
     this.sharedDetalle = this.detalleList;
     this.cabSolCotAsunto = this.cab_asunto;
-    /*console.log("Detalles:", this.detalleList);
-    console.log("est es shared detalle", this.sharedDetalle);
-    console.log("este es el asunto", this.cabSolCotAsunto);*/
     //aumenta el valor del id de detalle
     this.incrementDetID();
 
@@ -1383,12 +1372,11 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       await this.saveEditDetalle();
       await this.saveEditItem();
 
-      this.showmsj = true;
-      this.msjExito = `Solicitud N° ${this.cabecera.cabSolCotNumerico} editada exitosamente.`;
+      const msjExito = `Solicitud N° ${this.cabecera.cabSolCotNumerico} editada exitosamente.`;
+      this.callMensaje(msjExito,true)
 
       setTimeout(() => {
-        this.msjExito = '';
-        this.showmsj = false;
+        
         this.clear();
         this.serviceGlobal.solView = 'crear';
         this.router.navigate(['allrequest']);
@@ -1396,13 +1384,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
     } catch (error) {
       console.log('Error:', error);
-      this.showmsjerror = true;
-      this.msjError = "No se ha podido guardar la solicitud, intente nuevamente.";
-
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = "";
-      }, 3000);
+      const msjError = "No se ha podido guardar la solicitud, intente nuevamente.";
+      this.callMensaje(msjError,false)
     }
   }
 
@@ -1455,13 +1438,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       //this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
-      this.showmsjerror = true;
-      this.msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
-
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = "";
-      }, 3000);
+      const msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
+      this.callMensaje(this.msjError,false)
     }
   }
 
@@ -1475,13 +1453,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       //this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
-      this.showmsjerror = true;
-      this.msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
-
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = "";
-      }, 3000);
+      const msjError = "No se ha podido Editar la solicitud, intente nuevamente.";
+      this.callMensaje(msjError,false)
     }
   }
 
@@ -1519,13 +1492,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
             (response) => {
               this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
                 (response) => {
-
-                  this.showmsj = true;
-                  this.msjExito = `La solicitud ha sido enviada exitosamente.`;
-
+                  const msjExito = `La solicitud ha sido enviada exitosamente.`;
+                  this.callMensaje(msjExito,true)
                   setTimeout(() => {
-                    this.showmsj = false;
-                    this.msjExito = '';
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
                     this.router.navigate(['allrequest']);
@@ -1572,15 +1541,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
               //console.log("Solicitud enviada");
-              this.showmsj = true;
-              this.msjExito = `La solicitud ha sido enviada exitosamente.`;
-
+              const msjExito = `La solicitud ha sido enviada exitosamente.`;
+              this.callMensaje(msjExito,true)
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
               this.sendNotify(newEstado, newestadoSt, 1);
 
               setTimeout(() => {
-                this.showmsj = false;
-                this.msjExito = '';
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
                 this.router.navigate(['allrequest']);
@@ -1673,14 +1639,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
         if (exito && exitotrk) {
           this.showmsj = true;
-          this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido anulada exitosamente.`;
-
+          const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido anulada exitosamente.`;
+          this.callMensaje(msjExito,true)
           //notificar al emisor de la solicitud que ha sido anulada
           this.sendMail(mailToNotify,2);
 
           setTimeout(() => {
-            this.showmsj = false;
-            this.msjExito = '';
             this.clear();
             this.serviceGlobal.solView = 'crear';
             this.router.navigate(['allrequest']);
@@ -1691,11 +1655,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.log('Error:', error);
       this.showmsjerror = true;
-      this.msjError = "No se ha podido anular la solicitud, intente nuevamente.";
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = '';
-      }, 3000);
+      const msjError = "No se ha podido anular la solicitud, intente nuevamente.";
+      this.callMensaje(msjError,false)
     }
 
   }
@@ -1743,7 +1704,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           (response) => {
             //console.log('Estado de tracknig actualizado exitosamente');
             this.showmsj = true;
-            this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel anterior.`;
+            const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel anterior.`;
+            this.callMensaje(msjExito,true)
 
             if(newEstado == 10){
               //notificar al emisor
@@ -1756,8 +1718,6 @@ export class SolicotiComponent implements OnInit, OnDestroy {
             
 
             setTimeout(() => {
-              this.showmsj = false;
-              this.msjExito = '';
               this.clear();
               this.serviceGlobal.solView = 'crear';
               this.router.navigate(['allrequest']);
@@ -1766,16 +1726,10 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           (error) => {
             console.log('Error al actualizar el estado: ', error);
             this.showmsjerror = true;
-            this.msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
-
-            setTimeout(() => {
-              this.showmsjerror = false;
-              this.msjError = '';
-            }, 3000);
+            const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+            this.callMensaje(msjError,false)
           }
         );
-
-        //console.log("Nuevo estado: ", newEstado);
         break;
       }
 
@@ -1875,13 +1829,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         },
         error => {
           console.log(`Error, no se ha podido enviar el correo al proveedor.`, error)
-          this.showmsjerror = true;
-          this.msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
-
-          setTimeout(() => {
-            this.showmsjerror = false;
-            this.msjError = '';
-          }, 3000)
+          const msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
+          this.callMensaje(msjError,false)
         }
       );
     }, 500);

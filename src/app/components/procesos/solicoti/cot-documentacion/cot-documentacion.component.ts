@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
+import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { SharedService } from 'src/app/services/shared.service';
 
 interface Path {
@@ -35,7 +36,7 @@ export class CotDocumentacionComponent implements OnInit {
   msjError: string = '';
 
   constructor(private uploadfile: UploadFileService,
-    private sharedService: SharedService) {
+    private sharedService: SharedService, private dialogService:DialogServiceService) {
       this.sharedService.cotDocumentacion$.subscribe(() =>{
         this.deleteAllDocs();
       });
@@ -51,14 +52,9 @@ export class CotDocumentacionComponent implements OnInit {
       this.filesAll = event.target.files[0];
       //console.log('Imprimir esto  Objetos de pdf ', this.filesAll);
     } catch (error) {
-      this.showError = true;
-      this.msjError = 'Error al cargar el archivo';
+      const msjError = 'Error al cargar el archivo';
+      this.callMensaje(msjError,false)
       event.target.value = '';
-      setTimeout(() => {
-        this.showError = false;
-        this.msjError = '';
-      }, 3000);
-      console.error('Error al momento de subir ', error);
     }
   }
 
@@ -71,28 +67,19 @@ export class CotDocumentacionComponent implements OnInit {
       .subscribe({
         next: (data) => {
           //console.log('este es mi data', data);
-          this.showExito = true;
-          this.msjExito = 'Archivo Subido Correctamente';
-          setTimeout(() => {
-            this.showExito = false;
-            this.msjExito = '';
-          }, 3000);
+          const msjExito = 'Archivo Subido Correctamente';
+          this.callMensaje(msjExito,true)
           this.GetfileView();
         },
         error: (error) => {
           if (error.status == 400) {
             console.error('este es mi error', error);
-            this.showError = true;
-            this.msjError = 'Error deberia seleccionar un archivo';
-            setTimeout(() => {
-              this.showError = false;
-              this.msjError = '';
-            }, 3000);
+            const msjError = 'Error deberia seleccionar un archivo';
+            this.callMensaje(msjError,false)
           } else {
             console.error('este es mi error', error);
-            this.showError = true;
-            this.msjError =
-              'Error no se puede Subir el archivo intente nuevamente';
+            const msjError ='Error no se puede Subir el archivo intente nuevamente';
+            this.callMensaje(msjError,false)
             setTimeout(() => {
               this.showError = false;
               this.msjError = '';
@@ -213,27 +200,22 @@ export class CotDocumentacionComponent implements OnInit {
     
     this.uploadfile.deleteFile(ruta).subscribe({
       next: (data) => {
-        this.showExito = true;
-        this.msjExito = 'Archivo Eliminado Correctamente';
-        setTimeout(() => {
-          this.showExito = false;
-          this.msjExito = '';
-        }, 3000);
+        const msjExito = 'Archivo Eliminado Correctamente';
+        this.callMensaje(msjExito,true)
         this.GetfileView();
       },
       error: (error) => {
         console.error(error);
-        this.showError = true;
-        this.msjError = 'Error no se puede Eliminar el archivo intente nuevamente';
-        setTimeout(() => {
-          this.showError = false;
-          this.msjError = '';
-        }, 3000);
+        const msjError = 'Error no se puede Eliminar el archivo intente nuevamente';
+        this.callMensaje(msjError,false)
       },
       complete: () => {
         console.log('Proceso completado');
       },
     });
 
+  }
+  callMensaje(mensaje: string, type: boolean){
+    this.dialogService.openAlertDialog(mensaje, type);
   }
 }
