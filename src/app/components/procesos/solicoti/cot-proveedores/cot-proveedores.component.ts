@@ -144,6 +144,7 @@ export class CotProveedoresComponent implements OnInit {
     }
 
   ngOnInit(): void {
+    console.log(this.mail_detalles);
     this.getProvCotizacion();
 
     /*setTimeout(()=>{
@@ -563,21 +564,21 @@ export class CotProveedoresComponent implements OnInit {
                       <td style="width: 40%;overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Cabin',sans-serif;" align="left">
 
                         <div style="font-size: 14px;  color: #000000; line-height: 140%; text-align: center; word-wrap: break-word;">
-                          <p style="line-height: 140%;">${det.solCotDescripcion}</p>
+                          <p style="line-height: 140%;">${det.det_descp}</p>
                         </div>
 
                       </td>
                       <td style="width: 20%;overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Cabin',sans-serif;" align="left">
 
                         <div style="font-size: 14px;  color: #000000; line-height: 140%; text-align: center; word-wrap: break-word;">
-                          <p style="line-height: 140%;">${det.solCotUnidad}</p>
+                          <p style="line-height: 140%;">${det.det_unidad}</p>
                         </div>
 
                       </td>
                       <td style="width: 20%;overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Cabin',sans-serif;" align="left">
 
                         <div style="font-size: 14px; color: #000000; line-height: 140%; text-align: center; word-wrap: break-word;">
-                          <p style="line-height: 140%;">${det.solCotCantidadTotal}</p>
+                          <p style="line-height: 140%;">${det.det_cantidad}</p>
                         </div>
 
                       </td>
