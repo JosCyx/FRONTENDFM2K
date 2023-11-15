@@ -7,6 +7,8 @@ import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sect
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { SolipagoComponent } from '../solipago.component';
+import { DialogServiceService } from 'src/app/services/dialog-service.service';
+import { set } from 'date-fns';
 
 interface Detalle {
   idDetalle: number;
@@ -74,19 +76,9 @@ export class SpDestinoComponent implements OnInit {
     private destinoService: DestinoPagoServiceService,
     private globalService: GlobalService,
     private cabPago: SolipagoComponent,
-    private sectorServices: SectoresService) { }
+    private sectorServices: SectoresService,private dialogService:DialogServiceService) { }
 
   ngOnInit(): void {
-    //console.log('Detalles recibidos:', this.detalles);
-
-    /*this.sectoresService.getSectoresList().subscribe(
-      (data: any[]) => {
-        this.sectores = data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );*/
     console.log(this.tipoSol, this.noSol)
     setTimeout(() => {
 
@@ -125,7 +117,10 @@ export class SpDestinoComponent implements OnInit {
 
   empleadosEv: any[] = [];
   sectorEv: any[] = [];
-
+  //Mensajes de Dialogo
+  callMensaje(mensaje: string, type: boolean){
+    this.dialogService.openAlertDialog(mensaje, type);
+  }
   //busca los empleados segun su area
   searchEmpleado(): void {
     this.searchSectores();
@@ -241,10 +236,9 @@ export class SpDestinoComponent implements OnInit {
     if (this.detalles != undefined) {
       this.detalles.forEach((det) => {
         det.destinoDetalle = false;
-
       });
-
     }
+    this.evidenciasConsultadas = [];
   }
 
  deleteFilesUnsaved() {
@@ -351,25 +345,13 @@ export class SpDestinoComponent implements OnInit {
 
               this.destinoService.agregarEvidenciaPago(data).subscribe(
                 res => {
-                  //console.log("Exito: ",res);
-                  this.showExito = true;
-                  this.msjExito = 'Se ha agregado el destino correctamente.';
-
-                  setTimeout(() => {
-                    this.viewFile();
-                    this.showExito = false;
-                    this.msjExito = '';
-                  }, 3000);
+                  const msjExito = 'Se ha agregado el destino correctamente.';
+                  this.callMensaje(msjExito, true);
                 },
                 error => {
                   console.log("Error: ", error);
-                  this.showError = true;
-                  this.msjError = 'No se ha podido agregar el destino, intente nuevamente.';
-
-                  setTimeout(() => {
-                    this.showError = false;
-                    this.msjError = '';
-                  }, 3000);
+                  const msjError = 'No se ha podido agregar el destino, intente nuevamente.';
+                  this.callMensaje(msjError, false);
                 }
               );
 

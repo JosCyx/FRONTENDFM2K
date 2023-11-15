@@ -206,8 +206,8 @@ export class CotDocumentacionComponent implements OnInit {
       },
       error: (error) => {
         console.error(error);
-        const msjError = 'Error no se puede Eliminar el archivo intente nuevamente';
-        this.callMensaje(msjError,false)
+        // const msjError = 'Error no se puede Eliminar el archivo intente nuevamente';
+        // this.callMensaje(msjError,false)
       },
       complete: () => {
         console.log('Proceso completado');

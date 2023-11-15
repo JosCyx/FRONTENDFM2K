@@ -240,7 +240,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    //this.cancelar();
+    // this.cancelar();
     //this.cancelarEdi();
     //this.cancelarDes();
   }
