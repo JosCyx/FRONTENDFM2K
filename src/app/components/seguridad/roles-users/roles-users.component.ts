@@ -69,7 +69,16 @@ export class RolesUsersComponent implements OnInit {
       this.usuarioservice.getUsuariosList().subscribe({
         next: (response) => {
           this.usuarioList = response;
-          console.log('este es mi response ', this.usuarioList);
+          //ordenar usuarios en orden alfabetico segun el campo usNombre
+          this.usuarioList.sort((a, b) => {
+            if (a.usNombre > b.usNombre) {
+              return 1;
+            }
+            if (a.usNombre < b.usNombre) {
+              return -1;
+            }
+            return 0;
+          });
         },
         error: (error) => {
           console.error(error);
