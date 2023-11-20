@@ -359,7 +359,7 @@ export class AllrequestComponent implements OnInit {
   async saveEncargadoCotizacion() {
     for (const sol of this.allSol) {
       try {
-        const encargado = await this.setEncargado(sol.cabSolCotEstadoTracking, sol.cabSolCotIdDept);
+        const encargado = await this.setEncargado(sol.cabSolCotSolicitante, sol.cabSolCotEstadoTracking, sol.cabSolCotIdDept);
         sol.encargado = encargado; // Agrega la nueva propiedad "encargado" al elemento de allSol
       } catch (error) {
         console.error("Error al obtener el encargado para la solicitud:", error);
@@ -372,7 +372,7 @@ export class AllrequestComponent implements OnInit {
   async saveEncargadoOrdenCompra() {
     for (const sol of this.allSol) {
       try {
-        const encargado = await this.setEncargado(sol.cabSolOCEstadoTracking, sol.cabSolOCIdDept);
+        const encargado = await this.setEncargado(sol.cabSolOCSolicitante, sol.cabSolOCEstadoTracking, sol.cabSolOCIdDept);
         sol.encargado = encargado; // Agrega la nueva propiedad "encargado" al elemento de allSol
       } catch (error) {
         console.error("Error al obtener el encargado para la solicitud:", error);
@@ -385,7 +385,7 @@ export class AllrequestComponent implements OnInit {
   async saveEncargadoPago() {
     for (const sol of this.allSol) {
       try {
-        const encargado = await this.setEncargado(sol.cabPagoEstadoTrack, sol.cabPagoIdDeptSolicitante);
+        const encargado = await this.setEncargado(sol.cabPagoSolicitante,sol.cabPagoEstadoTrack, sol.cabPagoIdDeptSolicitante);
         sol.encargado = encargado; // Agrega la nueva propiedad "encargado" al elemento de allSol
       } catch (error) {
         console.error("Error al obtener el encargado para la solicitud:", error);
@@ -397,13 +397,14 @@ export class AllrequestComponent implements OnInit {
 
 
 
-  async setEncargado(nivel: number, dep: number) {
+  async setEncargado(idSolicitante: string, nivel: number, dep: number) {
     if (nivel == 0) {
       return 'FINALIZADO'
     } else if (nivel == 9999) {
       return 'ANULADO'
     } else if (nivel == 10) {
-      return this.cookieService.get('userName');
+      let encargado = await this.searchEmpleadobyId(idSolicitante);
+      return encargado;
     } else {
 
       try {

@@ -14,7 +14,7 @@ export class OcAnulacionComponent {
 
   constructor(private sharedService: SharedService) {}
 
-  enviarCotizacion(){
+  /*enviarCotizacion(){
     this.sharedService.aprobaroc();
   }
 
@@ -24,7 +24,7 @@ export class OcAnulacionComponent {
 
   noAutorizarCotizacion(){
     this.sharedService.noautorizaroc();
-  }
+  }*/
 
 
 }

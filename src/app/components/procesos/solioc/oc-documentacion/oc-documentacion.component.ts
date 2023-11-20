@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { SharedService } from 'src/app/services/shared.service';
@@ -13,7 +14,7 @@ interface Path {
   templateUrl: './oc-documentacion.component.html',
   styleUrls: ['./oc-documentacion.component.css'],
 })
-export class OCDocumentacionComponent implements OnInit {
+export class OCDocumentacionComponent implements OnInit, OnDestroy {
   //* Variables de archivo
   filesAll!: File;
   //* Variables compartidas
@@ -30,13 +31,17 @@ export class OCDocumentacionComponent implements OnInit {
   showError: boolean = false;
   msjExito: string = '';
   msjError: string = '';
+
+  subscription: Subscription = new Subscription();
+
   constructor(private uploadfile: UploadFileService,
     private sharedService: SharedService,private dialogService:DialogServiceService
     ) {
       this.sharedService.ocDocumentacion$.subscribe(() =>{
         this.deleteAllDocs();
       });
-    }
+  }
+
   ngOnInit(): void {
     this.GetfileView();
   }
@@ -44,6 +49,11 @@ export class OCDocumentacionComponent implements OnInit {
   callMensaje(mensaje: string, type: boolean){
     this.dialogService.openAlertDialog(mensaje, type);
   }
+
+  ngOnDestroy(): void {
+    //this.subscription.unsubscribe();
+  }
+
   //Obtener archivos
   getFiles(event: any): void {
     try {

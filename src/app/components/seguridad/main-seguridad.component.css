@@ -1,0 +1,12 @@
+.container {
+    display: grid;
+    place-items: center; 
+  }
+  
+  .background {
+    max-width: 100%; 
+    height: auto; 
+    max-height: calc(100vh - 140px); 
+    opacity: 0.5;
+  }
+  
