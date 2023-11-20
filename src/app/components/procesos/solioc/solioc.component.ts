@@ -15,7 +15,7 @@ import { Detalle } from 'src/app/models/procesos/Detalle';
 import { ItemSector } from 'src/app/models/procesos/ItemSector';
 import { Router } from '@angular/router';
 import { format, parseISO } from 'date-fns';
-import { es, oc } from 'date-fns/locale';
+import { es, oc, tr } from 'date-fns/locale';
 import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/DetalleCotizacion';
 import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotizacion';
 import { GlobalService } from 'src/app/services/global.service';
@@ -27,6 +27,7 @@ import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes
 import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
 import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
 import { SharedService } from 'src/app/services/shared.service';
+import { DialogServiceService } from 'src/app/services/dialog-service.service';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -181,7 +182,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
     private prespService: PresupuestoService,
     private sendMailService: SendEmailService,
     private nivGerenciaService: NivGerenciaService,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private dialogService:DialogServiceService
   ) {
     /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobaroc$.subscribe(() => {
@@ -221,7 +223,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
         this.empleadoedit = data;
       });
   
-      this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
+      this.inspectores$ = this.empService.getEmpleadosList(); //se le pasa el valor del id de nomina del area operaciones: 12
       this.inspectores$.subscribe((data) => {
         this.inspectoresEdit = data;
       });
@@ -261,7 +263,10 @@ export class SoliocComponent implements OnInit, OnDestroy {
     //this.cancelarAll();
     //this.cancelarItem();
   }
-
+  //Mensaje 
+  callMensaje(mensaje: string, type: boolean){
+    this.dialogService.openAlertDialog(mensaje, type);
+  }
   Validacionfecha():void{
     const fechpl=this.cab_plazo;
     this.fechaMinPlazo=fechpl.toString();
@@ -587,25 +592,16 @@ export class SoliocComponent implements OnInit, OnDestroy {
       //enviar la lista detalle a la api para registrarla
       this.saveItemDet();
       this.getSolName(this.trLastNoSol);
-      this.showmsj = true;
-      this.msjExito =
-        'Solicitud N°' + this.solNumerico + ' generada exitosamente.';
+      const msjExito ='Solicitud N°' + this.solNumerico + ' generada exitosamente.';
+      this.callMensaje(msjExito,true);
 
       setTimeout(() => {
-        this.msjExito = '';
-        this.showmsj = false;
         this.clear();
         this.router.navigate(['allrequest']);
       }, 3000);
     } catch (error) {
-      this.showmsjerror = true;
-      this.msjError =
-        'No se ha podido generar la solicitud, intente nuevamente.';
-
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = '';
-      }, 3000);
+      const msjError ='No se ha podido generar la solicitud, intente nuevamente.';
+      this.callMensaje(msjError,false);
     }
   }
   //
@@ -722,13 +718,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
       this.generarSolicitud();
     } else {
       this.showmsjerror = true;
-      this.msjError =
-        'Error, asegúrese de ingresar todos los detalles antes de registrar la solicitud.';
-
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = '';
-      }, 3000);
+      const msjError ='Error, asegúrese de ingresar todos los detalles antes de registrar la solicitud.';
+      this.callMensaje(msjError,false);
     }
   }
   //agrega los detalles a la lista detalles
@@ -1015,10 +1006,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
       this.cabecera.cabSolOCFecha.charAt(0).toUpperCase() +
       this.cabecera.cabSolOCFecha.slice(1);
 
-    // Formatear la fecha máxima de entrega en formato 'yyyy-MM-dd'
-    this.cabecera.cabSolOCFechaMaxentrega = format(
-      parseISO(this.cabecera.cabSolOCFechaMaxentrega),
-      'yyyy-MM-dd'
+    // Formatear la fecha máxima de entrega en formato 'yyyy-MM-dd' 
+    this.cabecera.cabSolOCFechaMaxentrega = this.cabecera.cabSolOCFechaMaxentrega === "0001-01-01T00:00:00" ? '':format(parseISO(this.cabecera.cabSolOCFechaMaxentrega),'yyyy-MM-dd'
     );
     setTimeout(() => {
       for (let empl of this.inspectoresEdit) {
@@ -1041,7 +1030,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
     }, 500);
 
     // Formatear el plazo de entrega en formato 'yyyy-MM-dd'
-    this.cabecera.cabSolOCPlazoEntrega = format(
+    this.cabecera.cabSolOCPlazoEntrega = this.cabecera.cabSolOCPlazoEntrega === "0001-01-01T00:00:00" ? '':format(
       parseISO(this.cabecera.cabSolOCPlazoEntrega),
       'yyyy-MM-dd'
     );
@@ -1487,29 +1476,15 @@ export class SoliocComponent implements OnInit, OnDestroy {
       await this.saveEditCabecera();
       await this.saveEditDetalle();
       await this.saveEditItem();
-
-      this.showmsj = true;
-      this.msjExito =
-        'Solicitud N°' +
-        this.cabecera.cabSolOCNumerico +
-        ' editada exitosamente.';
-
+      const msjExito ='Solicitud N°' +this.cabecera.cabSolOCNumerico +' editada exitosamente.';
+      this.callMensaje(msjExito,true);
       setTimeout(() => {
-        this.msjExito = '';
-        this.showmsj = false;
         this.router.navigate(['allrequest']);
         this.clear();
       }, 3000);
     } catch (error) {
-      //console.log('Error:', error);
-      this.showmsjerror = true;
-      this.msjError =
-        'No se ha podido guardar la solicitud, intente nuevamente.';
-
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = '';
-      }, 3000);
+      const msjError ='No se ha podido guardar la solicitud, intente nuevamente.';
+      this.callMensaje(msjError,false)
     }
   }
   //Buscar Proveedor y guardar
@@ -1610,13 +1585,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
         }, 500);
       } catch (error) {
         console.log('Error:', error);
-        this.showmsjerror = true;
-        this.msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
-  
-        setTimeout(() => {
-          this.showmsjerror = false;
-          this.msjError = "";
-        }, 3000);
+        const msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
+        this.callMensaje(msjError,false);
       }
     }
   
@@ -1628,13 +1598,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
         }, 500);     
       } catch (error) {
         console.log('Error:', error);
-        this.showmsjerror = true;
-        this.msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
-  
-        setTimeout(() => {
-          this.showmsjerror = false;
-          this.msjError = "";
-        }, 3000);
+        const msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
+        this.callMensaje(msjError,false);  
       }
     }
 
@@ -1702,12 +1667,9 @@ export class SoliocComponent implements OnInit, OnDestroy {
               this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
                 (response) => {
 
-                  this.showmsj = true;
-                  this.msjExito = `La solicitud ha sido enviada exitosamente.`;
-
+                  const msjExito = 'La solicitud ha sido enviada exitosamente.';
+                  this.callMensaje(msjExito,true);
                   setTimeout(() => {
-                    this.showmsj = false;
-                    this.msjExito = '';
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
                     this.router.navigate(['allrequest']);
@@ -1754,15 +1716,12 @@ export class SoliocComponent implements OnInit, OnDestroy {
           this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
               //console.log("Solicitud enviada");
-              this.showmsj = true;
-              this.msjExito = `La solicitud ha sido enviada exitosamente.`;
-
+              const msjExito = `La solicitud ha sido enviada exitosamente.`;
+              this.callMensaje(msjExito,true)
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
               this.sendNotify(newEstado, newestadoSt, 1);
 
               setTimeout(() => {
-                this.showmsj = false;
-                this.msjExito = '';
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
                 this.router.navigate(['allrequest']);
@@ -1856,14 +1815,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
         if (exito && exitotrk) {
           this.showmsj = true;
-          this.msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido anulada exitosamente.`;
+          const msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido anulada exitosamente.`;
+          this.callMensaje(msjExito,true);
 
           //notificar al emisor de la solicitud que ha sido anulada
           this.sendMail(mailToNotify,2);
 
           setTimeout(() => {
-            this.showmsj = false;
-            this.msjExito = '';
             this.clear();
             this.serviceGlobal.solView = 'crear';
             this.router.navigate(['allrequest']);
@@ -1874,11 +1832,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.log('Error:', error);
       this.showmsjerror = true;
-      this.msjError = "No se ha podido anular la solicitud, intente nuevamente.";
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = '';
-      }, 3000);
+      const msjError = "No se ha podido anular la solicitud, intente nuevamente.";
+      this.callMensaje(msjError,false);
     }
 
   }
@@ -1921,8 +1876,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
         this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
           (response) => {
             //console.log('Estado de tracknig actualizado exitosamente');
-            this.showmsj = true;
-            this.msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido devuelta al nivel anterior.`;
+            const msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido devuelta al nivel anterior.`;
+            this.callMensaje(msjExito,true)
 
             if(newEstado == 10){
               //notificar al emisor
@@ -1934,8 +1889,6 @@ export class SoliocComponent implements OnInit, OnDestroy {
             }
 
             setTimeout(() => {
-              this.showmsj = false;
-              this.msjExito = '';
               this.clear();
               this.serviceGlobal.solView = 'crear';
               this.router.navigate(['allrequest']);
@@ -1944,12 +1897,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
           (error) => {
             console.log('Error al actualizar el estado: ', error);
             this.showmsjerror = true;
-            this.msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
-
-            setTimeout(() => {
-              this.showmsjerror = false;
-              this.msjError = '';
-            }, 3000);
+            const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+            this.callMensaje(msjError,false)
           }
         );
         
@@ -2052,13 +2001,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
         },
         error => {
           console.log(`Error, no se ha podido enviar el correo al proveedor.`, error)
-          this.showmsjerror = true;
-          this.msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
-
-          setTimeout(() => {
-            this.showmsjerror = false;
-            this.msjError = '';
-          }, 3000)
+          const msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
+          this.callMensaje(msjError,false)
         }
       );
     }, 500);

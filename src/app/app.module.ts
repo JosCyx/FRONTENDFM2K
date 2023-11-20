@@ -3,6 +3,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 //Dependencias  Angular PDF View
+//Material UI Angular
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+//-------
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 
@@ -105,6 +109,8 @@ import { DialogServiceService } from './services/dialog-service.service';
     ReactiveFormsModule,
     HttpClientModule,
     NgxPaginationModule,
+    MatButtonModule,
+    MatIconModule,
     MatDialogModule
   ],
   providers: [AuthService, MatDialog, DialogServiceService],

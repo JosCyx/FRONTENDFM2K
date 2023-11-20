@@ -20,6 +20,7 @@ import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/s
 import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { SpDestinoComponent } from './sp-destino/sp-destino.component';
+import { DialogServiceService } from 'src/app/services/dialog-service.service';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -150,7 +151,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     private ruteoService: RuteoAreaService,
     private sendMailService: SendEmailService,
     private nivGerenciaService: NivGerenciaService,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private dialogService:DialogServiceService
   ) {
     
     /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
@@ -171,6 +173,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       this.noAutorizar();
     });*/
   }
+
+  callMensaje(mensaje: string, type: boolean){
+    this.dialogService.openAlertDialog(mensaje, type);
+  }
+
   validarCantidad(det:any,event:Event){
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = parseInt(inputElement.value, 10);
@@ -232,7 +239,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    //this.cancelar();
+    // this.cancelar();
     //this.cancelarEdi();
     //this.cancelarDes();
   }
@@ -512,12 +519,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         console.log('Cabecera agregada.');
         console.log('Solicitud', this.solNumerico);
         console.log('Agregando cuerpo de la cabecera...');
-        this.showmsj = true;
-        this.msjExito = 'Solicitud de Pago Generada Exitosamente';
+        const msjExito = 'Solicitud de Pago Generada Exitosamente';
+        this.callMensaje(msjExito,true);
         this.AddDetSolPago();
         setTimeout(()=>{
-          this.showmsj=false;
-          this.msjExito='';
           this.router.navigate(['allrequest']);
         },3000)
       },
@@ -728,11 +733,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     });
     //formatear la fecha de la solicitud de pago
     this.fechaFormateada = this.formatDateToSpanish(new Date(this.cabecera.cabPagoFechaEmision))
-    this.cabecera.cabPagoFechaInspeccion = format(
-      parseISO(this.cabecera.cabPagoFechaInspeccion),
-      'yyyy-MM-dd'
-    );
-    this.cabecera.cabPagoFechaFactura = format(
+    //
+    this.cabecera.cabPagoFechaInspeccion = this.cabecera.cabPagoFechaInspeccion === "0001-01-01T00:00:00" ? '':   format(
+      parseISO(this.cabecera.cabPagoFechaInspeccion),'yyyy-MM-dd');
+      //
+    this.cabecera.cabPagoFechaFactura= this.cabecera.cabPagoFechaFactura === "0001-01-01T00:00:00" ? '':format(
       parseISO(this.cabecera.cabPagoFechaFactura),
       'yyyy-MM-dd'
     );
@@ -780,19 +785,16 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       console.log('Se guardo la edicion ');
       await this.saveEditCabeceraPago();
       await this.saveEditdetPago();
-
-      this.showmsj = true;
-      this.msjExito = `Solicitud N° ${this.cabecera.cabPagoNumerico},editada exitosamente`;
+      const msjExito = `Solicitud N° ${this.cabecera.cabPagoNumerico},editada exitosamente`;
+      this.callMensaje(msjExito,true);
       setTimeout(() => {
-        this.msjExito = '';
-        this.showmsj = false;
         this.router.navigate(['allrequest']);
       }, 3000);
     } catch (error) {
       console.error('Error: ' + error);
-      this.showmsjerror = true;
-      this.msjError =
+      const msjError =
         'No se ha podido guardar la solicitud, intente nuevamente.';
+      this.callMensaje(msjError,false);
     }
   }
   async saveEditCabeceraPago() {
@@ -827,7 +829,6 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoFinancieroBy: this.financieropor
     };
 
-    console.log('esta guardo editada de cabecera solicitud ', dataCAB);
     this.cabPagoService
       .updatecabPago(this.cabecera.cabPagoID, dataCAB)
       .subscribe(
@@ -956,13 +957,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       //this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
-      this.showmsjerror = true;
-      this.msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
-
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = "";
-      }, 3000);
+      const msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
+      this.callMensaje(msjError,false);
     }
   }
 
@@ -975,13 +971,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       //this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
-      this.showmsjerror = true;
-      this.msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
-
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = "";
-      }, 3000);
+      const msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
+      this.callMensaje(msjError,false);
     }
   }
 
@@ -1031,11 +1022,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                 (response) => {
 
                   this.showmsj = true;
-                  this.msjExito = `La solicitud ha sido enviada exitosamente.`;
-
+                  const msjExito = `La solicitud ha sido enviada exitosamente.`;
+                  this.callMensaje(msjExito,true);
                   setTimeout(() => {
-                    this.showmsj = false;
-                    this.msjExito = '';
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
                     this.router.navigate(['allrequest']);
@@ -1082,15 +1071,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
               console.log("Solicitud enviada");
-              this.showmsj = true;
-              this.msjExito = `La solicitud ha sido enviada exitosamente.`;
-
+              const msjExito = `La solicitud ha sido enviada exitosamente.`;
+              this.callMensaje(msjExito,true);
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
               this.sendNotify(newEstado, newestadoSt, 1);
 
               setTimeout(() => {
-                this.showmsj = false;
-                this.msjExito = '';
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
                 this.router.navigate(['allrequest']);
@@ -1182,9 +1168,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       setTimeout(() => {
 
         if (exito && exitotrk) {
-          this.showmsj = true;
-          this.msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido anulada exitosamente.`;
-
+          const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido anulada exitosamente.`;
+          this.callMensaje(msjExito,true);
            //notificar al emisor de la solicitud que ha sido anulada
            this.sendMail(mailToNotify,2);
 
@@ -1200,12 +1185,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
     } catch (error) {
       console.log('Error:', error);
-      this.showmsjerror = true;
-      this.msjError = "No se ha podido anular la solicitud, intente nuevamente.";
-      setTimeout(() => {
-        this.showmsjerror = false;
-        this.msjError = '';
-      }, 3000);
+      const msjError = "No se ha podido anular la solicitud, intente nuevamente.";
+      this.callMensaje(msjError,false);
     }
 
   }
@@ -1248,9 +1229,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
           (response) => {
             //console.log('Estado de tracknig actualizado exitosamente');
-            this.showmsj = true;
-            this.msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel anterior.`;
-
+            const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel anterior.`;
+            this.callMensaje(msjExito,true)
             if(newEstado == 10){
               //notificar al emisor
               this.sendMail(mailToNotify,3);
@@ -1270,13 +1250,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           },
           (error) => {
             console.log('Error al actualizar el estado: ', error);
-            this.showmsjerror = true;
-            this.msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
-
-            setTimeout(() => {
-              this.showmsjerror = false;
-              this.msjError = '';
-            }, 3000);
+            const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+            this.callMensaje(msjError,false);
           }
         );
 
@@ -1379,13 +1354,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         },
         error => {
           console.log(`Error, no se ha podido enviar el correo al proveedor.`, error)
-          this.showmsjerror = true;
-          this.msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
-
-          setTimeout(() => {
-            this.showmsjerror = false;
-            this.msjError = '';
-          }, 3000)
+          const msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
+          this.callMensaje(msjError,false);
         }
       );
     }, 500);
