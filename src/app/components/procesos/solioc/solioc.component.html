@@ -580,7 +580,7 @@
                 [appSecureDisable]="estadoSol"
               />
             </div>
-            <div class="row col">
+            <div class="row col mb-1">
               <div class="input-group col std">
                 <label class="input-group-text">Estado:</label>
                 <input
@@ -603,6 +603,17 @@
                 </ng-container>
               </div>
             </div>
+          </div>
+
+          
+          <div class="input-group mb-1">
+            <label class="input-group-text">Motivo de devolución:</label>
+            <input
+              type="text"
+              class="form-control"
+              [value]="cabecera.cabSolOCMotivoDev"
+              disabled
+            />
           </div>
 
 

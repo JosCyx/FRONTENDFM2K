@@ -967,6 +967,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
     this.noSolTmp = this.cabecera.cabSolOCNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabSolOCEstadoTracking;
     this.depSolTmp = this.cabecera.cabSolOCIdDept;
+    this.cabecera.cabSolOCAprobPresup = this.cabecera.cabSolOCAprobPresup.trim();
     console.log(this.cabecera)
 
     this.checkAprobPrep(this.cabecera.cabSolOCEstadoTracking);

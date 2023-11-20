@@ -315,17 +315,11 @@
                     </div>
                     <div class="row mb-1">
                         <div class="input-group col">
-                            <label class="input-group-text">Aprobado por:</label>
-                            <ng-container *ngIf="cabecera.cabSolCotApprovedBy === 'XXXXXX'; else showValue">
-                                <input type="text" class="form-control" value="Nivel no alcanzado." disabled />
+                            <label class="input-group-text">Tracking:</label>
+                            <ng-container *ngFor="let nvTRk of nivelRut$ | async">
+                                <input *ngIf="nvTRk.nivel === cabecera.cabSolCotEstadoTracking" type="text"
+                                    class="form-control" [value]="nvTRk.descRuteo" disabled />
                             </ng-container>
-                            <ng-template #showValue>
-                                <ng-container *ngFor="let emp of empleadosEdit">
-                                    <input *ngIf="emp.empleadoIdNomina == cabecera.cabSolCotApprovedBy" type="text"
-                                        class="form-control" id="busqueda"
-                                        [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled />
-                                </ng-container>
-                            </ng-template>
                         </div>
                         <div class="input-group col">
                             <label class="input-group-text">Estado:</label>
@@ -334,7 +328,7 @@
 
                     </div>
                     <div class="row mb-1">
-                        <div class="input-group col">
+                        <!-- <div class="input-group col">
                             <label class="input-group-text">Apr. Financiera:</label>
                             <ng-container *ngIf="cabecera.cabSolCotFinancieroBy === 'XXXXXX'; else showValue">
                                 <input type="text" class="form-control" value="Nivel no alcanzado." disabled />
@@ -346,13 +340,19 @@
                                         disabled />
                                 </ng-container>
                             </ng-template>
-                        </div>
+                        </div> -->
                         <div class="input-group col">
-                            <label class="input-group-text">Tracking:</label>
-                            <ng-container *ngFor="let nvTRk of nivelRut$ | async">
-                                <input *ngIf="nvTRk.nivel === cabecera.cabSolCotEstadoTracking" type="text"
-                                    class="form-control" [value]="nvTRk.descRuteo" disabled />
+                            <label class="input-group-text">Aprobado por:</label>
+                            <ng-container *ngIf="cabecera.cabSolCotApprovedBy === 'XXXXXX'; else showValue">
+                                <input type="text" class="form-control" value="Nivel no alcanzado." disabled />
                             </ng-container>
+                            <ng-template #showValue>
+                                <ng-container *ngFor="let emp of empleadosEdit">
+                                    <input *ngIf="emp.empleadoIdNomina == cabecera.cabSolCotApprovedBy" type="text"
+                                        class="form-control" id="busqueda"
+                                        [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled />
+                                </ng-container>
+                            </ng-template>
                         </div>
 
                     </div>

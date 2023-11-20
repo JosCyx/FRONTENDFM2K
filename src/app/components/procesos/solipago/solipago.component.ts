@@ -556,8 +556,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   async Obtener() {
     if (this.tipoSolOc == 'F'){
       if(this.valorinput == ''){
+
         this.alertBool = true;
         this.alertText = 'Por favor ingrese el nombre de la solicitud a asociar.';
+
+        setTimeout(() => {
+          this.alertBool = false;
+          this.alertText = '';
+        }, 2500);
       } else {
         this.alertBool = true;
         this.alertText = '  Usted ha seleccionado solicitud física, por favor suba la documentacion de la orden de compra y las evidencias del destino en la pestaña Documentación ubicada en la parte superior.';
@@ -570,18 +576,17 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         this.detalleSolPagos = [];
         this.destinoIO = false;
         this.detallesToDestino = [];
+        
         this.alertBool = true;
-        this.alertText = 'El campo no puede estar vacio';
-            setTimeout(() => {
-              this.alertBoolError = false;
-              this.alertBool = false;
-              this.alertText = '';
-            }, 1000);
+        this.alertText = 'Por favor ingrese el nombre de la solicitud a asociar.';
+        setTimeout(() => {
+          this.alertBoolError = false;
+          this.alertBool = false;
+          this.alertText = '';
+        }, 1000);
       } else {
         const partes = this.valorinput.match(/(\d+)-(\d+)/);
-        console.log('partes', partes);
         if (partes && partes.length === 3) {
-          console.log("este mi partes ", partes[1]);
           if (partes[1] != '2') {
             this.alertBool = true;
             this.alertText = 'No se ha encontrado la solicitud';
@@ -617,6 +622,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                         destinoDetalle: false
                       };
                     });
+
+                    this.cab_NoSolOC = this.valorinput;
                     //console.log('cambios en el map ', this.detalleSolPagos);
                   },
                   (error) => {

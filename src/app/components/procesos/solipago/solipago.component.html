@@ -207,7 +207,8 @@
             <i class="bi bi-exclamation-triangle-fill" style="padding-right: 2px;" >  {{alertText}}</i>
           </div>
           <div  *ngIf="alertBoolError" class=  "alert alert-danger d-flex align-items-center mt-2" role="alert">
-            {{alertText}}
+            <i class="bi bi-x-circle-fill" style="padding-right: 2px;">  {{alertText}}</i>
+            
           </div>
 
         </div>
@@ -643,17 +644,28 @@
               />
             </div>
           </div>
-            <div class="row">
-              <div class="input-group col ">
+
+          <div class="row mb-1">
+            <div class="input-group col">
+              <label class="input-group-text">Solicitud Asociada:</label>
+              <input
+                type="text"
+                class="form-control mr-3"
+                [value]="cabecera.cabPagoNoSolOC"
+                disabled
+              />
+            </div>
+            <div class="row col">
+              <div class="input-group col std">
                 <label class="input-group-text">Estado:</label>
                 <input
-                  type="text"
-                  class="form-control"
-                  [value]="estadoTexto"
-                  disabled
-                />
+                type="text"
+                class="form-control"
+                [value]="estadoTexto"
+                disabled
+              />
               </div>
-              <div class="input-group col">
+              <div class="input-group col std">
                 <label class="input-group-text">Tracking:</label>
                 <ng-container *ngFor="let nvTRK of nivelRut$ | async">
                   <input
@@ -666,6 +678,7 @@
                 </ng-container>
               </div>
             </div>
+          </div>
         </div>
         <div *ngIf="actionEdit == 'documentacion'" >
           <app-sp-documentacion  [view]="changeview" [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-sp-documentacion>
