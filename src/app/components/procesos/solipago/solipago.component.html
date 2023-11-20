@@ -77,6 +77,7 @@
                 list="sugerencias"
                 [(ngModel)]="empleado"
                 (keyup)="searchEmpleado()"
+                (input)="selectEmpleado()"
                 placeholder="Ingrese el nombre del empleado"
               />
               <datalist id="sugerencias">
@@ -86,9 +87,9 @@
                   ></option>
                 </ng-container>
               </datalist>
-              <button class="btn btn-success" (click)="selectEmpleado()">
+              <!-- <button class="btn btn-success" (click)="selectEmpleado()">
                 <i class="bi bi-check-lg"></i>
-              </button>
+              </button> -->
             </div>
             <div class="input-group col">
               <label class="input-group-text">Area:</label>
@@ -196,16 +197,16 @@
               class="form-control mr-1"
               placeholder="Ejemplo: OC OB 2-0012"
             />
-            <button class="btn btn-success" (click)="Obtener()">
+            <button class="btn btn-success" data-toggle="modal" data-target="#elegirTipoSolOC">
               <i class="bi bi-search"></i>
             </button>
           </div>
           <!-- Mensaje de error -->
           <div  *ngIf="alertBool" class=  "alert alert-warning d-flex align-items-center mt-2" role="alert">
-            <i class="bi bi-exclamation-triangle-fill" style="padding-right: 2px;" ></i>
-            <div>
-                   {{alertText}}
-            </div>
+            <i class="bi bi-exclamation-triangle-fill" style="padding-right: 2px;" >  {{alertText}}</i>
+          </div>
+          <div  *ngIf="alertBoolError" class=  "alert alert-danger d-flex align-items-center mt-2" role="alert">
+            {{alertText}}
           </div>
 
         </div>
@@ -1042,6 +1043,32 @@
     </div>
     <!--  -->
 </div>
+
+<!-- Modal para verificar el envío de la solcitud guardada-->
+<div class="modal fade" #exampleModal id="elegirTipoSolOC" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    Seleccione el tipo de solicitud de orden de compra que desea asociar
+                </h3>
+            </div>
+            <div class="modal-body">
+                <select class="form-select"  [(ngModel)]="tipoSolOc">
+                  <option value="F">Solicitud física</option>
+                  <option value="S">Solicitud del sistema</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="Obtener()">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Modal para verificar el envío de la solcitud guardada-->
 <div class="modal fade" #exampleModal id="enviarSolicitudGuardada" data-backdrop="static" tabindex="-1" role="dialog"

@@ -90,6 +90,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   cab_cancelarOrden!: string;
   cab_observCancelacion: string = '';
   cab_estado: string = 'A'; //estado inicial Activo
+  cab_NoSolOC!: string;
   //*
   cabecera!: CabeceraPago;
   detallePago: DetallePago[] = [];
@@ -108,6 +109,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   buscarProveedor: string = '';
   //
   alertBool: boolean = false;
+  alertBoolError: boolean = false;
   alertText: string = '';
   //
   empleadoEdi: any[] = [];
@@ -122,10 +124,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
   detallesToDestino: any[] = [];
   setDestino: boolean = false;
-  /*settear() {
-    console.log("Estes es mi metodo settea")
-    this.setDestino = this.globalService.setDestino;
-  }*/
+  tipoSolOc: string = 'F';
 
    //Variables para validacion de fecha 
    fechaminina: Date = new Date();
@@ -263,43 +262,46 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }
   }
   selectEmpleado(): void {
-    this.showArea = '';
-    if (!this.empleado) {
+    setTimeout(() => {
+      
       this.showArea = '';
-    } else {
-      for (let emp of this.empleados) {
-        if (
-          emp.empleadoNombres + ' ' + emp.empleadoApellidos ==
-          this.empleado
-        ) {
-          this.trIdNomEmp = emp.empleadoIdNomina;
-          //console.log("Empleado ID:",this.trIdNomEmp);
-          this.depSolTmp = emp.empleadoIdDpto;
-          this.cab_id_dept = emp.empleadoIdDpto;
-          this.cab_id_area = emp.empleadoIdArea;
-          for (let area of this.areas) {
-            if (area.areaIdNomina == emp.empleadoIdArea) {
-
-              this.showArea = area.areaDecp;
-
-              this.areaNmco = area.areaNemonico.trim();
-
-              //busca el nuevo nombre de la solicitud y lo asigna a las variables para poder usarlo en el destino
-              setTimeout(async () => {
-                this.trLastNoSol = await this.getLastSol();
-                this.getSolName(this.trLastNoSol);
-                console.log(this.solNumerico);
-                console.log(this.numericoSol);
-              }, 1000);
-
-              //console.log("Empleado area ID:",this.cab_area);
-            } else if (emp.empleadoIdArea === 0) {
-              this.showArea = 'El empleado no posee un area asignada.';
+      if (!this.empleado) {
+        this.showArea = '';
+      } else {
+        for (let emp of this.empleados) {
+          if (
+            emp.empleadoNombres + ' ' + emp.empleadoApellidos ==
+            this.empleado
+          ) {
+            this.trIdNomEmp = emp.empleadoIdNomina;
+            //console.log("Empleado ID:",this.trIdNomEmp);
+            this.depSolTmp = emp.empleadoIdDpto;
+            this.cab_id_dept = emp.empleadoIdDpto;
+            this.cab_id_area = emp.empleadoIdArea;
+            for (let area of this.areas) {
+              if (area.areaIdNomina == emp.empleadoIdArea) {
+  
+                this.showArea = area.areaDecp;
+  
+                this.areaNmco = area.areaNemonico.trim();
+  
+                //busca el nuevo nombre de la solicitud y lo asigna a las variables para poder usarlo en el destino
+                setTimeout(async () => {
+                  this.trLastNoSol = await this.getLastSol();
+                  this.getSolName(this.trLastNoSol);
+                  console.log(this.solNumerico);
+                  console.log(this.numericoSol);
+                }, 1000);
+  
+                //console.log("Empleado area ID:",this.cab_area);
+              } else if (emp.empleadoIdArea === 0) {
+                this.showArea = 'El empleado no posee un area asignada.';
+              }
             }
           }
         }
       }
-    }
+    }, 1000);
   }
   async changeView(view: string) {
     this.changeview = view;
@@ -499,12 +501,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoEstado: this.cab_estado,
       cabPagoEstadoTrack: this.trNivelEmision,
       cabPagoIdEmisor: this.cookieService.get('userIdNomina'),
-      cabPagoApprovedBy: 'XXXXXX'
+      cabPagoApprovedBy: 'XXXXXX',
+      cabPagoNoSolOC: this.cab_NoSolOC
     };
 
     //enviar datos de cabecera a la API
     console.log('2. guardando solicitud...', dataCAB);
-    await this.cabPagoService.addSolPag(dataCAB).subscribe(
+    /*await this.cabPagoService.addSolPag(dataCAB).subscribe(
       (response) => {
         console.log('Cabecera agregada.');
         console.log('Solicitud', this.solNumerico);
@@ -521,7 +524,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       (error) => {
         console.log('error al guardar la cabecera: ', error);
       }
-    );
+    );*/
   }
   //Guardar el ID DEL QUE RECIBE
   saveReceptor() {
@@ -546,74 +549,101 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   async Obtener() {
-    if (this.valorinput == '') {
-      this.detalleSolPagos = [];
-      this.destinoIO = false;
-      this.detallesToDestino = [];
-      this.alertBool = true;
-      this.alertText = 'El campo no puede estar vacio';
-          setTimeout(() => {
-            this.alertBool = false;
-            this.alertText = '';
-          }, 1000);
-    } else {
-      const partes = this.valorinput.match(/(\d+)-(\d+)/);
-      console.log('partes', partes);
-      if (partes && partes.length === 3) {
-        console.log("este mi partes ", partes[1]);
-        if (partes[1] != '2') {
-          this.alertBool = true;
-          this.alertText = 'No se ha encontrado la solicitud';
-          this.detalleSolPagos = [];
-          setTimeout(() => {
-            this.alertBool = false;
-            this.alertText = '';
-          }, 1000);
-        } else {
-          this.noSolicinput = parseInt(partes[2], 10);
-          try {
-            this.detSolService
-              .getDetalle_solicitud(2, this.noSolicinput)
-              .subscribe(
-                (response) => {
+    if (this.tipoSolOc == 'F'){
+      if(this.valorinput == ''){
+        this.alertBool = true;
+        this.alertText = 'Por favor ingrese el nombre de la solicitud a asociar.';
+      } else {
+        this.alertBool = true;
+        this.alertText = '  Usted ha seleccionado solicitud física, por favor suba la documentacion de la orden de compra y las evidencias del destino en la pestaña Documentación ubicada en la parte superior.';
+        this.cab_NoSolOC = this.valorinput;
+      }
+    } else if (this.tipoSolOc == 'S'){
+      this.alertBool = false;
+      this.alertText = '';
+      if (this.valorinput == '') {
+        this.detalleSolPagos = [];
+        this.destinoIO = false;
+        this.detallesToDestino = [];
+        this.alertBool = true;
+        this.alertText = 'El campo no puede estar vacio';
+            setTimeout(() => {
+              this.alertBoolError = false;
+              this.alertBool = false;
+              this.alertText = '';
+            }, 1000);
+      } else {
+        const partes = this.valorinput.match(/(\d+)-(\d+)/);
+        console.log('partes', partes);
+        if (partes && partes.length === 3) {
+          console.log("este mi partes ", partes[1]);
+          if (partes[1] != '2') {
+            this.alertBool = true;
+            this.alertText = 'No se ha encontrado la solicitud';
+            this.detalleSolPagos = [];
+            setTimeout(() => {
+              this.alertBool = false;
+              this.alertText = '';
+            }, 1000);
+          } else {
+            this.noSolicinput = parseInt(partes[2], 10);
+            try {
+              this.detSolService
+                .getDetalle_solicitud(2, this.noSolicinput)
+                .subscribe(
+                  (response) => {
+  
+                    //console.log('response', response);
+                    this.detalleSolPagos = response.map((ini: any) => ({
+                      idDetalle: ini.solCotIdDetalle,
+                      itemDesc: ini.solCotDescripcion,
+                      itemCant: ini.solCotCantidadTotal,
+                      cantidadRecibid : undefined,
+                      valorUnitario: undefined,
+                      subTotal: undefined
+                    }));
+  
+                    //variables para controlar los datos ue se le pasan a destino
+                    this.destinoIO = true;
+                    this.detallesToDestino = response.map((detalle: any) => {
+                      return {
+                        idDetalle: detalle.solCotIdDetalle,
+                        descpDetalle: detalle.solCotDescripcion,
+                        destinoDetalle: false
+                      };
+                    });
+                    //console.log('cambios en el map ', this.detalleSolPagos);
+                  },
+                  (error) => {
+                    //console.log('error al guardar la cabecera: ', error);
+                    this.alertBoolError = true;
+                    this.alertText = 'No se ha encontrado la solicitud';
 
-                  //console.log('response', response);
-                  this.detalleSolPagos = response.map((ini: any) => ({
-                    idDetalle: ini.solCotIdDetalle,
-                    itemDesc: ini.solCotDescripcion,
-                    itemCant: ini.solCotCantidadTotal,
-                    cantidadRecibid : undefined,
-                    valorUnitario: undefined,
-                    subTotal: undefined
-                  }));
-
-                  //variables para controlar los datos ue se le pasan a destino
-                  this.destinoIO = true;
-                  this.detallesToDestino = response.map((detalle: any) => {
-                    return {
-                      idDetalle: detalle.solCotIdDetalle,
-                      descpDetalle: detalle.solCotDescripcion,
-                      destinoDetalle: false
-                    };
-                  });
-                  //console.log('cambios en el map ', this.detalleSolPagos);
-                },
-                (error) => {
-                  console.log('error al guardar la cabecera: ', error);
-                }
-              );
-          } catch (error) {
-            console.log('error', error);
+                    setTimeout(() => {
+                      this.alertBoolError = false;
+                      this.alertText = '';
+                    }, 3000);
+                  }
+                );
+            } catch (error) {
+              console.log('error', error);
+            }
+  
           }
-
+  
+  
         }
-
-
+        else {
+          console.log('No tiene ningun formato realizado');
+          this.alertBoolError = true;
+          this.alertText = 'Error, no se ha ingresado el formato correcto';
+          setTimeout(() => {
+            this.alertBoolError = false;
+            this.alertText = '';
+          }, 3000);
+        }
+  
       }
-      else {
-        console.log('No tiene ningun formato realizado');
-      }
-
     }
     this.setNoSolDocumentacion();
   }

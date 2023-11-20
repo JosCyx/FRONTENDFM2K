@@ -66,6 +66,7 @@
                 list="sugerencias"
                 [(ngModel)]="empleado"
                 (keyup)="searchEmpleado()"
+                (input)="selectEmpleado()"
                 placeholder="Ingrese el nombre del empleado"
               />
               <datalist id="sugerencias">
@@ -75,9 +76,9 @@
                   ></option>
                 </ng-container>
               </datalist>
-              <button class="btn btn-success" (click)="selectEmpleado()">
+              <!-- <button class="btn btn-success" (click)="selectEmpleado()">
                 <i class="bi bi-check-lg"></i>
-              </button>
+              </button> -->
             </div>
             <div class="input-group col">
               <label class="input-group-text">Area:</label>
@@ -1540,7 +1541,7 @@
                
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="noAutorizar()">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="guardarDevolverSolEditada()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">

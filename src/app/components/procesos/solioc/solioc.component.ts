@@ -334,33 +334,36 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
   //guarda el nombre del area del empleado seleccionado
   selectEmpleado(): void {
-    this.showArea = '';
-    if (!this.empleado) {
+    setTimeout(() => {
+      
       this.showArea = '';
-    } else {
-      for (let emp of this.empleados) {
-        if (
-          emp.empleadoNombres + ' ' + emp.empleadoApellidos ==
-          this.empleado
-        ) {
-          this.trIdNomEmp = emp.empleadoIdNomina;
-          this.cab_id_area = emp.empleadoIdArea;
-          this.cab_id_dept = emp.empleadoIdDpto;
-          this.depSolTmp = emp.empleadoIdDpto;
-          for (let area of this.areas) {
-            if (area.areaIdNomina == emp.empleadoIdArea) {
-              
-              this.showArea = area.areaDecp;
-
-              this.areaNmco = area.areaNemonico.trim();
-              //console.log("Empleado area ID:",this.cab_area);
-            } else if (emp.empleadoIdArea === 0) {
-              this.showArea = 'El empleado no posee un area asignada.';
+      if (!this.empleado) {
+        this.showArea = '';
+      } else {
+        for (let emp of this.empleados) {
+          if (
+            emp.empleadoNombres + ' ' + emp.empleadoApellidos ==
+            this.empleado
+          ) {
+            this.trIdNomEmp = emp.empleadoIdNomina;
+            this.cab_id_area = emp.empleadoIdArea;
+            this.cab_id_dept = emp.empleadoIdDpto;
+            this.depSolTmp = emp.empleadoIdDpto;
+            for (let area of this.areas) {
+              if (area.areaIdNomina == emp.empleadoIdArea) {
+                
+                this.showArea = area.areaDecp;
+  
+                this.areaNmco = area.areaNemonico.trim();
+                //console.log("Empleado area ID:",this.cab_area);
+              } else if (emp.empleadoIdArea === 0) {
+                this.showArea = 'El empleado no posee un area asignada.';
+              }
             }
           }
         }
       }
-    }
+    }, 1000);
   }
   /*//controla el contenido que se muestra en la pagina
   changeView(view: string): void {
@@ -1627,6 +1630,25 @@ export class SoliocComponent implements OnInit, OnDestroy {
         console.log('Error:', error);
         this.showmsjerror = true;
         this.msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
+  
+        setTimeout(() => {
+          this.showmsjerror = false;
+          this.msjError = "";
+        }, 3000);
+      }
+    }
+
+
+    guardarDevolverSolEditada() {
+      try {
+        this.saveEdit();
+        setTimeout(() => {
+          this.noAutorizar();
+        }, 500);     
+      } catch (error) {
+        console.log('Error:', error);
+        this.showmsjerror = true;
+        this.msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
   
         setTimeout(() => {
           this.showmsjerror = false;

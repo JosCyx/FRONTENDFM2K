@@ -340,27 +340,30 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
   //guarda el nombre del area del empleado seleccionado
   selectEmpleado(): void {
-    this.showArea = '';
-    if (!this.empleado) {
+    setTimeout(() => {
+      
       this.showArea = '';
-    } else {
-      for (let emp of this.empleados) {
-        if ((emp.empleadoNombres + ' ' + emp.empleadoApellidos) == this.empleado) {
-          this.trIdNomEmp = emp.empleadoIdNomina;//guarda el id de nomina del empleado utilizado para registrar el tracking
-          this.cab_id_area = emp.empleadoIdArea;//guardar el area de la solicitud como int para realizar busquedas
-          this.deptSolTmp = emp.empleadoIdDpto;
-          this.cab_id_dpto = emp.empleadoIdDpto;//guarda el departamento de la solicitud como int para realizar busquedas
-          for (let area of this.areas) {
-            if (area.areaIdNomina == emp.empleadoIdArea) {
-              this.showArea = area.areaDecp;//define el nombre del area para mostrarlo en el html
-              this.areaNmco = area.areaNemonico.trim();//extrae el nemonico del area para generar el nombre de la solicitud
-            } else if (emp.empleadoIdArea === 0) {
-              this.showArea = 'El empleado no posee un area asignada.'
+      if (!this.empleado) {
+        this.showArea = '';
+      } else {
+        for (let emp of this.empleados) {
+          if ((emp.empleadoNombres + ' ' + emp.empleadoApellidos) == this.empleado) {
+            this.trIdNomEmp = emp.empleadoIdNomina;//guarda el id de nomina del empleado utilizado para registrar el tracking
+            this.cab_id_area = emp.empleadoIdArea;//guardar el area de la solicitud como int para realizar busquedas
+            this.deptSolTmp = emp.empleadoIdDpto;
+            this.cab_id_dpto = emp.empleadoIdDpto;//guarda el departamento de la solicitud como int para realizar busquedas
+            for (let area of this.areas) {
+              if (area.areaIdNomina == emp.empleadoIdArea) {
+                this.showArea = area.areaDecp;//define el nombre del area para mostrarlo en el html
+                this.areaNmco = area.areaNemonico.trim();//extrae el nemonico del area para generar el nombre de la solicitud
+              } else if (emp.empleadoIdArea === 0) {
+                this.showArea = 'El empleado no posee un area asignada.'
+              }
             }
           }
         }
       }
-    }
+    }, 1000);
   }
 
   //tranforma la fecha actual en un formato especifico "Lunes, 31 de julio de 2023"
