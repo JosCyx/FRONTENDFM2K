@@ -703,11 +703,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     });
     //formatear la fecha de la solicitud de pago
     this.fechaFormateada = this.formatDateToSpanish(new Date(this.cabecera.cabPagoFechaEmision))
-    this.cabecera.cabPagoFechaInspeccion = format(
-      parseISO(this.cabecera.cabPagoFechaInspeccion),
-      'yyyy-MM-dd'
-    );
-    this.cabecera.cabPagoFechaFactura = format(
+    //
+    this.cabecera.cabPagoFechaInspeccion = this.cabecera.cabPagoFechaInspeccion === "0001-01-01T00:00:00" ? '':   format(
+      parseISO(this.cabecera.cabPagoFechaInspeccion),'yyyy-MM-dd');
+      //
+    this.cabecera.cabPagoFechaFactura= this.cabecera.cabPagoFechaFactura === "0001-01-01T00:00:00" ? '':format(
       parseISO(this.cabecera.cabPagoFechaFactura),
       'yyyy-MM-dd'
     );
