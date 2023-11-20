@@ -602,6 +602,8 @@
               </div>
             </div>
           </div>
+
+
           <div class="presupuestaria" *ngIf="aprobPreps">
             <div class="tabs-edit">
                 <ul class="nav nav-tabs">
@@ -632,6 +634,9 @@
                     </div>
                 </div>
             </div>
+            
+
+       
 
 
         </div>
@@ -645,13 +650,17 @@
                 <h2>Autorización de solicitud</h2>
                 <div class="text-center">
                     <div class="row buttons-ruteo">
-                        
-                        <ng-container *appAuthorize="'55'" >
-                          <button *ngIf="estadoSol == '70'" class="btn btn-success col m-2" data-toggle="modal"
-                            data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Finalizar</button>
-                          <button *ngIf="estadoSol != '70'" class="btn btn-success col m-2" data-toggle="modal"
-                            data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
-                        </ng-container>
+
+                        <ng-container *appAuthorize="'55'">
+                          <button *ngIf="setMotivo == 'NO' && estadoSol == lastNivel"
+                              class="btn btn-success col m-2" data-toggle="modal"
+                              data-target="#aprobarSolicitud"
+                              [appSecureDisable]="estadoSol">Finalizar</button>
+                          <button *ngIf="setMotivo == 'NO' && estadoSol != lastNivel"
+                              class="btn btn-success col m-2" data-toggle="modal"
+                              data-target="#aprobarSolicitud"
+                              [appSecureDisable]="estadoSol">Aprobar</button>
+                      </ng-container>
                         <button *appAuthorize="'58'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>
                         <button *appAuthorize="'61'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud" [appSecureDisable]="estadoSol">Anular</button>
                     </div>

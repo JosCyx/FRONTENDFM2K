@@ -204,56 +204,56 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       this.noAutorizar();
     });*/
   }
-  
+
 
   validarNumero(event: Event): void {
-    const patron: RegExp=/^[0-9]+$/;
+    const patron: RegExp = /^[0-9]+$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
     //console.log("este son mis valores digitados ",valorIngresado);
 
     if (!patron.test(valorIngresado)) {
       console.log("entro ");
-      inputElement.value = inputElement.defaultValue; 
+      inputElement.value = inputElement.defaultValue;
     }
   }
 
 
   ngOnInit(): void {
     //fechas 
-    this.fechaminina=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate());
-    this.fechamaxima=new Date(new Date().getFullYear(),new Date().getMonth()+6,new Date().getDate());
-    this.fechaMax=this.formatDateToYYYYMMDD(this.fechamaxima);
-    this.fechaMin=this.formatDateToYYYYMMDD(this.fechaminina);
+    this.fechaminina = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+    this.fechamaxima = new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate());
+    this.fechaMax = this.formatDateToYYYYMMDD(this.fechamaxima);
+    this.fechaMin = this.formatDateToYYYYMMDD(this.fechaminina);
     //console.log(this.cookieService.get('userRolNiveles'));
-    setTimeout(()=>{
+    setTimeout(() => {
       this.areaUserCookie = this.cookieService.get('userArea');
-    this.empService.getEmpleadosList().subscribe((data) => {
-      this.empleadosEdit = data;
-    });
+      this.empService.getEmpleadosList().subscribe((data) => {
+        this.empleadosEdit = data;
+      });
 
-    this.inspectores$ = this.empService.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
-    this.inspectores$.subscribe((data) => {
-      this.inspectoresEdit = data;
-    });
+      this.inspectores$ = this.empService.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
+      this.inspectores$.subscribe((data) => {
+        this.inspectoresEdit = data;
+      });
 
-    this.sectores$ = this.sectService.getSectoresList().pipe(
-      map(sectores => sectores.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre)))
-    );
+      this.sectores$ = this.sectService.getSectoresList().pipe(
+        map(sectores => sectores.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre)))
+      );
 
-    this.areaService.getAreaList().subscribe((data) => {
-      this.areas = data;
-    });
+      this.areaService.getAreaList().subscribe((data) => {
+        this.areas = data;
+      });
 
-    this.nivelRut$ = this.nivRuteService.getNivelruteo().pipe(
-      map(niv => niv.sort((a, b) => a.nivel - b.nivel))
-    );
+      this.nivelRut$ = this.nivRuteService.getNivelruteo().pipe(
+        map(niv => niv.sort((a, b) => a.nivel - b.nivel))
+      );
 
-    this.prespService.getPresupuestos().subscribe((data: any) => {
-      this.presupuestos = data;
-    });
+      this.prespService.getPresupuestos().subscribe((data: any) => {
+        this.presupuestos = data;
+      });
 
-    },100)
+    }, 100)
     if (this.changeview == 'editar') {
       this.editSolicitud();
     }
@@ -266,9 +266,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     //this.cancelarItem();
   }
 
-  Validacionfecha():void{
-    const fechpl=this.cab_plazo;
-    this.fechaMinPlazo=fechpl.toString();
+  Validacionfecha(): void {
+    const fechpl = this.cab_plazo;
+    this.fechaMinPlazo = fechpl.toString();
   }
 
   //guarda los datos de los empleados en una lista local dependiendo del tamaño de la variable de busqueda, esto se controla con un keyup
@@ -316,10 +316,10 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     const patron: RegExp = /^[a-zA-Z\s]*$/;
     if (!patron.test(this.inspector)) {
       //borrar el ultimo caracter ingresado
-      console.log('El inspector no puede contener el número 1',this.inspector);
+      console.log('El inspector no puede contener el número 1', this.inspector);
       // this.inspector = this.inspector.substring(0, this.inspector.length - 1);
       this.inspector = this.inspector.replace(/[^a-zA-Z\s]/g, '');
-    } 
+    }
   }
   onInputChanged(): void {
     // Cancelamos el temporizador anterior antes de crear uno nuevo
@@ -836,19 +836,19 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
   }
 
-  itemViewid!:number;
-  itemDetalleView!:number;
-  deleteview(id:number, detalle:number){
-    this.itemViewid=id;//guarda el id del item que se va a eliminar
-    this.itemDetalleView=detalle;//guarda el id del detalle al que pertenece el item que se va a eliminar
+  itemViewid!: number;
+  itemDetalleView!: number;
+  deleteview(id: number, detalle: number) {
+    this.itemViewid = id;//guarda el id del item que se va a eliminar
+    this.itemDetalleView = detalle;//guarda el id del detalle al que pertenece el item que se va a eliminar
   }
 
-  deleteViewSave(){
-    console.log("listas",this.itemSectorList)
-    const index = this.itemSectorList.findIndex(item=>item.item_id === this.itemViewid && item.det_id === this.itemDetalleView);
-    if(index!==-1){
+  deleteViewSave() {
+    console.log("listas", this.itemSectorList)
+    const index = this.itemSectorList.findIndex(item => item.item_id === this.itemViewid && item.det_id === this.itemDetalleView);
+    if (index !== -1) {
       //elimina el elemento que se ha seleccionado
-      this.itemSectorList.splice(index,1);
+      this.itemSectorList.splice(index, 1);
 
       //reordena la lista para evitar problemas con el id
       this.reorderAndSaveItemView();
@@ -861,13 +861,13 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     }
   }
 
-  async reorderAndSaveItemView(){
-    const itemmap :{[key:number]:number} = {};
+  async reorderAndSaveItemView() {
+    const itemmap: { [key: number]: number } = {};
 
-    for(const item of this.itemSectorList){
+    for (const item of this.itemSectorList) {
       const det = item.det_id;
 
-      if(!itemmap[det]){
+      if (!itemmap[det]) {
         itemmap[det] = 1;
       }
 
@@ -877,22 +877,22 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     }
   }
 
-  calcularIdItemView(){
-    for(let item of this.itemSectorList){
-      if(item.det_id === this.det_id){
+  calcularIdItemView() {
+    for (let item of this.itemSectorList) {
+      if (item.det_id === this.det_id) {
         this.item_id = item.item_id + 1;
       }
     }
   }
 
 
-  calculardetalleview(){
-    for(let det of this.detalleList){
-      if(det.det_id === this.IdDetalleEdicion){
+  calculardetalleview() {
+    for (let det of this.detalleList) {
+      if (det.det_id === this.IdDetalleEdicion) {
         det.det_cantidad = 0;
-        for(let it of this.itemSectorList){
-          
-          if(it.det_id === this.IdDetalleEdicion){
+        for (let it of this.itemSectorList) {
+
+          if (it.det_id === this.IdDetalleEdicion) {
             det.det_cantidad += it.item_cant;
           }
 
@@ -902,7 +902,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     }
   }
 
-  
+
 
 
   //agregar los items de la lista temporal a la lista definitiva
@@ -1002,7 +1002,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     this.deptSolTmp = this.cabecera.cabSolCotIdDept;
     this.estadoSol = this.cabecera.cabSolCotEstadoTracking.toString();
 
-    if(this.cabecera.cabSolCotEstadoTracking > 10){
+    if (this.cabecera.cabSolCotEstadoTracking > 10) {
       this.showEdicionItem = false;
     }
 
@@ -1046,14 +1046,34 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     this.item.sort((a, b) => a.itmIdDetalle - b.itmIdDetalle);
 
     this.setView();
-     setTimeout(() => {
+    setTimeout(() => {
       for (let emp of this.empleadosEdit) {
         if (emp.empleadoIdNomina == this.cabecera.cabSolCotInspector) {
           this.nameInspector = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
         }
       }
-    }, 200); 
+      this.getNivelRuteoArea();
+    }, 200);
+
+
+    setTimeout(() => {
+      
+
+      for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+        const element = this.nivelSolAsignado[i];
+  
+        //guardar el ultimo elemento de la lista
+        if (i === this.nivelSolAsignado.length - 1) {
+          const nivel = element.rutareaNivel;
+          this.lastNivel = nivel.toString();
+        }
+        console.log(this.estadoSol)
+      }
+    }, 500);
+
   }
+  lastNivel: string = '';
+
 
   get estadoTexto(): string {
     switch (this.cabecera.cabSolCotEstado) {
@@ -1204,7 +1224,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
   calcularCantDetalle() {
     for (let det of this.detalle) {
-      if (det.solCotIdDetalle === this.idDetEdit) { 
+      if (det.solCotIdDetalle === this.idDetEdit) {
         det.solCotCantidadTotal = 0; // Reiniciar la cantidad total del detalle
         for (let itm of this.item) {
           if (itm.itmIdDetalle === det.solCotIdDetalle) {
@@ -1501,16 +1521,25 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       this.financieropor = this.cookieService.get('userIdNomina');
       //this.saveEditCabecera();
       this.setFinancieroPor(this.financieropor);
-    } 
+    }
 
     await this.getNivelRuteoArea();
     try {
       // Espera a que se complete getNivelRuteoArea
       let newEstado: number = 0;
       let newestadoSt: string;
-      //si la solicitud ya eta en el nivel 70 se cambia su estado a FINALIZADO
+      let lastNivel: number = 0;
 
-      if (this.estadoTrkTmp == 70) {
+      for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+        const element = this.nivelSolAsignado[i];
+
+        //guardar el ultimo elemento de la lista
+        if (i === this.nivelSolAsignado.length - 1) {
+          lastNivel = element.rutareaNivel;
+        }
+      }
+
+      if (this.estadoTrkTmp == lastNivel) {
         //console.log("FINALIZADO");
         try {
           //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);
@@ -1560,7 +1589,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
                 console.log('Error al obtener el nuevo estado de tracking: ', error);
               }
             );
-           
+
             break;
           }
 
@@ -1612,13 +1641,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       this.nivelSolAsignado = response.filter((res: any) => res.rutareaTipoSol == this.trTipoSolicitud);
       this.nivelSolAsignado.sort((a, b) => a.rutareaNivel - b.rutareaNivel);
       this.nivelRuteotoAut = this.nivelSolAsignado;
-      //console.log('Niveles de ruteo asignados: ', this.nivelSolAsignado);
     } catch (error) {
       throw error;
     }
   }
 
-  metodo(){
+  metodo() {
     this.ruteoService.getRuteosByArea(this.deptSolTmp).subscribe(
       response => {
         console.log(response)
@@ -1675,7 +1703,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido anulada exitosamente.`;
 
           //notificar al emisor de la solicitud que ha sido anulada
-          this.sendMail(mailToNotify,2);
+          this.sendMail(mailToNotify, 2);
 
           setTimeout(() => {
             this.showmsj = false;
@@ -1744,15 +1772,15 @@ export class SolicotiComponent implements OnInit, OnDestroy {
             this.showmsj = true;
             this.msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel anterior.`;
 
-            if(newEstado == 10){
+            if (newEstado == 10) {
               //notificar al emisor
-              this.sendMail(mailToNotify,3);
+              this.sendMail(mailToNotify, 3);
 
             } else {
               //notificar al nivel correspondiente
-              this.sendNotify(newEstado, newestadoSt, 3); 
+              this.sendNotify(newEstado, newestadoSt, 3);
             }
-            
+
 
             setTimeout(() => {
               this.showmsj = false;
@@ -1842,13 +1870,13 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     let contenidoMail = '';
     let asuntoMail = '';
 
-    if(type == 1){
+    if (type == 1) {
       asuntoMail = this.asunto;
       contenidoMail = this.emailContent;
-    } else if(type == 2){
+    } else if (type == 2) {
       asuntoMail = this.asuntoAnulado;
       contenidoMail = this.emailContent2;
-    } else if(type == 3){
+    } else if (type == 3) {
       asuntoMail = this.asuntoDevuelto;
       contenidoMail = this.emailContent1;
     }
