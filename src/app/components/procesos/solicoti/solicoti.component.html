@@ -58,15 +58,16 @@
                             <input type="text" class="form-control" id="busqueda" list="sugerencias"
                                 [(ngModel)]="empleado" (keyup)="searchEmpleado()" (input)="selectEmpleado()"
                                 placeholder="Ingrese el nombre del empleado" />
-                            <datalist id="sugerencias">
-                                <ng-container *ngFor="let emp of empleados">
-                                    <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
-                                </ng-container>
-                            </datalist>
+                            
                             <!-- <button class="btn btn-success" (click)="selectEmpleado()">
                                 <i class="bi bi-check-lg"></i>
                             </button> -->
                         </div>
+                        <datalist id="sugerencias">
+                            <ng-container *ngFor="let emp of empleados">
+                                <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+                            </ng-container>
+                        </datalist>
                         <div class="input-group col">
                             <label class="input-group-text">Area:</label>
                             <input type="text" class="form-control" [value]="showArea"
@@ -403,7 +404,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">Item</th>
-                                <th scope="col">Descripción*</th>
+                                <th scope="col" style="width: 450px;">Descripción*</th>
                                 <th scope="col">Presupuesto*</th>
                                 <th scope="col">Sector*</th>
                                 <th scope="col">Unidad</th>
