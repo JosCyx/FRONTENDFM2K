@@ -234,7 +234,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         this.empleadosEdit = data;
       });
 
-      this.inspectores$ = this.empService.getEmpleadobyArea(12);//se le pasa el valor del id de nomina del area operaciones: 12
+      this.inspectores$ = this.empService.getEmpleadosList();//se le pasa el valor del id de nomina del area operaciones: 12
+      // this.empService.getEmpleadobyArea(12);
       this.inspectores$.subscribe((data) => {
         this.inspectoresEdit = data;
       });
@@ -334,6 +335,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     this.inputTimer = setTimeout(() => {
       // Coloca aquí la lógica que deseas ejecutar después de que el usuario haya terminado de modificar el input
       if (this.inspector) {
+        console.log("Este es mi dtos ",this.inspector);
         const empleadoSeleccionado = this.inspectores.find(emp => (emp.empleadoNombres + ' ' + emp.empleadoApellidos) === this.inspector);
         this.cab_inspector = empleadoSeleccionado ? empleadoSeleccionado.empleadoIdNomina : 'XXXXXX';
         //console.log("Inspector ID", this.cab_inspector);
@@ -976,7 +978,6 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       console.error('Error al obtener la solicitud:', error);
     }
   }
-
   showEdicionItem: boolean = true;
   async saveData() {
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
@@ -1024,14 +1025,15 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       .toUpperCase() + this.cabecera.cabSolCotFecha.slice(1);
 
     // Formatear la fecha máxima de entrega en formato 'yyyy-MM-dd'
-    this.cabecera.cabSolCotFechaMaxentrega = format(parseISO(this.cabecera.cabSolCotFechaMaxentrega),
+      this.cabecera.cabSolCotFechaMaxentrega = this.cabecera.cabSolCotFechaMaxentrega === "0001-01-01T00:00:00" ?   '':format(parseISO(this.cabecera.cabSolCotFechaMaxentrega),
       'yyyy-MM-dd');
+    
 
     // Formatear el plazo de entrega en formato 'yyyy-MM-dd'
-    this.cabecera.cabSolCotPlazoEntrega = format(parseISO(this.cabecera.cabSolCotPlazoEntrega),
+    this.cabecera.cabSolCotPlazoEntrega = this.cabecera.cabSolCotPlazoEntrega === "0001-01-01T00:00:00" ?   '':format(parseISO(this.cabecera.cabSolCotPlazoEntrega),
       'yyyy-MM-dd');
 
-    //ordena los items de la lista segun el id del detalle de menor a mayor
+    // ordena los items de la lista segun el id del detalle de menor a mayor
     this.item.sort((a, b) => a.itmIdDetalle - b.itmIdDetalle);
 
     this.setView();
