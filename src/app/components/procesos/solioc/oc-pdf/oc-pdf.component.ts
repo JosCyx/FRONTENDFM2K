@@ -76,7 +76,7 @@ export class OcPdfComponent implements OnInit {
           this.presupues = respuestas;
         },
       });
-      this.empService.getEmpleadobyArea(12).subscribe({
+      this.empService.getEmpleadosList().subscribe({
         next: (res) => {
           this.inspectoresEdit = res;
         },

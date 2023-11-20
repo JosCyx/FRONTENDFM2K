@@ -223,7 +223,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
         this.empleadoedit = data;
       });
   
-      this.inspectores$ = this.empService.getEmpleadobyArea(12); //se le pasa el valor del id de nomina del area operaciones: 12
+      this.inspectores$ = this.empService.getEmpleadosList(); //se le pasa el valor del id de nomina del area operaciones: 12
       this.inspectores$.subscribe((data) => {
         this.inspectoresEdit = data;
       });
@@ -1003,10 +1003,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
       this.cabecera.cabSolOCFecha.charAt(0).toUpperCase() +
       this.cabecera.cabSolOCFecha.slice(1);
 
-    // Formatear la fecha máxima de entrega en formato 'yyyy-MM-dd'
-    this.cabecera.cabSolOCFechaMaxentrega = format(
-      parseISO(this.cabecera.cabSolOCFechaMaxentrega),
-      'yyyy-MM-dd'
+    // Formatear la fecha máxima de entrega en formato 'yyyy-MM-dd' 
+    this.cabecera.cabSolOCFechaMaxentrega = this.cabecera.cabSolOCFechaMaxentrega === "0001-01-01T00:00:00" ? '':format(parseISO(this.cabecera.cabSolOCFechaMaxentrega),'yyyy-MM-dd'
     );
     setTimeout(() => {
       for (let empl of this.inspectoresEdit) {
@@ -1029,7 +1027,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
     }, 500);
 
     // Formatear el plazo de entrega en formato 'yyyy-MM-dd'
-    this.cabecera.cabSolOCPlazoEntrega = format(
+    this.cabecera.cabSolOCPlazoEntrega = this.cabecera.cabSolOCPlazoEntrega === "0001-01-01T00:00:00" ? '':format(
       parseISO(this.cabecera.cabSolOCPlazoEntrega),
       'yyyy-MM-dd'
     );
