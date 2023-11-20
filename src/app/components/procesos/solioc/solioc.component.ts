@@ -218,7 +218,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
     this.fechaMax=this.formatDateToYYYYMMDD(this.fechamaxima);
     this.fechaMin=this.formatDateToYYYYMMDD(this.fechaminina);
     setTimeout(() => {
-  
+      
       this.empService.getEmpleadosList().subscribe((data) => {
         this.empleadoedit = data;
       });
@@ -942,6 +942,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   //editar solicitudes
   async getSolicitud() {
     try {
+      this.getNivelRuteoArea();
       const data = await this.cabOCService
         .getOrdenComprabyId(this.SolID)
         .toPromise();
@@ -953,6 +954,9 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
   showEdicionItem: boolean = true;
   async saveData() {
+    
+
+    
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
     this.cabecera = this.solicitudEdit.cabecera;
     this.sharedTipoSol=this.cabecera.cabSolOCTipoSolicitud;
@@ -960,6 +964,9 @@ export class SoliocComponent implements OnInit, OnDestroy {
     this.noSolTmp = this.cabecera.cabSolOCNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabSolOCEstadoTracking;
     this.depSolTmp = this.cabecera.cabSolOCIdDept;
+    console.log(this.cabecera)
+
+    this.checkAprobPrep(this.cabecera.cabSolOCEstadoTracking);
 
     if(this.cabecera.cabSolOCEstadoTracking > 10){
       this.showEdicionItem = false;
@@ -1007,8 +1014,19 @@ export class SoliocComponent implements OnInit, OnDestroy {
           this.inspector = empl.empleadoNombres + ' ' + empl.empleadoApellidos;
         }
       }
+      this.getNivelRuteoArea();
     }, 200);
     
+    setTimeout(() => {
+      for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+        const element = this.nivelSolAsignado[i];
+        //guardar el ultimo elemento de la lista
+        if (i === this.nivelSolAsignado.length - 1) {
+          const nivel = element.rutareaNivel;
+          this.lastNivel = nivel.toString();
+        }
+      }
+    }, 500);
 
     // Formatear el plazo de entrega en formato 'yyyy-MM-dd'
     this.cabecera.cabSolOCPlazoEntrega = format(
@@ -1021,6 +1039,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
     this.setView();
   }
+
+  lastNivel: string = '';
 
   get estadoTexto(): string {
     switch (this.cabecera.cabSolOCEstado) {
@@ -1128,7 +1148,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
       cabSolOCApprovedBy: this.aprobadopor,
       cabSolOCFinancieroBy: this.financieropor,
       cabSolOCAprobPresup: this.cabecera.cabSolOCAprobPresup,
-      cabSolOCMotivoDev: this.cabecera. cabSolOCMotivoDev
+      cabSolOCMotivoDev: this.cabecera.cabSolOCMotivoDev
     };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
     //console.log('2. guardando solicitud...', dataCAB);
@@ -1607,9 +1627,18 @@ export class SoliocComponent implements OnInit, OnDestroy {
       // Espera a que se complete getNivelRuteoArea
       let newEstado: number = 0;
       let newestadoSt: string;
-      //si la solicitud ya eta en el nivel 70 se cambia su estado a FINALIZADO
+      let lastNivel: number = 0;
 
-      if (this.estadoTrkTmp == 70) {
+      for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+        const element = this.nivelSolAsignado[i];
+
+        //guardar el ultimo elemento de la lista
+        if (i === this.nivelSolAsignado.length - 1) {
+          lastNivel = element.rutareaNivel;
+        }
+      }
+
+      if (this.estadoTrkTmp == lastNivel) {
         //console.log("FINALIZADO");
         try {
           //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);
@@ -1986,7 +2015,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
     aprobPreps: boolean = false;
 
     checkAprobPrep(nivel: number) {
-      if (nivel >= 60) {
+      if (nivel == 60) {
         this.aprobPreps = true;
       } else {
         this.aprobPreps = false;
@@ -2003,6 +2032,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
       }
       //this.setMotivo = !this.setMotivo;
     }
+
+
 
   
 

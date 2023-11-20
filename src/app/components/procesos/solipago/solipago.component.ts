@@ -718,9 +718,24 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           this.receptor = empl.empleadoNombres + ' ' + empl.empleadoApellidos;
         }
       }  
+      this.getNivelRuteoArea();
     }, 200);
     
+
+    setTimeout(() => {
+      for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+        const element = this.nivelSolAsignado[i];
+  
+        //guardar el ultimo elemento de la lista
+        if (i === this.nivelSolAsignado.length - 1) {
+          const nivel = element.rutareaNivel;
+          this.lastNivel = nivel.toString();
+        }
+      }
+    }, 500);
+
   }
+  lastNivel: string = '';
   //
   get estadoTexto(): string {
     switch (this.cabecera.cabPagoEstado) {
@@ -956,9 +971,18 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       // Espera a que se complete getNivelRuteoArea
       let newEstado: number = 0;
       let newestadoSt: string;
-      //si la solicitud ya eta en el nivel 70 se cambia su estado a FINALIZADO
+      let lastNivel: number = 0;
 
-      if (this.estadoTrkTmp == 70) {
+      for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+        const element = this.nivelSolAsignado[i];
+
+        //guardar el ultimo elemento de la lista
+        if (i === this.nivelSolAsignado.length - 1) {
+          lastNivel = element.rutareaNivel;
+        }
+      }
+
+      if (this.estadoTrkTmp == lastNivel) {
         //console.log("FINALIZADO");
         try {
           //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);

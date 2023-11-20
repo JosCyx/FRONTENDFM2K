@@ -676,9 +676,9 @@
                       <div class="row buttons-ruteo">
                           
                           <ng-container *appAuthorize="'56'" >
-                            <button *ngIf="estadoSol == '70'" class="btn btn-success col m-2" data-toggle="modal"
+                            <button *ngIf="estadoSol == lastNivel" class="btn btn-success col m-2" data-toggle="modal"
                               data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Finalizar</button>
-                            <button *ngIf="estadoSol != '70'" class="btn btn-success col m-2" data-toggle="modal"
+                            <button *ngIf="estadoSol != lastNivel" class="btn btn-success col m-2" data-toggle="modal"
                               data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
                           </ng-container>
                           <button *appAuthorize="'59'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>

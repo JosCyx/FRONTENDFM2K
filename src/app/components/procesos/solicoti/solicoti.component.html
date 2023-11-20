@@ -363,7 +363,7 @@
                         </div>
                     </div>
 
-                    <div class="presupuestaria" *ngIf="aprobPreps">
+                    <!-- <div class="presupuestaria" *ngIf="aprobPreps">
                         <div class="tabs-edit">
                             <ul class="nav nav-tabs">
                                 <li class="nav-item">
@@ -395,7 +395,7 @@
                         </div>
 
 
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="detalle" *ngIf="actionEdit == 'edicion'">
@@ -499,12 +499,14 @@
                                 </td>
                             </tr>
                             <tr *appAuthorize="'66'">
-                                <td colspan="6" class="align-middle text-end">
-                                    <button class="btn btn-success" [disabled]="!det_descp || tmpItemSect.length === 0"
-                                        (click)="addDetalle()" [appSecureDisable]="estadoSol">
-                                        <i class="bi bi-check"></i>
-                                    </button>
-                                </td>
+                                <ng-container *ngIf="det_descp && det_presupuesto && det_cantidad != 0">
+                                    <td colspan="6" class="align-middle text-end">
+                                        <button class="btn btn-success" [disabled]="!det_descp || tmpItemSect.length === 0"
+                                            (click)="addDetalle()" [appSecureDisable]="estadoSol">
+                                            <i class="bi bi-check"></i>
+                                        </button>
+                                    </td>
+                                </ng-container>
                             </tr>
                         </tbody>
                     </table>
@@ -527,11 +529,11 @@
                             <div class="text-center">
                                 <div class="row buttons-ruteo">
                                     <ng-container *appAuthorize="'54'">
-                                        <button *ngIf="setMotivo == 'NO' && estadoSol == '70'"
+                                        <button *ngIf="setMotivo == 'NO' && estadoSol == lastNivel"
                                             class="btn btn-success col m-2" data-toggle="modal"
                                             data-target="#aprobarSolicitud"
                                             [appSecureDisable]="estadoSol">Finalizar</button>
-                                        <button *ngIf="setMotivo == 'NO' && estadoSol != '70'"
+                                        <button *ngIf="setMotivo == 'NO' && estadoSol != lastNivel"
                                             class="btn btn-success col m-2" data-toggle="modal"
                                             data-target="#aprobarSolicitud"
                                             [appSecureDisable]="estadoSol">Aprobar</button>
