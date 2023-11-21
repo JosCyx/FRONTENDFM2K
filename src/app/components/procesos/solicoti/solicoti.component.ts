@@ -552,6 +552,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       },
       error => {
         console.log("error al guardar la cabecera: ", error)
+        //AGREGAR MENSAJE DE ERROR 
+        const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
       }
     );
 
@@ -1273,7 +1276,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       cabSolCotNumerico: this.cabecera.cabSolCotNumerico,
       cabSolCotAprobPresup: this.cabecera.cabSolCotAprobPresup,
       cabSolCotMtovioDev: this.cabecera.cabSolCotMtovioDev,
-      cabSolCotIdEmisor: this.cookieService.get('userIdNomina'),
+      cabSolCotIdEmisor: this.cabecera.cabSolCotIdEmisor,
       cabSolCotApprovedBy: this.aprobadopor,
       cabSolCotFinancieroBy: this.financieropor
     };
@@ -1285,6 +1288,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       },
       (error) => {
         console.log('error : ', error);
+        const mensaje = "Ha habido un error al guardar los datos de la cabecera, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
       }
     );
 
@@ -1314,6 +1319,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         },
         error => {
           console.log("No se ha podido registrar el detalle, error: ", error);
+          const mensaje = "Ha habido un error al guardar los datos de los detalles, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+          this.callMensaje(mensaje,false);
         }
       );
 
@@ -1363,6 +1370,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         },
         error => {
           console.log("No se pudo guardar el item no:" + item.itmIdItem + ", error: ", error);
+          const mensaje = "Ha habido un error al guardar los datos los items, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
         }
       );
 

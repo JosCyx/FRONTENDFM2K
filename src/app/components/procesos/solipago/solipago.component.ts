@@ -192,7 +192,6 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     const patron: RegExp=/^[0-9]+$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
-    //console.log("este son mis valores digitados ",valorIngresado);
 
     if (!patron.test(valorIngresado)) {
       console.log("entro ");
@@ -204,7 +203,6 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
-    //console.log("este son mis valores digitados ",valorIngresado);
 
     if (!patron.test(valorIngresado)) {
       console.log("entro ");
@@ -514,11 +512,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
     //enviar datos de cabecera a la API
     console.log('2. guardando solicitud...', dataCAB);
-    /*await this.cabPagoService.addSolPag(dataCAB).subscribe(
+    await this.cabPagoService.addSolPag(dataCAB).subscribe(
       (response) => {
-        console.log('Cabecera agregada.');
-        console.log('Solicitud', this.solNumerico);
-        console.log('Agregando cuerpo de la cabecera...');
         const msjExito = 'Solicitud de Pago Generada Exitosamente';
         this.callMensaje(msjExito,true);
         this.AddDetSolPago();
@@ -528,8 +523,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       },
       (error) => {
         console.log('error al guardar la cabecera: ', error);
+        const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
       }
-    );*/
+    );
   }
   //Guardar el ID DEL QUE RECIBE
   saveReceptor() {
@@ -831,7 +828,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoObservCancelacion: this.cabecera.cabPagoObservCancelacion,
       cabPagoEstado: this.cabecera.cabPagoEstado,
       cabPagoEstadoTrack: this.cabecera.cabPagoEstadoTrack,
-      cabPagoIdEmisor: this.cookieService.get('userIdNomina'),
+      cabPagoIdEmisor: this.cabecera.cabPagoIdEmisor,
       cabPagoApprovedBy: this.aprobadopor,
       cabPagoFinancieroBy: this.financieropor
     };
@@ -844,6 +841,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.log('Error', error);
+          const mensaje = "Ha habido un error al guardar los datos de la cabecera, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
         }
       );
   }
@@ -867,6 +866,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.log('Error', error);
+          const mensaje = "Ha habido un error al guardar los datos de los detalles, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
         }
       );
     }

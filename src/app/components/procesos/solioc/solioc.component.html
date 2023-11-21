@@ -109,7 +109,7 @@
               *ngIf="tipobusqProv == 'nombre'"
                 [(ngModel)]="buscarProveedor"
                 type="text"
-                class="form-control"
+                class="form-control mr-3"
                 list="proveedor"
                 (keyup)="searchProveedor(buscarProveedor)"
               />
@@ -117,7 +117,7 @@
               *ngIf="tipobusqProv == 'ruc'"
                 [(ngModel)]="buscarProveedor"
                 type="text"
-                class="form-control"
+                class="form-control mr-3"
                 list="proveedor"
               />
               <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
@@ -129,27 +129,36 @@
                 <i class="bi bi-check-lg"></i>
               </button>
             </div>
-            <div class="input-group col">
-              <label class="input-group-text">
-                <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
-                <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                *ngIf="tipobusqProv == 'nombre'"
-                [(ngModel)]="cab_ruc_prov"
-                disabled
-              />
-              <input
-                type="text "
-                class="form-control"
-                *ngIf="tipobusqProv == 'ruc'"
-                [(ngModel)]="cab_proveedor"
-                disabled
-              />
+            <div class="row col">
+              <div class="input-group col std">
+                <label class="input-group-text">
+                  <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
+                  <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  *ngIf="tipobusqProv == 'nombre'"
+                  [(ngModel)]="cab_ruc_prov"
+                  disabled
+                />
+                <input
+                  type="text "
+                  class="form-control"
+                  *ngIf="tipobusqProv == 'ruc'"
+                  [(ngModel)]="cab_proveedor"
+                  disabled
+                />
+              </div>
+              <div class="input-group col std">
+                <!-- aqui va el nuevo campo -->
+                <label class="input-group-text">Valor aprobación:</label>
+                <input class="form-control" type="number" (input)="validarNumeroFloat($event)" [(ngModel)]="cab_valorAprobacion">
+              </div>
             </div>
           </div>
+
+
           <div class="input-group mb-1">
             <label class="input-group-text">Asunto*:</label>
             <input
@@ -384,14 +393,15 @@
               !empleado ||
               !cab_asunto ||
               detalleList.length === 0 ||
-              itemSectorList.length === 0"
+              itemSectorList.length === 0 ||
+              cab_valorAprobacion == 0"
               data-toggle="modal" 
               data-target="#guardarOrdenCompra"
              *appAuthorize="'28'"
           >
             Guardar
           </button>
-          <button class="btn btn-success m-2" [disabled]="!empleado || !cab_asunto || detalleList.length === 0 || itemSectorList.length === 0"
+          <button class="btn btn-success m-2" [disabled]="!empleado || !cab_asunto || detalleList.length === 0 || itemSectorList.length === 0 || cab_valorAprobacion == 0"
           data-toggle="modal" data-target="#enviarSolicitud"  *appAuthorize="'27'">
             Guardar y enviar
         </button>
@@ -526,7 +536,7 @@
                 [(ngModel)]="cabecera.cabSolOCProveedor"
                 *ngIf="tipobusqProv == 'nombre'"
                 type="text"
-                class="form-control"
+                class="form-control mr-3"
                 list="proveedor"
                 (keyup)="searchProveedor(cabecera.cabSolOCProveedor)"
                 [appSecureDisable]="estadoSol"
@@ -535,7 +545,7 @@
                 [(ngModel)]="cabecera.cabSolOCRUCProveedor"
                 *ngIf="tipobusqProv == 'ruc'"
                 type="text"
-                class="form-control"
+                class="form-control mr-3"
                 list="proveedor"
                 [appSecureDisable]="estadoSol"
               />
@@ -548,27 +558,35 @@
                 <i class="bi bi-check-lg"></i>
               </button>
             </div>
-  
-            <div class="input-group col">
-              <label class="input-group-text">
-                <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
-                <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
-              </label>
-              <input
-                type="text "
-                class="form-control"
-                *ngIf="tipobusqProv == 'nombre'"
-                [(ngModel)]="cabecera.cabSolOCRUCProveedor"
-                [appSecureDisable]="estadoSol"
-              />
-              <input
-                type="text "
-                class="form-control"
-                *ngIf="tipobusqProv == 'ruc'"
-                [(ngModel)]="cabecera.cabSolOCProveedor"
-                [appSecureDisable]="estadoSol"
-              />
+
+            <div class="row col">
+              <div class="input-group col std">
+                <label class="input-group-text">
+                  <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
+                  <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
+                </label>
+                <input
+                  type="text "
+                  class="form-control"
+                  *ngIf="tipobusqProv == 'nombre'"
+                  [(ngModel)]="cabecera.cabSolOCRUCProveedor"
+                  [appSecureDisable]="estadoSol"
+                />
+                <input
+                  type="text "
+                  class="form-control"
+                  *ngIf="tipobusqProv == 'ruc'"
+                  [(ngModel)]="cabecera.cabSolOCProveedor"
+                  [appSecureDisable]="estadoSol"
+                />
+              </div>
+              <div class="input-group col std">
+                <!-- aqui va el nuevo campo -->
+                <label class="input-group-text">Valor aprobación:</label>
+                <input class="form-control" type="number" (input)="validarNumeroFloat($event)" [(ngModel)]="cabecera.cabSolOCValorAprobacion" disabled>
+              </div>
             </div>
+  
           </div>
           <div class="row mb-1">
             <div class="input-group col">
@@ -580,7 +598,7 @@
                 [appSecureDisable]="estadoSol"
               />
             </div>
-            <div class="row col mb-1">
+            <div class="row col ">
               <div class="input-group col std">
                 <label class="input-group-text">Estado:</label>
                 <input
@@ -606,7 +624,7 @@
           </div>
 
           
-          <div class="input-group mb-1">
+          <div class="input-group mb-1" *ngIf="cabecera.cabSolOCAprobPresup == 'NO'">
             <label class="input-group-text">Motivo de devolución:</label>
             <input
               type="text"

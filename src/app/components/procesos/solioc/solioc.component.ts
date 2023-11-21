@@ -86,6 +86,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   cab_telef_insp!: string;
   cab_ruc_prov!: string;
   cab_proveedor!: string;
+  cab_valorAprobacion: number = 0;
 
   //variables del detalle
   det_id: number = 1; //se usa para el detalle y para el item por sector
@@ -208,6 +209,16 @@ export class SoliocComponent implements OnInit, OnDestroy {
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
     if (!patron.test(valorIngresado)) {
+      inputElement.value = inputElement.defaultValue; 
+    }
+  }
+  validarNumeroFloat(event: Event): void {
+    const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
+    const inputElement = event.target as HTMLInputElement;
+    const valorIngresado = inputElement.value;
+
+    if (!patron.test(valorIngresado)) {
+      console.log("entro ");
       inputElement.value = inputElement.defaultValue; 
     }
   }
@@ -567,7 +578,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
       cabSolOCApprovedBy: 'XXXXXX',
       cabSolOCFinancieroBy: 'XXXXXX',
       cabSolOCAprobPresup: 'SI',
-      cabSolOCMotivoDev: ''
+      cabSolOCMotivoDev: '',
+      cabSolOCValorAprobacion: this.cab_valorAprobacion
     };
 
     //enviar datos de cabecera a la API
@@ -582,6 +594,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
       },
       (error) => {
         console.log('error al guardar la cabecera: ', error);
+        const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
       }
     );
   }
@@ -1146,11 +1160,12 @@ export class SoliocComponent implements OnInit, OnDestroy {
       cabSolOCNumerico: this.cabecera.cabSolOCNumerico,
       cabSolOCProveedor: this.cabecera.cabSolOCProveedor,
       cabSolOCRUCProveedor: this.cabecera.cabSolOCRUCProveedor,
-      cabSolOCIdEmisor: this.cookieService.get('userIdNomina'),
+      cabSolOCIdEmisor: this.cabecera.cabSolOCIdEmisor,
       cabSolOCApprovedBy: this.aprobadopor,
       cabSolOCFinancieroBy: this.financieropor,
       cabSolOCAprobPresup: this.cabecera.cabSolOCAprobPresup,
-      cabSolOCMotivoDev: this.cabecera.cabSolOCMotivoDev
+      cabSolOCMotivoDev: this.cabecera.cabSolOCMotivoDev,
+      cabSolOCValorAprobacion: this.cabecera.cabSolOCValorAprobacion
     };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
     //console.log('2. guardando solicitud...', dataCAB);
@@ -1162,6 +1177,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.log('error : ', error);
+          const mensaje = "Ha habido un error al guardar los datos de la cabecera, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
         }
       );
   }
@@ -1186,6 +1203,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.log('No se ha podido registrar el detalle, error: ', error);
+          const mensaje = "Ha habido un error al guardar los datos de los detalles, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
         }
       );
     }
@@ -1239,6 +1258,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
             'No se pudo guardar el item no:' + item.itmIdItem + ', error: ',
             error
           );
+          const mensaje = "Ha habido un error al guardar los datos de los items, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+          this.callMensaje(mensaje,false);
         }
       );
     }
