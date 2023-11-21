@@ -152,7 +152,7 @@
               </div>
               <div class="input-group col std">
                 <!-- aqui va el nuevo campo -->
-                <label class="input-group-text">Valor aprobación:</label>
+                <label class="input-group-text">Valor aprob.:</label>
                 <input class="form-control" type="number" (input)="validarNumeroFloat($event)" [(ngModel)]="cab_valorAprobacion">
               </div>
             </div>
@@ -582,7 +582,7 @@
               </div>
               <div class="input-group col std">
                 <!-- aqui va el nuevo campo -->
-                <label class="input-group-text">Valor aprobación:</label>
+                <label class="input-group-text">Valor aprob.:</label>
                 <input class="form-control" type="number" (input)="validarNumeroFloat($event)" [(ngModel)]="cabecera.cabSolOCValorAprobacion" disabled>
               </div>
             </div>
@@ -825,7 +825,6 @@
                 </td>
                 <td class="align-middle cel-prep">
                   <input
-                  [appSecureDisable]="estadoSol" 
                     type="text"
                     class="form-control text-center"
                     [(ngModel)]="det_cantidad"
@@ -834,16 +833,18 @@
                 </td>
               </tr>
               <tr *appAuthorize="'66'">
-                <td colspan="6" class="align-middle text-end">
-                  <button
-                    class="btn btn-success"
-                    [appSecureDisable]="estadoSol" 
-                    [disabled]="!det_descp || tmpItemSect.length === 0"
-                    (click)="addDetalle()"
-                  >
-                    <i class="bi bi-check"></i>
-                  </button>
-                </td>
+                <ng-container *ngIf="det_descp && det_presupuesto && det_cantidad != 0">
+                  <td colspan="6" class="align-middle text-end">
+                    <button
+                      class="btn btn-success"
+                      [appSecureDisable]="estadoSol" 
+                      [disabled]="!det_descp || tmpItemSect.length === 0"
+                      (click)="addDetalle()"
+                    >
+                      <i class="bi bi-check"></i>
+                    </button>
+                  </td>
+                </ng-container>
               </tr>
             </tbody>
           </table>
