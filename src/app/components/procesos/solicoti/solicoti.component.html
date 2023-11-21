@@ -582,9 +582,13 @@
                         <label class="input-group-text">Plazo de entrega:</label>
                         <input class="form-control" type="date" for="plazoentrega"
                             [(ngModel)]="cabecera.cabSolCotPlazoEntrega"
+                            [min]="cabecera.cabSolCotPlazoEntrega"
+                            [max]="FechaMaxEntrega(cabecera.cabSolCotPlazoEntrega)"
                             [appSecureDisable]="estadoSol" />
                         <label class="input-group-text">Fecha máxima de entrega:</label>
                         <input class="form-control" type="date" for="fechamaxima"
+                        [min]="cabecera.cabSolCotFechaMaxentrega"
+                        [max]="FechaMaxEntrega(cabecera.cabSolCotFechaMaxentrega)"
                             [(ngModel)]="cabecera.cabSolCotFechaMaxentrega"
                             [appSecureDisable]="estadoSol" />
                     </div>

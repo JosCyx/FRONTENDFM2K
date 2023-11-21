@@ -893,6 +893,8 @@
           <div class="input-group mb-3">
             <label class="input-group-text">Plazo de entrega:</label>
             <input
+            [min]="cabecera.cabSolOCPlazoEntrega"
+            [max]="FechaMaxEntrega(cabecera.cabSolOCPlazoEntrega)"
               class="form-control"
               type="date"
               for="plazoentrega"
@@ -901,6 +903,8 @@
             />
             <label class="input-group-text">Fecha máxima de entrega:</label>
             <input
+            [min]="cabecera.cabSolOCFechaMaxentrega"
+            [max]="FechaMaxEntrega(cabecera.cabSolOCFechaMaxentrega)"
               class="form-control"
               type="date"
               for="fechamaxima"

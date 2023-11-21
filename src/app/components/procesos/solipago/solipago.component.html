@@ -119,6 +119,7 @@
                 type="date"
                 class="form-control"
                 [max]="fechaMax" 
+                [min]="fechaMin"
                 [(ngModel)]="cab_fechafactura"
               />
             </div>
@@ -574,6 +575,8 @@
               <input
                 type="date"
                 class="form-control"
+                [min]="cabecera.cabPagoFechaFactura"
+                [max]="FechaMaxEntrega(cabecera.cabPagoFechaFactura)"
                 [(ngModel)]="cabecera.cabPagoFechaFactura"
                 [appSecureDisable]="estadoSol"
               />
@@ -865,8 +868,10 @@
             </datalist>
             <label class="input-group-text">Fecha de Inspeccion*:</label>
             <input
+            [min]="cabecera.cabPagoFechaInspeccion"
+            [max]="FechaMaxEntrega(cabecera.cabPagoFechaInspeccion)"
               class="form-control"
-              type="text"
+              type="date"
               for="fechamaxima"
               [(ngModel)]="cabecera.cabPagoFechaInspeccion"
               [appSecureDisable]="estadoSol"
