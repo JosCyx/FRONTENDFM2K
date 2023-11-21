@@ -2030,6 +2030,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
       }
       //this.setMotivo = !this.setMotivo;
     }
+    FechaMaxEntrega(fechas: string) {
+      let fecha = new Date(fechas);
+      fecha.setMonth(fecha.getMonth()+6)
+      let Fechatrans=this.formatDateToYYYYMMDD(fecha)
+      return Fechatrans
+      // return fechaMax;
+    }
 
 
 

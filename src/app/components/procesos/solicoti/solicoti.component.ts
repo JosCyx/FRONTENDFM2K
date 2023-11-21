@@ -227,7 +227,6 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     this.fechamaxima = new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate());
     this.fechaMax = this.formatDateToYYYYMMDD(this.fechamaxima);
     this.fechaMin = this.formatDateToYYYYMMDD(this.fechaminina);
-    //console.log(this.cookieService.get('userRolNiveles'));
     setTimeout(() => {
       this.areaUserCookie = this.cookieService.get('userArea');
       this.empService.getEmpleadosList().subscribe((data) => {
@@ -1895,6 +1894,13 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         console.log('error : ', error);
       }
     );
+  }
+  FechaMaxEntrega(fechas: string) {
+    let fecha = new Date(fechas);
+    fecha.setMonth(fecha.getMonth()+6)
+    let Fechatrans=this.formatDateToYYYYMMDD(fecha)
+    return Fechatrans
+    // return fechaMax;
   }
 
 }
