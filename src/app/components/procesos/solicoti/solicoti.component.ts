@@ -539,7 +539,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       cabSolCotApprovedBy: 'XXXXXX',
       cabSolCotFinancieroBy: 'XXXXXX',
       cabSolCotAprobPresup: 'SI',
-      cabSolCotMtovioDev: '',
+      cabSolCotMtovioDev: 'NOHAYMOTIVO',
     }
 
 
@@ -1888,13 +1888,13 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  asunto: string = 'PRUEBA Nueva Solicitud de Cotización Recibida - Acción Requerida';
+  asunto: string = 'Nueva Solicitud de Cotización Recibida - Acción Requerida';
   emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Cotización.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
 
-  asuntoDevuelto: string = 'PRUEBA Notificación - Solicitud de Cotización Devuelta';
+  asuntoDevuelto: string = 'Notificación - Solicitud de Cotización Devuelta';
   emailContent1: string = `Estimado(a), le notificamos que la solicitud de cotización autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
 
-  asuntoAnulado: string = 'PRUEBA Notificación - Solicitud de Cotización Anulada';
+  asuntoAnulado: string = 'Notificación - Solicitud de Cotización Anulada';
   emailContent2: string = `Estimado(a), le notificamos que la solicitud de cotización generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
 
   sendMail(mailToNotify: string, type: number) {

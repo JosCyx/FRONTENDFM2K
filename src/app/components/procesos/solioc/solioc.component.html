@@ -152,7 +152,7 @@
               </div>
               <div class="input-group col std">
                 <!-- aqui va el nuevo campo -->
-                <label class="input-group-text">Valor aprob.:</label>
+                <label class="input-group-text">Valor aprob*.:</label>
                 <input class="form-control" type="number" (input)="validarNumeroFloat($event)" [(ngModel)]="cab_valorAprobacion">
               </div>
             </div>
@@ -1570,8 +1570,8 @@
             <div class="modal-body">
                 <p>Al no autorizar la solicitud, esta se regresará al nivel anterior para su revisión.</p>
                 <div>
-                  <label for="devolucion">Motivo de la devolucion:</label>
-                  <textarea class="form-control" name="devolucion" cols="30" rows="10" [(ngModel)]="motivoDevEditar"></textarea>
+                  <label for="devolucion">Motivo de la devolución:</label>
+                  <textarea class="form-control" name="devolucion" cols="30" rows="5" [(ngModel)]="motivoDevEditar"></textarea>
                 </div>
             </div>
             <div class="modal-footer">

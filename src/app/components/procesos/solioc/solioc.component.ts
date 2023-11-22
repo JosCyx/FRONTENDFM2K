@@ -582,7 +582,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
       cabSolOCApprovedBy: 'XXXXXX',
       cabSolOCFinancieroBy: 'XXXXXX',
       cabSolOCAprobPresup: 'SI',
-      cabSolOCMotivoDev: '',
+      cabSolOCMotivoDev: 'NOHAYMOTIVO',
       cabSolOCValorAprobacion: this.cab_valorAprobacion
     };
 
@@ -2028,13 +2028,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  asunto: string = 'PRUEBA Nueva Solicitud de Orden de Compra Recibida - Acción Requerida';
+  asunto: string = 'Nueva Solicitud de Orden de Compra Recibida - Acción Requerida';
   emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Orden de Compra.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
 
-  asuntoDevuelto: string = 'PRUEBA Notificación - Solicitud de Orden de Compra Devuelta';
+  asuntoDevuelto: string = 'Notificación - Solicitud de Orden de Compra Devuelta';
   emailContent1: string = `Estimado(a), le notificamos que la solicitud de orden de compra autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
 
-  asuntoAnulado: string = 'PRUEBA Notificación - Solicitud de Orden de Compra Anulada';
+  asuntoAnulado: string = 'Notificación - Solicitud de Orden de Compra Anulada';
   emailContent2: string = `Estimado(a), le notificamos que la solicitud de orden de compra generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
 
   sendMail(mailToNotify: string, type: number) {
