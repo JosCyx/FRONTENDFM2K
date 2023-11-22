@@ -169,6 +169,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   fechaMax: string = '';
   fechaMinPlazo: string = '';
 
+  devolucion: boolean = false;//controla si la solicitud esta siendo devuelta o no
+  motivoDevEditar: string = '';
 
   constructor(private router: Router,
     private empService: EmpleadosService,
@@ -1063,7 +1065,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           const nivel = element.rutareaNivel;
           this.lastNivel = nivel.toString();
         }
-        console.log(this.estadoSol)
+        //console.log(this.estadoSol)
       }
     }, 500);
 
@@ -1253,6 +1255,15 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }
 
   async saveEditCabecera() {
+    let motivoDevolucion = '';
+    let aprobPresp = '';
+    if(this.devolucion == true){
+      motivoDevolucion = this.motivoDevEditar;
+      aprobPresp = 'NO';
+    } else if(this.devolucion == false){
+      motivoDevolucion = 'NOHAYMOTIVO';
+      aprobPresp = 'SI';
+    }
     const dataCAB = {
       cabSolCotID: this.cabecera.cabSolCotID,
       cabSolCotTipoSolicitud: this.cabecera.cabSolCotTipoSolicitud,
@@ -1273,8 +1284,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       cabSolCotInspector: this.cabecera.cabSolCotInspector,
       cabSolCotTelefInspector: this.cabecera.cabSolCotTelefInspector,
       cabSolCotNumerico: this.cabecera.cabSolCotNumerico,
-      cabSolCotAprobPresup: this.cabecera.cabSolCotAprobPresup,
-      cabSolCotMtovioDev: this.cabecera.cabSolCotMtovioDev,
+      cabSolCotAprobPresup: aprobPresp,
+      cabSolCotMtovioDev: motivoDevolucion,
       cabSolCotIdEmisor: this.cabecera.cabSolCotIdEmisor,
       cabSolCotApprovedBy: this.aprobadopor,
       cabSolCotFinancieroBy: this.financieropor
@@ -1471,7 +1482,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.log('Error:', error);
       const msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
-      this.callMensaje(this.msjError,false)
+      this.callMensaje(msjError,false)
     }
   }
 
@@ -1490,6 +1501,38 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     }
   }
 
+  guardarDevolverSolEditada(){
+    this.devolucion = true;
+    try {
+      //this.saveEdit();
+      let motivoDevolucion = '';
+      let aprobPresp = '';
+      if(this.devolucion){
+        motivoDevolucion = this.motivoDevEditar;
+        aprobPresp = 'NO';
+      } else{
+        motivoDevolucion = 'NOHAYMOTIVO';
+        aprobPresp = 'SI';
+      }
+      
+      this.cabCotService.updateMotivoDevolucion(this.trTipoSolicitud, this.noSolTmp, motivoDevolucion).subscribe(
+        (response) => {
+          //console.log("Motivo de devolucion actualizado");
+        },
+        (error) => {
+          console.log('Error al actualizar el motivo de devolucion: ', error);
+        }
+      );
+      setTimeout(() => {
+        this.noAutorizar();
+      }, 500);     
+    } catch (error) {
+      console.log('Error:', error);
+      const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+      this.callMensaje(msjError,false)
+    }
+  }
+
   noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui
   estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
   deptSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
@@ -1498,6 +1541,27 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   financieropor: string = 'XXXXXX';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
+    this.devolucion = false;
+
+    let motivoDevolucion = '';
+    let aprobPresp = '';
+    if(this.devolucion){
+      motivoDevolucion = this.motivoDevEditar;
+      aprobPresp = 'NO';
+    } else{
+      motivoDevolucion = 'NOHAYMOTIVO';
+      aprobPresp = 'SI';
+    }
+
+    this.cabCotService.updateMotivoDevolucion(this.trTipoSolicitud, this.noSolTmp, motivoDevolucion).subscribe(
+      (response) => {
+        //console.log("Motivo de devolucion actualizado");
+      },
+      (error) => {
+        console.log('Error al actualizar el motivo de devolucion: ', error);
+      }
+    );
+
     //verifica los niveles de aprobacion y financiero para asignar el usuario que envia la solicitud para guardar el empleado quien autoriza
     if (this.estadoTrkTmp == 40) {
       this.aprobadopor = this.cookieService.get('userIdNomina');
@@ -1824,13 +1888,13 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  asunto: string = 'Nueva Solicitud de Cotización Recibida - Acción Requerida';
+  asunto: string = 'PRUEBA Nueva Solicitud de Cotización Recibida - Acción Requerida';
   emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Cotización.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
 
-  asuntoDevuelto: string = 'Notificación - Solicitud de Cotización Devuelta';
+  asuntoDevuelto: string = 'PRUEBA Notificación - Solicitud de Cotización Devuelta';
   emailContent1: string = `Estimado(a), le notificamos que la solicitud de cotización autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
 
-  asuntoAnulado: string = 'Notificación - Solicitud de Cotización Anulada';
+  asuntoAnulado: string = 'PRUEBA Notificación - Solicitud de Cotización Anulada';
   emailContent2: string = `Estimado(a), le notificamos que la solicitud de cotización generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
 
   sendMail(mailToNotify: string, type: number) {

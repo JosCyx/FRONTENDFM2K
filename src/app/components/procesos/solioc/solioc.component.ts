@@ -166,6 +166,10 @@ export class SoliocComponent implements OnInit, OnDestroy {
    fechaMax: string = '';
    fechaMinPlazo: string = '';
 
+   devolucion: boolean = false;//controla si la solicitud esta siendo devuelta o no
+
+   motivoDevEditar: string = '';
+
   constructor(
     private empService: EmpleadosService,
     private sectService: SectoresService,
@@ -982,7 +986,6 @@ export class SoliocComponent implements OnInit, OnDestroy {
     this.estadoTrkTmp = this.cabecera.cabSolOCEstadoTracking;
     this.depSolTmp = this.cabecera.cabSolOCIdDept;
     this.cabecera.cabSolOCAprobPresup = this.cabecera.cabSolOCAprobPresup.trim();
-    console.log(this.cabecera)
 
     this.checkAprobPrep(this.cabecera.cabSolOCEstadoTracking);
 
@@ -1136,8 +1139,19 @@ export class SoliocComponent implements OnInit, OnDestroy {
     const fechaConvertida = new Date(fechaStr);
     return fechaConvertida;
   }
+  
   //* Editar orden compra en el Enviar
   async saveEditCabecera() {
+    let motivoDevolucion = '';
+    let aprobPresp = '';
+    if(this.devolucion == true){
+      motivoDevolucion = this.motivoDevEditar;
+      aprobPresp = 'NO';
+    } else if(this.devolucion == false){
+      motivoDevolucion = 'NOHAYMOTIVO';
+      aprobPresp = 'SI';
+    }
+    
     const dataCAB = {
       cabSolOCID: this.cabecera.cabSolOCID,
       cabSolOCTipoSolicitud: this.cabecera.cabSolOCTipoSolicitud,
@@ -1163,8 +1177,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
       cabSolOCIdEmisor: this.cabecera.cabSolOCIdEmisor,
       cabSolOCApprovedBy: this.aprobadopor,
       cabSolOCFinancieroBy: this.financieropor,
-      cabSolOCAprobPresup: this.cabecera.cabSolOCAprobPresup,
-      cabSolOCMotivoDev: this.cabecera.cabSolOCMotivoDev,
+      cabSolOCAprobPresup: aprobPresp,
+      cabSolOCMotivoDev: motivoDevolucion,
       cabSolOCValorAprobacion: this.cabecera.cabSolOCValorAprobacion
     };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
@@ -1626,21 +1640,36 @@ export class SoliocComponent implements OnInit, OnDestroy {
     }
 
 
+
     guardarDevolverSolEditada() {
+      this.devolucion = true;
       try {
-        this.saveEdit();
+        //this.saveEdit();
+        let motivoDevolucion = '';
+        let aprobPresp = '';
+        if(this.devolucion){
+          motivoDevolucion = this.motivoDevEditar;
+          aprobPresp = 'NO';
+        } else{
+          motivoDevolucion = 'NOHAYMOTIVO';
+          aprobPresp = 'SI';
+        }
+        
+        this.cabOCService.updateMotivoDevolucion(this.trTipoSolicitud, this.noSolTmp, motivoDevolucion).subscribe(
+          (response) => {
+            //console.log("Motivo de devolucion actualizado");
+          },
+          (error) => {
+            console.log('Error al actualizar el motivo de devolucion: ', error);
+          }
+        );
         setTimeout(() => {
           this.noAutorizar();
         }, 500);     
       } catch (error) {
         console.log('Error:', error);
-        this.showmsjerror = true;
-        this.msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
-  
-        setTimeout(() => {
-          this.showmsjerror = false;
-          this.msjError = "";
-        }, 3000);
+        const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+        this.callMensaje(msjError,false);
       }
     }
 
@@ -1653,6 +1682,27 @@ export class SoliocComponent implements OnInit, OnDestroy {
   financieropor: string = 'XXXXXX';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
+    this.devolucion = false;
+
+    let motivoDevolucion = '';
+    let aprobPresp = '';
+    if(this.devolucion){
+      motivoDevolucion = this.motivoDevEditar;
+      aprobPresp = 'NO';
+    } else{
+      motivoDevolucion = 'NOHAYMOTIVO';
+      aprobPresp = 'SI';
+    }
+
+    this.cabOCService.updateMotivoDevolucion(this.trTipoSolicitud, this.noSolTmp, motivoDevolucion).subscribe(
+      (response) => {
+        //console.log("Motivo de devolucion actualizado");
+      },
+      (error) => {
+        console.log('Error al actualizar el motivo de devolucion: ', error);
+      }
+    );
+    
     //verifica los niveles de aprobacion y financiero para asignar el usuario que envia la solicitud para guardar el empleado quien autoriza
     if (this.estadoTrkTmp == 40) {
       this.aprobadopor = this.cookieService.get('userIdNomina');
@@ -1978,13 +2028,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  asunto: string = 'Nueva Solicitud de Orden de Compra Recibida - Acción Requerida';
+  asunto: string = 'PRUEBA Nueva Solicitud de Orden de Compra Recibida - Acción Requerida';
   emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Orden de Compra.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
 
-  asuntoDevuelto: string = 'Notificación - Solicitud de Orden de Compra Devuelta';
+  asuntoDevuelto: string = 'PRUEBA Notificación - Solicitud de Orden de Compra Devuelta';
   emailContent1: string = `Estimado(a), le notificamos que la solicitud de orden de compra autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
 
-  asuntoAnulado: string = 'Notificación - Solicitud de Orden de Compra Anulada';
+  asuntoAnulado: string = 'PRUEBA Notificación - Solicitud de Orden de Compra Anulada';
   emailContent2: string = `Estimado(a), le notificamos que la solicitud de orden de compra generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
 
   sendMail(mailToNotify: string, type: number) {

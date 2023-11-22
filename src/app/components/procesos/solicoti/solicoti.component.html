@@ -13,14 +13,14 @@
             </div>
         </nav>
     </div>
-    <div class=" m-2 text-center">
+    <!-- <div class=" m-2 text-center">
         <div *ngIf="showmsj" class="alert alert-success" role="alert">
             <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
         </div>
         <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
             <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
         </div>
-    </div>
+    </div> -->
 
     <ng-container *appAuthorize="'25'">
         <div class="form-cot" *ngIf="changeview === 'crear'">
@@ -364,6 +364,16 @@
                         </div>
                     </div>
 
+                    <div class="input-group mb-1" *ngIf="cabecera.cabSolCotMtovioDev != 'NOHAYMOTIVO'">
+                        <label class="input-group-text motivo-dev-label">Motivo de devolución:</label>
+                        <input
+                          type="text"
+                          class="form-control  motivo-dev"
+                          [value]="cabecera.cabSolCotMtovioDev"
+                          disabled
+                        />
+                      </div>
+
                     <!-- <div class="presupuestaria" *ngIf="aprobPreps">
                         <div class="tabs-edit">
                             <ul class="nav nav-tabs">
@@ -661,6 +671,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr *ngIf="itemSectorList.length != 0"><th colspan="6">Items Registrados</th></tr>
                         <tr *ngFor="let item of itemSectorList">
                             <ng-container *ngIf="item.det_id == IdDetalleEdicion">
                                 <td class="align-middle">{{ item.det_id }}</td>
@@ -751,6 +762,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr *ngIf="tmpItemSect.length != 0"><th colspan="6">Items Registrados</th></tr>
                         <tr *ngFor="let item of tmpItemSect">
                             <td class="align-middle">{{ item.det_id }}</td>
                             <td class="align-middle">{{ item.det_descp }}</td>
@@ -772,6 +784,7 @@
                                     <i class="bi bi-x-circle"></i></button>
                             </td>
                         </tr>
+                        <tr><th colspan="6">Registrar un nuevo item</th></tr>
                         <tr>
                             <td class="align-middle">{{ det_id }}</td>
                             <td class="align-middle">
@@ -846,6 +859,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr *ngIf="item.length != 0"><th colspan="6">Items Registrados</th></tr>
                         <tr *ngFor="let itm of item; let i = index">
                             <ng-container *ngIf="idDetEdit == itm.itmIdDetalle">
                                 <th class="align-middle">{{ itm.itmIdDetalle }}</th>
@@ -875,6 +889,7 @@
                             </ng-container>
 
                         </tr>
+                        <tr><th colspan="6">Registrar un nuevo item</th></tr>
                         <tr *appAuthorize="'66'"><!-- Aqui hay que controlar que no se muestre en edicion -->
                             <td class="align-middle">{{ det_id_edit }}</td>
                             <td class="align-middle">
@@ -1137,10 +1152,13 @@
             </div>
             <div class="modal-body">
                 <p>Al no autorizar la solicitud, esta se regresará al nivel anterior para su revisión.</p>
-
+                <div>
+                    <label for="devolucion">Motivo de la devolucion:</label>
+                    <textarea class="form-control" name="devolucion" cols="30" rows="10" [(ngModel)]="motivoDevEditar"></textarea>
+                  </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="noAutorizar()">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarDevolverSolEditada()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">
