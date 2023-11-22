@@ -92,14 +92,28 @@ export class CotDocumentacionComponent implements OnInit {
       });
   }
   //Capturar la url del servidor y lo convierte
-  getUrlFile(ruta: string): Promise<string> {
+  getUrlFile(ruta: string,nombre:string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.uploadfile.viewFile(ruta).subscribe({
         next:(blob) => {
-          const file = new Blob([blob], { type: 'application/pdf' });
+          if(nombre == 'pdf'){
+            const file = new Blob([blob], { type: 'application/pdf' });
           const urlfile = URL.createObjectURL(file);
           //console.log('URL del documento: ', urlfile);
-          resolve(urlfile); // Resuelve la Promesa con el valor de urlfile
+          resolve(urlfile);
+          }else if(nombre == 'png'){
+            const file = new Blob([blob], { type: 'image/png' });
+          const urlfile = URL.createObjectURL(file);
+          resolve(urlfile);
+          }else if(nombre == 'jpg'){
+            const file = new Blob([blob], { type: 'image/jpg' });
+          const urlfile = URL.createObjectURL(file);
+          resolve(urlfile);
+          }else if(nombre == 'jpeg'){
+            const file = new Blob([blob], { type: 'image/jpeg' });
+          const urlfile = URL.createObjectURL(file);
+          resolve(urlfile);
+          }
         },
         error:(error) => {
           reject(error); // Rechaza la Promesa si ocurre un error
@@ -118,6 +132,13 @@ export class CotDocumentacionComponent implements OnInit {
     }
     return rutaCompleta; // Si no hay barras invertidas, devuelve la ruta original
   }
+  getNombres(rutaCompleta: string) {
+    const partes = rutaCompleta.split('.'); 
+    if (partes.length > 1) {
+      return partes.slice(-1).join(); 
+    }
+    return rutaCompleta; 
+  }
   //
   GetfileView() {
     this.paths = [];
@@ -129,7 +150,7 @@ export class CotDocumentacionComponent implements OnInit {
             try {
               const ruta = this.getNombreArchivo(data[i].docUrl);
               //console.log("Ruta:",ruta);
-              const docUrl = await this.getUrlFile(ruta); // Espera a que se resuelva getUrlFile
+              const docUrl = await this.getUrlFile(ruta,this.getNombres(data[i].docNombre)); // Espera a que se resuelva getUrlFile
               const pat: Path = {
                 docNombre: data[i].docNombre,
                 docUrl: docUrl, // Usa la URL resuelta
