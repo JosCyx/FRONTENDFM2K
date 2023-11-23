@@ -53,10 +53,10 @@ export class SPDocumentacionComponent implements OnInit {
     this.dialogService.openAlertDialog(mensaje, type);
   }
   getFiles(event: any): void {
-    //console.log('Imprimir esto ', event);
-    // const [files]=$event.target.files;
-    this.filesAll = event.target.files[0];
-    //console.log('Imprimir esto  Objetos de pdf ', this.filesAll);
+    const file = event.target.files[0];
+    const modifiedName = file.name.replace(/#/g, " No.");
+    this.filesAll = new File([file], modifiedName, { type: file.type });
+    console.log('Imprimir esto ', modifiedName,"este FILE ",this.filesAll);
   }
   //Enviar archivos al servidor y guardar a  la base
   sendfile(): void {
@@ -86,12 +86,12 @@ export class SPDocumentacionComponent implements OnInit {
       },
     });
   }
+  
   //Capturar la url del servidor y lo convierte en un blob para visualizarlo
   getUrlFile(ruta: string,nombre:string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       this.uploadfile.viewFile(ruta).subscribe({
         next: (blob) => {
-
           if(nombre == 'pdf'){
             const file = new Blob([blob], { type: 'application/pdf' });
           const urlfile = URL.createObjectURL(file);
