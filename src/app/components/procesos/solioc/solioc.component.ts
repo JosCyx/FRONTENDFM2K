@@ -34,6 +34,12 @@ interface RuteoArea {
   // Otras propiedades si es necesario
 }
 
+interface ResponseTrack{
+  solTrTipoSol: number;
+  solTrNumSol: number;
+  solTrId: number;
+}
+
 interface SolicitudData {
   cabecera: any;
   detalles: any[];
@@ -45,6 +51,7 @@ interface SolicitudData {
   styleUrls: ['./solioc.component.css'],
 })
 export class SoliocComponent implements OnInit, OnDestroy {
+  responseTRK: ResponseTrack[] = [];
   empleado: string = '';
   inspector: string = '';
   showArea: string = '';
@@ -322,6 +329,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
       this.inspector = this.inspector.replace(/[^a-zA-Z\s]/g, '');
     } 
   }
+
   onInputChanged(): void {
     // Cancelamos el temporizador anterior antes de crear uno nuevo
     clearTimeout(this.inputTimer);
@@ -537,7 +545,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
         //console.log('1. guardando tracking: ', dataTRK);
         this.solTrckService.generateTracking(dataTRK).subscribe(
-          () => {
+          (response: any) => {
+            this.responseTRK = response;
             //console.log('Tracking guardado con éxito.');
             resolve();
           },
@@ -597,12 +606,29 @@ export class SoliocComponent implements OnInit, OnDestroy {
         //console.log('Cuerpo agregado.');
       },
       (error) => {
+        this.deleteLastTracking();
         console.log('error al guardar la cabecera: ', error);
         const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
         this.callMensaje(mensaje,false);
       }
     );
   }
+
+  async deleteLastTracking(){
+    const tipoSol = this.responseTRK[0].solTrTipoSol;
+    const noSol = this.responseTRK[0].solTrNumSol;
+    const idTracking = this.responseTRK[0].solTrId;
+
+    this.solTrckService.deleteTracking(tipoSol, noSol, idTracking).subscribe(
+      response => {
+        console.log("Tracking eliminado.");
+      },
+      error => {
+        console.log("Error al eliminar el tracking: ", error);
+      }
+    );
+  }
+
   //permite crear el detalle y el item por sector y los envia a la API
   async addBodySol() {
     this.det_id = await this.getLastDetalleCot(); //numero del detalle que se va a guardar
@@ -2130,9 +2156,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
       let Fechatrans=this.formatDateToYYYYMMDD(fecha)
       return Fechatrans
       // return fechaMax;
-    }
+  }
 
 
+  showMotivoDev: boolean = false;
+  enableMotivoDev(){
+    this.showMotivoDev = !this.showMotivoDev;
+  }
 
   
 

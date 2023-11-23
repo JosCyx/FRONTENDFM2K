@@ -7,8 +7,7 @@
                 <div class="navbar-nav">
                     <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">
                         Crear
-                    </button> -->
-                    <!-- <button (click)="metodo()">boton</button>  -->
+                    </button> --> 
                 </div>
             </div>
         </nav>
@@ -677,7 +676,7 @@
                                 <td class="align-middle">{{ item.det_id }}</td>
                                 <td class="align-middle">{{ item.det_descp }}</td>
                                 <td class="align-middle">{{ item.item_id }}</td>
-                                <td class="align-middle"><input type="number" (input)="validarNumero($event)" min="1"
+                                <td class="align-middle"><input type="number" (input)="validarNumeroFloat($event)" min="1"
                                         class="form-control" name="item_cant" [(ngModel)]="item.item_cant"></td>
 
 
@@ -796,7 +795,7 @@
                             </td>
                             <td class="align-middle">
                                 <div class="cel-prep">
-                                    <input class="form-control" [(ngModel)]="item_cant" (input)="validarNumero($event)"
+                                    <input class="form-control" [(ngModel)]="item_cant" (input)="validarNumeroFloat($event)"
                                         min="1" type="number" placeholder="Cantidad" />
                                 </div>
                             </td>
@@ -1153,8 +1152,10 @@
             <div class="modal-body">
                 <p>Al no autorizar la solicitud, esta se regresará al nivel anterior para su revisión.</p>
                 <div>
-                    <label for="devolucion">Motivo de la devolución:</label>
-                    <textarea class="form-control" name="devolucion" cols="30" rows="5" [(ngModel)]="motivoDevEditar"></textarea>
+                    <input type="checkbox" [(ngModel)]="showMotivoDev">
+                    <label for="devolucion">Asignar motivo de la devolución:</label>
+                    <p class="text-danger font-italic">Advertencia: si la solicitud ya posee un motivo asignado, no lo debe modificar.</p>
+                    <textarea class="form-control" name="devolucion" cols="30" rows="5" [(ngModel)]="motivoDevEditar" [disabled]="!showMotivoDev"></textarea>
                   </div>
             </div>
             <div class="modal-footer">

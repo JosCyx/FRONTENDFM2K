@@ -126,7 +126,7 @@ export class SpDestinoComponent implements OnInit {
     this.searchSectores();
     if (this.empleadoBusq.length > 2) {
       this.empleadoService
-        .getEmpleadobyArea(this.areaSol)
+        .getEmpleadosList()
         .subscribe((data: any[]) => {
           this.empleados = data;
         });

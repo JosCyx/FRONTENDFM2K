@@ -43,6 +43,7 @@ export class SPDocumentacionComponent implements OnInit {
     }
 
   ngOnInit(): void {
+    console.log(this.noSol)
     setTimeout(() => {
       this.GetfileView();
       

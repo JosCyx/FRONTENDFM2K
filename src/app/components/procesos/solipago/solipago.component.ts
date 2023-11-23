@@ -27,6 +27,12 @@ interface RuteoArea {
   // Otras propiedades si es necesario
 }
 
+interface ResponseTrack{
+  solTrTipoSol: number;
+  solTrNumSol: number;
+  solTrId: number;
+}
+
 interface DetalleSolPagos {
   itemDesc: string;
   cantidadContrat: number;
@@ -45,6 +51,7 @@ interface SolicitudData {
   styleUrls: ['./solipago.component.css'],
 })
 export class SolipagoComponent implements OnInit, OnDestroy {
+  responseTRK: ResponseTrack[] = [];
   empleado: string = '';
   empleados: any[] = [];
   showArea: string = '';
@@ -255,11 +262,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
   searchEmpleado(): void {
     if (this.empleado.length > 2) {
-      this.empService.getEmpleadobyArea(parseInt(this.cookieService.get('userArea'))).subscribe((data) => {
+      this.empService.getEmpleadosList().subscribe((data) => {
         this.empleados = data;
       });
     } else if (this.receptor.length > 2) {
-      this.empService.getEmpleadobyArea(parseInt(this.cookieService.get('userArea'))).subscribe((data) => {
+      this.empService.getEmpleadosList().subscribe((data) => {
         this.empleados = data;
       });
     } else {
@@ -461,8 +468,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
         console.log('1. guardando tracking: ', dataTRK);
         this.solTrckService.generateTracking(dataTRK).subscribe(
-          () => {
-            console.log('Tracking guardado con éxito.');
+          (response: any) => {
+            this.responseTRK = response;
+            //console.log('Tracking guardado con éxito.');
             resolve();
           },
           (error) => {
@@ -522,12 +530,29 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         },3000)
       },
       (error) => {
+        this.deleteLastTracking();
         console.log('error al guardar la cabecera: ', error);
         const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
         this.callMensaje(mensaje,false);
       }
     );
   }
+
+  async deleteLastTracking(){
+    const tipoSol = this.responseTRK[0].solTrTipoSol;
+    const noSol = this.responseTRK[0].solTrNumSol;
+    const idTracking = this.responseTRK[0].solTrId;
+
+    this.solTrckService.deleteTracking(tipoSol, noSol, idTracking).subscribe(
+      response => {
+        console.log("Tracking eliminado.");
+      },
+      error => {
+        console.log("Error al eliminar el tracking: ", error);
+      }
+    );
+  }
+
   //Guardar el ID DEL QUE RECIBE
   saveReceptor() {
     for (let emp of this.empleados) {
@@ -552,6 +577,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
   async Obtener() {
     if (this.tipoSolOc == 'F'){
+      this.setDestino = true;//inhabilita la validacion del destino
       if(this.valorinput == ''){
 
         this.alertBool = true;
@@ -567,6 +593,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         this.cab_NoSolOC = this.valorinput;
       }
     } else if (this.tipoSolOc == 'S'){
+      this.setDestino = false;//habilita la validacion del destino
       this.alertBool = false;
       this.alertText = '';
       if (this.valorinput == '') {

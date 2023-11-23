@@ -48,5 +48,10 @@ export class TrackingService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any>(`${this.APIUrl}/SolTrackings/GetLastSol?tipoSol=${tipoSol}`, { headers: headers });
   }
+
+  deleteTracking(tipoSol: number, noSol: number, idTracking: number):Observable<any>{
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(this.APIUrl + `/SolTrackings/DeleteTracking?tipoSol=${tipoSol}&noSol=${noSol}&idTracking=${idTracking}`, { headers: headers });
+  }
 }
 

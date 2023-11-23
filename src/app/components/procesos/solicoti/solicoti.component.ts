@@ -41,6 +41,12 @@ interface SolicitudData {
   items: any[];
 }
 
+interface ResponseTrack{
+  solTrTipoSol: number;
+  solTrNumSol: number;
+  solTrId: number;
+}
+
 @Component({
   selector: 'app-solicoti',
   templateUrl: './solicoti.component.html',
@@ -51,6 +57,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   detalle: DetalleCotizacion[] = [];
   item: ItemCotizacion[] = [];
 
+  responseTRK: ResponseTrack[] = [];
   solicitudEdit!: SolicitudData;
 
 
@@ -328,6 +335,18 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       this.inspector = this.inspector.replace(/[^a-zA-Z\s]/g, '');
     }
   }
+
+  validarNumeroFloat(event: Event): void {
+    const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
+    const inputElement = event.target as HTMLInputElement;
+    const valorIngresado = inputElement.value;
+
+    if (!patron.test(valorIngresado)) {
+      console.log("entro ");
+      inputElement.value = inputElement.defaultValue; 
+    }
+  }
+
   onInputChanged(): void {
     // Cancelamos el temporizador anterior antes de crear uno nuevo
     clearTimeout(this.inputTimer);
@@ -493,8 +512,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
         //console.log("1. guardando tracking: ", dataTRK);
         this.solTrckService.generateTracking(dataTRK).subscribe(
-          () => {
-            //console.log("Tracking guardado con éxito.");
+          (response: any) => {
+            this.responseTRK = response;
+            //console.log("Tracking guardado con éxito.", this.responseTRK);
             resolve();
           },
           (error) => {
@@ -552,6 +572,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         this.addBodySol();
       },
       error => {
+        this.deleteLastTracking();
         console.log("error al guardar la cabecera: ", error)
         //AGREGAR MENSAJE DE ERROR 
         const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
@@ -559,6 +580,21 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       }
     );
 
+  }
+
+  async deleteLastTracking(){
+    const tipoSol = this.responseTRK[0].solTrTipoSol;
+    const noSol = this.responseTRK[0].solTrNumSol;
+    const idTracking = this.responseTRK[0].solTrId;
+
+    this.solTrckService.deleteTracking(tipoSol, noSol, idTracking).subscribe(
+      response => {
+        console.log("Tracking eliminado.");
+      },
+      error => {
+        console.log("Error al eliminar el tracking: ", error);
+      }
+    );
   }
 
   //permite crear el detalle y el item por sector y los envia a la API
@@ -1979,4 +2015,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     // return fechaMax;
   }
 
+  showMotivoDev: boolean = false;
+  enableMotivoDev(){
+    this.showMotivoDev = !this.showMotivoDev;
+  }
 }
