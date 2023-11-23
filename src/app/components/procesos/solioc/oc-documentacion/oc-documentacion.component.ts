@@ -57,7 +57,9 @@ export class OCDocumentacionComponent implements OnInit, OnDestroy {
   //Obtener archivos
   getFiles(event: any): void {
     try {
-      this.filesAll = event.target.files[0];
+     const file= event.target.files[0];
+      const modifiedName = file.name.replace(/#/g, " No.");
+    this.filesAll = new File([file], modifiedName, { type: file.type });
       //console.log('Imprimir esto  Objetos de pdf ', this.filesAll);
     } catch (error) {
       const msjError = 'Error al cargar el archivo';

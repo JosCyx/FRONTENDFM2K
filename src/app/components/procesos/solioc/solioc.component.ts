@@ -2036,11 +2036,5 @@ export class SoliocComponent implements OnInit, OnDestroy {
       let Fechatrans=this.formatDateToYYYYMMDD(fecha)
       return Fechatrans
       // return fechaMax;
-    }
-
-
-
-  
-
-    
+    }    
 }
