@@ -629,8 +629,7 @@
                             Guardar y enviar
                         </button>
                     </ng-container>
-                    <button class="btn btn-danger" (click)="EliminarCotiza(cabecera.cabSolCotTipoSolicitud
-                    ,cabecera.cabSolCotNoSolicitud)" >Eliminar</button>
+                    <button class="btn btn-danger"  data-toggle="modal" data-target="#deleteCoti">Eliminar</button>
                     <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
                 </div>
             </div>
@@ -984,6 +983,31 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteItemSaved()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal para eliminar Cotizacion-->
+<div class="modal fade" #exampleModal id="deleteCoti" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea eliminar esta Solicitud de Cotización?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>"Esta acción eliminará esta solicitud y no podrás acceder a ella."</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="EliminarCotiza(cabecera.cabSolCotTipoSolicitud
+                ,cabecera.cabSolCotNoSolicitud)">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">

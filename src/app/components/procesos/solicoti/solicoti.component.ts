@@ -1906,8 +1906,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     console.log("esto ya estan eliminado",TipoSolicitud,noSolTmp)
     this.cabCotService.DeleteCotizacion(TipoSolicitud,noSolTmp).subscribe({
       next: data => {
-        console.log(data)
-        const msjExito = `Cotizaciones eliminadas exitosamente.`;
+        const msjExito ='Solicitud de Cotización eliminada exitosamente.';
         this.callMensaje(msjExito,true)
         setTimeout(() => {
           this.router.navigate(['allrequest']);
@@ -1916,6 +1915,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       },
       error: error => {
         console.log(error)
+        const msjError = `Error, no se ha podido eliminar la cotizacion, intente nuevamente.`;
+        this.callMensaje(msjError,false)
       }
 
     })
