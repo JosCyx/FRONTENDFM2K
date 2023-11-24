@@ -366,6 +366,27 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.router.navigate(['allrequest']);
     this.clear();
   }
+  EliminarSolPo(TipoSolicitud:number, NoSolicitud:number) {
+    console.log("tipo solicitud",TipoSolicitud,"no solicitud",NoSolicitud);
+    this.cabPagoService.DeleteSolPago(TipoSolicitud,NoSolicitud).subscribe(
+      {
+        next: data => {
+          const msjExito ='Solicitud de Pago Eliminada Exitosamente';
+          this.callMensaje(msjExito,true)
+          setTimeout(()=>{
+            this.router.navigate(['allrequest']);
+          },3000);
+        },
+        error: error => {
+          console.error('Error al eliminar la solicitud: ', error);
+          const msjError = 'Error al eliminar la solicitud';
+          this.callMensaje(msjError,false)
+        }
+      }
+      )
+
+  
+  }
 
   cancelarDes(){
     console.log("cancelar destino")
