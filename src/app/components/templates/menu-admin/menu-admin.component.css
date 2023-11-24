@@ -63,8 +63,34 @@
 #configuracionDropdown {
     text-align: left;
 }
+.nav{
+    height: 400px;
+}
 
 .nav-item {
     margin-bottom: 20px;
     text-align: left;
+}
+.nav-item.dropdown {
+    width: 130px;
+}
+
+.nav-item.dropdown:hover .menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu{
+    display: none;
+    background-color: rgba(209, 209, 212, 0.75);
+    width: 200px;
+}
+
+
+
+/* div regresar */
+div .regresar{
+    display: flex;
+    height: 200px;
+    align-items: flex-end;
 }

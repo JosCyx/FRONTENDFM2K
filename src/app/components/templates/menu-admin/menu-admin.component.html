@@ -1,8 +1,8 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <div class="header-container">
-      <button  class="btn btn-primary mr-3"  (click)="toggleSidebar()"><i
-          class="bi bi-list h5"></i></button>
+      <!-- <button  class="btn btn-primary mr-3"  (click)="toggleSidebar()"><i
+          class="bi bi-list h5"></i></button> -->
           <a routerLink="/main"><img src="assets/img/logo.png" alt="logo" class="logo"></a>
     </div>
 
@@ -15,36 +15,34 @@
   </nav>
 </header>
 <p class="text-end m-2 user-name" style="font-weight: bold; font-style: italic;">Bienvenido: {{userName}}</p>
-<div class="sidebar" [ngClass]="{'show': showSB, 'hide': !showSB}">
+<div class="sidebar" >
   <ul class="nav flex-column">
     <li class="nav-item dropdown" *appAuthorize="'41'">
-      <a class="nav-link dropdown-toggle btn " href="#" id="configuracionDropdown" role="button"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <a class="contenido" href="#" id="configuracionDropdown" mat-button>
         Mantenimiento
       </a>
-      <div class="dropdown-menu" aria-labelledby="configuracionDropdown">
-        <a class="dropdown-item" routerLink="/rol" *appAuthorize="'2'">Roles</a>
-        <a class="dropdown-item" routerLink="/users" *appAuthorize="'6'">Usuarios</a>
-        <a class="dropdown-item" routerLink="/empleados" *appAuthorize="'10'">Empleados</a>
-        <a class="dropdown-item" routerLink="/apps" *appAuthorize="'14'">Aplicaciones</a>
+      <div class="menu" >
+        <a class="item" mat-button routerLink="/rol" *appAuthorize="'2'">Roles</a>
+        <a class="item" mat-button routerLink="/users" *appAuthorize="'6'">Usuarios</a>
+        <a class="item" mat-button routerLink="/empleados" *appAuthorize="'10'">Empleados</a>
+        <a class="item" mat-button routerLink="/apps" *appAuthorize="'14'">Aplicaciones</a>
         <!-- <a class="dropdown-item" routerLink="/functions">Funciones</a> -->
-        <a class="dropdown-item" routerLink="/transact" *appAuthorize="'18'">Transacciones</a>
-        <a class="dropdown-item" routerLink="/empnivel" *appAuthorize="'68'">Empleado-Nivel</a>
+        <a class="item" mat-button  routerLink="/transact" *appAuthorize="'18'">Transacciones</a>
+        <a class="item" mat-button routerLink="/empnivel" *appAuthorize="'68'">Empleado-Nivel</a>
       </div>
     </li>
     <li class="nav-item dropdown" *appAuthorize="'51'">
-      <a class="nav-link dropdown-toggle btn " href="#" id="configuracionDropdown" role="button"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <a class="" mat-button href="#" id="configuracionDropdown" >
         Autorización
       </a>
-      <div class="dropdown-menu" aria-labelledby="configuracionDropdown">
-        <a class="dropdown-item" routerLink="/rolTransc" *appAuthorize="'49'">Roles-Transacciones</a>
-        <a class="dropdown-item" routerLink="/rolUser" *appAuthorize="'48'">Roles-Usuarios</a>
+      <div class="menu" >
+        <a class="item" mat-button  routerLink="/rolTransc" *appAuthorize="'49'">Roles-Transacciones</a>
+        <a class="item" mat-button  routerLink="/rolUser" *appAuthorize="'48'">Roles-Usuarios</a>
       </div>
     </li>
   </ul>
-  <div class="text-center mt-5">
-    <button class="btn btn-primary" (click)="backToMain()">Regresar</button>
+  <div class="regresar">
+    <button  mat-raised-button  (click)="backToMain()">Regresar</button>
   </div>
 </div>
 <!-- <nav class="sidebar" *ngIf="appSelected">
