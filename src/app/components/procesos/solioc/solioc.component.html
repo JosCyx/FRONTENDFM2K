@@ -948,6 +948,9 @@
               Guardar y enviar
             </button>
           </ng-container>
+          <button class="btn btn-danger m-2" data-toggle="modal" data-target="#deleteOr" >
+            Eliminar
+          </button>
           <button class="btn btn-danger m-2" (click)="cancelar()">
             Cancelar
           </button>
@@ -1498,6 +1501,30 @@
       </div>
     </div>
   </div>
+</div>
+<!-- Modal para eliminar Orden Compra-->
+<div class="modal fade" #exampleModal id="deleteOr" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea eliminar esta Solicitud Orden de Compra?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>"Esta acción eliminará esta solicitud y no podrás acceder a ella."</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="EliminarOrCompra(cabecera.cabSolOCTipoSolicitud,cabecera.cabSolOCNoSolicitud)">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Modal para verificar el envío de la soliitud recien registrada-->

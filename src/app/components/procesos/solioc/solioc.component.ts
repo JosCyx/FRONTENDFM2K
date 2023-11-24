@@ -14,7 +14,7 @@ import { Observable, map } from 'rxjs';
 import { Detalle } from 'src/app/models/procesos/Detalle';
 import { ItemSector } from 'src/app/models/procesos/ItemSector';
 import { Router } from '@angular/router';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, set } from 'date-fns';
 import { es, oc, tr } from 'date-fns/locale';
 import { DetalleCotizacion } from 'src/app/models/procesos/solcotizacion/DetalleCotizacion';
 import { ItemCotizacion } from 'src/app/models/procesos/solcotizacion/ItemCotizacion';
@@ -1062,6 +1062,30 @@ export class SoliocComponent implements OnInit, OnDestroy {
     this.router.navigate(['allrequest']);
     this.clear();
     this.changeView('consultar');
+  }
+  EliminarOrCompra(TipoSol:number,NoSolici:number){
+    console.log("😎😎TipoSol",TipoSol,"NoSolici",NoSolici)
+    this.cabOCService.DeleteOrdenCompra(TipoSol,NoSolici).subscribe({
+      next: (data) => {
+        console.log(data);
+        const msjExito ='Orden Compra eliminada exitosamente.'; 
+        this.callMensaje(msjExito,true)
+        setTimeout(() => {
+          this.router.navigate(['allrequest']);
+        }
+        , 3000);
+      },
+      error: (error) => {
+        console.error(error);
+        const msjError ='No se ha podido eliminar la Orden Compra, intente nuevamente.';
+        this.callMensaje(msjError,false);
+      }
+      
+
+
+    })
+    
+
   }
 
   confDeleteItm(idList: number, idItem: number, idNSol: number) {
