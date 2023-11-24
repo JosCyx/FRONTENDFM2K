@@ -162,12 +162,15 @@ export class SolicitudesAprobadasComponent implements OnInit {
     
     if(this.metodoBusq == 1){
       this.allSol = data.filter((sol: any) => sol.cabSolCotIdEmisor == this.cookieService.get('userIdNomina'));
+      this.allSol = this.allSol.filter(item => item.cabSolCotValido==1);
       
     } else if(this.metodoBusq == 2){
       this.allSol = data.filter((sol: any) => sol.cabSolCotIdArea == parseInt(this.cookieService.get('userArea')));
+      this.allSol = this.allSol.filter(item => item.cabSolCotValido==1);
     } else if(this.metodoBusq == 3){
       
       this.allSol = data;
+      this.allSol = this.allSol.filter(item => item.cabSolCotValido==1);
     }
   }
 
@@ -175,10 +178,13 @@ export class SolicitudesAprobadasComponent implements OnInit {
   filterOCbyRol(data: any): void {
     if(this.metodoBusq == 1){
       this.allSol = data.filter((sol: any) => sol.cabSolOCIdEmisor == this.cookieService.get('userIdNomina'));
+      this.allSol = this.allSol.filter(item => item.cabSolCotValido==1);
     } else if(this.metodoBusq == 2){
       this.allSol = data.filter((sol: any) => sol.cabSolOCIdArea == parseInt(this.cookieService.get('userArea')));
+      this.allSol = this.allSol.filter(item => item.cabSolCotValido==1);
     } else if(this.metodoBusq == 3){
       this.allSol = data;
+      this.allSol = this.allSol.filter(item => item.cabSolCotValido==1);
     }
   }
   //
@@ -186,10 +192,13 @@ export class SolicitudesAprobadasComponent implements OnInit {
     console.log(data)
     if(this.metodoBusq == 1){
       this.allSol = data.filter((sol: any) => sol.cabPagoIdEmisor == this.cookieService.get('userIdNomina'));
+      this.allSol = this.allSol.filter(item => item.cabSolCotValido==1);
     } else if(this.metodoBusq == 2){
       this.allSol = data.filter((sol: any) => sol.cabPagoIdAreaSolicitante == parseInt(this.cookieService.get('userArea')));
+      this.allSol = this.allSol.filter(item => item.cabSolCotValido==1);
     } else if(this.metodoBusq == 3){
       this.allSol = data;
+      this.allSol = this.allSol.filter(item => item.cabSolCotValido==1);
     }
   }
   //

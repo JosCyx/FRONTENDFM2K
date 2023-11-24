@@ -540,7 +540,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoEstadoTrack: this.trNivelEmision,
       cabPagoIdEmisor: this.cookieService.get('userIdNomina'),
       cabPagoApprovedBy: 'XXXXXX',
-      cabPagoNoSolOC: this.cab_NoSolOC
+      cabPagoNoSolOC: this.cab_NoSolOC,
+      cabPagoValido: 1
     };
 
     //enviar datos de cabecera a la API
@@ -885,7 +886,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoIdEmisor: this.cabecera.cabPagoIdEmisor,
       cabPagoApprovedBy: this.aprobadopor,
       cabPagoFinancieroBy: this.financieropor,
-      cabPagoNoSolOC: this.cabecera.cabPagoNoSolOC
+      cabPagoNoSolOC: this.cabecera.cabPagoNoSolOC,
+      cabPagoValido: this.cabecera.cabPagoValido
     };
 
     this.cabPagoService

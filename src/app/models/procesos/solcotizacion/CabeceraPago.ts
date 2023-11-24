@@ -27,6 +27,7 @@ export class CabeceraPago {
   public cabPagoApprovedBy: string;
   public cabPagoObservCancelacion: string;
   public cabPagoNoSolOC: string;
+  public cabPagoValido: number;
 
   constructor(data: any) {
     this.cabPagoID = data.cabPagoID;
@@ -57,5 +58,6 @@ export class CabeceraPago {
     this.cabPagoApprovedBy = data.cabPagoApprovedBy;
     this.cabPagoObservCancelacion = data.cabPagoObservCancelacion;
     this.cabPagoNoSolOC = data.cabPagoNoSolOC;
+    this.cabPagoValido = data.cabPagoValido;
   }
 }

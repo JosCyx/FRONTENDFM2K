@@ -593,7 +593,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
       cabSolOCFinancieroBy: 'XXXXXX',
       cabSolOCAprobPresup: 'SI',
       cabSolOCMotivoDev: 'NOHAYMOTIVO',
-      cabSolOCValorAprobacion: this.cab_valorAprobacion
+      cabSolOCValorAprobacion: this.cab_valorAprobacion,
+      cabSolOCValido: 1
     };
 
     //enviar datos de cabecera a la API
@@ -1112,7 +1113,6 @@ export class SoliocComponent implements OnInit, OnDestroy {
     this.changeView('consultar');
   }
   EliminarOrCompra(TipoSol:number,NoSolici:number){
-    console.log("😎😎TipoSol",TipoSol,"NoSolici",NoSolici)
     this.cabOCService.DeleteOrdenCompra(TipoSol,NoSolici).subscribe({
       next: (data) => {
         console.log(data);
@@ -1230,7 +1230,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
       cabSolOCFinancieroBy: this.financieropor,
       cabSolOCAprobPresup: aprobPresp,
       cabSolOCMotivoDev: motivoDevolucion,
-      cabSolOCValorAprobacion: this.cabecera.cabSolOCValorAprobacion
+      cabSolOCValorAprobacion: this.cabecera.cabSolOCValorAprobacion,
+      cabSolOCValido: this.cabecera.cabSolOCValido
     };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
     //console.log('2. guardando solicitud...', dataCAB);

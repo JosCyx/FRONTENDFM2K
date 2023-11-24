@@ -930,8 +930,8 @@
               Guardar y enviar
           </button>
           </ng-container>
-          <button class="btn btn-danger m-2" data-toggle="modal" data-target="#deleteSolP" >
-            Eliminar
+          <button *ngIf="cabecera.cabPagoEstadoTrack == 10" class="btn btn-danger m-2" data-toggle="modal" data-target="#deleteSolP" >
+            Eliminar solicitud
           </button>
           <button class="btn btn-danger m-2" (click)="cancelarEdi()">
             Cancelar
@@ -1213,7 +1213,7 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <p>"Esta acción eliminará esta solicitud y no podrás acceder a ella."</p>
+                <p>Esta acción eliminará esta solicitud y ya no podrá acceder a ella.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="EliminarSolPo(cabecera.cabPagoTipoSolicitud,cabecera.cabPagoNoSolicitud)">

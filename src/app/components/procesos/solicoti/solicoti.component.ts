@@ -561,6 +561,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       cabSolCotFinancieroBy: 'XXXXXX',
       cabSolCotAprobPresup: 'SI',
       cabSolCotMtovioDev: 'NOHAYMOTIVO',
+      cabSolCotValido: 1
     }
 
 
@@ -1330,7 +1331,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       cabSolCotMtovioDev: motivoDevolucion,
       cabSolCotIdEmisor: this.cabecera.cabSolCotIdEmisor,
       cabSolCotApprovedBy: this.aprobadopor,
-      cabSolCotFinancieroBy: this.financieropor
+      cabSolCotFinancieroBy: this.financieropor,
+      cabSolCotValido: this.cabecera.cabSolCotValido
     };
 
     //console.log("Cabecera editada: ", this.cabecera.cabSolCotID, dataCAB);

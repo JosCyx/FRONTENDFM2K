@@ -639,7 +639,7 @@
                             Guardar y enviar
                         </button>
                     </ng-container>
-                    <button class="btn btn-danger"  data-toggle="modal" data-target="#deleteCoti">Eliminar</button>
+                    <button *ngIf="cabecera.cabSolCotEstadoTracking == 10" class="btn btn-danger"  data-toggle="modal" data-target="#deleteCoti">Eliminar solicitud</button>
                     <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
                 </div>
             </div>
@@ -1018,7 +1018,7 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <p>"Esta acción eliminará esta solicitud y no podrás acceder a ella."</p>
+                <p>Esta acción eliminará esta solicitud y ya no podrá acceder a ella.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="EliminarCotiza(cabecera.cabSolCotTipoSolicitud
