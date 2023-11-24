@@ -30,7 +30,6 @@ interface RuteoArea {
 interface ResponseTrack{
   solTrTipoSol: number;
   solTrNumSol: number;
-  solTrId: number;
 }
 
 interface DetalleSolPagos {
@@ -51,7 +50,8 @@ interface SolicitudData {
   styleUrls: ['./solipago.component.css'],
 })
 export class SolipagoComponent implements OnInit, OnDestroy {
-  responseTRK: ResponseTrack[] = [];
+  responseTRK: ResponseTrack = { solTrTipoSol: 0, solTrNumSol: 0 };
+
   empleado: string = '';
   empleados: any[] = [];
   showArea: string = '';
@@ -141,6 +141,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
    fechaMin: string = '';
    fechaMax: string = '';
   areaUserCookie: number = Number(this.cookieService.get('userArea'));
+  numeroSolicitudEmail: string = '';
 
 
   constructor(
@@ -469,8 +470,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         console.log('1. guardando tracking: ', dataTRK);
         this.solTrckService.generateTracking(dataTRK).subscribe(
           (response: any) => {
-            this.responseTRK = response;
-            //console.log('Tracking guardado con éxito.');
+
+            this.responseTRK = response?.solTrTipoSol && response?.solTrNumSol ? response : { solTrTipoSol: 0, solTrNumSol: 0 };
+
+            //console.log('Tracking guardado con éxito.',response.solTrTipoSol);
             resolve();
           },
           (error) => {
@@ -487,6 +490,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   async generarSolicitud() {
     await this.guardarTrancking();
     await this.getSolName(this.trLastNoSol);
+    this.numeroSolicitudEmail = this.solNumerico;
 
     const dataCAB = {
       cabPagoNumerico: this.solNumerico,
@@ -539,11 +543,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   async deleteLastTracking(){
-    const tipoSol = this.responseTRK[0].solTrTipoSol;
-    const noSol = this.responseTRK[0].solTrNumSol;
-    const idTracking = this.responseTRK[0].solTrId;
+    const tipoSol = this.responseTRK.solTrTipoSol;
+    const noSol = this.responseTRK.solTrNumSol;
 
-    this.solTrckService.deleteTracking(tipoSol, noSol, idTracking).subscribe(
+    this.solTrckService.deleteTracking(tipoSol, noSol).subscribe(
       response => {
         console.log("Tracking eliminado.");
       },
@@ -577,6 +580,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
   async Obtener() {
     if (this.tipoSolOc == 'F'){
+      this.cab_NoSolOC = this.valorinput;
       this.setDestino = true;//inhabilita la validacion del destino
       if(this.valorinput == ''){
 
@@ -593,6 +597,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         this.cab_NoSolOC = this.valorinput;
       }
     } else if (this.tipoSolOc == 'S'){
+      this.cab_NoSolOC = this.valorinput;
       this.setDestino = false;//habilita la validacion del destino
       this.alertBool = false;
       this.alertText = '';
@@ -742,6 +747,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.estadoTrkTmp = this.cabecera.cabPagoEstadoTrack;
     this.depSolTmp = this.cabecera.cabPagoIdDeptSolicitante;
     this.numericoSol = this.cabecera.cabPagoNumerico;
+    this.numeroSolicitudEmail = this.cabecera.cabPagoNumerico;
 
     this.setCancelacionOrden(this.cabecera.cabPagoCancelacionOrden);
 
@@ -857,7 +863,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoEstadoTrack: this.cabecera.cabPagoEstadoTrack,
       cabPagoIdEmisor: this.cabecera.cabPagoIdEmisor,
       cabPagoApprovedBy: this.aprobadopor,
-      cabPagoFinancieroBy: this.financieropor
+      cabPagoFinancieroBy: this.financieropor,
+      cabPagoNoSolOC: this.cabecera.cabPagoNoSolOC
     };
 
     this.cabPagoService
@@ -1344,13 +1351,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   asunto: string = 'Nueva Solicitud de Pago Recibida - Acción Requerida';
-  emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Pago.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
+  emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Pago.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.<br>No. Solicitud: `;
 
   asuntoDevuelto: string = 'Notificación - Solicitud de Pago Devuelta';
-  emailContent1: string = `Estimado(a), le notificamos que la solicitud de pago autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
+  emailContent1: string = `Estimado(a), le notificamos que la solicitud de pago autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
 
   asuntoAnulado: string = 'Notificación - Solicitud de Pago Anulada';
-  emailContent2: string = `Estimado(a), le notificamos que la solicitud de pago generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
+  emailContent2: string = `Estimado(a), le notificamos que la solicitud de pago generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.<br>No. Solicitud: `;
 
   sendMail(mailToNotify: string, type: number) {
     let contenidoMail = '';
@@ -1358,13 +1365,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
     if(type == 1){
       asuntoMail = this.asunto;
-      contenidoMail = this.emailContent;
+      contenidoMail = this.emailContent + this.numeroSolicitudEmail;
     } else if(type == 2){
       asuntoMail = this.asuntoAnulado;
-      contenidoMail = this.emailContent2;
+      contenidoMail = this.emailContent2 + this.numeroSolicitudEmail;
     } else if(type == 3){
       asuntoMail = this.asuntoDevuelto;
-      contenidoMail = this.emailContent1;
+      contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
 
     }
 

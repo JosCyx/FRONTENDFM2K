@@ -95,3 +95,11 @@
     width: 50%;
     margin: 0 auto;
 }
+
+.motivo-dev:disabled{
+    background-color: rgba(255, 219, 152, 0.5);
+}
+
+.motivo-dev-label{
+    background-color: rgb(255, 219, 152);
+}

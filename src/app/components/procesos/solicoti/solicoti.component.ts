@@ -44,7 +44,6 @@ interface SolicitudData {
 interface ResponseTrack{
   solTrTipoSol: number;
   solTrNumSol: number;
-  solTrId: number;
 }
 
 @Component({
@@ -57,7 +56,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   detalle: DetalleCotizacion[] = [];
   item: ItemCotizacion[] = [];
 
-  responseTRK: ResponseTrack[] = [];
+  responseTRK: ResponseTrack = { solTrTipoSol: 0, solTrNumSol: 0 };
   solicitudEdit!: SolicitudData;
 
 
@@ -178,6 +177,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
   devolucion: boolean = false;//controla si la solicitud esta siendo devuelta o no
   motivoDevEditar: string = '';
+  numeroSolicitudEmail: string = '';
 
   constructor(private router: Router,
     private empService: EmpleadosService,
@@ -513,7 +513,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         //console.log("1. guardando tracking: ", dataTRK);
         this.solTrckService.generateTracking(dataTRK).subscribe(
           (response: any) => {
-            this.responseTRK = response;
+            this.responseTRK = response?.solTrTipoSol && response?.solTrNumSol ? response : { solTrTipoSol: 0, solTrNumSol: 0 };
             //console.log("Tracking guardado con éxito.", this.responseTRK);
             resolve();
           },
@@ -535,6 +535,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
     await this.guardarTrancking();
     this.getSolName(this.trLastNoSol);
+    this.numeroSolicitudEmail = this.solNumerico;
 
     const dataCAB = {
       cabSolCotTipoSolicitud: this.trTipoSolicitud,
@@ -583,11 +584,10 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }
 
   async deleteLastTracking(){
-    const tipoSol = this.responseTRK[0].solTrTipoSol;
-    const noSol = this.responseTRK[0].solTrNumSol;
-    const idTracking = this.responseTRK[0].solTrId;
+    const tipoSol = this.responseTRK.solTrTipoSol;
+    const noSol = this.responseTRK.solTrNumSol;
 
-    this.solTrckService.deleteTracking(tipoSol, noSol, idTracking).subscribe(
+    this.solTrckService.deleteTracking(tipoSol, noSol).subscribe(
       response => {
         console.log("Tracking eliminado.");
       },
@@ -654,6 +654,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         },
         error => {
           console.log("No se ha podido registrar el detalle, error: ", error);
+          const mensaje = "Ha habido un error al registrar un detalle, por favor intente nuevamente.";
+          this.callMensaje(mensaje,false);
         }
       );
 
@@ -678,6 +680,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         },
         error => {
           console.log("No se pudo guardar el item no:" + item.item_id + ", error: ", error);
+          const mensaje = "Ha habido un error al registrar un item, por favor intente nuevamente.";
+          this.callMensaje(mensaje,false);
         }
       );
 
@@ -1034,6 +1038,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     this.estadoTrkTmp = this.cabecera.cabSolCotEstadoTracking;
     this.deptSolTmp = this.cabecera.cabSolCotIdDept;
     this.estadoSol = this.cabecera.cabSolCotEstadoTracking.toString();
+    this.numeroSolicitudEmail = this.cabecera.cabSolCotNumerico;
 
     if (this.cabecera.cabSolCotEstadoTracking > 10) {
       this.showEdicionItem = false;
@@ -1047,6 +1052,15 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
     this.detalle.sort((a, b) => a.solCotIdDetalle - b.solCotIdDetalle);
     this.det_id = this.detalle.length + 1;
+
+    setTimeout(() => {
+      for (let emp of this.empleadosEdit) {        
+        if (emp.empleadoIdNomina == this.cabecera.cabSolCotInspector) {
+          this.nameInspector = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
+        }
+      }
+      this.getNivelRuteoArea();
+    }, 100);
 
     for (let itm of this.solicitudEdit.items) {
       this.item.push(itm as ItemCotizacion);
@@ -1080,15 +1094,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     this.item.sort((a, b) => a.itmIdDetalle - b.itmIdDetalle);
 
     this.setView();
-    setTimeout(() => {
-      for (let emp of this.empleadosEdit) {
-        if (emp.empleadoIdNomina == this.cabecera.cabSolCotInspector) {
-          this.nameInspector = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
-        }
-      }
-      this.getNivelRuteoArea();
-    }, 200);
-
+    
 
     setTimeout(() => {
       
@@ -1813,7 +1819,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       (response: any) => {
         //console.log('Empleado: ', response);
         mailToNotify = response[0].empleadoCorreo;
-        //console.log("Correo enviado a: ", mailToNotify)
+        console.log("Correo enviado a: ", mailToNotify)
       },
       (error) => {
         console.log('Error al obtener el empleado: ', error);
@@ -1924,14 +1930,15 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
+
   asunto: string = 'Nueva Solicitud de Cotización Recibida - Acción Requerida';
-  emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Cotización.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
+  emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Cotización.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.<br>No. Solicitud: `;
 
   asuntoDevuelto: string = 'Notificación - Solicitud de Cotización Devuelta';
-  emailContent1: string = `Estimado(a), le notificamos que la solicitud de cotización autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
+  emailContent1: string = `Estimado(a), le notificamos que la solicitud de cotización autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
 
   asuntoAnulado: string = 'Notificación - Solicitud de Cotización Anulada';
-  emailContent2: string = `Estimado(a), le notificamos que la solicitud de cotización generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
+  emailContent2: string = `Estimado(a), le notificamos que la solicitud de cotización generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.<br>No. Solicitud: `;
 
   sendMail(mailToNotify: string, type: number) {
     let contenidoMail = '';
@@ -1939,13 +1946,13 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
     if (type == 1) {
       asuntoMail = this.asunto;
-      contenidoMail = this.emailContent;
+      contenidoMail = this.emailContent + this.numeroSolicitudEmail;
     } else if (type == 2) {
       asuntoMail = this.asuntoAnulado;
-      contenidoMail = this.emailContent2;
+      contenidoMail = this.emailContent2 + this.numeroSolicitudEmail;
     } else if (type == 3) {
       asuntoMail = this.asuntoDevuelto;
-      contenidoMail = this.emailContent1;
+      contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
     }
 
     setTimeout(() => {
@@ -1968,8 +1975,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
         },
         error => {
-          console.log(`Error, no se ha podido enviar el correo al proveedor.`, error)
-          const msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
+          console.log(`Error, no se ha podido enviar el correo al empleado correspondiente.`, error)
+          const msjError = `Error, no se ha podido enviar el correo al empleado correspondiente, intente nuevamente.`;
           this.callMensaje(msjError,false)
         }
       );
