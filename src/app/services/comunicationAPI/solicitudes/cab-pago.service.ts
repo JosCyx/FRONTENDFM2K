@@ -97,6 +97,12 @@ export class CabPagoService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolPago/UpdateAprobado?tipoSol=${tipoSol}&noSol=${noSol}&id=${id}`,null, { headers: headers });
   }
+    //Metodo eliminar solicitud de pago , detalles  y documentoss
+    DeleteSolPago(TipoSol:number,NoSol:number){
+      const headers = this.getHeadersWithAuthToken();
+      return this.http.delete(this.APIUrl + `/CabSolPago/DeletesSolOrdenPago?tipoSol=${TipoSol}&noSol=${NoSol}`, { headers: headers });
+    }
+
 
   /*updateFinancieroCotizacion(tipoSol: number, noSol: number, id: string) {
     const headers = this.getHeadersWithAuthToken();
