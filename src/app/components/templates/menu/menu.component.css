@@ -18,7 +18,7 @@
     background-color: #ffffff80;
     height: 100%;
     width: 200px;
-    position: fixed;
+    position: absolute;
     transition: transform 0.3s ease-in-out;
 }
 
@@ -62,9 +62,9 @@
 }
 
 .menu{
+    display: none;
     background-color: rgba(209, 209, 212, 0.75);
     width: 200px;
-    display: none;
 }
 
 
