@@ -107,5 +107,11 @@ export class CabCotizacionService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolCotizacions/UpdateMotivoDevolucion?tipoSol=${tipoSol}&noSol=${noSol}&motivo=${motivo}`,null, { headers: headers });
   }
+  //Metodo eliminar cotizacion , detalles ,item  y documentoss
+  DeleteCotizacion(tipoSol: number, noSol: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(this.APIUrl + `/CabSolCotizacions/DeleteCotizacion?tipoSol=${tipoSol}&noSol=${noSol}`, { headers: headers });
+
+  }
 }
 

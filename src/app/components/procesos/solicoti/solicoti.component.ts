@@ -2021,6 +2021,26 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     return Fechatrans
     // return fechaMax;
   }
+  EliminarCotiza(TipoSolicitud: number, noSolTmp: number) {
+    console.log("esto ya estan eliminado",TipoSolicitud,noSolTmp)
+    this.cabCotService.DeleteCotizacion(TipoSolicitud,noSolTmp).subscribe({
+      next: data => {
+        const msjExito ='Solicitud de Cotización eliminada exitosamente.';
+        this.callMensaje(msjExito,true)
+        setTimeout(() => {
+          this.router.navigate(['allrequest']);
+        }
+          , 3000);
+      },
+      error: error => {
+        console.log(error)
+        const msjError = `Error, no se ha podido eliminar la cotizacion, intente nuevamente.`;
+        this.callMensaje(msjError,false)
+      }
+
+    })
+  }
+  
 
   showMotivoDev: boolean = false;
   enableMotivoDev(){

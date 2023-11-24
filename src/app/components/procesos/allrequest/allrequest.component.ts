@@ -209,7 +209,7 @@ export class AllrequestComponent implements OnInit {
       this.cabCotService.getCotizacionesByIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
           // console.log("Exito: ", response);
-          this.allSol = response;
+          this.allSol = response.filter(item => item.cabSolCotValido==1);
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
         },
@@ -221,7 +221,7 @@ export class AllrequestComponent implements OnInit {
       this.cabCotService.getCotizacionesbyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response;
+          this.allSol = response.filter(item => item.cabSolCotValido==1);
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
         },
@@ -233,7 +233,7 @@ export class AllrequestComponent implements OnInit {
       this.cabCotService.getAllCotizaciones().subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response;
+          this.allSol = response.filter(item => item.cabSolCotValido==1);
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
         },
@@ -251,7 +251,7 @@ export class AllrequestComponent implements OnInit {
       this.cabOCService.getOrdenCmpbyIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response;
+          this.allSol = response.filter(item => item.cabSolOCValido==1);
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
         },
@@ -263,7 +263,7 @@ export class AllrequestComponent implements OnInit {
       this.cabOCService.getOrdenCmpbyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response;
+          this.allSol = response.filter(item => item.cabSolOCValido==1);
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
 
@@ -277,7 +277,7 @@ export class AllrequestComponent implements OnInit {
       this.cabOCService.getAllOrdenCmp().subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response;
+          this.allSol = response.filter(item => item.cabSolOCValido==1);
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
         },
@@ -296,7 +296,7 @@ export class AllrequestComponent implements OnInit {
       this.cabPagoService.getPagobyIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response;
+          this.allSol = response.filter(item => item.cabPagoValido==1);
           this.reorderOrdenPago();
           this.saveEncargadoPago();
         },
@@ -308,7 +308,7 @@ export class AllrequestComponent implements OnInit {
       this.cabPagoService.getPagobyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response;
+          this.allSol = response.filter(item => item.cabPagoValido==1);
           this.reorderOrdenPago();
           this.saveEncargadoPago();
         },
@@ -321,7 +321,7 @@ export class AllrequestComponent implements OnInit {
       this.cabPagoService.getAllPago().subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response;
+          this.allSol = response.filter(item => item.cabPagoValido==1);
           this.reorderOrdenPago();
           this.saveEncargadoPago();
         },

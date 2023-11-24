@@ -106,4 +106,10 @@ export class CabOrdCompraService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolOrdenCompras/UpdateMotivoDevolucion?tipoSol=${tipoSol}&noSol=${noSol}&motivo=${motivo}`,null, { headers: headers });
   }
+  //Metodo eliminar Orden Compra , detalles ,item  y documentoss
+  DeleteOrdenCompra(tipoSol: number, noSol: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(this.APIUrl + `/CabSolOrdenCompras/DeleteOrdenCompra?tipoSol=${tipoSol}&noSol=${noSol}`, { headers: headers });
+
+  }
 }
