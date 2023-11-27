@@ -36,7 +36,7 @@
 
     <div class="align-items-center input-group mb-3 justify-content-between">
       <div >
-        <!-- <div class="input-group">
+        <div class="input-group">
           <label class="input-group-text">Buscar:</label>
           <select class="form-select" name="busqueda" [(ngModel)]="tipoBusqueda">
             <option value="emp">Empleado</option>
@@ -47,9 +47,9 @@
             class="form-control"
             placeholder="Buscar por empleado"
             [(ngModel)]="bsqContenido"
-            (keyup)="filtrarSolicitudes()"
           />
-        </div> -->
+          <button class="btn btn-outline-success" type="button" (click)="filtrarSolicitudes()">Buscar</button>
+        </div>
       </div>
       <div>
         <button class="btn btn-primary mr-1" (click)="prevPage()">

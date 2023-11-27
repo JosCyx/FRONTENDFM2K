@@ -1,7 +1,7 @@
 <header>
   <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <div class="header-container d-flex">
-      <button  class="btn btn-primary mr-3"   (click)="toggleSidebar()"><i class="bi bi-list h5"></i></button>
+      <!-- <button  class="btn btn-primary mr-3"   (click)="toggleSidebar()"><i class="bi bi-list h5"></i></button> -->
       <a routerLink="/main"><img src="assets/img/logo.png" alt="logo" class="logo"></a>
     </div>
 
@@ -14,30 +14,27 @@
   
 </header>
 <p class="text-end m-2 user-name" style="font-weight: bold; font-style: italic;">Bienvenido: {{userName}}</p>
-<div class="sidebar" [ngClass]="{'show': showSB, 'hide': !showSB}">
+<div class="sidebar" >
   <ul class="nav flex-column">
     <li class="nav-item dropdown" *appAuthorize="'42'">
-      <a class="nav-link dropdown-toggle btn " href="#" id="configuracionDropdown" role="button"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <a class="" mat-button  href="#" id="configuracionDropdown" >
         Configuración
       </a>
-      <div class="dropdown-menu" aria-labelledby="configuracionDropdown">
-        
-        <a class="dropdown-item" routerLink="/ruteo" *appAuthorize="'21'">Ruteo</a>
+      <div class="menu" >
+        <a class="item"  mat-button routerLink="/ruteo" *appAuthorize="'21'">Ruteo</a>
         <!-- <a class="dropdown-item" routerLink="/documentos">Documentos</a> -->
       </div>
     </li>
     <li class="nav-item dropdown" *appAuthorize="'43'">
-      <a class="nav-link dropdown-toggle btn " href="#" id="configuracionDropdown" role="button"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <a class="" mat-button href="#" id="configuracionDropdown" >
         Procesos
       </a>
-      <div class="dropdown-menu" aria-labelledby="configuracionDropdown">
-        <a class="dropdown-item" (click)="routToCot()" *appAuthorize="'25'">Solicitud de cotizacion</a>
-        <a class="dropdown-item" (click)="routToOC()" *appAuthorize="'28'">Solicitud de O/C</a>
-        <a class="dropdown-item" (click)="routToPago()" *appAuthorize="'31'">Solicitud de pago</a>
-        <a class="dropdown-item" routerLink="/allrequest" *appAuthorize="'34'">Todas las solicitudes</a>
-        <a class="dropdown-item" routerLink="/solAprob" *appAuthorize="'35'">Consultar solicitudes</a>
+      <div class="menu"  >
+        <a class="item" mat-button (click)="routToCot()" *appAuthorize="'25'">Solicitud de cotizacion</a>
+        <a class="item" mat-button (click)="routToOC()" *appAuthorize="'28'">Solicitud de O/C</a>
+        <a class="item" mat-button (click)="routToPago()" *appAuthorize="'31'">Solicitud de pago</a>
+        <a class="item" mat-button routerLink="/allrequest" *appAuthorize="'34'">Todas las solicitudes</a>
+        <a class="item" mat-button routerLink="/solAprob" *appAuthorize="'35'">Consultar solicitudes</a>
         <!-- <a class="dropdown-item" routerLink="/solNoAprob">Solicitudes no aprobadas</a> -->
       </div>
     </li>
@@ -54,8 +51,8 @@
     </li> -->
     
   </ul>
-  <div class="text-center mt-5">
-    <button class="btn btn-primary" (click)="backToMain()">Regresar</button>
+  <div class="regresar">
+    <button mat-raised-button (click)="backToMain()">Regresar</button>
   </div>
 </div>
 

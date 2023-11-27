@@ -54,6 +54,12 @@ export class AllrequestComponent implements OnInit {
 
   bsqContenido: string = '';
   tipoBusqueda: string = 'emp';
+  
+  //busqueda
+  idAreabus: number = 0;
+  idEmpleadobus: string = "";
+  //
+  allSoltmp: any[] = [];
 
   constructor(private router: Router,
     private serviceGlobal: GlobalService,
@@ -212,6 +218,8 @@ export class AllrequestComponent implements OnInit {
           this.allSol = response.filter(item => item.cabSolCotValido==1);
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
+          this.allSoltmp=this.allSol;
+
         },
         error => {
           console.log(error);
@@ -224,6 +232,8 @@ export class AllrequestComponent implements OnInit {
           this.allSol = response.filter(item => item.cabSolCotValido==1);
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
+          this.allSoltmp=this.allSol;
+
         },
         error => {
           console.log(error);
@@ -236,13 +246,13 @@ export class AllrequestComponent implements OnInit {
           this.allSol = response.filter(item => item.cabSolCotValido==1);
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
+          this.allSoltmp=this.allSol;
         },
         error => {
           console.log(error);
         }
       );
     }
-
   }
 
   getAllOrdenCompras(): void {
@@ -254,6 +264,8 @@ export class AllrequestComponent implements OnInit {
           this.allSol = response.filter(item => item.cabSolOCValido==1);
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
+          this.allSoltmp=this.allSol;
+
         },
         error => {
           console.log(error);
@@ -266,6 +278,8 @@ export class AllrequestComponent implements OnInit {
           this.allSol = response.filter(item => item.cabSolOCValido==1);
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
+          this.allSoltmp=this.allSol;
+
 
         },
         error => {
@@ -280,13 +294,13 @@ export class AllrequestComponent implements OnInit {
           this.allSol = response.filter(item => item.cabSolOCValido==1);
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
+          this.allSoltmp=this.allSol;
         },
         error => {
           console.log(error);
         }
       );
     }
-
   }
 
 
@@ -299,6 +313,8 @@ export class AllrequestComponent implements OnInit {
           this.allSol = response.filter(item => item.cabPagoValido==1);
           this.reorderOrdenPago();
           this.saveEncargadoPago();
+          this.allSoltmp=this.allSol;
+
         },
         error => {
           console.log(error);
@@ -311,6 +327,8 @@ export class AllrequestComponent implements OnInit {
           this.allSol = response.filter(item => item.cabPagoValido==1);
           this.reorderOrdenPago();
           this.saveEncargadoPago();
+          this.allSoltmp=this.allSol;
+
         },
         error => {
           console.log(error);
@@ -324,6 +342,7 @@ export class AllrequestComponent implements OnInit {
           this.allSol = response.filter(item => item.cabPagoValido==1);
           this.reorderOrdenPago();
           this.saveEncargadoPago();
+          this.allSoltmp=this.allSol;
         },
         error => {
           console.log(error);
@@ -475,8 +494,71 @@ export class AllrequestComponent implements OnInit {
   }
 
   filtrarSolicitudes(){
-    
+    if(this.bsqContenido== ''){
+      this.allSol=this.allSoltmp;
+    }else if (this.bsqTipoSol == 1) {
+      if(this.tipoBusqueda == 'emp'){        
+          this.BuscarEmpleado();
+          this.allSol= this.allSol.filter( item => item.cabSolCotSolicitante == this.idEmpleadobus);
+        
+      }else if(this.tipoBusqueda == 'area'){
+        this.BuscarArea();
+        this.allSol= this.allSol.filter( item => item.cabSolCotIdArea == this.idAreabus);
+            }
+    } else if (this.bsqTipoSol == 2) {
+      if(this.tipoBusqueda == 'emp'){        
+          console.log("entro a buscar empleado",this.allSol);
+          this.BuscarEmpleado();
+          this.allSol= this.allSol.filter( item => item.cabSolOCSolicitante == this.idEmpleadobus);
+       
+      }else if(this.tipoBusqueda == 'area'){
+        this.BuscarArea();
+        this.allSol= this.allSol.filter( item => item.cabSolOCIdArea == this.idAreabus);
+        console.log("entro a buscar area",this.allSol); 
+            }
+    } else if (this.bsqTipoSol == 3) {
+      if(this.tipoBusqueda == 'emp'){
+        
+          console.log("entro a buscar empleado",this.allSol);
+          this.BuscarEmpleado();
+          this.allSol= this.allSol.filter( item => item.cabPagoSolicitante == this.idEmpleadobus);
+        
+      }else if(this.tipoBusqueda == 'area'){
+        this.BuscarArea();
+        this.allSol= this.allSol.filter( item => item.cabPagoIdAreaSolicitante == this.idAreabus);
+        console.log("entro a buscar area",this.allSol); 
+            }
+    }
   }
+  
+  BuscarArea(){
+    const bsqContenido = this.bsqContenido.toUpperCase().trim();
+  const foundArea = this.areas.find(element => {
+    const areaNom = element.areaDecp.trim();
+    return areaNom.includes(bsqContenido);
+  });
+  if (foundArea) {
+    this.idAreabus = foundArea.areaIdNomina;
+  } else {
+    this.idAreabus = 0;
+  }
+}
+  
+  BuscarEmpleado(){
+  const bsqContenido = this.bsqContenido.toUpperCase().trim();
+  const foundEmpleado = this.empleados.find(element => {
+    const empleadoNom = element.empleadoNombres.trim();
+    return empleadoNom.includes(bsqContenido);
+  }); 
+  console.log("dfdfggf", foundEmpleado);
+  if (foundEmpleado) {
+    this.idEmpleadobus = foundEmpleado.empleadoIdNomina;
+  } else {
+    this.idEmpleadobus = "";
+  }
+
+  }
+  
 
 
 
