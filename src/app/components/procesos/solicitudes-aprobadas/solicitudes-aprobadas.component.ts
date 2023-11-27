@@ -21,8 +21,8 @@ import { CookieService } from 'ngx-cookie-service';
 })
 export class SolicitudesAprobadasComponent implements OnInit {
   //Variables para mostrar las solicitudes
-  AbierTipoSol: number = 0;
-  Allstate: string = '';
+  AbierTipoSol: number = 1;
+  Allstate: string = 'A';
   //Observable de tipo de solicitud
   tipoSol: any[] = [];
   allSol: any[] = [];

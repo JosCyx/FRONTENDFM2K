@@ -8,6 +8,7 @@ interface Path {
   docUrl: any;
   docNombre: string;
   docUrlComleta: string;
+  docImage: string;
 }
 @Component({
   selector: 'app-oc-documentacion',
@@ -99,32 +100,54 @@ export class OCDocumentacionComponent implements OnInit, OnDestroy {
         },
       });
   }
-  //Capturar la url del servidor y lo convierte 
-  getUrlFile(ruta: string,nombre:string): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
+   //Capturar la url del servidor y lo convierte
+   getUrlFile(ruta: string,nombre:string): Promise<{ url: string, icono: string }> {
+    return new Promise<{ url: string, icono: string }>((resolve, reject) => {
       this.uploadfile.viewFile(ruta).subscribe({
         next:(blob) => {
           if(nombre == 'pdf'){
             const file = new Blob([blob], { type: 'application/pdf' });
           const urlfile = URL.createObjectURL(file);
+          const img = 'assets/img/272699_pdf_icon.png';
           //console.log('URL del documento: ', urlfile);
-          resolve(urlfile);
+          resolve({url: urlfile, icono: img});
           }else if(nombre == 'png'){
             const file = new Blob([blob], { type: 'image/png' });
           const urlfile = URL.createObjectURL(file);
-          resolve(urlfile);
+          const img = 'assets/img/image.png';
+          resolve({url: urlfile, icono: img});
           }else if(nombre == 'jpg'){
             const file = new Blob([blob], { type: 'image/jpg' });
           const urlfile = URL.createObjectURL(file);
-          resolve(urlfile);
+          const img = 'assets/img/image.png';
+          resolve({url: urlfile, icono: img});
           }else if(nombre == 'jpeg'){
             const file = new Blob([blob], { type: 'image/jpeg' });
           const urlfile = URL.createObjectURL(file);
-          resolve(urlfile);
+          const img = 'assets/img/image.png';
+          resolve({url: urlfile, icono: img});
+          } else if(nombre == 'xlsx'){
+            const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+          const urlfile = URL.createObjectURL(file);
+          const img = 'assets/img/272697_excel_icon.png';
+          resolve({url: urlfile, icono: img});
+          } else if(nombre == 'docx'){
+            const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+          const urlfile = URL.createObjectURL(file);
+          const img = 'assets/img/docx.png';
+          resolve({url: urlfile, icono: img});
+          } else if(nombre == 'doc'){
+            const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+          const urlfile = URL.createObjectURL(file);
+          const img = 'assets/img/doc.png';
+          resolve({url: urlfile, icono: img});
           }
         },
         error:(error) => {
           reject(error); // Rechaza la Promesa si ocurre un error
+        },
+        complete:()=>{
+          //console.log("Finalizacion del SUBSCRIBE");
         }
     });
     });
@@ -155,11 +178,16 @@ export class OCDocumentacionComponent implements OnInit, OnDestroy {
             try {
               const ruta = this.getNombreArchivo(data[i].docUrl);
               //console.log(ruta);
-              const docUrl = await this.getUrlFile(ruta,this.getNombres(data[i].docNombre)); // Espera a que se resuelva getUrlFile
+              const urlFileResult = await this.getUrlFile(ruta, this.getNombres(data[i].docNombre));
+
+              const docUrl: string = urlFileResult.url;
+              const img: string = urlFileResult.icono;
+
               const pat: Path = {
                 docNombre: data[i].docNombre,
                 docUrl: docUrl, // Usa la URL resuelta
-                docUrlComleta: data[i].docUrl
+                docUrlComleta: data[i].docUrl,
+                docImage: img
               };
               this.paths.push(pat);
             } catch (error) {
