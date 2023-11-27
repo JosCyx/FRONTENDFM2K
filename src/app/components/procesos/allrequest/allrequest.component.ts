@@ -532,31 +532,22 @@ export class AllrequestComponent implements OnInit {
   }
   
   BuscarArea(){
-    const bsqContenido = this.bsqContenido.toUpperCase().trim();
-  const foundArea = this.areas.find(element => {
-    const areaNom = element.areaDecp.trim();
-    return areaNom.includes(bsqContenido);
-  });
-  if (foundArea) {
-    this.idAreabus = foundArea.areaIdNomina;
-  } else {
-    this.idAreabus = 0;
-  }
+  const bsqContenido = this.bsqContenido.toUpperCase().trim();
+  const foundArea = this.areas.find(element => element.areaDecp.trim().includes(bsqContenido)
+  );
+  this.idAreabus = foundArea ? foundArea.areaIdNomina : 0;
+  console.log("AREAS🚧", this.idAreabus);
 }
   
   BuscarEmpleado(){
   const bsqContenido = this.bsqContenido.toUpperCase().trim();
   const foundEmpleado = this.empleados.find(element => {
     const empleadoNom = element.empleadoNombres.trim();
-    return empleadoNom.includes(bsqContenido);
+    const empleadoApelli= element.empleadoApellidos.trim();
+    return empleadoNom.includes(bsqContenido) || empleadoApelli.includes(bsqContenido);
   }); 
-  console.log("dfdfggf", foundEmpleado);
-  if (foundEmpleado) {
-    this.idEmpleadobus = foundEmpleado.empleadoIdNomina;
-  } else {
-    this.idEmpleadobus = "";
-  }
-
+  this.idEmpleadobus = foundEmpleado ? foundEmpleado.empleadoIdNomina : "";
+  console.log("dfdfggf💁‍♂️", this.idEmpleadobus);
   }
   
 
