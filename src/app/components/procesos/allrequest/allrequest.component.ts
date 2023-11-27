@@ -494,6 +494,7 @@ export class AllrequestComponent implements OnInit {
   }
 
   filtrarSolicitudes(){
+    this.allSol=this.allSoltmp;
     if(this.bsqContenido== ''){
       this.allSol=this.allSoltmp;
     }else if (this.bsqTipoSol == 1) {
@@ -538,7 +539,6 @@ export class AllrequestComponent implements OnInit {
   this.idAreabus = foundArea ? foundArea.areaIdNomina : 0;
   console.log("AREAS🚧", this.idAreabus);
 }
-  
   BuscarEmpleado(){
   const bsqContenido = this.bsqContenido.toUpperCase().trim();
   const foundEmpleado = this.empleados.find(element => {
@@ -547,7 +547,7 @@ export class AllrequestComponent implements OnInit {
     return empleadoNom.includes(bsqContenido) || empleadoApelli.includes(bsqContenido);
   }); 
   this.idEmpleadobus = foundEmpleado ? foundEmpleado.empleadoIdNomina : "";
-  console.log("dfdfggf💁‍♂️", this.idEmpleadobus);
+  console.log("dfdfgg🌞", this.idEmpleadobus);
   }
   
 
