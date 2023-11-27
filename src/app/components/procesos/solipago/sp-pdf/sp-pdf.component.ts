@@ -157,10 +157,10 @@ export class SpPdfComponent implements OnInit {
                     ],
                     [
                       { text: 'APROBADO POR ', style: 'tableHeader' },
-                      { text: this.datosSP.cabecera.cabPagoApprovedBy, colSpan: 4 },
-                      '',
-                      '',
-                      '',
+                      { text: this.datosSP.cabecera.cabPagoApprovedBy},
+                      { text: 'SOLICITUD ASOCIADA ', style: 'tableHeader' },
+                      { text: this.datosSP.cabecera.cabPagoNoSolOC, colSpan: 2 },
+                      ''
                     ],
                   ],
                 },

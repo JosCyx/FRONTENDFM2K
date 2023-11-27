@@ -152,18 +152,18 @@ export class CotPdfComponent implements OnInit {
                       '',
                     ],
                     [
-                      { text: 'APROBADO POR :', style: 'tableHeader' },
-                      { text: this.datosCabcot.cabecera.cabSolCotApprovedBy},
+                      { text: 'TRACKING', style: 'tableHeader' },
+                      { text: this.nivelRuta},
                       { text: 'ESTADO:', style: 'tableHeader' },
                       { text: this.estadoTexto(), colSpan: 2 },
                       '',
                     ],
                     [
-                      { text: 'FINANCIERO :', style: 'tableHeader' },
-                      { text: this.datosCabcot.cabecera.cabSolCotFinancieroBy },
-                      { text: 'TRACKING', style: 'tableHeader' },
-                      { text: this.nivelRuta, colSpan: 2 },
+                      { text: 'APROBADO POR :', style: 'tableHeader' },
+                      { text: this.datosCabcot.cabecera.cabSolCotApprovedBy, colSpan: 4},
                       '',
+                      '',
+                      ''
                     ],
                     [
                       { text: 'ASUNTO', style: 'tableHeader' },
@@ -523,7 +523,7 @@ export class CotPdfComponent implements OnInit {
           this.datosCabcot.cabecera.cabSolCotApprovedBy
         ) {
           this.datosCabcot.cabecera.cabSolCotApprovedBy =
-            iterator.empleadoNombres + '' + iterator.empleadoApellidos;
+            iterator.empleadoNombres + ' ' + iterator.empleadoApellidos;
         }
       }
     }

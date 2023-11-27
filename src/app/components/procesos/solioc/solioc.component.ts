@@ -34,6 +34,11 @@ interface RuteoArea {
   // Otras propiedades si es necesario
 }
 
+interface ResponseTrack{
+  solTrTipoSol: number;
+  solTrNumSol: number;
+}
+
 interface SolicitudData {
   cabecera: any;
   detalles: any[];
@@ -45,6 +50,7 @@ interface SolicitudData {
   styleUrls: ['./solioc.component.css'],
 })
 export class SoliocComponent implements OnInit, OnDestroy {
+  responseTRK: ResponseTrack = { solTrTipoSol: 0, solTrNumSol: 0 };
   empleado: string = '';
   inspector: string = '';
   showArea: string = '';
@@ -86,6 +92,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   cab_telef_insp!: string;
   cab_ruc_prov!: string;
   cab_proveedor!: string;
+  cab_valorAprobacion: number = 0;
 
   //variables del detalle
   det_id: number = 1; //se usa para el detalle y para el item por sector
@@ -165,6 +172,11 @@ export class SoliocComponent implements OnInit, OnDestroy {
    fechaMax: string = '';
    fechaMinPlazo: string = '';
 
+   devolucion: boolean = false;//controla si la solicitud esta siendo devuelta o no
+
+   motivoDevEditar: string = '';
+   numeroSolicitudEmail: string = '';
+
   constructor(
     private empService: EmpleadosService,
     private sectService: SectoresService,
@@ -208,6 +220,16 @@ export class SoliocComponent implements OnInit, OnDestroy {
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
     if (!patron.test(valorIngresado)) {
+      inputElement.value = inputElement.defaultValue; 
+    }
+  }
+  validarNumeroFloat(event: Event): void {
+    const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
+    const inputElement = event.target as HTMLInputElement;
+    const valorIngresado = inputElement.value;
+
+    if (!patron.test(valorIngresado)) {
+      console.log("entro ");
       inputElement.value = inputElement.defaultValue; 
     }
   }
@@ -307,6 +329,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
       this.inspector = this.inspector.replace(/[^a-zA-Z\s]/g, '');
     } 
   }
+
   onInputChanged(): void {
     // Cancelamos el temporizador anterior antes de crear uno nuevo
     clearTimeout(this.inputTimer);
@@ -339,33 +362,36 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
   //guarda el nombre del area del empleado seleccionado
   selectEmpleado(): void {
-    this.showArea = '';
-    if (!this.empleado) {
+    setTimeout(() => {
+      
       this.showArea = '';
-    } else {
-      for (let emp of this.empleados) {
-        if (
-          emp.empleadoNombres + ' ' + emp.empleadoApellidos ==
-          this.empleado
-        ) {
-          this.trIdNomEmp = emp.empleadoIdNomina;
-          this.cab_id_area = emp.empleadoIdArea;
-          this.cab_id_dept = emp.empleadoIdDpto;
-          this.depSolTmp = emp.empleadoIdDpto;
-          for (let area of this.areas) {
-            if (area.areaIdNomina == emp.empleadoIdArea) {
-              
-              this.showArea = area.areaDecp;
-
-              this.areaNmco = area.areaNemonico.trim();
-              //console.log("Empleado area ID:",this.cab_area);
-            } else if (emp.empleadoIdArea === 0) {
-              this.showArea = 'El empleado no posee un area asignada.';
+      if (!this.empleado) {
+        this.showArea = '';
+      } else {
+        for (let emp of this.empleados) {
+          if (
+            emp.empleadoNombres + ' ' + emp.empleadoApellidos ==
+            this.empleado
+          ) {
+            this.trIdNomEmp = emp.empleadoIdNomina;
+            this.cab_id_area = emp.empleadoIdArea;
+            this.cab_id_dept = emp.empleadoIdDpto;
+            this.depSolTmp = emp.empleadoIdDpto;
+            for (let area of this.areas) {
+              if (area.areaIdNomina == emp.empleadoIdArea) {
+                
+                this.showArea = area.areaDecp;
+  
+                this.areaNmco = area.areaNemonico.trim();
+                //console.log("Empleado area ID:",this.cab_area);
+              } else if (emp.empleadoIdArea === 0) {
+                this.showArea = 'El empleado no posee un area asignada.';
+              }
             }
           }
         }
       }
-    }
+    }, 1000);
   }
   /*//controla el contenido que se muestra en la pagina
   changeView(view: string): void {
@@ -519,7 +545,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
         //console.log('1. guardando tracking: ', dataTRK);
         this.solTrckService.generateTracking(dataTRK).subscribe(
-          () => {
+          (response: any) => {
+            this.responseTRK = response?.solTrTipoSol && response?.solTrNumSol ? response : { solTrTipoSol: 0, solTrNumSol: 0 };
             //console.log('Tracking guardado con éxito.');
             resolve();
           },
@@ -538,6 +565,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   async generarSolicitud() {
     await this.guardarTrancking();
     this.getSolName(this.trLastNoSol);
+    this.numeroSolicitudEmail = this.solNumerico;
 
     const dataCAB = {
       cabSolOCTipoSolicitud: this.trTipoSolicitud,
@@ -564,7 +592,9 @@ export class SoliocComponent implements OnInit, OnDestroy {
       cabSolOCApprovedBy: 'XXXXXX',
       cabSolOCFinancieroBy: 'XXXXXX',
       cabSolOCAprobPresup: 'SI',
-      cabSolOCMotivoDev: ''
+      cabSolOCMotivoDev: 'NOHAYMOTIVO',
+      cabSolOCValorAprobacion: this.cab_valorAprobacion,
+      cabSolOCValido: 1
     };
 
     //enviar datos de cabecera a la API
@@ -578,10 +608,28 @@ export class SoliocComponent implements OnInit, OnDestroy {
         //console.log('Cuerpo agregado.');
       },
       (error) => {
+        this.deleteLastTracking();
         console.log('error al guardar la cabecera: ', error);
+        const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
       }
     );
   }
+
+  async deleteLastTracking(){
+    const tipoSol = this.responseTRK.solTrTipoSol;
+    const noSol = this.responseTRK.solTrNumSol;
+
+    this.solTrckService.deleteTracking(tipoSol, noSol).subscribe(
+      response => {
+        console.log("Tracking eliminado.");
+      },
+      error => {
+        console.log("Error al eliminar el tracking: ", error);
+      }
+    );
+  }
+
   //permite crear el detalle y el item por sector y los envia a la API
   async addBodySol() {
     this.det_id = await this.getLastDetalleCot(); //numero del detalle que se va a guardar
@@ -964,7 +1012,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
     this.noSolTmp = this.cabecera.cabSolOCNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabSolOCEstadoTracking;
     this.depSolTmp = this.cabecera.cabSolOCIdDept;
-    console.log(this.cabecera)
+    this.cabecera.cabSolOCAprobPresup = this.cabecera.cabSolOCAprobPresup.trim();
+    this.numeroSolicitudEmail = this.cabecera.cabSolOCNumerico;
 
     this.checkAprobPrep(this.cabecera.cabSolOCEstadoTracking);
 
@@ -1064,7 +1113,6 @@ export class SoliocComponent implements OnInit, OnDestroy {
     this.changeView('consultar');
   }
   EliminarOrCompra(TipoSol:number,NoSolici:number){
-    console.log("😎😎TipoSol",TipoSol,"NoSolici",NoSolici)
     this.cabOCService.DeleteOrdenCompra(TipoSol,NoSolici).subscribe({
       next: (data) => {
         console.log(data);
@@ -1142,8 +1190,19 @@ export class SoliocComponent implements OnInit, OnDestroy {
     const fechaConvertida = new Date(fechaStr);
     return fechaConvertida;
   }
+  
   //* Editar orden compra en el Enviar
   async saveEditCabecera() {
+    let motivoDevolucion = '';
+    let aprobPresp = '';
+    if(this.devolucion == true){
+      motivoDevolucion = this.motivoDevEditar;
+      aprobPresp = 'NO';
+    } else if(this.devolucion == false){
+      motivoDevolucion = 'NOHAYMOTIVO';
+      aprobPresp = 'SI';
+    }
+    
     const dataCAB = {
       cabSolOCID: this.cabecera.cabSolOCID,
       cabSolOCTipoSolicitud: this.cabecera.cabSolOCTipoSolicitud,
@@ -1166,11 +1225,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
       cabSolOCNumerico: this.cabecera.cabSolOCNumerico,
       cabSolOCProveedor: this.cabecera.cabSolOCProveedor,
       cabSolOCRUCProveedor: this.cabecera.cabSolOCRUCProveedor,
-      cabSolOCIdEmisor: this.cookieService.get('userIdNomina'),
+      cabSolOCIdEmisor: this.cabecera.cabSolOCIdEmisor,
       cabSolOCApprovedBy: this.aprobadopor,
       cabSolOCFinancieroBy: this.financieropor,
-      cabSolOCAprobPresup: this.cabecera.cabSolOCAprobPresup,
-      cabSolOCMotivoDev: this.cabecera.cabSolOCMotivoDev
+      cabSolOCAprobPresup: aprobPresp,
+      cabSolOCMotivoDev: motivoDevolucion,
+      cabSolOCValorAprobacion: this.cabecera.cabSolOCValorAprobacion,
+      cabSolOCValido: this.cabecera.cabSolOCValido
     };
     //* Enviar datos para actualizar en tabla cab_sol_orden_compra
     //console.log('2. guardando solicitud...', dataCAB);
@@ -1182,6 +1243,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.log('error : ', error);
+          const mensaje = "Ha habido un error al guardar los datos de la cabecera, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
         }
       );
   }
@@ -1206,6 +1269,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.log('No se ha podido registrar el detalle, error: ', error);
+          const mensaje = "Ha habido un error al guardar los datos de los detalles, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
         }
       );
     }
@@ -1259,6 +1324,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
             'No se pudo guardar el item no:' + item.itmIdItem + ', error: ',
             error
           );
+          const mensaje = "Ha habido un error al guardar los datos de los items, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+          this.callMensaje(mensaje,false);
         }
       );
     }
@@ -1624,6 +1691,40 @@ export class SoliocComponent implements OnInit, OnDestroy {
       }
     }
 
+
+
+    guardarDevolverSolEditada() {
+      this.devolucion = true;
+      try {
+        //this.saveEdit();
+        let motivoDevolucion = '';
+        let aprobPresp = '';
+        if(this.devolucion){
+          motivoDevolucion = this.motivoDevEditar;
+          aprobPresp = 'NO';
+        } else{
+          motivoDevolucion = 'NOHAYMOTIVO';
+          aprobPresp = 'SI';
+        }
+        
+        this.cabOCService.updateMotivoDevolucion(this.trTipoSolicitud, this.noSolTmp, motivoDevolucion).subscribe(
+          (response) => {
+            //console.log("Motivo de devolucion actualizado");
+          },
+          (error) => {
+            console.log('Error al actualizar el motivo de devolucion: ', error);
+          }
+        );
+        setTimeout(() => {
+          this.noAutorizar();
+        }, 500);     
+      } catch (error) {
+        console.log('Error:', error);
+        const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+        this.callMensaje(msjError,false);
+      }
+    }
+
   noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui
   estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
   depSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
@@ -1633,6 +1734,27 @@ export class SoliocComponent implements OnInit, OnDestroy {
   financieropor: string = 'XXXXXX';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
+    this.devolucion = false;
+
+    let motivoDevolucion = '';
+    let aprobPresp = '';
+    if(this.devolucion){
+      motivoDevolucion = this.motivoDevEditar;
+      aprobPresp = 'NO';
+    } else{
+      motivoDevolucion = 'NOHAYMOTIVO';
+      aprobPresp = 'SI';
+    }
+
+    this.cabOCService.updateMotivoDevolucion(this.trTipoSolicitud, this.noSolTmp, motivoDevolucion).subscribe(
+      (response) => {
+        //console.log("Motivo de devolucion actualizado");
+      },
+      (error) => {
+        console.log('Error al actualizar el motivo de devolucion: ', error);
+      }
+    );
+    
     //verifica los niveles de aprobacion y financiero para asignar el usuario que envia la solicitud para guardar el empleado quien autoriza
     if (this.estadoTrkTmp == 40) {
       this.aprobadopor = this.cookieService.get('userIdNomina');
@@ -1959,13 +2081,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
   }
 
   asunto: string = 'Nueva Solicitud de Orden de Compra Recibida - Acción Requerida';
-  emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Orden de Compra.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
+  emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Orden de Compra.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.<br>No. Solicitud: `;
 
   asuntoDevuelto: string = 'Notificación - Solicitud de Orden de Compra Devuelta';
-  emailContent1: string = `Estimado(a), le notificamos que la solicitud de orden de compra autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
+  emailContent1: string = `Estimado(a), le notificamos que la solicitud de orden de compra autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
 
   asuntoAnulado: string = 'Notificación - Solicitud de Orden de Compra Anulada';
-  emailContent2: string = `Estimado(a), le notificamos que la solicitud de orden de compra generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
+  emailContent2: string = `Estimado(a), le notificamos que la solicitud de orden de compra generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.<br>No. Solicitud: `;
 
   sendMail(mailToNotify: string, type: number) {
     let contenidoMail = '';
@@ -1973,13 +2095,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
     if(type == 1){
       asuntoMail = this.asunto;
-      contenidoMail = this.emailContent;
+      contenidoMail = this.emailContent + this.numeroSolicitudEmail;
     } else if(type == 2){
       asuntoMail = this.asuntoAnulado;
-      contenidoMail = this.emailContent2;
+      contenidoMail = this.emailContent2 + this.numeroSolicitudEmail;
     } else if(type == 3){
       asuntoMail = this.asuntoDevuelto;
-      contenidoMail = this.emailContent1;
+      contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
     }
 
     setTimeout(() => {
@@ -2060,5 +2182,15 @@ export class SoliocComponent implements OnInit, OnDestroy {
       let Fechatrans=this.formatDateToYYYYMMDD(fecha)
       return Fechatrans
       // return fechaMax;
-    }    
+  }
+
+
+  showMotivoDev: boolean = false;
+  enableMotivoDev(){
+    this.showMotivoDev = !this.showMotivoDev;
+  }
+
+  
+
+    
 }

@@ -27,6 +27,11 @@ interface RuteoArea {
   // Otras propiedades si es necesario
 }
 
+interface ResponseTrack{
+  solTrTipoSol: number;
+  solTrNumSol: number;
+}
+
 interface DetalleSolPagos {
   itemDesc: string;
   cantidadContrat: number;
@@ -45,6 +50,8 @@ interface SolicitudData {
   styleUrls: ['./solipago.component.css'],
 })
 export class SolipagoComponent implements OnInit, OnDestroy {
+  responseTRK: ResponseTrack = { solTrTipoSol: 0, solTrNumSol: 0 };
+
   empleado: string = '';
   empleados: any[] = [];
   showArea: string = '';
@@ -91,6 +98,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   cab_cancelarOrden!: string;
   cab_observCancelacion: string = '';
   cab_estado: string = 'A'; //estado inicial Activo
+  cab_NoSolOC!: string;
   //*
   cabecera!: CabeceraPago;
   detallePago: DetallePago[] = [];
@@ -109,6 +117,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   buscarProveedor: string = '';
   //
   alertBool: boolean = false;
+  alertBoolError: boolean = false;
   alertText: string = '';
   //
   empleadoEdi: any[] = [];
@@ -123,10 +132,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
   detallesToDestino: any[] = [];
   setDestino: boolean = false;
-  /*settear() {
-    console.log("Estes es mi metodo settea")
-    this.setDestino = this.globalService.setDestino;
-  }*/
+  tipoSolOc: string = 'F';
 
    //Variables para validacion de fecha 
    fechaminina: Date = new Date();
@@ -135,6 +141,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
    fechaMin: string = '';
    fechaMax: string = '';
   areaUserCookie: number = Number(this.cookieService.get('userArea'));
+  numeroSolicitudEmail: string = '';
 
 
   constructor(
@@ -193,7 +200,6 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     const patron: RegExp=/^[0-9]+$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
-    //console.log("este son mis valores digitados ",valorIngresado);
 
     if (!patron.test(valorIngresado)) {
       console.log("entro ");
@@ -205,7 +211,6 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
-    //console.log("este son mis valores digitados ",valorIngresado);
 
     if (!patron.test(valorIngresado)) {
       console.log("entro ");
@@ -258,11 +263,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
   searchEmpleado(): void {
     if (this.empleado.length > 2) {
-      this.empService.getEmpleadobyArea(parseInt(this.cookieService.get('userArea'))).subscribe((data) => {
+      this.empService.getEmpleadosList().subscribe((data) => {
         this.empleados = data;
       });
     } else if (this.receptor.length > 2) {
-      this.empService.getEmpleadobyArea(parseInt(this.cookieService.get('userArea'))).subscribe((data) => {
+      this.empService.getEmpleadosList().subscribe((data) => {
         this.empleados = data;
       });
     } else {
@@ -270,43 +275,46 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }
   }
   selectEmpleado(): void {
-    this.showArea = '';
-    if (!this.empleado) {
+    setTimeout(() => {
+      
       this.showArea = '';
-    } else {
-      for (let emp of this.empleados) {
-        if (
-          emp.empleadoNombres + ' ' + emp.empleadoApellidos ==
-          this.empleado
-        ) {
-          this.trIdNomEmp = emp.empleadoIdNomina;
-          //console.log("Empleado ID:",this.trIdNomEmp);
-          this.depSolTmp = emp.empleadoIdDpto;
-          this.cab_id_dept = emp.empleadoIdDpto;
-          this.cab_id_area = emp.empleadoIdArea;
-          for (let area of this.areas) {
-            if (area.areaIdNomina == emp.empleadoIdArea) {
-
-              this.showArea = area.areaDecp;
-
-              this.areaNmco = area.areaNemonico.trim();
-
-              //busca el nuevo nombre de la solicitud y lo asigna a las variables para poder usarlo en el destino
-              setTimeout(async () => {
-                this.trLastNoSol = await this.getLastSol();
-                this.getSolName(this.trLastNoSol);
-                console.log(this.solNumerico);
-                console.log(this.numericoSol);
-              }, 1000);
-
-              //console.log("Empleado area ID:",this.cab_area);
-            } else if (emp.empleadoIdArea === 0) {
-              this.showArea = 'El empleado no posee un area asignada.';
+      if (!this.empleado) {
+        this.showArea = '';
+      } else {
+        for (let emp of this.empleados) {
+          if (
+            emp.empleadoNombres + ' ' + emp.empleadoApellidos ==
+            this.empleado
+          ) {
+            this.trIdNomEmp = emp.empleadoIdNomina;
+            //console.log("Empleado ID:",this.trIdNomEmp);
+            this.depSolTmp = emp.empleadoIdDpto;
+            this.cab_id_dept = emp.empleadoIdDpto;
+            this.cab_id_area = emp.empleadoIdArea;
+            for (let area of this.areas) {
+              if (area.areaIdNomina == emp.empleadoIdArea) {
+  
+                this.showArea = area.areaDecp;
+  
+                this.areaNmco = area.areaNemonico.trim();
+  
+                //busca el nuevo nombre de la solicitud y lo asigna a las variables para poder usarlo en el destino
+                setTimeout(async () => {
+                  this.trLastNoSol = await this.getLastSol();
+                  this.getSolName(this.trLastNoSol);
+                  console.log(this.solNumerico);
+                  console.log(this.numericoSol);
+                }, 1000);
+  
+                //console.log("Empleado area ID:",this.cab_area);
+              } else if (emp.empleadoIdArea === 0) {
+                this.showArea = 'El empleado no posee un area asignada.';
+              }
             }
           }
         }
       }
-    }
+    }, 1000);
   }
   async changeView(view: string) {
     this.changeview = view;
@@ -482,8 +490,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
         console.log('1. guardando tracking: ', dataTRK);
         this.solTrckService.generateTracking(dataTRK).subscribe(
-          () => {
-            console.log('Tracking guardado con éxito.');
+          (response: any) => {
+
+            this.responseTRK = response?.solTrTipoSol && response?.solTrNumSol ? response : { solTrTipoSol: 0, solTrNumSol: 0 };
+
+            //console.log('Tracking guardado con éxito.',response.solTrTipoSol);
             resolve();
           },
           (error) => {
@@ -500,6 +511,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   async generarSolicitud() {
     await this.guardarTrancking();
     await this.getSolName(this.trLastNoSol);
+    this.numeroSolicitudEmail = this.solNumerico;
 
     const dataCAB = {
       cabPagoNumerico: this.solNumerico,
@@ -527,16 +539,15 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoEstado: this.cab_estado,
       cabPagoEstadoTrack: this.trNivelEmision,
       cabPagoIdEmisor: this.cookieService.get('userIdNomina'),
-      cabPagoApprovedBy: 'XXXXXX'
+      cabPagoApprovedBy: 'XXXXXX',
+      cabPagoNoSolOC: this.cab_NoSolOC,
+      cabPagoValido: 1
     };
 
     //enviar datos de cabecera a la API
     console.log('2. guardando solicitud...', dataCAB);
     await this.cabPagoService.addSolPag(dataCAB).subscribe(
       (response) => {
-        console.log('Cabecera agregada.');
-        console.log('Solicitud', this.solNumerico);
-        console.log('Agregando cuerpo de la cabecera...');
         const msjExito = 'Solicitud de Pago Generada Exitosamente';
         this.callMensaje(msjExito,true);
         this.AddDetSolPago();
@@ -545,10 +556,28 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         },3000)
       },
       (error) => {
+        this.deleteLastTracking();
         console.log('error al guardar la cabecera: ', error);
+        const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
       }
     );
   }
+
+  async deleteLastTracking(){
+    const tipoSol = this.responseTRK.solTrTipoSol;
+    const noSol = this.responseTRK.solTrNumSol;
+
+    this.solTrckService.deleteTracking(tipoSol, noSol).subscribe(
+      response => {
+        console.log("Tracking eliminado.");
+      },
+      error => {
+        console.log("Error al eliminar el tracking: ", error);
+      }
+    );
+  }
+
   //Guardar el ID DEL QUE RECIBE
   saveReceptor() {
     for (let emp of this.empleados) {
@@ -572,74 +601,112 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   async Obtener() {
-    if (this.valorinput == '') {
-      this.detalleSolPagos = [];
-      this.destinoIO = false;
-      this.detallesToDestino = [];
-      this.alertBool = true;
-      this.alertText = 'El campo no puede estar vacio';
-          setTimeout(() => {
-            this.alertBool = false;
-            this.alertText = '';
-          }, 1000);
-    } else {
-      const partes = this.valorinput.match(/(\d+)-(\d+)/);
-      console.log('partes', partes);
-      if (partes && partes.length === 3) {
-        console.log("este mi partes ", partes[1]);
-        if (partes[1] != '2') {
-          this.alertBool = true;
-          this.alertText = 'No se ha encontrado la solicitud';
-          this.detalleSolPagos = [];
-          setTimeout(() => {
-            this.alertBool = false;
-            this.alertText = '';
-          }, 1000);
-        } else {
-          this.noSolicinput = parseInt(partes[2], 10);
-          try {
-            this.detSolService
-              .getDetalle_solicitud(2, this.noSolicinput)
-              .subscribe(
-                (response) => {
+    if (this.tipoSolOc == 'F'){
+      this.cab_NoSolOC = this.valorinput;
+      this.setDestino = true;//inhabilita la validacion del destino
+      if(this.valorinput == ''){
 
-                  //console.log('response', response);
-                  this.detalleSolPagos = response.map((ini: any) => ({
-                    idDetalle: ini.solCotIdDetalle,
-                    itemDesc: ini.solCotDescripcion,
-                    itemCant: ini.solCotCantidadTotal,
-                    cantidadRecibid : undefined,
-                    valorUnitario: undefined,
-                    subTotal: undefined
-                  }));
+        this.alertBool = true;
+        this.alertText = 'Por favor ingrese el nombre de la solicitud a asociar.';
 
-                  //variables para controlar los datos ue se le pasan a destino
-                  this.destinoIO = true;
-                  this.detallesToDestino = response.map((detalle: any) => {
-                    return {
-                      idDetalle: detalle.solCotIdDetalle,
-                      descpDetalle: detalle.solCotDescripcion,
-                      destinoDetalle: false
-                    };
-                  });
-                  //console.log('cambios en el map ', this.detalleSolPagos);
-                },
-                (error) => {
-                  console.log('error al guardar la cabecera: ', error);
-                }
-              );
-          } catch (error) {
-            console.log('error', error);
+        setTimeout(() => {
+          this.alertBool = false;
+          this.alertText = '';
+        }, 2500);
+      } else {
+        this.alertBool = true;
+        this.alertText = '  Usted ha seleccionado solicitud física, por favor suba la documentacion de la orden de compra y las evidencias del destino en la pestaña Documentación ubicada en la parte superior.';
+        this.cab_NoSolOC = this.valorinput;
+      }
+    } else if (this.tipoSolOc == 'S'){
+      this.cab_NoSolOC = this.valorinput;
+      this.setDestino = false;//habilita la validacion del destino
+      this.alertBool = false;
+      this.alertText = '';
+      if (this.valorinput == '') {
+        this.detalleSolPagos = [];
+        this.destinoIO = false;
+        this.detallesToDestino = [];
+        
+        this.alertBool = true;
+        this.alertText = 'Por favor ingrese el nombre de la solicitud a asociar.';
+        setTimeout(() => {
+          this.alertBoolError = false;
+          this.alertBool = false;
+          this.alertText = '';
+        }, 1000);
+      } else {
+        const partes = this.valorinput.match(/(\d+)-(\d+)/);
+        if (partes && partes.length === 3) {
+          if (partes[1] != '2') {
+            this.alertBool = true;
+            this.alertText = 'No se ha encontrado la solicitud';
+            this.detalleSolPagos = [];
+            setTimeout(() => {
+              this.alertBool = false;
+              this.alertText = '';
+            }, 1000);
+          } else {
+            this.noSolicinput = parseInt(partes[2], 10);
+            try {
+              this.detSolService
+                .getDetalle_solicitud(2, this.noSolicinput)
+                .subscribe(
+                  (response) => {
+  
+                    //console.log('response', response);
+                    this.detalleSolPagos = response.map((ini: any) => ({
+                      idDetalle: ini.solCotIdDetalle,
+                      itemDesc: ini.solCotDescripcion,
+                      itemCant: ini.solCotCantidadTotal,
+                      cantidadRecibid : undefined,
+                      valorUnitario: undefined,
+                      subTotal: undefined
+                    }));
+  
+                    //variables para controlar los datos ue se le pasan a destino
+                    this.destinoIO = true;
+                    this.detallesToDestino = response.map((detalle: any) => {
+                      return {
+                        idDetalle: detalle.solCotIdDetalle,
+                        descpDetalle: detalle.solCotDescripcion,
+                        destinoDetalle: false
+                      };
+                    });
+
+                    this.cab_NoSolOC = this.valorinput;
+                    //console.log('cambios en el map ', this.detalleSolPagos);
+                  },
+                  (error) => {
+                    //console.log('error al guardar la cabecera: ', error);
+                    this.alertBoolError = true;
+                    this.alertText = 'No se ha encontrado la solicitud';
+
+                    setTimeout(() => {
+                      this.alertBoolError = false;
+                      this.alertText = '';
+                    }, 3000);
+                  }
+                );
+            } catch (error) {
+              console.log('error', error);
+            }
+  
           }
-
+  
+  
         }
-
-
+        else {
+          console.log('No tiene ningun formato realizado');
+          this.alertBoolError = true;
+          this.alertText = 'Error, no se ha ingresado el formato correcto';
+          setTimeout(() => {
+            this.alertBoolError = false;
+            this.alertText = '';
+          }, 3000);
+        }
+  
       }
-      else {
-        console.log('No tiene ningun formato realizado');
-      }
-
     }
     this.setNoSolDocumentacion();
   }
@@ -702,6 +769,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.estadoTrkTmp = this.cabecera.cabPagoEstadoTrack;
     this.depSolTmp = this.cabecera.cabPagoIdDeptSolicitante;
     this.numericoSol = this.cabecera.cabPagoNumerico;
+    this.numeroSolicitudEmail = this.cabecera.cabPagoNumerico;
 
     this.setCancelacionOrden(this.cabecera.cabPagoCancelacionOrden);
 
@@ -815,9 +883,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoObservCancelacion: this.cabecera.cabPagoObservCancelacion,
       cabPagoEstado: this.cabecera.cabPagoEstado,
       cabPagoEstadoTrack: this.cabecera.cabPagoEstadoTrack,
-      cabPagoIdEmisor: this.cookieService.get('userIdNomina'),
+      cabPagoIdEmisor: this.cabecera.cabPagoIdEmisor,
       cabPagoApprovedBy: this.aprobadopor,
-      cabPagoFinancieroBy: this.financieropor
+      cabPagoFinancieroBy: this.financieropor,
+      cabPagoNoSolOC: this.cabecera.cabPagoNoSolOC,
+      cabPagoValido: this.cabecera.cabPagoValido
     };
 
     this.cabPagoService
@@ -828,6 +898,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.log('Error', error);
+          const mensaje = "Ha habido un error al guardar los datos de la cabecera, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
         }
       );
   }
@@ -851,6 +923,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.log('Error', error);
+          const mensaje = "Ha habido un error al guardar los datos de los detalles, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+        this.callMensaje(mensaje,false);
         }
       );
     }
@@ -1300,13 +1374,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   asunto: string = 'Nueva Solicitud de Pago Recibida - Acción Requerida';
-  emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Pago.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.`;
+  emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Pago.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.<br>No. Solicitud: `;
 
   asuntoDevuelto: string = 'Notificación - Solicitud de Pago Devuelta';
-  emailContent1: string = `Estimado(a), le notificamos que la solicitud de pago autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.`;
+  emailContent1: string = `Estimado(a), le notificamos que la solicitud de pago autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
 
   asuntoAnulado: string = 'Notificación - Solicitud de Pago Anulada';
-  emailContent2: string = `Estimado(a), le notificamos que la solicitud de pago generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.`;
+  emailContent2: string = `Estimado(a), le notificamos que la solicitud de pago generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.<br>No. Solicitud: `;
 
   sendMail(mailToNotify: string, type: number) {
     let contenidoMail = '';
@@ -1314,13 +1388,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
     if(type == 1){
       asuntoMail = this.asunto;
-      contenidoMail = this.emailContent;
+      contenidoMail = this.emailContent + this.numeroSolicitudEmail;
     } else if(type == 2){
       asuntoMail = this.asuntoAnulado;
-      contenidoMail = this.emailContent2;
+      contenidoMail = this.emailContent2 + this.numeroSolicitudEmail;
     } else if(type == 3){
       asuntoMail = this.asuntoDevuelto;
-      contenidoMail = this.emailContent1;
+      contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
 
     }
 

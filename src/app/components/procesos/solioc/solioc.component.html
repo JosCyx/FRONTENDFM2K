@@ -13,7 +13,7 @@
       </div>
     </nav>
   </div>
-  <div class=" m-2 text-center">
+  <!-- <div class=" m-2 text-center">
     <div *ngIf="showmsj" class="alert alert-success" role="alert">
         <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
     </div>
@@ -21,7 +21,7 @@
         <span><i class="bi bi-exclamation-triangle-fill">
                 {{ msjError }}</i></span>
     </div>
-</div>
+</div> -->
 
   <ng-container *appAuthorize="'28'">
     
@@ -66,19 +66,21 @@
                 list="sugerencias"
                 [(ngModel)]="empleado"
                 (keyup)="searchEmpleado()"
+                (input)="selectEmpleado()"
                 placeholder="Ingrese el nombre del empleado"
               />
-              <datalist id="sugerencias">
-                <ng-container *ngFor="let emp of empleados">
-                  <option
-                    [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-                  ></option>
-                </ng-container>
-              </datalist>
-              <button class="btn btn-success" (click)="selectEmpleado()">
+              
+              <!-- <button class="btn btn-success" (click)="selectEmpleado()">
                 <i class="bi bi-check-lg"></i>
-              </button>
+              </button> -->
             </div>
+            <datalist id="sugerencias">
+              <ng-container *ngFor="let emp of empleados">
+                <option
+                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+                ></option>
+              </ng-container>
+            </datalist>
             <div class="input-group col">
               <label class="input-group-text">Area:</label>
               <input
@@ -107,7 +109,7 @@
               *ngIf="tipobusqProv == 'nombre'"
                 [(ngModel)]="buscarProveedor"
                 type="text"
-                class="form-control"
+                class="form-control mr-3"
                 list="proveedor"
                 (keyup)="searchProveedor(buscarProveedor)"
               />
@@ -115,7 +117,7 @@
               *ngIf="tipobusqProv == 'ruc'"
                 [(ngModel)]="buscarProveedor"
                 type="text"
-                class="form-control"
+                class="form-control mr-3"
                 list="proveedor"
               />
               <datalist id="proveedor" *ngIf="tipobusqProv === 'nombre'" >
@@ -127,27 +129,36 @@
                 <i class="bi bi-check-lg"></i>
               </button>
             </div>
-            <div class="input-group col">
-              <label class="input-group-text">
-                <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
-                <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                *ngIf="tipobusqProv == 'nombre'"
-                [(ngModel)]="cab_ruc_prov"
-                disabled
-              />
-              <input
-                type="text "
-                class="form-control"
-                *ngIf="tipobusqProv == 'ruc'"
-                [(ngModel)]="cab_proveedor"
-                disabled
-              />
+            <div class="row col">
+              <div class="input-group col std">
+                <label class="input-group-text">
+                  <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
+                  <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  *ngIf="tipobusqProv == 'nombre'"
+                  [(ngModel)]="cab_ruc_prov"
+                  disabled
+                />
+                <input
+                  type="text "
+                  class="form-control"
+                  *ngIf="tipobusqProv == 'ruc'"
+                  [(ngModel)]="cab_proveedor"
+                  disabled
+                />
+              </div>
+              <div class="input-group col std">
+                <!-- aqui va el nuevo campo -->
+                <label class="input-group-text">Valor aprob*.:</label>
+                <input class="form-control" type="number" (input)="validarNumeroFloat($event)" [(ngModel)]="cab_valorAprobacion">
+              </div>
             </div>
           </div>
+
+
           <div class="input-group mb-1">
             <label class="input-group-text">Asunto*:</label>
             <input
@@ -382,14 +393,15 @@
               !empleado ||
               !cab_asunto ||
               detalleList.length === 0 ||
-              itemSectorList.length === 0"
+              itemSectorList.length === 0 ||
+              cab_valorAprobacion == 0"
               data-toggle="modal" 
               data-target="#guardarOrdenCompra"
              *appAuthorize="'28'"
           >
             Guardar
           </button>
-          <button class="btn btn-success m-2" [disabled]="!empleado || !cab_asunto || detalleList.length === 0 || itemSectorList.length === 0"
+          <button class="btn btn-success m-2" [disabled]="!empleado || !cab_asunto || detalleList.length === 0 || itemSectorList.length === 0 || cab_valorAprobacion == 0"
           data-toggle="modal" data-target="#enviarSolicitud"  *appAuthorize="'27'">
             Guardar y enviar
         </button>
@@ -524,7 +536,7 @@
                 [(ngModel)]="cabecera.cabSolOCProveedor"
                 *ngIf="tipobusqProv == 'nombre'"
                 type="text"
-                class="form-control"
+                class="form-control mr-3"
                 list="proveedor"
                 (keyup)="searchProveedor(cabecera.cabSolOCProveedor)"
                 [appSecureDisable]="estadoSol"
@@ -533,7 +545,7 @@
                 [(ngModel)]="cabecera.cabSolOCRUCProveedor"
                 *ngIf="tipobusqProv == 'ruc'"
                 type="text"
-                class="form-control"
+                class="form-control mr-3"
                 list="proveedor"
                 [appSecureDisable]="estadoSol"
               />
@@ -546,27 +558,35 @@
                 <i class="bi bi-check-lg"></i>
               </button>
             </div>
-  
-            <div class="input-group col">
-              <label class="input-group-text">
-                <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
-                <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
-              </label>
-              <input
-                type="text "
-                class="form-control"
-                *ngIf="tipobusqProv == 'nombre'"
-                [(ngModel)]="cabecera.cabSolOCRUCProveedor"
-                [appSecureDisable]="estadoSol"
-              />
-              <input
-                type="text "
-                class="form-control"
-                *ngIf="tipobusqProv == 'ruc'"
-                [(ngModel)]="cabecera.cabSolOCProveedor"
-                [appSecureDisable]="estadoSol"
-              />
+
+            <div class="row col">
+              <div class="input-group col std">
+                <label class="input-group-text">
+                  <span *ngIf="tipobusqProv == 'nombre'"> RUC:</span>
+                  <span *ngIf="tipobusqProv == 'ruc'">Nombre:</span>
+                </label>
+                <input
+                  type="text "
+                  class="form-control"
+                  *ngIf="tipobusqProv == 'nombre'"
+                  [(ngModel)]="cabecera.cabSolOCRUCProveedor"
+                  [appSecureDisable]="estadoSol"
+                />
+                <input
+                  type="text "
+                  class="form-control"
+                  *ngIf="tipobusqProv == 'ruc'"
+                  [(ngModel)]="cabecera.cabSolOCProveedor"
+                  [appSecureDisable]="estadoSol"
+                />
+              </div>
+              <div class="input-group col std">
+                <!-- aqui va el nuevo campo -->
+                <label class="input-group-text">Valor aprob.:</label>
+                <input class="form-control" type="number" (input)="validarNumeroFloat($event)" [(ngModel)]="cabecera.cabSolOCValorAprobacion" [appSecureDisable]="estadoSol">
+              </div>
             </div>
+  
           </div>
           <div class="row mb-1">
             <div class="input-group col">
@@ -578,7 +598,7 @@
                 [appSecureDisable]="estadoSol"
               />
             </div>
-            <div class="row col">
+            <div class="row col ">
               <div class="input-group col std">
                 <label class="input-group-text">Estado:</label>
                 <input
@@ -603,8 +623,19 @@
             </div>
           </div>
 
+          
+          <div class="input-group mb-1" *ngIf="cabecera.cabSolOCMotivoDev != 'NOHAYMOTIVO'">
+            <label class="input-group-text motivo-dev-label">Motivo de devolución:</label>
+            <input
+              type="text"
+              class="form-control  motivo-dev"
+              [value]="cabecera.cabSolOCMotivoDev"
+              disabled
+            />
+          </div>
 
-          <div class="presupuestaria" *ngIf="aprobPreps">
+
+          <!-- <div class="presupuestaria" *ngIf="aprobPreps">
             <div class="tabs-edit">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
@@ -633,13 +664,8 @@
                             [appSecureDisable]="estadoSol"></textarea>
                     </div>
                 </div>
-            </div>
-            
-
-       
-
-
-        </div>
+            </div>   
+        </div> -->
         </div>
         <div *ngIf="actionEdit =='documentacion'" >
           <app-oc-documentacion [view]="changeview" [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-oc-documentacion>
@@ -676,7 +702,7 @@
             <thead>
               <tr>
                 <th scope="col">Item</th>
-                <th scope="col">Descripción*</th>
+                <th scope="col" style="width: 450px;">Descripción*</th>
                 <th scope="col">Presupuesto*</th>
                 <th scope="col">Sector*</th>
                 <th scope="col">Unidad</th>
@@ -794,7 +820,6 @@
                 </td>
                 <td class="align-middle cel-prep">
                   <input
-                  [appSecureDisable]="estadoSol" 
                     type="text"
                     class="form-control text-center"
                     [(ngModel)]="det_cantidad"
@@ -803,16 +828,18 @@
                 </td>
               </tr>
               <tr *appAuthorize="'66'">
-                <td colspan="6" class="align-middle text-end">
-                  <button
-                    class="btn btn-success"
-                    [appSecureDisable]="estadoSol" 
-                    [disabled]="!det_descp || tmpItemSect.length === 0"
-                    (click)="addDetalle()"
-                  >
-                    <i class="bi bi-check"></i>
-                  </button>
-                </td>
+                <ng-container *ngIf="det_descp && det_presupuesto && det_cantidad != 0">
+                  <td colspan="6" class="align-middle text-end">
+                    <button
+                      class="btn btn-success"
+                      [appSecureDisable]="estadoSol" 
+                      [disabled]="!det_descp || tmpItemSect.length === 0"
+                      (click)="addDetalle()"
+                    >
+                      <i class="bi bi-check"></i>
+                    </button>
+                  </td>
+                </ng-container>
               </tr>
             </tbody>
           </table>
@@ -861,8 +888,6 @@
           <div class="input-group mb-3">
             <label class="input-group-text">Plazo de entrega:</label>
             <input
-            [min]="cabecera.cabSolOCPlazoEntrega"
-            [max]="FechaMaxEntrega(cabecera.cabSolOCPlazoEntrega)"
               class="form-control"
               type="date"
               for="plazoentrega"
@@ -871,8 +896,6 @@
             />
             <label class="input-group-text">Fecha máxima de entrega:</label>
             <input
-            [min]="cabecera.cabSolOCFechaMaxentrega"
-            [max]="FechaMaxEntrega(cabecera.cabSolOCFechaMaxentrega)"
               class="form-control"
               type="date"
               for="fechamaxima"
@@ -948,8 +971,8 @@
               Guardar y enviar
             </button>
           </ng-container>
-          <button class="btn btn-danger m-2" data-toggle="modal" data-target="#deleteOr" >
-            Eliminar
+          <button *ngIf="cabecera.cabSolOCEstadoTracking == 10" class="btn btn-danger m-2" data-toggle="modal" data-target="#deleteOr" >
+            Eliminar solicitud
           </button>
           <button class="btn btn-danger m-2" (click)="cancelar()">
             Cancelar
@@ -982,12 +1005,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                      <tr *ngIf="itemSectorList.length != 0"><th colspan="6">Items Registrados</th></tr>
                         <tr *ngFor="let item of itemSectorList">
                             <ng-container  *ngIf="item.det_id == IdDetalle" >
                                 <td class="align-middle">{{ item.det_id }}</td>
                                 <td class="align-middle">{{ item.det_descp }}</td>
                                 <td class="align-middle">{{ item.item_id }}</td>
-                                <td class="align-middle"><input type="number" (input)="validarNumero($event)" min="1" class="form-control" name="item_cant" [(ngModel)]="item.item_cant"></td>
+                                <td class="align-middle"><input type="number" (input)="validarNumeroFloat($event)" min="1" class="form-control" name="item_cant" [(ngModel)]="item.item_cant"></td>
                             <ng-container *ngFor="let sect of sectores$ | async">
                                 <!-- <td *ngIf="sect.sectIdNomina == item.item_sector" class="align-middle">
                                     {{ sect.sectNombre }}
@@ -1046,6 +1070,7 @@
               </tr>
             </thead>
             <tbody>
+              <tr *ngIf="tmpItemSect.length != 0"><th colspan="6">Items Registrados</th></tr>
               <tr *ngFor="let item of tmpItemSect">
                 <td class="align-middle">{{ item.det_id }}</td>
                 <td class="align-middle">{{ item.det_descp }}</td>
@@ -1068,6 +1093,7 @@
                   </button>
                 </td>
               </tr>
+              <tr><th colspan="6">Registrar un nuevo item</th></tr>
               <tr>
                 <td class="align-middle">{{ det_id }}</td>
                 <td class="align-middle">
@@ -1095,7 +1121,7 @@
                       [(ngModel)]="item_cant"
                       min="1"
                       type="number"
-                      (input)="validarNumero($event)"
+                      (input)="validarNumeroFloat($event)"
                       placeholder="Cantidad"
                     />
                   </div>
@@ -1187,6 +1213,7 @@
             </tr>
           </thead>
           <tbody>
+            <tr *ngIf="item.length != 0"><th colspan="6">Items Registrados</th></tr>
             <tr *ngFor="let itm of item; let i = index">
               <ng-container *ngIf="idDetEdit == itm.itmIdDetalle">
                 <th class="align-middle">{{ itm.itmIdDetalle }}</th>
@@ -1233,6 +1260,7 @@
                 </td>
               </ng-container>
             </tr>
+            <tr><th colspan="6">Registrar nuevo item</th></tr>
             <tr *appAuthorize="'66'"><!-- Aqui hay que controlar que no se muestre en edicion -->
               <td class="align-middle">{{ det_id_edit }}</td>
               <td class="align-middle">
@@ -1261,7 +1289,7 @@
                     [(ngModel)]="item_cant"
                     min="1"
                     type="number"
-                    (input)="validarNumero($event)"
+                    (input)="validarNumeroFloat($event)"
                     placeholder="Cantidad"
                   />
                 </div>
@@ -1372,15 +1400,6 @@
             </div>
             <div class="modal-body">
                 <p>Al enviar la solicitud no podrá volver a editarla y pasará al siguiente estado.</p>
-                <!-- <div>
-                  <label for="nivGerencia" class="input-label">Notificar a:</label>
-                  <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
-                      <option value="" selected disabled>Seleccione una opción</option>
-                      <ng-container *ngFor="let niv of nivGerencias">
-                          <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
-                      </ng-container>
-                  </select>
-                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolNueva()">
@@ -1406,15 +1425,6 @@
             </div>
             <div class="modal-body">
                 <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.</p>
-                <!-- <div>
-                  <label for="nivGerencia" class="input-label">Notificar a:</label>
-                  <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
-                      <option value="" selected disabled>Seleccione una opción</option>
-                      <ng-container *ngFor="let niv of nivGerencias">
-                          <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
-                      </ng-container>
-                  </select>
-                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
@@ -1513,7 +1523,7 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <p>"Esta acción eliminará esta solicitud y no podrás acceder a ella."</p>
+                <p>Esta acción eliminará esta solicitud y ya no podrá acceder a ella.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="EliminarOrCompra(cabecera.cabSolOCTipoSolicitud,cabecera.cabSolOCNoSolicitud)">
@@ -1568,10 +1578,15 @@
             </div>
             <div class="modal-body">
                 <p>Al no autorizar la solicitud, esta se regresará al nivel anterior para su revisión.</p>
-               
+                <div>
+                  <input type="checkbox" [(ngModel)]="showMotivoDev">
+                  <label for="devolucion">Asignar motivo de la devolución:</label>
+                  <p class="text-danger font-italic">Advertencia: si la solicitud ya posee un motivo asignado, no lo debe modificar.</p>
+                  <textarea class="form-control" name="devolucion" cols="30" rows="5" [(ngModel)]="motivoDevEditar" [disabled]="!showMotivoDev"></textarea>
+              </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="noAutorizar()">
+                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="guardarDevolverSolEditada()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">

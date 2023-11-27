@@ -13,7 +13,7 @@
       </div>
     </nav>
   </div>
-  <div class=" m-2 text-center">
+  <!-- <div class=" m-2 text-center">
     <div *ngIf="showmsj" class="alert alert-success" role="alert">
         <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
     </div>
@@ -21,7 +21,7 @@
         <span><i class="bi bi-exclamation-triangle-fill">
                 {{ msjError }}</i></span>
     </div>
-</div>
+</div> -->
 
   <ng-container *appAuthorize="'31'">
     <div class="form-cot" *ngIf="changeview === 'crear'">
@@ -77,19 +77,21 @@
                 list="sugerencias"
                 [(ngModel)]="empleado"
                 (keyup)="searchEmpleado()"
+                (input)="selectEmpleado()"
                 placeholder="Ingrese el nombre del empleado"
               />
-              <datalist id="sugerencias">
-                <ng-container *ngFor="let emp of empleados">
-                  <option
-                    [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-                  ></option>
-                </ng-container>
-              </datalist>
-              <button class="btn btn-success" (click)="selectEmpleado()">
+              
+              <!-- <button class="btn btn-success" (click)="selectEmpleado()">
                 <i class="bi bi-check-lg"></i>
-              </button>
+              </button> -->
             </div>
+            <datalist id="sugerencias">
+              <ng-container *ngFor="let emp of empleados">
+                <option
+                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+                ></option>
+              </ng-container>
+            </datalist>
             <div class="input-group col">
               <label class="input-group-text">Area:</label>
               <input
@@ -116,8 +118,7 @@
               <input
                 type="date"
                 class="form-control"
-                [max]="fechaMax" 
-                [min]="fechaMin"
+                [max]="fechaMax"
                 [(ngModel)]="cab_fechafactura"
               />
             </div>
@@ -197,16 +198,17 @@
               class="form-control mr-1"
               placeholder="Ejemplo: OC OB 2-0012"
             />
-            <button class="btn btn-success" (click)="Obtener()">
+            <button class="btn btn-success" data-toggle="modal" data-target="#elegirTipoSolOC">
               <i class="bi bi-search"></i>
             </button>
           </div>
           <!-- Mensaje de error -->
           <div  *ngIf="alertBool" class=  "alert alert-warning d-flex align-items-center mt-2" role="alert">
-            <i class="bi bi-exclamation-triangle-fill" style="padding-right: 2px;" ></i>
-            <div>
-                   {{alertText}}
-            </div>
+            <i class="bi bi-exclamation-triangle-fill" style="padding-right: 2px;" >  {{alertText}}</i>
+          </div>
+          <div  *ngIf="alertBoolError" class=  "alert alert-danger d-flex align-items-center mt-2" role="alert">
+            <i class="bi bi-x-circle-fill" style="padding-right: 2px;">  {{alertText}}</i>
+            
           </div>
 
         </div>
@@ -386,7 +388,7 @@
               class="form-control"
               type="date"
               for="fechamaxima"
-              [max]="fechaMax" [min]="fechaMin"
+              [max]="fechaMax"
               [(ngModel)]="cab_fechaInspeccion"
             />
           </div>
@@ -572,7 +574,6 @@
               <input
                 type="date"
                 class="form-control"
-                [min]="cabecera.cabPagoFechaFactura"
                 [max]="FechaMaxEntrega(cabecera.cabPagoFechaFactura)"
                 [(ngModel)]="cabecera.cabPagoFechaFactura"
                 [appSecureDisable]="estadoSol"
@@ -644,17 +645,28 @@
               />
             </div>
           </div>
-            <div class="row">
-              <div class="input-group col ">
+
+          <div class="row mb-1">
+            <div class="input-group col">
+              <label class="input-group-text">Solicitud Asociada:</label>
+              <input
+                type="text"
+                class="form-control mr-3"
+                [value]="cabecera.cabPagoNoSolOC"
+                disabled
+              />
+            </div>
+            <div class="row col">
+              <div class="input-group col std">
                 <label class="input-group-text">Estado:</label>
                 <input
-                  type="text"
-                  class="form-control"
-                  [value]="estadoTexto"
-                  disabled
-                />
+                type="text"
+                class="form-control"
+                [value]="estadoTexto"
+                disabled
+              />
               </div>
-              <div class="input-group col">
+              <div class="input-group col std">
                 <label class="input-group-text">Tracking:</label>
                 <ng-container *ngFor="let nvTRK of nivelRut$ | async">
                   <input
@@ -667,6 +679,7 @@
                 </ng-container>
               </div>
             </div>
+          </div>
         </div>
         <div *ngIf="actionEdit == 'documentacion'" >
           <app-sp-documentacion  [view]="changeview" [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-sp-documentacion>
@@ -853,7 +866,6 @@
             </datalist>
             <label class="input-group-text">Fecha de Inspeccion*:</label>
             <input
-            [min]="cabecera.cabPagoFechaInspeccion"
             [max]="FechaMaxEntrega(cabecera.cabPagoFechaInspeccion)"
               class="form-control"
               type="date"
@@ -918,8 +930,8 @@
               Guardar y enviar
           </button>
           </ng-container>
-          <button class="btn btn-danger m-2" data-toggle="modal" data-target="#deleteSolP" >
-            Eliminar
+          <button *ngIf="cabecera.cabPagoEstadoTrack == 10" class="btn btn-danger m-2" data-toggle="modal" data-target="#deleteSolP" >
+            Eliminar solicitud
           </button>
           <button class="btn btn-danger m-2" (click)="cancelarEdi()">
             Cancelar
@@ -935,7 +947,7 @@
 <div class="modal fade" #exampleModal id="guardarOrdenPago" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <div *ngIf="setDestino"  class="modal-content">
+        <div  class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
                     ¿Está seguro que desea guardar esta solicitud?
@@ -954,7 +966,7 @@
             </div>
         </div>
         <!--  -->
-        <div  *ngIf="!setDestino" class="modal-content">
+        <!-- <div  *ngIf="!setDestino" class="modal-content">
           <div class="modal-header justify-content-center">
               <h3 class="font-weight-bold" id="exampleModalLabel">
                   Error
@@ -968,7 +980,7 @@
                   Aceptar
               </button>
           </div>
-      </div>
+      </div> -->
     </div>
 </div>
 
@@ -1013,15 +1025,6 @@
             </div>
             <div class="modal-body">
                 <p>Al enviar la solicitud no podrá volver a editarla y pasará al siguiente nivel.</p>
-                <!-- <div>
-                  <label for="nivGerencia" class="input-label">Notificar a:</label>
-                  <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
-                      <option value="" selected disabled>Seleccione una opción</option>
-                      <ng-container *ngFor="let niv of nivGerencias">
-                          <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
-                      </ng-container>
-                  </select>
-                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolNueva()">
@@ -1039,7 +1042,7 @@
               </h3>
           </div>
           <div class="modal-body">
-              <p>No se han guardo los destinos de los Items.</p>
+              <p>No se han guardo los destinos de los Items.<br>Para enviar la solicitud, debe haber registrado el destino de los items anteriormente.</p>
           </div>
           <div class="modal-footer">
               <button type="button" class="btn btn-danger" data-dismiss="modal">
@@ -1052,10 +1055,36 @@
 </div>
 
 <!-- Modal para verificar el envío de la solcitud guardada-->
-<div class="modal fade" #exampleModal id="enviarSolicitudGuardada" data-backdrop="static" tabindex="-1" role="dialog"
+<div class="modal fade" #exampleModal id="elegirTipoSolOC" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    Seleccione el tipo de solicitud de orden de compra que desea asociar
+                </h3>
+            </div>
+            <div class="modal-body">
+                <select class="form-select"  [(ngModel)]="tipoSolOc">
+                  <option value="F">Solicitud física</option>
+                  <option value="S">Solicitud del sistema</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="Obtener()">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal para verificar el envío de la solcitud guardada-->
+<div class="modal fade" #exampleModal id="enviarSolicitudGuardada" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div *ngIf="setDestino" class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
                     ¿Está seguro que desea guardar los cambios realizados en la solicitud y enviarla para su revisión?
@@ -1063,15 +1092,6 @@
             </div>
             <div class="modal-body">
                 <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.</p>
-                <!-- <div>
-                  <label for="nivGerencia" class="input-label">Notificar a:</label>
-                  <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
-                      <option value="" selected disabled>Seleccione una opción</option>
-                      <ng-container *ngFor="let niv of nivGerencias">
-                          <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
-                      </ng-container>
-                  </select>
-                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
@@ -1082,6 +1102,21 @@
                 </button>
             </div>
         </div>
+        <div  *ngIf="!setDestino" class="modal-content">
+          <div class="modal-header justify-content-center">
+              <h3 class="font-weight-bold" id="exampleModalLabel">
+                  Error
+              </h3>
+          </div>
+          <div class="modal-body">
+              <p>No se han guardo los destinos de los Items.<br>Para enviar la solicitud, debe haber registrado el destino de los items anteriormente.</p>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">
+                  Aceptar
+              </button>
+          </div>
+      </div>
     </div>
 </div>
 
@@ -1178,7 +1213,7 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <p>"Esta acción eliminará esta solicitud y no podrás acceder a ella."</p>
+                <p>Esta acción eliminará esta solicitud y ya no podrá acceder a ella.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="EliminarSolPo(cabecera.cabPagoTipoSolicitud,cabecera.cabPagoNoSolicitud)">

@@ -25,6 +25,8 @@ export class CabeceraOrdenCompra {
   public cabSolOCFinancieroBy: string;
   public cabSolOCAprobPresup: string;
   public cabSolOCMotivoDev: string;
+  public cabSolOCValorAprobacion: number;
+  public cabSolOCValido: number;
 
   constructor(data: any) {
     this.cabSolOCTipoSolicitud = data.cabSolOCTipoSolicitud;
@@ -53,5 +55,7 @@ export class CabeceraOrdenCompra {
     this.cabSolOCFinancieroBy=data.cabSolOCFinancieroBy;
     this.cabSolOCAprobPresup=data.cabSolOCAprobPresup;
     this.cabSolOCMotivoDev=data.cabSolOCMotivoDev;
+    this.cabSolOCValorAprobacion=data.cabSolOCValorAprobacion;
+    this.cabSolOCValido = data.cabSolOCValido;
   }
 }

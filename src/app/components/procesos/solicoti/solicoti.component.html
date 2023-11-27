@@ -7,20 +7,19 @@
                 <div class="navbar-nav">
                     <!-- <button class="btn btn-primary m-2" (click)="changeView('crear')">
                         Crear
-                    </button> -->
-                    <!-- <button (click)="metodo()">boton</button>  -->
+                    </button> --> 
                 </div>
             </div>
         </nav>
     </div>
-    <div class=" m-2 text-center">
+    <!-- <div class=" m-2 text-center">
         <div *ngIf="showmsj" class="alert alert-success" role="alert">
             <span><i class="bi bi-check-circle-fill"> {{ msjExito }}</i></span>
         </div>
         <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
             <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
         </div>
-    </div>
+    </div> -->
 
     <ng-container *appAuthorize="'25'">
         <div class="form-cot" *ngIf="changeview === 'crear'">
@@ -56,17 +55,18 @@
                         <div class="input-group col">
                             <label class="input-group-text">Solicitado por*:</label>
                             <input type="text" class="form-control" id="busqueda" list="sugerencias"
-                                [(ngModel)]="empleado" (keyup)="searchEmpleado()"
+                                [(ngModel)]="empleado" (keyup)="searchEmpleado()" (input)="selectEmpleado()"
                                 placeholder="Ingrese el nombre del empleado" />
-                            <datalist id="sugerencias">
-                                <ng-container *ngFor="let emp of empleados">
-                                    <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
-                                </ng-container>
-                            </datalist>
-                            <button class="btn btn-success" (click)="selectEmpleado()">
+                            
+                            <!-- <button class="btn btn-success" (click)="selectEmpleado()">
                                 <i class="bi bi-check-lg"></i>
-                            </button>
+                            </button> -->
                         </div>
+                        <datalist id="sugerencias">
+                            <ng-container *ngFor="let emp of empleados">
+                                <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+                            </ng-container>
+                        </datalist>
                         <div class="input-group col">
                             <label class="input-group-text">Area:</label>
                             <input type="text" class="form-control" [value]="showArea"
@@ -314,6 +314,33 @@
                     </div>
                     <div class="row mb-1">
                         <div class="input-group col">
+                            <label class="input-group-text">Tracking:</label>
+                            <ng-container *ngFor="let nvTRk of nivelRut$ | async">
+                                <input *ngIf="nvTRk.nivel === cabecera.cabSolCotEstadoTracking" type="text"
+                                    class="form-control" [value]="nvTRk.descRuteo" disabled />
+                            </ng-container>
+                        </div>
+                        <div class="input-group col">
+                            <label class="input-group-text">Estado:</label>
+                            <input type="text" class="form-control" [value]="estadoTexto" disabled />
+                        </div>
+
+                    </div>
+                    <div class="row mb-1">
+                        <!-- <div class="input-group col">
+                            <label class="input-group-text">Apr. Financiera:</label>
+                            <ng-container *ngIf="cabecera.cabSolCotFinancieroBy === 'XXXXXX'; else showValue">
+                                <input type="text" class="form-control" value="Nivel no alcanzado." disabled />
+                            </ng-container>
+                            <ng-template #showValue>
+                                <ng-container *ngFor="let emp of empleadosEdit">
+                                    <input *ngIf="emp.empleadoIdNomina == cabecera.cabSolCotFinancieroBy" type="text"
+                                        class="form-control" [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
+                                        disabled />
+                                </ng-container>
+                            </ng-template>
+                        </div> -->
+                        <div class="input-group col">
                             <label class="input-group-text">Aprobado por:</label>
                             <ng-container *ngIf="cabecera.cabSolCotApprovedBy === 'XXXXXX'; else showValue">
                                 <input type="text" class="form-control" value="Nivel no alcanzado." disabled />
@@ -326,33 +353,6 @@
                                 </ng-container>
                             </ng-template>
                         </div>
-                        <div class="input-group col">
-                            <label class="input-group-text">Estado:</label>
-                            <input type="text" class="form-control" [value]="estadoTexto" disabled />
-                        </div>
-
-                    </div>
-                    <div class="row mb-1">
-                        <div class="input-group col">
-                            <label class="input-group-text">Apr. Financiera:</label>
-                            <ng-container *ngIf="cabecera.cabSolCotFinancieroBy === 'XXXXXX'; else showValue">
-                                <input type="text" class="form-control" value="Nivel no alcanzado." disabled />
-                            </ng-container>
-                            <ng-template #showValue>
-                                <ng-container *ngFor="let emp of empleadosEdit">
-                                    <input *ngIf="emp.empleadoIdNomina == cabecera.cabSolCotFinancieroBy" type="text"
-                                        class="form-control" [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-                                        disabled />
-                                </ng-container>
-                            </ng-template>
-                        </div>
-                        <div class="input-group col">
-                            <label class="input-group-text">Tracking:</label>
-                            <ng-container *ngFor="let nvTRk of nivelRut$ | async">
-                                <input *ngIf="nvTRk.nivel === cabecera.cabSolCotEstadoTracking" type="text"
-                                    class="form-control" [value]="nvTRk.descRuteo" disabled />
-                            </ng-container>
-                        </div>
 
                     </div>
                     <div class="row mb-1">
@@ -362,6 +362,16 @@
                             [appSecureDisable]="estadoSol" />
                         </div>
                     </div>
+
+                    <div class="input-group mb-1" *ngIf="cabecera.cabSolCotMtovioDev != 'NOHAYMOTIVO'">
+                        <label class="input-group-text motivo-dev-label">Motivo de devolución:</label>
+                        <input
+                          type="text"
+                          class="form-control  motivo-dev"
+                          [value]="cabecera.cabSolCotMtovioDev"
+                          disabled
+                        />
+                      </div>
 
                     <!-- <div class="presupuestaria" *ngIf="aprobPreps">
                         <div class="tabs-edit">
@@ -403,7 +413,7 @@
                         <thead>
                             <tr>
                                 <th scope="col">Item</th>
-                                <th scope="col">Descripción*</th>
+                                <th scope="col" style="width: 450px;">Descripción*</th>
                                 <th scope="col">Presupuesto*</th>
                                 <th scope="col">Sector*</th>
                                 <th scope="col">Unidad</th>
@@ -495,7 +505,7 @@
                                 </td>
                                 <td class="align-middle cel-prep">
                                     <input type="text" class="form-control text-center" [(ngModel)]="det_cantidad"
-                                        disabled [appSecureDisable]="estadoSol" />
+                                        disabled/>
                                 </td>
                             </tr>
                             <tr *appAuthorize="'66'">
@@ -629,7 +639,7 @@
                             Guardar y enviar
                         </button>
                     </ng-container>
-                    <button class="btn btn-danger"  data-toggle="modal" data-target="#deleteCoti">Eliminar</button>
+                    <button *ngIf="cabecera.cabSolCotEstadoTracking == 10" class="btn btn-danger"  data-toggle="modal" data-target="#deleteCoti">Eliminar solicitud</button>
                     <button class="btn btn-danger m-2" (click)="cancelar()">Cancelar</button>
                 </div>
             </div>
@@ -661,12 +671,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr *ngIf="itemSectorList.length != 0"><th colspan="6">Items Registrados</th></tr>
                         <tr *ngFor="let item of itemSectorList">
                             <ng-container *ngIf="item.det_id == IdDetalleEdicion">
                                 <td class="align-middle">{{ item.det_id }}</td>
                                 <td class="align-middle">{{ item.det_descp }}</td>
                                 <td class="align-middle">{{ item.item_id }}</td>
-                                <td class="align-middle"><input type="number" (input)="validarNumero($event)" min="1"
+                                <td class="align-middle"><input type="number" (input)="validarNumeroFloat($event)" min="1"
                                         class="form-control" name="item_cant" [(ngModel)]="item.item_cant"></td>
 
 
@@ -751,6 +762,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr *ngIf="tmpItemSect.length != 0"><th colspan="6">Items Registrados</th></tr>
                         <tr *ngFor="let item of tmpItemSect">
                             <td class="align-middle">{{ item.det_id }}</td>
                             <td class="align-middle">{{ item.det_descp }}</td>
@@ -772,6 +784,7 @@
                                     <i class="bi bi-x-circle"></i></button>
                             </td>
                         </tr>
+                        <tr><th colspan="6">Registrar un nuevo item</th></tr>
                         <tr>
                             <td class="align-middle">{{ det_id }}</td>
                             <td class="align-middle">
@@ -783,7 +796,7 @@
                             </td>
                             <td class="align-middle">
                                 <div class="cel-prep">
-                                    <input class="form-control" [(ngModel)]="item_cant" (input)="validarNumero($event)"
+                                    <input class="form-control" [(ngModel)]="item_cant" (input)="validarNumeroFloat($event)"
                                         min="1" type="number" placeholder="Cantidad" />
                                 </div>
                             </td>
@@ -846,6 +859,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr *ngIf="item.length != 0"><th colspan="6">Items Registrados</th></tr>
                         <tr *ngFor="let itm of item; let i = index">
                             <ng-container *ngIf="idDetEdit == itm.itmIdDetalle">
                                 <th class="align-middle">{{ itm.itmIdDetalle }}</th>
@@ -875,6 +889,7 @@
                             </ng-container>
 
                         </tr>
+                        <tr><th colspan="6">Registrar un nuevo item</th></tr>
                         <tr *appAuthorize="'66'"><!-- Aqui hay que controlar que no se muestre en edicion -->
                             <td class="align-middle">{{ det_id_edit }}</td>
                             <td class="align-middle">
@@ -1003,7 +1018,7 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <p>"Esta acción eliminará esta solicitud y no podrás acceder a ella."</p>
+                <p>Esta acción eliminará esta solicitud y ya no podrá acceder a ella.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="EliminarCotiza(cabecera.cabSolCotTipoSolicitud
@@ -1056,15 +1071,6 @@
             </div>
             <div class="modal-body">
                 <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente estado.</p>
-                <!-- <div>
-                    <label for="nivGerencia" class="input-label">Notificar a:</label>
-                    <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
-                        <option value="" selected disabled>Seleccione una opción</option>
-                        <ng-container *ngFor="let niv of nivGerencias">
-                            <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
-                        </ng-container>
-                    </select>
-                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolNueva()">
@@ -1091,15 +1097,6 @@
             <div class="modal-body">
                 <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.
                 </p>
-                <!-- <div>
-                    <label for="nivGerencia" class="input-label">Notificar a:</label>
-                    <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
-                        <option value="" selected disabled>Seleccione una opción</option>
-                        <ng-container *ngFor="let niv of nivGerencias">
-                            <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
-                        </ng-container>
-                    </select>
-                </div> -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
@@ -1125,15 +1122,6 @@
             </div>
             <div class="modal-body">
                 <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente nivel.</p>
-                <!-- <div *ngIf="estadoTrkTmp < 40">
-                    <label for="nivGerencia" class="input-label">Notificar a:</label>
-                    <select  id="nivGerencia" class="form-select" [(ngModel)]="mailToNotify">
-                        <option value="" selected disabled>Seleccione una opción</option>
-                        <ng-container *ngFor="let niv of nivGerencias">
-                            <option *ngIf="niv.gerNivArea == areaUserCookie" [value]="niv.gerNivCorreo">{{niv.gerNivNombre}}</option>
-                        </ng-container>
-                    </select>
-                </div> -->
             </div>
             <div class="modal-footer">
                 <button *appAuthorize="'67'" type="button" class="btn btn-warning" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
@@ -1162,10 +1150,15 @@
             </div>
             <div class="modal-body">
                 <p>Al no autorizar la solicitud, esta se regresará al nivel anterior para su revisión.</p>
-
+                <div>
+                    <input type="checkbox" [(ngModel)]="showMotivoDev">
+                    <label for="devolucion">Asignar motivo de la devolución:</label>
+                    <p class="text-danger font-italic">Advertencia: si la solicitud ya posee un motivo asignado, no lo debe modificar.</p>
+                    <textarea class="form-control" name="devolucion" cols="30" rows="5" [(ngModel)]="motivoDevEditar" [disabled]="!showMotivoDev"></textarea>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="noAutorizar()">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarDevolverSolEditada()">
                     Confirmar
                 </button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">

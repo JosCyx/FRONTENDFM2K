@@ -40,7 +40,7 @@ export class AllrequestComponent implements OnInit {
 
 
 
-  bsqTipoSol: number = 0;
+  bsqTipoSol: number = 1;
   btp!: number;
   idBusq!: number;
   isSolicitud: boolean = true;
@@ -52,6 +52,8 @@ export class AllrequestComponent implements OnInit {
 
   currentPage: number = 1;
 
+  bsqContenido: string = '';
+  tipoBusqueda: string = 'emp';
 
   constructor(private router: Router,
     private serviceGlobal: GlobalService,
@@ -472,6 +474,9 @@ export class AllrequestComponent implements OnInit {
     }
   }
 
+  filtrarSolicitudes(){
+    
+  }
 
 
 

@@ -31,13 +31,34 @@
         </button>
       </div>
     </form>
-    <div class="align-items-center input-group mb-3 justify-content-end">
-      <button class="btn btn-primary" (click)="prevPage()">
-        <i class="bi bi-arrow-left"></i>
-      </button>
-      <button class="btn btn-primary" (click)="nextPage()">
-        <i class="bi bi-arrow-right"></i>
-      </button>
+    <!-- busqueda de solicitudes por empleados-->
+
+
+    <div class="align-items-center input-group mb-3 justify-content-between">
+      <div >
+        <!-- <div class="input-group">
+          <label class="input-group-text">Buscar:</label>
+          <select class="form-select" name="busqueda" [(ngModel)]="tipoBusqueda">
+            <option value="emp">Empleado</option>
+            <option value="area">Area</option>
+          </select>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Buscar por empleado"
+            [(ngModel)]="bsqContenido"
+            (keyup)="filtrarSolicitudes()"
+          />
+        </div> -->
+      </div>
+      <div>
+        <button class="btn btn-primary mr-1" (click)="prevPage()">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <button class="btn btn-primary" (click)="nextPage()">
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
     </div>
     <div class="mb-5">
       <table class="table table-bordered text-center table-hover">
