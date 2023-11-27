@@ -1306,7 +1306,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     } else if(this.devolucion == false){
       motivoDevolucion = 'NOHAYMOTIVO';
       aprobPresp = 'SI';
-    }
+    }   
     const dataCAB = {
       cabSolCotID: this.cabecera.cabSolCotID,
       cabSolCotTipoSolicitud: this.cabecera.cabSolCotTipoSolicitud,
@@ -1621,6 +1621,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     try {
       // Espera a que se complete getNivelRuteoArea
       let newEstado: number = 0;
+      let indiceNewEstado: number = 0;
       let newestadoSt: string;
       let lastNivel: number = 0;
 
@@ -1669,6 +1670,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           var nivel = this.nivelSolAsignado[i];
           if (nivel.rutareaNivel == this.estadoTrkTmp) {
             newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
+            indiceNewEstado = i;
             //extrae el tipo de proceso del nivel actual
             this.nivRuteService.getNivelInfo(newEstado).subscribe(
               (response) => {
@@ -1679,10 +1681,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
                 console.log('Error al obtener el nuevo estado de tracking: ', error);
               }
             );
-
             break;
           }
-
         }
         //hace la peticion a la API para cambiar el estado de la solicitud
         //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);
@@ -1705,6 +1705,19 @@ export class SolicotiComponent implements OnInit, OnDestroy {
               console.log('Error al actualizar el estado: ', error);
             }
           );
+
+          //si el estado nuevo es mayor al 40, actualizar la fecha
+          if (this.nivelSolAsignado[indiceNewEstado].rutareaNivel == 40) {
+            this.cabCotService.updateFechaCotizacion(this.trTipoSolicitud, this.noSolTmp, new Date()).subscribe(
+              (response) => {
+                //console.log("Fecha de aprobacion actualizada");
+              },
+              (error) => {
+                console.log('Error al actualizar la fecha de aprobacion: ', error);
+              }
+            );
+          }
+
         }, 500);
 
       }
@@ -1821,7 +1834,6 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       (response: any) => {
         //console.log('Empleado: ', response);
         mailToNotify = response[0].empleadoCorreo;
-        console.log("Correo enviado a: ", mailToNotify)
       },
       (error) => {
         console.log('Error al obtener el empleado: ', error);
