@@ -129,7 +129,7 @@ export class OCDocumentacionComponent implements OnInit, OnDestroy {
           } else if(nombre == 'xlsx'){
             const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
           const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/272697_excel_icon.png';
+          const img = 'assets/img/excel.png.png';
           resolve({url: urlfile, icono: img});
           } else if(nombre == 'docx'){
             const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
