@@ -1065,6 +1065,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     try {
       // Espera a que se complete getNivelRuteoArea
       let newEstado: number = 0;
+      let indiceNewEstado: number = 0;
       let newestadoSt: string;
       let lastNivel: number = 0;
 
@@ -1115,6 +1116,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           var nivel = this.nivelSolAsignado[i];
           if (nivel.rutareaNivel == this.estadoTrkTmp) {
             newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
+            indiceNewEstado = i;
             //extrae el tipo de proceso del nivel actual
             this.nivRuteService.getNivelInfo(newEstado).subscribe(
               (response) => {
@@ -1151,6 +1153,18 @@ export class SolipagoComponent implements OnInit, OnDestroy {
               console.log('Error al actualizar el estado: ', error);
             }
           );
+
+          //si el estado nuevo es mayor al 40, actualizar la fecha
+          if (this.nivelSolAsignado[indiceNewEstado].rutareaNivel == 40) {
+            this.cabPagoService.updateFechaPago(this.trTipoSolicitud, this.noSolTmp, new Date()).subscribe(
+              (response) => {
+                //console.log("Fecha de aprobacion actualizada");
+              },
+              (error) => {
+                console.log('Error al actualizar la fecha de aprobacion: ', error);
+              }
+            );
+          }
         }, 500);
 
       }

@@ -54,7 +54,7 @@ export class AllrequestComponent implements OnInit {
 
   bsqContenido: string = '';
   tipoBusqueda: string = 'emp';
-  
+
   //busqueda
   idAreabus: number = 0;
   idEmpleadobus: string = "";
@@ -187,9 +187,9 @@ export class AllrequestComponent implements OnInit {
       this.metodoBusq = 1;
     } else if (maxNivel >= 20 && maxNivel <= 40) {
       this.metodoBusq = 2;
-    } else if (maxNivel >= 50 && maxNivel <= 70) {
+    } else if ((maxNivel >= 50 && maxNivel <= 70) || maxNivel == 999){
       this.metodoBusq = 3;
-    }
+    } 
   }
 
   reorderCotizaciones(): void {
@@ -215,10 +215,10 @@ export class AllrequestComponent implements OnInit {
       this.cabCotService.getCotizacionesByIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
           // console.log("Exito: ", response);
-          this.allSol = response.filter(item => item.cabSolCotValido==1);
+          this.allSol = response.filter(item => item.cabSolCotValido == 1);
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
-          this.allSoltmp=this.allSol;
+          this.allSoltmp = this.allSol;
 
         },
         error => {
@@ -229,10 +229,10 @@ export class AllrequestComponent implements OnInit {
       this.cabCotService.getCotizacionesbyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response.filter(item => item.cabSolCotValido==1);
+          this.allSol = response.filter(item => item.cabSolCotValido == 1);
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
-          this.allSoltmp=this.allSol;
+          this.allSoltmp = this.allSol;
 
         },
         error => {
@@ -243,10 +243,10 @@ export class AllrequestComponent implements OnInit {
       this.cabCotService.getAllCotizaciones().subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response.filter(item => item.cabSolCotValido==1);
+          this.allSol = response.filter(item => item.cabSolCotValido == 1);
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
-          this.allSoltmp=this.allSol;
+          this.allSoltmp = this.allSol;
         },
         error => {
           console.log(error);
@@ -261,10 +261,10 @@ export class AllrequestComponent implements OnInit {
       this.cabOCService.getOrdenCmpbyIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response.filter(item => item.cabSolOCValido==1);
+          this.allSol = response.filter(item => item.cabSolOCValido == 1);
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
-          this.allSoltmp=this.allSol;
+          this.allSoltmp = this.allSol;
 
         },
         error => {
@@ -275,10 +275,10 @@ export class AllrequestComponent implements OnInit {
       this.cabOCService.getOrdenCmpbyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response.filter(item => item.cabSolOCValido==1);
+          this.allSol = response.filter(item => item.cabSolOCValido == 1);
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
-          this.allSoltmp=this.allSol;
+          this.allSoltmp = this.allSol;
 
 
         },
@@ -291,10 +291,10 @@ export class AllrequestComponent implements OnInit {
       this.cabOCService.getAllOrdenCmp().subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response.filter(item => item.cabSolOCValido==1);
+          this.allSol = response.filter(item => item.cabSolOCValido == 1);
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
-          this.allSoltmp=this.allSol;
+          this.allSoltmp = this.allSol;
         },
         error => {
           console.log(error);
@@ -310,10 +310,10 @@ export class AllrequestComponent implements OnInit {
       this.cabPagoService.getPagobyIdNomina(this.cookieService.get('userIdNomina')).subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response.filter(item => item.cabPagoValido==1);
+          this.allSol = response.filter(item => item.cabPagoValido == 1);
           this.reorderOrdenPago();
           this.saveEncargadoPago();
-          this.allSoltmp=this.allSol;
+          this.allSoltmp = this.allSol;
 
         },
         error => {
@@ -324,10 +324,10 @@ export class AllrequestComponent implements OnInit {
       this.cabPagoService.getPagobyArea(parseInt(this.cookieService.get('userArea'))).subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response.filter(item => item.cabPagoValido==1);
+          this.allSol = response.filter(item => item.cabPagoValido == 1);
           this.reorderOrdenPago();
           this.saveEncargadoPago();
-          this.allSoltmp=this.allSol;
+          this.allSoltmp = this.allSol;
 
         },
         error => {
@@ -339,10 +339,10 @@ export class AllrequestComponent implements OnInit {
       this.cabPagoService.getAllPago().subscribe(
         response => {
           //console.log("Exito: ", response);
-          this.allSol = response.filter(item => item.cabPagoValido==1);
+          this.allSol = response.filter(item => item.cabPagoValido == 1);
           this.reorderOrdenPago();
           this.saveEncargadoPago();
-          this.allSoltmp=this.allSol;
+          this.allSoltmp = this.allSol;
         },
         error => {
           console.log(error);
@@ -406,7 +406,7 @@ export class AllrequestComponent implements OnInit {
   async saveEncargadoPago() {
     for (const sol of this.allSol) {
       try {
-        const encargado = await this.setEncargado(sol.cabPagoSolicitante,sol.cabPagoEstadoTrack, sol.cabPagoIdDeptSolicitante);
+        const encargado = await this.setEncargado(sol.cabPagoSolicitante, sol.cabPagoEstadoTrack, sol.cabPagoIdDeptSolicitante);
         sol.encargado = encargado; // Agrega la nueva propiedad "encargado" al elemento de allSol
       } catch (error) {
         console.error("Error al obtener el encargado para la solicitud:", error);
@@ -492,118 +492,116 @@ export class AllrequestComponent implements OnInit {
       return '';
     }
   }
+  clearBusqueda() {
+    this.bsqContenido = '';
+    this.allSol = this.allSoltmp;
+  }
 
-  filtrarSolicitudes(){
-    this.allSol=this.allSoltmp;
-    if(this.bsqContenido== ''){
-      this.allSol=this.allSoltmp;
-    }else if (this.bsqTipoSol == 1) {
-      if(this.tipoBusqueda == 'emp'){        
-          this.BuscarEmpleado();
-          this.allSol= this.allSol.filter( item => item.cabSolCotSolicitante == this.idEmpleadobus);
-        
-      }else if(this.tipoBusqueda == 'area'){
+
+  filtrarSolicitudes() {
+    if (this.bsqContenido == '') {
+      this.allSol = this.allSoltmp;
+    } else if (this.bsqTipoSol == 1) {
+      if (this.tipoBusqueda == 'emp') {
+        this.BuscarEmpleado();
+        this.allSol = this.allSol.filter(item => item.cabSolCotSolicitante == this.idEmpleadobus);
+
+      } else if (this.tipoBusqueda == 'area') {
         this.BuscarArea();
-        this.allSol= this.allSol.filter( item => item.cabSolCotIdArea == this.idAreabus);
-            }
+        this.allSol = this.allSol.filter(item => item.cabSolCotIdArea == this.idAreabus);
+      } else if (this.tipoBusqueda == 'asunto'){
+        this.allSol = this.allSol.filter(item => item.cabSolCotAsunto.includes(this.bsqContenido));
+      } else if (this.tipoBusqueda == 'num'){
+        this.allSol = this.allSol.filter(item => item.cabSolCotNumerico.includes(this.bsqContenido));
+      }
     } else if (this.bsqTipoSol == 2) {
-      if(this.tipoBusqueda == 'emp'){        
-          console.log("entro a buscar empleado",this.allSol);
-          this.BuscarEmpleado();
-          this.allSol= this.allSol.filter( item => item.cabSolOCSolicitante == this.idEmpleadobus);
-       
-      }else if(this.tipoBusqueda == 'area'){
+      if (this.tipoBusqueda == 'emp') {
+        console.log("entro a buscar empleado", this.allSol);
+        this.BuscarEmpleado();
+        this.allSol = this.allSol.filter(item => item.cabSolOCSolicitante == this.idEmpleadobus);
+
+      } else if (this.tipoBusqueda == 'area') {
         this.BuscarArea();
-        this.allSol= this.allSol.filter( item => item.cabSolOCIdArea == this.idAreabus);
-        console.log("entro a buscar area",this.allSol); 
-            }
+        this.allSol = this.allSol.filter(item => item.cabSolOCIdArea == this.idAreabus);
+        console.log("entro a buscar area", this.allSol);
+      } else if (this.tipoBusqueda == 'asunto'){
+        this.allSol = this.allSol.filter(item => item.cabSolOCAsunto.includes(this.bsqContenido));
+      } else if (this.tipoBusqueda == 'num'){
+        this.allSol = this.allSol.filter(item => item.cabSolOCNumerico.includes(this.bsqContenido));
+      }
     } else if (this.bsqTipoSol == 3) {
-      if(this.tipoBusqueda == 'emp'){
-        
-          console.log("entro a buscar empleado",this.allSol);
-          this.BuscarEmpleado();
-          this.allSol= this.allSol.filter( item => item.cabPagoSolicitante == this.idEmpleadobus);
-        
-      }else if(this.tipoBusqueda == 'area'){
+      if (this.tipoBusqueda == 'emp') {
+
+        console.log("entro a buscar empleado", this.allSol);
+        this.BuscarEmpleado();
+        this.allSol = this.allSol.filter(item => item.cabPagoSolicitante == this.idEmpleadobus);
+
+      } else if (this.tipoBusqueda == 'area') {
         this.BuscarArea();
-        this.allSol= this.allSol.filter( item => item.cabPagoIdAreaSolicitante == this.idAreabus);
-        console.log("entro a buscar area",this.allSol); 
-            }
-    }
-  }
-  
-  BuscarArea(){
-  const bsqContenido = this.bsqContenido.toUpperCase().trim();
-  const foundArea = this.areas.find(element => element.areaDecp.trim().includes(bsqContenido)
-  );
-  this.idAreabus = foundArea ? foundArea.areaIdNomina : 0;
-  console.log("AREAS🚧", this.idAreabus);
-}
-  BuscarEmpleado(){
-  const bsqContenido = this.bsqContenido.toUpperCase().trim();
-  const foundEmpleado = this.empleados.find(element => {
-    const empleadoNom = element.empleadoNombres.trim();
-    const empleadoApelli= element.empleadoApellidos.trim();
-    return empleadoNom.includes(bsqContenido) || empleadoApelli.includes(bsqContenido);
-  }); 
-  this.idEmpleadobus = foundEmpleado ? foundEmpleado.empleadoIdNomina : "";
-  console.log("dfdfgg🌞", this.idEmpleadobus);
-  }
-  
-
-
-
-
-
-  /*async setEncargado(nivel: number, dep: number) {
-    console.log("INICIO DEL METODO SETENCARGADO")
-    let encargado: string = '';
-
-    console.log("nivel: ", nivel);
-    console.log("dep: ", dep);
-
-    //buscar en la lista de nivProceso el elemento que coincida con nivel y extraer la propiedad nivProceso
-    let nivelLet = this.nivProceso.find(x => x.nivel == nivel);
-    //console.log("nivelLet: ", nivelLet);
-    const nivelProceso = nivelLet.procesoRuteo;
-    //console.log("nivelProceso: ", nivelProceso);
-    //console.log(this.nivelEmpleados)
-    if (nivelProceso == 'E') {
-      //buscar en la lista de nivelEmpleados el elemento que coincida con el nivel y el departamento y extraer la propiedad empleadoNombre
-      let empleado = this.nivelEmpleados.find(x => x.empNivRuteo == nivel && x.empNivDeptAutorizado == dep);
-      console.log("empleado: ", empleado);
-      encargado = await this.searchEmpleadobyId(empleado.empNivEmpelado);
-
-    } else if (nivelProceso == 'G') {
-      //buscar en la lista de nivelEmpleados el elemento que coincida con el nivel y el departamento y extraer la propiedad empleadoNombre
-      let empleado = this.nivelEmpleados.find(x => x.nivel == nivel && x.dep == 0);
-      console.log("empleado: ", empleado);
-      encargado = await this.searchEmpleadobyId(empleado.empNivEmpelado);
-
-    }
-    console.log("encargado: ", encargado);
-
-    this.allSol.map((item) => {
-      if (item.cabSolCotId == this.serviceGlobal.solID) {
-        item.cabSolCotEncargado = encargado;
+        this.allSol = this.allSol.filter(item => item.cabPagoIdAreaSolicitante == this.idAreabus);
+        console.log("entro a buscar area", this.allSol);
+      } else if (this.tipoBusqueda == 'asunto'){
+        this.allSol = this.allSol.filter(item => item.cabPagoAsunto.includes(this.bsqContenido));
+      } else if (this.tipoBusqueda == 'num'){
+        this.allSol = this.allSol.filter(item => item.cabPagoNumerico.includes(this.bsqContenido));
       }
+    }
+  }
+
+  BuscarArea() {
+    const bsqContenido = this.bsqContenido.toUpperCase().trim();
+  
+    // Encontrar áreas que contengan la cadena de búsqueda
+    const areasCoincidentes = this.areas.filter(element => {
+      const areaNom = element.areaDecp.trim().toUpperCase();
+      return areaNom.includes(bsqContenido);
     });
-
+  
+    // Ordenar las áreas por la posición de la coincidencia más cercana
+    areasCoincidentes.sort((a, b) => {
+      const posA = a.areaDecp.toUpperCase().indexOf(bsqContenido);
+      const posB = b.areaDecp.toUpperCase().indexOf(bsqContenido);
+      return posA - posB;
+    });
+  
+    // Tomar el área con la coincidencia más cercana
+    const foundArea = areasCoincidentes[0];
+  
+    if (foundArea) {
+      this.idAreabus = foundArea.areaIdNomina;
+    } else {
+      this.idAreabus = 0;
+    }
   }
+  
 
-  async searchEmpleadobyId(id: string){
-    let nombres = '';
-    this.empService.getEmpleadoByNomina(id).subscribe(
-      response => {
-        //console.log("Exito: ", response);
-        nombres = response[0].empleadoNombres + response[0].empleadoApellidos;
-      },
-      error => {
-        console.log(error);
-      }
-    );
-    console.log("nombres: ", nombres)
-    return nombres;
-  }*/
+  BuscarEmpleado() {
+    const bsqContenido = this.bsqContenido.toUpperCase().trim();
+  
+    // Encontrar empleados que contengan la cadena de búsqueda
+    const empleadosCoincidentes = this.empleados.filter(element => {
+      const empleadoNom = (element.empleadoNombres + ' ' + element.empleadoApellidos).trim().toUpperCase();
+      return empleadoNom.includes(bsqContenido);
+    });
+  
+    // Ordenar los empleados por la posición de la coincidencia más cercana
+    empleadosCoincidentes.sort((a, b) => {
+      const posA = (a.empleadoNombres + ' ' + a.empleadoApellidos).toUpperCase().indexOf(bsqContenido);
+      const posB = (b.empleadoNombres + ' ' + b.empleadoApellidos).toUpperCase().indexOf(bsqContenido);
+      return posA - posB;
+    });
+  
+    // Tomar el empleado con la coincidencia más cercana
+    const foundEmpleado = empleadosCoincidentes[0];
+  
+    console.log("Empleado encontrado:", foundEmpleado);
+  
+    if (foundEmpleado) {
+      this.idEmpleadobus = foundEmpleado.empleadoIdNomina;
+    } else {
+      this.idEmpleadobus = "";
+    }
+  }
+  
 
 }

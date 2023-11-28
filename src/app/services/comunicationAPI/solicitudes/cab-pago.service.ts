@@ -97,6 +97,13 @@ export class CabPagoService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolPago/UpdateAprobado?tipoSol=${tipoSol}&noSol=${noSol}&id=${id}`,null, { headers: headers });
   }
+
+  updateFechaPago(tipoSol: number, noSol: number, fecha: Date) {
+    const headers = this.getHeadersWithAuthToken();
+    const formattedFecha = fecha.toISOString();
+    return this.http.put(`${this.APIUrl}/CabSolPago/UpdateFecha?tipoSol=${tipoSol}&noSol=${noSol}&fecha=${formattedFecha}`, null, { headers: headers });
+  }
+
     //Metodo eliminar solicitud de pago , detalles  y documentoss
     DeleteSolPago(TipoSol:number,NoSol:number){
       const headers = this.getHeadersWithAuthToken();

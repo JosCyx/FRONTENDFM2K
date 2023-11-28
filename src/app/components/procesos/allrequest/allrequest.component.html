@@ -35,22 +35,38 @@
 
 
     <div class="align-items-center input-group mb-3 justify-content-between">
-      <div >
+    
+      <div>
         <div class="input-group">
-          <label class="input-group-text">Buscar:</label>
+          <label class="input-group-text">Filtrar por:</label>
           <select class="form-select" name="busqueda" [(ngModel)]="tipoBusqueda">
             <option value="emp">Empleado</option>
             <option value="area">Area</option>
+            <option value="asunto">Asunto</option>
+            <option value="num">Código</option>
           </select>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Buscar por empleado"
-            [(ngModel)]="bsqContenido"
-          />
+          <input *ngIf="tipoBusqueda == 'emp'" type="text" list="sugerenciasemp" class="form-control"
+            placeholder="Buscar por empleado" [(ngModel)]="bsqContenido" />
+          <input *ngIf="tipoBusqueda == 'area'" type="text" list="sugerenciasarea" class="form-control"
+            placeholder="Buscar por area" [(ngModel)]="bsqContenido" />
+          <input *ngIf="tipoBusqueda == 'asunto'" type="text" class="form-control" placeholder="Buscar por asunto"
+            [(ngModel)]="bsqContenido" />
+          <input *ngIf="tipoBusqueda == 'num'" type="text" class="form-control" placeholder="Buscar por numero"
+            [(ngModel)]="bsqContenido" />
           <button class="btn btn-outline-success" type="button" (click)="filtrarSolicitudes()">Buscar</button>
+          <button  class="btn btn-success" (click)="clearBusqueda()"><i class="bi bi-arrow-clockwise"></i></button>
         </div>
       </div>
+      <datalist id="sugerenciasemp">
+        <ng-container *ngFor="let emp of empleados">
+          <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+        </ng-container>
+      </datalist>
+      <datalist id="sugerenciasarea">
+        <ng-container *ngFor="let area of areas">
+          <option [value]="area.areaDecp"></option>
+        </ng-container>
+      </datalist>
       <div>
         <button class="btn btn-primary mr-1" (click)="prevPage()">
           <i class="bi bi-arrow-left"></i>
@@ -87,7 +103,8 @@
             </td>
           </tr>
           <ng-container *ngIf="btp == 1">
-            <tr *ngFor="let sol of allSol| paginate : { itemsPerPage: 10, currentPage: currentPage }" (click)="selectSol(sol.cabSolCotID)">
+            <tr *ngFor="let sol of allSol| paginate : { itemsPerPage: 10, currentPage: currentPage }"
+              (click)="selectSol(sol.cabSolCotID)">
               <td class="align-middle">{{ sol.cabSolCotNumerico }}</td>
               <ng-container *ngFor="let area of areaList$ | async">
                 <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolCotIdArea">

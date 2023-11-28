@@ -48,11 +48,11 @@
 
       <a href="{{ pat.docUrl }}" target="_blank">
         <img
-          src="assets/img/272699_pdf_icon.png"
+          src="{{pat.docImage}}"
           width="100"
           alt="..."
         />
-        <h5 class="card-title">{{ pat.docNombre }}</h5>
+        <h5>{{ pat.docNombre }}</h5>
         <a
           class="link-primary"
           (click)="DowmloadFile(pat.docUrl, pat.docNombre)"

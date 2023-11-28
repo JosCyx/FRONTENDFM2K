@@ -102,6 +102,13 @@ export class CabOrdCompraService {
     return this.http.put(this.APIUrl + `/CabSolOrdenCompras/UpdateFinanciero?tipoSol=${tipoSol}&noSol=${noSol}&id=${id}`,null, { headers: headers });
   }
 
+  updateFechaOC(tipoSol: number, noSol: number, fecha: Date) {
+    const headers = this.getHeadersWithAuthToken();
+    const formattedFecha = fecha.toISOString();
+    return this.http.put(`${this.APIUrl}/CabSolOrdenCompras/UpdateFecha?tipoSol=${tipoSol}&noSol=${noSol}&fecha=${formattedFecha}`, null, { headers: headers });
+
+  }
+
   updateMotivoDevolucion(tipoSol: number, noSol: number, motivo: string) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolOrdenCompras/UpdateMotivoDevolucion?tipoSol=${tipoSol}&noSol=${noSol}&motivo=${motivo}`,null, { headers: headers });

@@ -103,6 +103,12 @@ export class CabCotizacionService {
     return this.http.put(this.APIUrl + `/CabSolCotizacions/UpdateFinanciero?tipoSol=${tipoSol}&noSol=${noSol}&id=${id}`,null, { headers: headers });
   }
 
+  updateFechaCotizacion(tipoSol: number, noSol: number, fecha: Date) {
+    const headers = this.getHeadersWithAuthToken();
+    const formattedFecha = fecha.toISOString();
+    return this.http.put(`${this.APIUrl}/CabSolCotizacions/UpdateFecha?tipoSol=${tipoSol}&noSol=${noSol}&fecha=${formattedFecha}`, null, { headers: headers });
+  }
+
   updateMotivoDevolucion(tipoSol: number, noSol: number, motivo: string) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolCotizacions/UpdateMotivoDevolucion?tipoSol=${tipoSol}&noSol=${noSol}&motivo=${motivo}`,null, { headers: headers });
