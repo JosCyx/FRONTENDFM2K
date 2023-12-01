@@ -272,16 +272,13 @@ export class CotPdfComponent implements OnInit {
                     [
                       { text: 'PLAZO DE ENTREGA:', style: 'textos' },
                       {
-                        text: (this.datosCabcot.cabecera.cabSolCotPlazoEntrega =
-                          format(
-                            parseISO(this.datosCabcot.cabecera.cabSolCotPlazoEntrega),
-                            'yyyy-MM-dd'
-                          )),
+                        text: (this.datosCabcot.cabecera.cabSolCotPlazoEntrega === null ? 'Sin fecha' :  format(
+                            parseISO(this.datosCabcot.cabecera.cabSolCotPlazoEntrega),'yyyy-MM-dd')),
                         alignment: 'center',
                       },
                       { text: 'FECHA MAXIMA DE ENTREGA:', style: 'textos' },
                       {
-                        text: (this.datosCabcot.cabecera.cabSolCotFechaMaxentrega =
+                        text: (this.datosCabcot.cabecera.cabSolCotFechaMaxentrega === null  ? 'Sin fecha' :
                           format(
                             parseISO(
                               this.datosCabcot.cabecera.cabSolCotFechaMaxentrega
@@ -509,7 +506,7 @@ export class CotPdfComponent implements OnInit {
         this.datosCabcot.cabecera.cabSolCotInspector
       ) {
         this.inpectores =
-          iterator.empleadoNombres + '' + iterator.empleadoApellidos;
+          iterator.empleadoNombres + ' ' + iterator.empleadoApellidos;
       }
     }
   }

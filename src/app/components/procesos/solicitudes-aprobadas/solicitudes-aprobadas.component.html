@@ -5,8 +5,8 @@
   <!--  -->
   <div class="formRol" *appAuthorize="'35'">
     <form class="form-tiposol d-flex row mb-5">
-      <div class="form input-group">
-       <div class="col" >
+      <div class="form " style="display: flex; flex-direction: row; gap: 30px;">
+       <div style="display: flex; flex-direction: column;">
          <label class="form-label" for="tipoSol"> Tipo de Solicitud:</label>
          <select class="form-select" name="tipoSol" [(ngModel)]="AbierTipoSol">
            <option disabled selected value="0">Seleccione una opción...</option>
@@ -15,7 +15,7 @@
            </option>
          </select>
        </div>
-        <div class="col" >
+        <div style="display: flex; flex-direction: column;" >
           <label class="form-label" for="estadoSol"> Estados:</label>
           <select class="form-select" name="estadoSol" [(ngModel)]="Allstate">
             <option disabled selected value="0">Seleccione una opción...</option>
@@ -26,7 +26,8 @@
         </div>
         <div class="botones" >
           <button
-            class="btn btn-outline-success"
+            class="success-button-outline"
+            style="padding: 8px"
             (click)="consultarSolicitudes()"
           >
             Consultar
@@ -34,11 +35,11 @@
         </div>
       </div>
     </form>
-    <div class="align-items-center input-group mb-3 justify-content-end">
-      <button class="btn btn-primary" (click)="prevPage()">
+    <div class="mb-1 text-end">
+      <button class="pagination-btnl primary-button mr-2" (click)="prevPage()">
         <i class="bi bi-arrow-left"></i>
       </button>
-      <button class="btn btn-primary" (click)="nextPage()">
+      <button class=" pagination-btnr primary-button" (click)="nextPage()">
         <i class="bi bi-arrow-right"></i>
       </button>
     </div>

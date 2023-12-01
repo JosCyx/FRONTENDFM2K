@@ -142,7 +142,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
    fechaMax: string = '';
   areaUserCookie: number = Number(this.cookieService.get('userArea'));
   numeroSolicitudEmail: string = '';
-
+  devolucion: boolean = false;//controla si la solicitud esta siendo devuelta o no
+  motivoDevEditar: string = '';
+  solicitudFrom: string = '';
 
   constructor(
     private empService: EmpleadosService,
@@ -513,6 +515,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     await this.getSolName(this.trLastNoSol);
     this.numeroSolicitudEmail = this.solNumerico;
 
+    let ifDestino = '';
+    if(this.setDestino == true){
+      ifDestino = 'S';
+    } else if(this.setDestino == false){
+      ifDestino = 'N';
+    }
+
     const dataCAB = {
       cabPagoNumerico: this.solNumerico,
       cabPagoTipoSolicitud: this.trTipoSolicitud,
@@ -541,7 +550,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoIdEmisor: this.cookieService.get('userIdNomina'),
       cabPagoApprovedBy: 'XXXXXX',
       cabPagoNoSolOC: this.cab_NoSolOC,
-      cabPagoValido: 1
+      cabPagoValido: 1,
+      cabPagoMotivoDev: 'NOHAYMOTIVO',
+      cabPagoFrom: this.solicitudFrom,
+      cabPagoIfDestino: ifDestino
     };
 
     //enviar datos de cabecera a la API
@@ -600,8 +612,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.showItDt = valor;
   }
 
+
   async Obtener() {
     if (this.tipoSolOc == 'F'){
+      this.solicitudFrom = 'F';
       this.cab_NoSolOC = this.valorinput;
       this.setDestino = true;//inhabilita la validacion del destino
       if(this.valorinput == ''){
@@ -619,6 +633,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         this.cab_NoSolOC = this.valorinput;
       }
     } else if (this.tipoSolOc == 'S'){
+      this.solicitudFrom = 'S';
       this.cab_NoSolOC = this.valorinput;
       this.setDestino = false;//habilita la validacion del destino
       this.alertBool = false;
@@ -767,9 +782,23 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.cabecera = this.solicitudEdit.cabecera;
     this.noSolTmp = this.cabecera.cabPagoNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabPagoEstadoTrack;
+    this.areaSolTmp = this.cabecera.cabPagoIdAreaSolicitante;
     this.depSolTmp = this.cabecera.cabPagoIdDeptSolicitante;
     this.numericoSol = this.cabecera.cabPagoNumerico;
     this.numeroSolicitudEmail = this.cabecera.cabPagoNumerico;
+
+    if(this.cabecera.cabPagoIfDestino == 'S'){
+      this.setDestino = true;
+    } else if (this.cabecera.cabPagoIfDestino == 'N'){
+      this.setDestino = false;
+    }
+
+    if(this.cabecera.cabPagoFrom == 'F'){
+      this.setDestino = true;
+    } else if(this.cabecera.cabPagoFrom == 'S'){
+      this.setDestino = this.setDestino;
+    }
+
 
     this.setCancelacionOrden(this.cabecera.cabPagoCancelacionOrden);
 
@@ -793,26 +822,29 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     //formatear la fecha de la solicitud de pago
     this.fechaFormateada = this.formatDateToSpanish(new Date(this.cabecera.cabPagoFechaEmision))
     //
-    this.cabecera.cabPagoFechaInspeccion = this.cabecera.cabPagoFechaInspeccion === "0001-01-01T00:00:00" ? '':   format(
-      parseISO(this.cabecera.cabPagoFechaInspeccion),'yyyy-MM-dd');
+    this.formatFechaInspeccion();
       //
-    this.cabecera.cabPagoFechaFactura= this.cabecera.cabPagoFechaFactura === "0001-01-01T00:00:00" ? '':format(
-      parseISO(this.cabecera.cabPagoFechaFactura),
-      'yyyy-MM-dd'
-    );
+    this.formatFechaFactura();
+    this.getInspector();
+    this.getLastNivel();
 
-    setTimeout(() => {
-      for (let empl of this.empleadoEdi) {
-        if (empl.empleadoIdNomina == this.cabecera.cabPagoReceptor) {
-          this.receptor = empl.empleadoNombres + ' ' + empl.empleadoApellidos;
+  }
+  lastNivel: string = '';
+
+  async getInspector() {
+    await this.empService.getEmpleadosList().subscribe((data) => {
+      this.empleadoEdi = data;
+      for (let emp of this.empleadoEdi) { 
+        if (emp.empleadoIdNomina == this.cabecera.cabPagoReceptor) {
+          this.receptor = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
         }
-      }  
-      this.getNivelRuteoArea();
-    }, 200);
-    
+      }
+    });
+    this.getNivelRuteoArea();
+  }
 
-    setTimeout(() => {
-      for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+  getLastNivel(){
+    for (let i = 0; i < this.nivelSolAsignado.length; i++) {
         const element = this.nivelSolAsignado[i];
   
         //guardar el ultimo elemento de la lista
@@ -820,11 +852,48 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           const nivel = element.rutareaNivel;
           this.lastNivel = nivel.toString();
         }
+        //console.log(this.estadoSol)
       }
-    }, 500);
-
   }
-  lastNivel: string = '';
+
+  formatFechaInspeccion(){
+    /*this.cabecera.cabPagoFechaInspeccion = this.cabecera.cabPagoFechaInspeccion === null ? '':   format(
+      parseISO(this.cabecera.cabPagoFechaInspeccion),'yyyy-MM-dd');*/
+    if (this.cabecera.cabPagoFechaInspeccion) {
+      const fechaMaxEntrega = parseISO(this.cabecera.cabPagoFechaInspeccion);
+      
+      if (!isNaN(fechaMaxEntrega.getTime())) {
+        // La fecha es válida, ahora puedes formatearla
+        this.cabecera.cabPagoFechaInspeccion = format(fechaMaxEntrega, 'yyyy-MM-dd');
+      } else {
+        // La fecha no es válida, maneja el caso según tus necesidades
+        console.error('Fecha máxima de inspeccion no válida:', this.cabecera.cabPagoFechaInspeccion);
+      }
+    } else {
+      // La fecha es undefined, maneja el caso según tus necesidades
+      console.error('La fecha máxima de inspeccion es undefined.');
+    }
+  }
+
+  formatFechaFactura(){
+    /*this.cabecera.cabPagoFechaFactura= this.cabecera.cabPagoFechaFactura === null ? '':format(
+      parseISO(this.cabecera.cabPagoFechaFactura),'yyyy-MM-dd');*/
+    if (this.cabecera.cabPagoFechaFactura) {
+      const fechaMaxEntrega = parseISO(this.cabecera.cabPagoFechaFactura);
+      
+      if (!isNaN(fechaMaxEntrega.getTime())) {
+        // La fecha es válida, ahora puedes formatearla
+        this.cabecera.cabPagoFechaFactura = format(fechaMaxEntrega, 'yyyy-MM-dd');
+      } else {
+        // La fecha no es válida, maneja el caso según tus necesidades
+        console.error('Fecha máxima de inspeccion no válida:', this.cabecera.cabPagoFechaFactura);
+      }
+    } else {
+      // La fecha es undefined, maneja el caso según tus necesidades
+      console.error('La fecha máxima de inspeccion es undefined.');
+    }
+  }
+
   //
   get estadoTexto(): string {
     switch (this.cabecera.cabPagoEstado) {
@@ -857,6 +926,24 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }
   }
   async saveEditCabeceraPago() {
+    let motivoDevolucion = '';
+    let aprobPresp = '';
+    if(this.devolucion == true){
+      motivoDevolucion = this.motivoDevEditar;
+      aprobPresp = 'NO';
+    } else if(this.devolucion == false){
+      motivoDevolucion = 'NOHAYMOTIVO';
+      aprobPresp = 'SI';
+    } 
+
+
+    let ifDestino = '';
+    if(this.setDestino == true){
+      ifDestino = 'S';
+    } else if(this.setDestino == false){
+      ifDestino = 'N';
+    }
+
     const dataCAB = {
       cabPagoID: this.cabecera.cabPagoID,
       cabPagoNumerico: this.cabecera.cabPagoNumerico,
@@ -887,7 +974,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoApprovedBy: this.aprobadopor,
       cabPagoFinancieroBy: this.financieropor,
       cabPagoNoSolOC: this.cabecera.cabPagoNoSolOC,
-      cabPagoValido: this.cabecera.cabPagoValido
+      cabPagoValido: this.cabecera.cabPagoValido,
+      cabPagoMotivoDev: motivoDevolucion,
+      cabPagoFrom: this.cabecera.cabPagoFrom,
+      cabPagoIfDestino: ifDestino
     };
 
     this.cabPagoService
@@ -1041,15 +1131,68 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }
   }
 
+  guardarDevolverSolEditada(){
+    this.devolucion = true;
+    try {
+      //this.saveEdit();
+      let motivoDevolucion = '';
+      let aprobPresp = '';
+      if(this.devolucion){
+        motivoDevolucion = this.motivoDevEditar;
+        aprobPresp = 'NO';
+      } else{
+        motivoDevolucion = 'NOHAYMOTIVO';
+        aprobPresp = 'SI';
+      }
+      
+      this.cabPagoService.updateMotivoDevolucion(this.trTipoSolicitud, this.noSolTmp, motivoDevolucion).subscribe(
+        (response) => {
+          //console.log("Motivo de devolucion actualizado");
+        },
+        (error) => {
+          console.log('Error al actualizar el motivo de devolucion: ', error);
+        }
+      );
+      setTimeout(() => {
+        this.noAutorizar();
+      }, 500);     
+    } catch (error) {
+      console.log('Error:', error);
+      const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+      this.callMensaje(msjError,false)
+    }
+  }
+
   noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui
   estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
   depSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
+  areaSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
 
   aprobadopor: string = 'XXXXXX';
   financieropor: string = 'XXXXXX';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
+    this.devolucion = false;
+
+    let motivoDevolucion = 'NOHAYMOTIVO';
+    let aprobPresp = '';
+    if(this.devolucion){
+      motivoDevolucion = this.motivoDevEditar;
+      aprobPresp = 'NO';
+    } else{
+      motivoDevolucion = 'NOHAYMOTIVO';
+      aprobPresp = 'SI';
+    }
+
+    this.cabPagoService.updateMotivoDevolucion(this.trTipoSolicitud, this.noSolTmp, motivoDevolucion).subscribe(
+      (response) => {
+        //console.log("Motivo de devolucion actualizado");
+      },
+      (error) => {
+        console.log('Error al actualizar el motivo de devolucion: ', error);
+      }
+    );
     //verifica los niveles de aprobacion y financiero para asignar el usuario que envia la solicitud para guardar el empleado quien autoriza
     if (this.estadoTrkTmp == 40) {
       this.aprobadopor = this.cookieService.get('userIdNomina');
@@ -1141,7 +1284,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
               const msjExito = `La solicitud ha sido enviada exitosamente.`;
               this.callMensaje(msjExito,true);
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
-              this.sendNotify(newEstado, newestadoSt, 1);
+              this.sendNotify(newEstado, newestadoSt, 1,0);
 
               setTimeout(() => {
                 this.clear();
@@ -1250,7 +1393,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido anulada exitosamente.`;
           this.callMensaje(msjExito,true);
            //notificar al emisor de la solicitud que ha sido anulada
-           this.sendMail(mailToNotify,2);
+           this.sendMail(mailToNotify,2,0);
 
           setTimeout(() => {
             this.showmsj = false;
@@ -1288,62 +1431,98 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       }
     );
 
-    for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
-      let niv = this.nivelRuteotoAut[i];
-      if (niv.rutareaNivel == this.estadoTrkTmp) {
-        let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
-        let newestadoSt = '';
-
-        //extrae el tipo de proceso del nivel actual
-        this.nivRuteService.getNivelInfo(newEstado).subscribe(
-          (response) => {
-            newestadoSt = response[0].procesoRuteo;
-            //console.log("tipo de proceso de nivel: ", newestadoSt);
-          },
-          (error) => {
-            console.log('Error al obtener el nuevo estado de tracking: ', error);
-          }
-        );
-
-        this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
-          (response) => {
-            //console.log('Estado de tracknig actualizado exitosamente');
-            const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel anterior.`;
-            this.callMensaje(msjExito,true)
-            if(newEstado == 10){
-              //notificar al emisor
-              this.sendMail(mailToNotify,3);
-
-            } else {
-              //notificar al nivel correspondiente
-              this.sendNotify(newEstado, newestadoSt, 3); 
+    if(this.areaSolTmp == 12){
+      for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
+        let niv = this.nivelRuteotoAut[i];
+        if (niv.rutareaNivel == this.estadoTrkTmp) {
+          let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
+          let newestadoSt = '';
+  
+          //extrae el tipo de proceso del nivel actual
+          this.nivRuteService.getNivelInfo(newEstado).subscribe(
+            (response) => {
+              newestadoSt = response[0].procesoRuteo;
+              //console.log("tipo de proceso de nivel: ", newestadoSt);
+            },
+            (error) => {
+              console.log('Error al obtener el nuevo estado de tracking: ', error);
             }
-
-            setTimeout(() => {
-              this.showmsj = false;
-              this.msjExito = '';
-              this.clear();
-              this.serviceGlobal.solView = 'crear';
-              this.router.navigate(['allrequest']);
-            }, 3000);
-          },
-          (error) => {
-            console.log('Error al actualizar el estado: ', error);
-            const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
-            this.callMensaje(msjError,false);
-          }
-        );
-
-        //console.log("Nuevo estado: ", newEstado);
-        break;
+          );
+  
+          this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+            (response) => {
+              //console.log('Estado de tracknig actualizado exitosamente');
+              const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel anterior.`;
+              this.callMensaje(msjExito,true)
+              if(newEstado == 10){
+                //notificar al emisor
+                this.sendMail(mailToNotify,3,1);
+  
+              } else {
+                //notificar al nivel correspondiente
+                this.sendNotify(newEstado, newestadoSt, 3,2); 
+              }
+  
+              setTimeout(() => {
+                this.showmsj = false;
+                this.msjExito = '';
+                this.clear();
+                this.serviceGlobal.solView = 'crear';
+                this.router.navigate(['allrequest']);
+              }, 3000);
+            },
+            (error) => {
+              console.log('Error al actualizar el estado: ', error);
+              const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+              this.callMensaje(msjError,false);
+            }
+          );
+  
+          //console.log("Nuevo estado: ", newEstado);
+          break;
+        }
+  
       }
+    } else {
+      //regresar la solicitud al nivel 10 y notificar a todos los niveles anteriores
+      this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10).subscribe(
+        (response) => {
+          //console.log('Estado de tracknig actualizado exitosamente');
+          const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel inicial.`;
+          this.callMensaje(msjExito,true)
 
+          //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
+          for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
+            let niv = this.nivelRuteotoAut[i];
+            if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
+              //console.log("Nivel a notificar: ", niv.rutareaNivel);
+              this.sendNotify(niv.rutareaNivel, 'E', 3,2);
+            }
+          }
+          
+          //notificar al emisor
+          this.sendMail(mailToNotify,3,1);
+
+          setTimeout(() => {
+            this.clear();
+            this.serviceGlobal.solView = 'crear';
+            this.router.navigate(['allrequest']);
+          }, 3000);
+        },
+        (error) => {
+          console.log('Error al actualizar el estado: ', error);
+          const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+          this.callMensaje(msjError,false);
+        }
+      );
     }
+
+    
   }
 
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
 
-  async sendNotify(nivelStr: number, nivelStatus: string, tipoNotificacion: number) {
+  async sendNotify(nivelStr: number, nivelStatus: string, tipoNotificacion: number, tipoDevolucion: number) {
     //nivelStr: numero del nivel de ruteo al que se le va a enviar la notificacion
     //nivelStatus: tipo de proceso del nivel de ruteo al que se le va a enviar la notificacion
     //tipoNotificacion: tipo de notificacion que se va a enviar (1: solicitud nueva, 2: solicitud anulada, 3: solicitud devuelta)
@@ -1370,7 +1549,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                   //console.log('Empleado: ', response);
                   mailToNotify = response[0].empleadoCorreo;
                   //enviar la notificacion al correo guardado en mailnotify
-                  this.sendMail(mailToNotify,tipoNotificacion);
+                  this.sendMail(mailToNotify,tipoNotificacion, tipoDevolucion);
                   console.log("Correo enviado a: ", mailToNotify)
                 },
                 (error) => {
@@ -1387,16 +1566,22 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
+  //correo de envío de solicitud
   asunto: string = 'Nueva Solicitud de Pago Recibida - Acción Requerida';
   emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Pago.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.<br>No. Solicitud: `;
 
   asuntoDevuelto: string = 'Notificación - Solicitud de Pago Devuelta';
-  emailContent1: string = `Estimado(a), le notificamos que la solicitud de pago autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
+  //correo de devolucion para el emisor
+  emailContent1: string = `Estimado(a), le notificamos que la solicitud de pago generada por usted ha sido devuelta al nivel de EMISIÓN, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
 
+  //correo de devolucion para los niveles de autorizacion
+  emailContent3: string = `Estimado(a), le notificamos que la solicitud de pago autorizada por usted ha sido devuelta al nivel de EMISIÓN, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias si le compete.<br>No. Solicitud: `;
+
+  //correo de anulacion
   asuntoAnulado: string = 'Notificación - Solicitud de Pago Anulada';
   emailContent2: string = `Estimado(a), le notificamos que la solicitud de pago generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.<br>No. Solicitud: `;
 
-  sendMail(mailToNotify: string, type: number) {
+  sendMail(mailToNotify: string, type: number, typeDev: number) {
     let contenidoMail = '';
     let asuntoMail = '';
 
@@ -1408,7 +1593,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       contenidoMail = this.emailContent2 + this.numeroSolicitudEmail;
     } else if(type == 3){
       asuntoMail = this.asuntoDevuelto;
-      contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
+      if(typeDev = 1){
+        contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
+      } else if(typeDev == 2) {
+        contenidoMail = this.emailContent3 + this.numeroSolicitudEmail;
+      }
 
     }
 
@@ -1495,5 +1684,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     let Fechatrans=this.formatDateToYYYYMMDD(fecha)
     return Fechatrans
     // return fechaMax;
+  }
+
+  showMotivoDev: boolean = false;
+  enableMotivoDev(){
+    this.showMotivoDev = !this.showMotivoDev;
   }
   }

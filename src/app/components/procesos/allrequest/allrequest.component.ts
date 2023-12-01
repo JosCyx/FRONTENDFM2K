@@ -502,6 +502,7 @@ export class AllrequestComponent implements OnInit {
     if (this.bsqContenido == '') {
       this.allSol = this.allSoltmp;
     } else if (this.bsqTipoSol == 1) {
+      this.allSol = this.allSoltmp;
       if (this.tipoBusqueda == 'emp') {
         this.BuscarEmpleado();
         this.allSol = this.allSol.filter(item => item.cabSolCotSolicitante == this.idEmpleadobus);
@@ -510,11 +511,12 @@ export class AllrequestComponent implements OnInit {
         this.BuscarArea();
         this.allSol = this.allSol.filter(item => item.cabSolCotIdArea == this.idAreabus);
       } else if (this.tipoBusqueda == 'asunto'){
-        this.allSol = this.allSol.filter(item => item.cabSolCotAsunto.includes(this.bsqContenido));
+        this.allSol = this.allSol.filter(item => item.cabSolCotAsunto.toLowerCase().includes(this.bsqContenido));
       } else if (this.tipoBusqueda == 'num'){
-        this.allSol = this.allSol.filter(item => item.cabSolCotNumerico.includes(this.bsqContenido));
+        this.allSol = this.allSol.filter(item => item.cabSolCotNumerico.toLowerCase().includes(this.bsqContenido));
       }
     } else if (this.bsqTipoSol == 2) {
+      this.allSol = this.allSoltmp;
       if (this.tipoBusqueda == 'emp') {
         console.log("entro a buscar empleado", this.allSol);
         this.BuscarEmpleado();
@@ -525,11 +527,12 @@ export class AllrequestComponent implements OnInit {
         this.allSol = this.allSol.filter(item => item.cabSolOCIdArea == this.idAreabus);
         console.log("entro a buscar area", this.allSol);
       } else if (this.tipoBusqueda == 'asunto'){
-        this.allSol = this.allSol.filter(item => item.cabSolOCAsunto.includes(this.bsqContenido));
+        this.allSol = this.allSol.filter(item => item.cabSolOCAsunto.toLowerCase().includes(this.bsqContenido));
       } else if (this.tipoBusqueda == 'num'){
-        this.allSol = this.allSol.filter(item => item.cabSolOCNumerico.includes(this.bsqContenido));
+        this.allSol = this.allSol.filter(item => item.cabSolOCNumerico.toLowerCase().includes(this.bsqContenido));
       }
     } else if (this.bsqTipoSol == 3) {
+      this.allSol = this.allSoltmp;
       if (this.tipoBusqueda == 'emp') {
 
         console.log("entro a buscar empleado", this.allSol);
@@ -541,9 +544,9 @@ export class AllrequestComponent implements OnInit {
         this.allSol = this.allSol.filter(item => item.cabPagoIdAreaSolicitante == this.idAreabus);
         console.log("entro a buscar area", this.allSol);
       } else if (this.tipoBusqueda == 'asunto'){
-        this.allSol = this.allSol.filter(item => item.cabPagoAsunto.includes(this.bsqContenido));
+        this.allSol = this.allSol.filter(item => item.cabPagoAsunto.toLowerCase().includes(this.bsqContenido));
       } else if (this.tipoBusqueda == 'num'){
-        this.allSol = this.allSol.filter(item => item.cabPagoNumerico.includes(this.bsqContenido));
+        this.allSol = this.allSol.filter(item => item.cabPagoNumerico.toLowerCase().includes(this.bsqContenido));
       }
     }
   }

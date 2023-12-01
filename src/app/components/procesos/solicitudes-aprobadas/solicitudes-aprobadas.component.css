@@ -1,7 +1,7 @@
 .container {
     width: 70%;
     margin: 0 auto;
-    padding-top: 25px;
+    padding-top: 120px;
     padding-bottom: 50px;
 }
 
@@ -56,4 +56,14 @@
 .botones{
     display: flex;
     align-items: flex-end;
+}
+
+.pagination-btnl{
+    padding: 10px 12px 10px 12px;
+    border-radius: 5px 0px 0px 5px;
+}
+
+.pagination-btnr{
+    padding: 10px 12px 10px 12px;
+    border-radius: 0 5px 5px 0;
 }
