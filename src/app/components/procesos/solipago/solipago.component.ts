@@ -1496,7 +1496,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
             let niv = this.nivelRuteotoAut[i];
             if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
               //console.log("Nivel a notificar: ", niv.rutareaNivel);
-              this.sendNotify(niv.rutareaNivel, 'E', 3,2);
+              this.sendNotify(niv.rutareaNivel, 'E', 3, 3);
             }
           }
           
@@ -1570,12 +1570,19 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   asunto: string = 'Nueva Solicitud de Pago Recibida - Acción Requerida';
   emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Pago.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.<br>No. Solicitud: `;
 
+  /////////DEVOLUCION///////////
   asuntoDevuelto: string = 'Notificación - Solicitud de Pago Devuelta';
   //correo de devolucion para el emisor
   emailContent1: string = `Estimado(a), le notificamos que la solicitud de pago generada por usted ha sido devuelta al nivel de EMISIÓN, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
 
-  //correo de devolucion para los niveles de autorizacion
-  emailContent3: string = `Estimado(a), le notificamos que la solicitud de pago autorizada por usted ha sido devuelta al nivel de EMISIÓN, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias si le compete.<br>No. Solicitud: `;
+  
+  //correo de devolucion para los niveles de autorizacion (OPERACIONES)
+  emailContent3: string = `Estimado(a), le notificamos que la solicitud de pago autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
+  
+  //correo de devolucion para los niveles de autorizacion (operacionesn't)
+  emailContent4: string = `Estimado(a), para su conocimiento, la solicitud de pago autorizada por usted ha sido devuelta al nivel de EMISIÓN. El usuario correspondiente a ese rol deberá revisar y tomar las acciones necesarias para continuar con el proceso.<br>No. Solicitud: `;
+
+
 
   //correo de anulacion
   asuntoAnulado: string = 'Notificación - Solicitud de Pago Anulada';
@@ -1593,10 +1600,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       contenidoMail = this.emailContent2 + this.numeroSolicitudEmail;
     } else if(type == 3){
       asuntoMail = this.asuntoDevuelto;
-      if(typeDev = 1){
+      if(typeDev == 1){
         contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
       } else if(typeDev == 2) {
         contenidoMail = this.emailContent3 + this.numeroSolicitudEmail;
+      } else if(typeDev == 3) {
+        contenidoMail = this.emailContent4 + this.numeroSolicitudEmail;
       }
 
     }

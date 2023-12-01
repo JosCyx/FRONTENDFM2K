@@ -44,4 +44,9 @@ export class SendEmailService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(this.APIUrl + '/SendEmail', data, { headers: headers });
   }
+
+  getMailContent(idMail: number): Observable<any> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get(this.APIUrl + '/EmailContents/' + idMail, { headers: headers });
+  }
 }

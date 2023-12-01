@@ -14,6 +14,7 @@ import { CabPagoService } from 'src/app/services/comunicationAPI/solicitudes/cab
 import { CookieService } from 'ngx-cookie-service';
 import { max, parse } from 'date-fns';
 import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
+import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
 
 
 
@@ -605,6 +606,5 @@ export class AllrequestComponent implements OnInit {
       this.idEmpleadobus = "";
     }
   }
-  
 
 }

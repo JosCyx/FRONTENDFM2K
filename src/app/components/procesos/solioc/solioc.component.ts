@@ -1890,7 +1890,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
               const msjExito = `La solicitud ha sido enviada exitosamente.`;
               this.callMensaje(msjExito,true)
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
-              this.sendNotify(newEstado, newestadoSt, 1);
+              this.sendNotify(newEstado, newestadoSt, 1,0);
 
               setTimeout(() => {
                 this.clear();
@@ -2002,7 +2002,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
           this.callMensaje(msjExito,true);
 
           //notificar al emisor de la solicitud que ha sido anulada
-          this.sendMail(mailToNotify,2);
+          this.sendMail(mailToNotify,2,0);
 
           setTimeout(() => {
             this.clear();
@@ -2065,11 +2065,11 @@ export class SoliocComponent implements OnInit, OnDestroy {
   
               if(newEstado == 10){
                 //notificar al emisor
-                this.sendMail(mailToNotify,3);
+                this.sendMail(mailToNotify,3,1);
   
               } else {
                 //notificar al nivel correspondiente
-                this.sendNotify(newEstado, newestadoSt, 3); 
+                this.sendNotify(newEstado, newestadoSt, 3,2); 
               }
   
               setTimeout(() => {
@@ -2104,12 +2104,12 @@ export class SoliocComponent implements OnInit, OnDestroy {
             let niv = this.nivelRuteotoAut[i];
             if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
               //console.log("Nivel a notificar: ", niv.rutareaNivel);
-              this.sendNotify(niv.rutareaNivel, 'E', 3);
+              this.sendNotify(niv.rutareaNivel, 'E', 3,3);
             }
           }
 
           //notificar al emisor
-          this.sendMail(mailToNotify,3);
+          this.sendMail(mailToNotify,3,1);
 
           setTimeout(() => {
             this.clear();
@@ -2133,7 +2133,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL//////////////////////////////////////////////////
 
 
-  async sendNotify(nivelStr: number, nivelStatus: string, tipoNotificacion: number) {
+  async sendNotify(nivelStr: number, nivelStatus: string, tipoNotificacion: number, tipoDevolucion: number) {
     //nivelStr: numero del nivel de ruteo al que se le va a enviar la notificacion
     //nivelStatus: tipo de proceso del nivel de ruteo al que se le va a enviar la notificacion
     //tipoNotificacion: tipo de notificacion que se va a enviar (1: solicitud nueva, 2: solicitud anulada, 3: solicitud devuelta)
@@ -2160,7 +2160,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
                   //console.log('Empleado: ', response);
                   mailToNotify = response[0].empleadoCorreo;
                   //enviar la notificacion al correo guardado en mailnotify
-                  this.sendMail(mailToNotify,tipoNotificacion);
+                  this.sendMail(mailToNotify,tipoNotificacion, tipoDevolucion);
                   //console.log("Correo enviado a: ", mailToNotify)
                 },
                 (error) => {
@@ -2181,12 +2181,18 @@ export class SoliocComponent implements OnInit, OnDestroy {
   emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Orden de Compra.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.<br>No. Solicitud: `;
 
   asuntoDevuelto: string = 'Notificación - Solicitud de Orden de Compra Devuelta';
-  emailContent1: string = `Estimado(a), le notificamos que la solicitud de orden de compra autorizada por usted ha sido devuelta al nivel de EMISIÓN, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias si le compete.<br>No. Solicitud: `;
+  emailContent1: string = `Estimado(a), le notificamos que la solicitud de orden de compra generada por usted ha sido devuelta al nivel de EMISIÓN, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
+
+    //correo de devolucion para los niveles de autorizacion (OPERACIONES)
+    emailContent3: string = `Estimado(a), le notificamos que la solicitud de orden de compra autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
+  
+    //correo de devolucion para los niveles de autorizacion (operacionesn't)
+    emailContent4: string = `Estimado(a), para su conocimiento, la solicitud de orden de compra autorizada por usted ha sido devuelta al nivel de EMISIÓN. El usuario correspondiente a ese rol deberá revisar y tomar las acciones necesarias para continuar con el proceso.<br>No. Solicitud: `;
 
   asuntoAnulado: string = 'Notificación - Solicitud de Orden de Compra Anulada';
   emailContent2: string = `Estimado(a), le notificamos que la solicitud de orden de compra generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.<br>No. Solicitud: `;
 
-  sendMail(mailToNotify: string, type: number) {
+  sendMail(mailToNotify: string, type: number, typeDev: number) {
     let contenidoMail = '';
     let asuntoMail = '';
 
@@ -2198,7 +2204,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
       contenidoMail = this.emailContent2 + this.numeroSolicitudEmail;
     } else if(type == 3){
       asuntoMail = this.asuntoDevuelto;
-      contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
+      if(typeDev == 1){
+        contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
+      } else if(typeDev == 2) {
+        contenidoMail = this.emailContent3 + this.numeroSolicitudEmail;
+      } else if(typeDev == 3) {
+        contenidoMail = this.emailContent4 + this.numeroSolicitudEmail;
+      }
     }
 
     setTimeout(() => {

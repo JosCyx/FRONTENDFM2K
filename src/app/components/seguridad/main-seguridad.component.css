@@ -1,6 +1,7 @@
 .container {
     display: grid;
     place-items: center; 
+    padding-top: 120px;
   }
   
   .background {

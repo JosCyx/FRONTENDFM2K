@@ -3,7 +3,7 @@
   <h2 class="font-weight-bolt ruteo">Todas las solicitudes</h2>
   <!-- <app-breadcrumb></app-breadcrumb> -->
 
-  <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light" style="height: 30px;" >
+  <!-- <nav class=" navbar-expand-lg navbar-light bg-light" style="height: 30px;" >
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
          <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar</button> 
@@ -121,7 +121,7 @@
 
 
     <div class="mb-5">
-      <table class="table table-bordered text-center table-hover">
+      <table class="table table-bordered text-center table-hover ">
         <thead>
           <tr>
             <th class="align-middle cab-x">Código</th>
@@ -158,7 +158,7 @@
               <td class="align-middle">{{ sol.cabSolCotNoSolicitud }}</td>
               <ng-container *ngFor="let emp of empleadoList$ | async">
                 <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolCotSolicitante">
-                  {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
+                  {{ emp.empleadoNombres.split(' ')[0] }} {{ emp.empleadoApellidos.split(' ')[0] }}
                 </td>
               </ng-container>
               <td class="align-middle">{{ sol.cabSolCotAsunto }}</td>
@@ -193,7 +193,7 @@
               <td class="align-middle">{{ sol.cabSolOCNoSolicitud }}</td>
               <ng-container *ngFor="let emp of empleadoList$ | async">
                 <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolOCSolicitante">
-                  {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
+                  {{ emp.empleadoNombres.split(' ')[0] }} {{ emp.empleadoApellidos.split(' ')[0] }}
                 </td>
               </ng-container>
               <td class="align-middle">{{ sol.cabSolOCAsunto }}</td>
@@ -228,7 +228,7 @@
               <td class="align-middle">{{ sol.cabPagoNoSolicitud }}</td>
               <ng-container *ngFor="let emp of empleadoList$ | async">
                 <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabPagoSolicitante">
-                  {{ emp.empleadoNombres }}<br />{{ emp.empleadoApellidos }}
+                  {{ emp.empleadoNombres.split(' ')[0] }} {{ emp.empleadoApellidos.split(' ')[0] }}
                 </td>
               </ng-container>
 
