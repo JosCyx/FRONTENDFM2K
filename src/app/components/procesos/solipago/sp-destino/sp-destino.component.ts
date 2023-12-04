@@ -297,7 +297,7 @@ export class SpDestinoComponent implements OnInit {
       }, 2000);
     } else if (this.archivo.size > 500000) {
       this.alert = true;
-      this.alertText = " ‎ El Tamaño del archivo no debe superar los 200kB";
+      this.alertText = " ‎ El Tamaño del archivo no debe superar los 500kB";
       setTimeout(() => {
         this.alert = false;
         this.alertText = "";

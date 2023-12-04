@@ -129,7 +129,8 @@ export class SpPdfComponent implements OnInit {
                     [
                       { text: 'FECHA DE FACTURA', style: 'tableHeader' },
                       {
-                        text: (this.datosSP.cabecera.cabPagoFechaFactura=format(parseISO(this.datosSP.cabecera.cabPagoFechaFactura),'yyyy-MM-dd'))
+                        text: (this.datosSP.cabecera.cabPagoFechaFactura === null ? 'Sin fecha' :  format(
+                          parseISO(this.datosSP.cabecera.cabPagoFechaFactura),'yyyy-MM-dd'))
                       },
                       { text: 'NO DE FACTURA ', style: 'tableHeader' },
                       {
@@ -259,13 +260,8 @@ export class SpPdfComponent implements OnInit {
                       },
                       '',
                       {
-                        text: (this.datosSP.cabecera.cabPagoFechaInspeccion =
-                          format(
-                            parseISO(
-                              this.datosSP.cabecera.cabPagoFechaInspeccion
-                            ),
-                            'yyyy-MM-dd'
-                          )),
+                        text: (this.datosSP.cabecera.cabPagoFechaInspeccion === null ? 'Sin fecha' :  format(
+                          parseISO(this.datosSP.cabecera.cabPagoFechaInspeccion),'yyyy-MM-dd')),
                       },
                     ],
                     [
@@ -469,7 +465,7 @@ export class SpPdfComponent implements OnInit {
           this.datosSP.cabecera.cabPagoApprovedBy
         ) {
           this.datosSP.cabecera.cabPagoApprovedBy =
-            iterator.empleadoNombres + '' + iterator.empleadoApellidos;
+            iterator.empleadoNombres + ' ' + iterator.empleadoApellidos;
         }
       }
     }

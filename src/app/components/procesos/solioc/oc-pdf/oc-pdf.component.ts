@@ -279,24 +279,14 @@ export class OcPdfComponent implements OnInit {
                     [
                       { text: 'PLAZO DE ENTREGA:', style: 'textos' },
                       {
-                        text: (this.datosCabOC.cabecera.cabSolOCPlazoEntrega =
-                          format(
-                            parseISO(
-                              this.datosCabOC.cabecera.cabSolOCPlazoEntrega
-                            ),
-                            'yyyy-MM-dd'
-                          )),
+                        text: (this.datosCabOC.cabecera.cabSolOCPlazoEntrega === null ? 'Sin fecha' :  format(
+                          parseISO(this.datosCabOC.cabecera.cabSolOCPlazoEntrega),'yyyy-MM-dd')),
                         alignment: 'center',
                       },
                       { text: 'FECHA MAXIMA DE ENTREGA:', style: 'textos' },
                       {
-                        text: (this.datosCabOC.cabecera.cabSolOCFechaMaxentrega =
-                          format(
-                            parseISO(
-                              this.datosCabOC.cabecera.cabSolOCFechaMaxentrega
-                            ),
-                            'yyyy-MM-dd'
-                          )),
+                        text: (this.datosCabOC.cabecera.cabSolOCFechaMaxentrega === null ? 'Sin fecha' :  format(
+                          parseISO(this.datosCabOC.cabecera.cabSolOCFechaMaxentrega),'yyyy-MM-dd')),
                         alignment: 'center',
                       },
                     ],
@@ -514,7 +504,7 @@ export class OcPdfComponent implements OnInit {
         iterator.empleadoIdNomina == this.datosCabOC.cabecera.cabSolOCInspector
       ) {
         this.inpectores =
-          iterator.empleadoNombres + '' + iterator.empleadoApellidos;
+          iterator.empleadoNombres + ' ' + iterator.empleadoApellidos;
       }
     }
   }

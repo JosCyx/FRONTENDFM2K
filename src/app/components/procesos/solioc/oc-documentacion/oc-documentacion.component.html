@@ -1,24 +1,26 @@
 <div class="row justify-content-between" >
-  <div class="input-group col-6" *appAuthorize="'39'">
-    <label for="inputFile" class="input-group-text">
-      <i class="bi bi-upload"></i>
+  <div class="custom-input-group" *appAuthorize="'39'">
+    <label for="inputFile" class="custom-label">
+        <i class="bi bi-upload"></i>
     </label>
     <input
-      id="inputFile"
-      type="file"
-      class="form-control"
-      id="inputFile"
-      (change)="getFiles($event)"
-      [appSecureDisable]= "estadoSol"
+        id="inputFile"
+        type="file"
+        accept=".pdf, .PDF, .png, .jpg, .jpeg, .docx, .doc, .xlsx"
+        class="custom-input"
+        id="inputFile"
+        (change)="getFiles($event)"
+        [appSecureDisable]="estadoSol"
     />
-    <button class="btn btn-success" (click)="sendfile()" [appSecureDisable]= "estadoSol">
-      <i class="bi bi-upload">  Subir</i>
+    <button class="custom-button" (click)="sendfile()" [appSecureDisable]="estadoSol">
+        <i class="bi bi-upload"></i> Subir
     </button>
   </div>
   <div class="col-2 w-2">
     <button  *ngIf="view" class="btn btn-success" (click)="allDownload()">Descargar</button>
   </div>
 </div>
+<div class="file-tip"><h5  class="tip">Tipos de archivos admitidos: .pdf, .PDF, .doc, .docx, .jpg, .jpeg, .png, .xlsx</h5></div>
 <div  >
   <div *ngIf="showExito" class="alert alert-success text-center" role="alert">
     <span

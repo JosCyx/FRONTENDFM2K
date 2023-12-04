@@ -37,11 +37,11 @@ export class CotDocumentacionComponent implements OnInit {
   msjError: string = '';
 
   constructor(private uploadfile: UploadFileService,
-    private sharedService: SharedService, private dialogService:DialogServiceService) {
-      this.sharedService.cotDocumentacion$.subscribe(() =>{
-        this.deleteAllDocs();
-      });
-    }
+    private sharedService: SharedService, private dialogService: DialogServiceService) {
+    this.sharedService.cotDocumentacion$.subscribe(() => {
+      this.deleteAllDocs();
+    });
+  }
 
   ngOnInit(): void {
     //console.log(this.noSol);
@@ -49,16 +49,36 @@ export class CotDocumentacionComponent implements OnInit {
     this.GetfileView();
   }
   getFiles(event: any): void {
+    const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB en bytes
+
     try {
       const file = event.target.files[0];
-      const modifiedName = file.name.replace(/#/g, " No.");
-      this.filesAll = new File([file], modifiedName, { type: file.type });
-      //console.log('Imprimir esto  Objetos de pdf ', this.filesAll);
+
+      if(!this.isFileTypeAllowed(file)){
+        const msjError = 'Tipo de archivo no permitido. Por favor, seleccione un archivo válido.';
+        this.callMensaje(msjError, false);
+        event.target.value = '';  // Limpiar la selección
+      } else if (file.size > maxSizeInBytes) {
+        const msjError = 'El tamaño del archivo no puede exceder los 5 MB.';
+        this.callMensaje(msjError, false);
+        event.target.value = '';  // Limpiar la selección
+      } else {
+        const modifiedName = file.name.replace(/#/g, " No.");
+        this.filesAll = new File([file], modifiedName, { type: file.type });
+      }
+  
     } catch (error) {
       const msjError = 'Error al cargar el archivo';
-      this.callMensaje(msjError,false)
+      this.callMensaje(msjError, false);
       event.target.value = '';
     }
+  }
+  
+  isFileTypeAllowed(file: File): boolean {
+    const allowedTypes = [".pdf", ".png", ".jpg", ".jpeg", ".docx", ".doc", ".xlsx"];
+    const fileType = `.${file.name.split('.').pop()}`.toLowerCase();
+  
+    return allowedTypes.includes(fileType);
   }
 
   sendfile(): void {
@@ -71,18 +91,23 @@ export class CotDocumentacionComponent implements OnInit {
         next: (data) => {
           //console.log('este es mi data', data);
           const msjExito = 'Archivo Subido Correctamente';
-          this.callMensaje(msjExito,true)
+          this.callMensaje(msjExito, true)
           this.GetfileView();
+
+          const inputFile = document.getElementById('inputFile') as HTMLInputElement;
+          if (inputFile) {
+            inputFile.value = '';
+          }
         },
         error: (error) => {
           if (error.status == 400) {
             console.error('este es mi error', error);
             const msjError = 'Error deberia seleccionar un archivo';
-            this.callMensaje(msjError,false)
+            this.callMensaje(msjError, false)
           } else {
             console.error('este es mi error', error);
-            const msjError ='Error no se puede Subir el archivo intente nuevamente';
-            this.callMensaje(msjError,false)
+            const msjError = 'Error no se puede Subir el archivo intente nuevamente';
+            this.callMensaje(msjError, false)
             setTimeout(() => {
               this.showError = false;
               this.msjError = '';
@@ -95,55 +120,61 @@ export class CotDocumentacionComponent implements OnInit {
       });
   }
   //Capturar la url del servidor y lo convierte
-  getUrlFile(ruta: string,nombre:string): Promise<{ url: string, icono: string }> {
+  getUrlFile(ruta: string, nombre: string): Promise<{ url: string, icono: string }> {
     return new Promise<{ url: string, icono: string }>((resolve, reject) => {
       this.uploadfile.viewFile(ruta).subscribe({
-        next:(blob) => {
-          if(nombre == 'pdf'){
+        next: (blob) => {
+          if (nombre == 'pdf') {
             const file = new Blob([blob], { type: 'application/pdf' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/272699_pdf_icon.png';
-          //console.log('URL del documento: ', urlfile);
-          resolve({url: urlfile, icono: img});
-          }else if(nombre == 'png'){
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/272699_pdf_icon.png';
+            //console.log('URL del documento: ', urlfile);
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'PDF') {
+            const file = new Blob([blob], { type: 'application/pdf' });
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/272699_pdf_icon.png';
+            //console.log('URL del documento: ', urlfile);
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'png') {
             const file = new Blob([blob], { type: 'image/png' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/image.png';
-          resolve({url: urlfile, icono: img});
-          }else if(nombre == 'jpg'){
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.png';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'jpg') {
             const file = new Blob([blob], { type: 'image/jpg' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/image.png';
-          resolve({url: urlfile, icono: img});
-          }else if(nombre == 'jpeg'){
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.png';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'jpeg') {
             const file = new Blob([blob], { type: 'image/jpeg' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/image.png';
-          resolve({url: urlfile, icono: img});
-          } else if(nombre == 'xlsx'){
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.png';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'xlsx') {
             const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/excel.png.png';
-          resolve({url: urlfile, icono: img});
-          } else if(nombre == 'docx'){
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/excel.png.png';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'docx') {
             const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/docx.png';
-          resolve({url: urlfile, icono: img});
-          } else if(nombre == 'doc'){
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/docx.png';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'doc') {
             const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/doc.png';
-          resolve({url: urlfile, icono: img});
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/doc.png';
+            resolve({ url: urlfile, icono: img });
           }
         },
-        error:(error) => {
+        error: (error) => {
           reject(error); // Rechaza la Promesa si ocurre un error
         },
-        complete:()=>{
+        complete: () => {
           //console.log("Finalizacion del SUBSCRIBE");
         }
-    });
+      });
     });
   }
 
@@ -155,11 +186,11 @@ export class CotDocumentacionComponent implements OnInit {
     return rutaCompleta; // Si no hay barras invertidas, devuelve la ruta original
   }
   getNombres(rutaCompleta: string) {
-    const partes = rutaCompleta.split('.'); 
+    const partes = rutaCompleta.split('.');
     if (partes.length > 1) {
-      return partes.slice(-1).join(); 
+      return partes.slice(-1).join();
     }
-    return rutaCompleta; 
+    return rutaCompleta;
   }
   //
   GetfileView() {
@@ -192,7 +223,7 @@ export class CotDocumentacionComponent implements OnInit {
             }
           }
         },
-        error:(err)=> {
+        error: (err) => {
           console.error('Error al momento de obtener ', err);
         },
         complete: () => {
@@ -215,15 +246,15 @@ export class CotDocumentacionComponent implements OnInit {
       })
       .then((blob) => {
         const blobURL = window.URL.createObjectURL(blob);
-  
+
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = blobURL;
         a.download = fileName;
-  
+
         document.body.appendChild(a);
         a.click();
-  
+
         window.URL.revokeObjectURL(blobURL);
         document.body.removeChild(a);
       })
@@ -231,13 +262,13 @@ export class CotDocumentacionComponent implements OnInit {
         console.error('Error al descargar el archivo:', error);
       });
   }
-   allDownload() {
+  allDownload() {
     this.paths.forEach((item) => {
       this.DowmloadFile(item.docUrl, item.docNombre);
     });
-   }
+  }
   //recorre toda la lista de documentos y los elimina
-  deleteAllDocs(){
+  deleteAllDocs() {
     this.paths.forEach((item) => {
       this.deleteFile(item.docUrlComleta);
     });
@@ -246,12 +277,12 @@ export class CotDocumentacionComponent implements OnInit {
   }
 
   //emilima de la base de datos y del servidor el archivo que coincida con la url ingesada como parametro
-  deleteFile(ruta: string) { 
-    
+  deleteFile(ruta: string) {
+
     this.uploadfile.deleteFile(ruta).subscribe({
       next: (data) => {
         const msjExito = 'Archivo Eliminado Correctamente';
-        this.callMensaje(msjExito,true)
+        this.callMensaje(msjExito, true)
         this.GetfileView();
       },
       error: (error) => {
@@ -265,7 +296,7 @@ export class CotDocumentacionComponent implements OnInit {
     });
 
   }
-  callMensaje(mensaje: string, type: boolean){
+  callMensaje(mensaje: string, type: boolean) {
     this.dialogService.openAlertDialog(mensaje, type);
   }
 }

@@ -57,19 +57,38 @@ export class OCDocumentacionComponent implements OnInit, OnDestroy {
 
   //Obtener archivos
   getFiles(event: any): void {
+    const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB en bytes
+
     try {
-     const file= event.target.files[0];
-      const modifiedName = file.name.replace(/#/g, " No.");
-    this.filesAll = new File([file], modifiedName, { type: file.type });
-      //console.log('Imprimir esto  Objetos de pdf ', this.filesAll);
+      const file = event.target.files[0];
+
+      if(!this.isFileTypeAllowed(file)){
+        const msjError = 'Tipo de archivo no permitido. Por favor, seleccione un archivo válido.';
+        this.callMensaje(msjError, false);
+        event.target.value = '';  // Limpiar la selección
+      } else if (file.size > maxSizeInBytes) {
+        const msjError = 'El tamaño del archivo no puede exceder los 5 MB.';
+        this.callMensaje(msjError, false);
+        event.target.value = '';  // Limpiar la selección
+      } else {
+        const modifiedName = file.name.replace(/#/g, " No.");
+        this.filesAll = new File([file], modifiedName, { type: file.type });
+      }
+  
     } catch (error) {
       const msjError = 'Error al cargar el archivo';
-      this.callMensaje(this.msjError, false)
+      this.callMensaje(msjError, false);
       event.target.value = '';
-      
-      console.error('Error al momento de subir ', error);
     }
   }
+  
+  isFileTypeAllowed(file: File): boolean {
+    const allowedTypes = [".pdf", ".png", ".jpg", ".jpeg", ".docx", ".doc", ".xlsx"];
+    const fileType = `.${file.name.split('.').pop()}`.toLowerCase();
+  
+    return allowedTypes.includes(fileType);
+  }
+
   //Enviar archivos al servidor y guardar a  la base
   sendfile(): void {
     const body = new FormData();
@@ -83,6 +102,11 @@ export class OCDocumentacionComponent implements OnInit, OnDestroy {
           const msjExito = 'Archivo Subido Correctamente';
           this.callMensaje(msjExito, true);
           this.GetfileView();
+
+          const inputFile = document.getElementById('inputFile') as HTMLInputElement;
+          if (inputFile) {
+            inputFile.value = '';
+          }
         },
         error: (error) => {
           if (error.status == 400) {
@@ -111,7 +135,13 @@ export class OCDocumentacionComponent implements OnInit, OnDestroy {
           const img = 'assets/img/272699_pdf_icon.png';
           //console.log('URL del documento: ', urlfile);
           resolve({url: urlfile, icono: img});
-          }else if(nombre == 'png'){
+          } else if (nombre == 'PDF') {
+            const file = new Blob([blob], { type: 'application/pdf' });
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/272699_pdf_icon.png';
+            //console.log('URL del documento: ', urlfile);
+            resolve({ url: urlfile, icono: img });
+          } else if(nombre == 'png'){
             const file = new Blob([blob], { type: 'image/png' });
           const urlfile = URL.createObjectURL(file);
           const img = 'assets/img/image.png';

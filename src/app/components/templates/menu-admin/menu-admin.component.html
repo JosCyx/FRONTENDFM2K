@@ -1,26 +1,26 @@
 <header>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
-    <div class="header-container">
-      <!-- <button  class="btn btn-primary mr-3"  (click)="toggleSidebar()"><i
-          class="bi bi-list h5"></i></button> -->
-          <a routerLink="/main"><img src="assets/img/logo.png" alt="logo" class="logo"></a>
+  <nav class="navbar navbar-expand-lg  justify-content-between">
+    <div class="header-container d-flex">
+      <!-- <button  class="btn btn-primary mr-3"   (click)="toggleSidebar()"><i class="bi bi-list h5"></i></button> -->
+      <a routerLink="/main"><img src="assets/img/logo.png" alt="logo" class="logo"></a>
     </div>
 
-    
     <div>
-      <!-- <button class="btn btn-primary mr-5">FAQ</button> -->
-      <button class="btn btn-primary ml-2 text-end" (click)="logOut()">Cerrar sesión <i
+      
+      <button mat-raised-button color="warn" class=" ml-2 text-end" (click)="logOut()">Cerrar sesión <i
           class="bi bi-person-circle"></i></button>
     </div>
   </nav>
+  
+  <p class="text-end" style="font-style: italic; color: white; margin-bottom: 0px !important;">Bienvenido: {{userName}}</p>
 </header>
-<p class="text-end m-2 user-name" style="font-weight: bold; font-style: italic;">Bienvenido: {{userName}}</p>
+
 <div class="sidebar" >
   <ul class="nav flex-column">
     <li class="nav-item dropdown" *appAuthorize="'41'">
-      <a class="contenido" href="#" id="configuracionDropdown" mat-button>
+      <button mat-stroked-button>
         Mantenimiento
-      </a>
+      </button>
       <div class="menu" >
         <a class="item" mat-button routerLink="/rol" *appAuthorize="'2'">Roles</a>
         <a class="item" mat-button routerLink="/users" *appAuthorize="'6'">Usuarios</a>
@@ -32,9 +32,9 @@
       </div>
     </li>
     <li class="nav-item dropdown" *appAuthorize="'51'">
-      <a class="" mat-button href="#" id="configuracionDropdown" >
+      <button mat-stroked-button>
         Autorización
-      </a>
+      </button>
       <div class="menu" >
         <a class="item" mat-button  routerLink="/rolTransc" *appAuthorize="'49'">Roles-Transacciones</a>
         <a class="item" mat-button  routerLink="/rolUser" *appAuthorize="'48'">Roles-Usuarios</a>
@@ -42,7 +42,7 @@
     </li>
   </ul>
   <div class="regresar">
-    <button  mat-raised-button  (click)="backToMain()">Regresar</button>
+    <button class="back-button" mat-raised-button onclick="history.back()"><i class="bi bi-arrow-left h4"></i></button> 
   </div>
 </div>
 <!-- <nav class="sidebar" *ngIf="appSelected">

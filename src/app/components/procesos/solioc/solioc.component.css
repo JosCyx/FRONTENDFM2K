@@ -2,6 +2,7 @@
     width: 70%;
     margin: 0 auto;
     padding-top: 25px;
+    padding-top: 120px;
 }
 
 .form-cot {
@@ -43,9 +44,7 @@
     border: red ;
     border-radius: 2px;
 } */
-.mr-3{
-    margin-right: 10px !important;
-}
+
 
 .anulacion{
     background-color: rgb(237, 237, 237);
@@ -63,4 +62,53 @@
 
 .motivo-dev-label{
     background-color: rgb(255, 219, 152);
+}
+
+/*SUSTITUYE AL ESTILO DEL INPUT-GROUP DE BOOSTRAP*/
+.custom-input-group {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border-radius: 0.25rem;
+}
+
+.custom-label {
+    color: #000000;
+    margin: 0;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: #d6d6d6;
+    border-right: 1px solid #ced4da;
+    border-radius: 0.25rem 0 0 0.25rem;
+    flex-shrink: 0; 
+    white-space: nowrap; 
+}
+
+.custom-input {
+    color: black;
+    flex-grow: 1;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: #fff;
+    border: none;
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+
+.custom-input:disabled{
+    color: black;
+}
+
+.custom-input:focus,
+.custom-label:focus-within {
+    outline: 0;
+    border-color: #80bdff;
+}
+
+.custom-row{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }

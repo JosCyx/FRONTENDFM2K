@@ -144,13 +144,12 @@ export class CotProveedoresComponent implements OnInit {
     }
 
   ngOnInit(): void {
-    console.log(this.mail_detalles);
+    
     this.getProvCotizacion();
 
-    /*setTimeout(()=>{
-      this.sol_fecha = this.mail_cabecera.cabSolCotFecha;
-      this.sol_asunto = this.mail_cabecera.cabSolCotAsunto;
-    },200)*/
+    setTimeout(()=>{
+      console.log(this.mail_detalles);
+    },200)
   }
 
   //tranforma la fecha actual en un formato especifico "Lunes, 31 de julio de 2023"
@@ -564,21 +563,21 @@ export class CotProveedoresComponent implements OnInit {
                       <td style="width: 40%;overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Cabin',sans-serif;" align="left">
 
                         <div style="font-size: 14px;  color: #000000; line-height: 140%; text-align: center; word-wrap: break-word;">
-                          <p style="line-height: 140%;">${det.det_descp}</p>
+                          <p style="line-height: 140%;">${det.solCotDescripcion}</p>
                         </div>
 
                       </td>
                       <td style="width: 20%;overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Cabin',sans-serif;" align="left">
 
                         <div style="font-size: 14px;  color: #000000; line-height: 140%; text-align: center; word-wrap: break-word;">
-                          <p style="line-height: 140%;">${det.det_unidad}</p>
+                          <p style="line-height: 140%;">${det.solCotUnidad}</p>
                         </div>
 
                       </td>
                       <td style="width: 20%;overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:'Cabin',sans-serif;" align="left">
 
                         <div style="font-size: 14px; color: #000000; line-height: 140%; text-align: center; word-wrap: break-word;">
-                          <p style="line-height: 140%;">${det.det_cantidad}</p>
+                          <p style="line-height: 140%;">${det.solCotCantidadTotal}</p>
                         </div>
 
                       </td>

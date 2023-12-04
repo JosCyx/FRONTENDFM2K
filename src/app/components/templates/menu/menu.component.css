@@ -1,3 +1,16 @@
+
+
+
+header{
+    position: fixed !important;
+    width: 100%;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+}
+
+
+
 /* Add margin to the sub-menu items */
 .sub-menu {
     margin-left: 10px;
@@ -8,44 +21,26 @@
     padding-left: 10px;
 }
 
-.header-container {
-    height: 40px;
-    /* Ajusta la altura del header según tus necesidades */
-}
+
 
 /* Estilo base del sidebar */
 .sidebar {
-    background-color: #ffffff80;
-    height: 100%;
+    position: fixed !important;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0));
+    top: 89px;
+    height: 100vh;
     width: 200px;
-    position: absolute;
-    transition: transform 0.3s ease-in-out;
+    padding-top: 40px;
+    padding-left: 20px;
 }
 
-/* Clase para mostrar el sidebar */
-.sidebar.show {
-    transform: translateX(0);
-    /* Mostrar el sidebar deslizándolo hacia la derecha */
-}
 
-/* Clase para ocultar el sidebar */
-.sidebar.hide {
-    transform: translateX(-100%);
-    /* Ocultar el sidebar deslizándolo hacia la izquierda */
-}
 
-.main-content {
-    margin-left: 250px;
-    /* Ancho del sidebar para dejar espacio para él */
-    margin-top: 60px;
-    /* Ajusta este valor según la altura de tu header */
-}
+
 #configuracionDropdown {
     text-align: left;
 }
-.nav{
-    height: 400px;
-}
+
 
 .nav-item {
     margin-bottom: 30px;
@@ -62,15 +57,16 @@
 }
 
 .menu{
+    color: black;
     display: none;
-    background-color: rgba(209, 209, 212, 0.75);
+    background-color: rgb(226, 226, 226);
     width: 200px;
+    border-radius: 0 10px 10px 10px;
 }
 
-
-/* div regresar */
-div .regresar{
-    display: flex;
-    height: 200px;
-    align-items: flex-end;
+.regresar{
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
 }
+

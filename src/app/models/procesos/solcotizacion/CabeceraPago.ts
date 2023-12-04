@@ -28,6 +28,9 @@ export class CabeceraPago {
   public cabPagoObservCancelacion: string;
   public cabPagoNoSolOC: string;
   public cabPagoValido: number;
+  public cabPagoMotivoDev: string;
+  public cabPagoFrom: string;
+  public cabPagoIfDestino: string;
 
   constructor(data: any) {
     this.cabPagoID = data.cabPagoID;
@@ -59,5 +62,8 @@ export class CabeceraPago {
     this.cabPagoObservCancelacion = data.cabPagoObservCancelacion;
     this.cabPagoNoSolOC = data.cabPagoNoSolOC;
     this.cabPagoValido = data.cabPagoValido;
+    this.cabPagoMotivoDev = data.cabPagoMotivoDev;
+    this.cabPagoFrom = data.cabPagoFrom;
+    this.cabPagoIfDestino = data.cabPagoIfDestino;
   }
 }

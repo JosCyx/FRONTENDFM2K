@@ -1003,14 +1003,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
   showEdicionItem: boolean = true;
   async saveData() {
     
-
-    
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
     this.cabecera = this.solicitudEdit.cabecera;
     this.sharedTipoSol=this.cabecera.cabSolOCTipoSolicitud;
     this.sharedNoSol=this.cabecera.cabSolOCNoSolicitud;
     this.noSolTmp = this.cabecera.cabSolOCNoSolicitud;
     this.estadoTrkTmp = this.cabecera.cabSolOCEstadoTracking;
+    this.areaSolTmp = this.cabecera.cabSolOCIdArea;
     this.depSolTmp = this.cabecera.cabSolOCIdDept;
     this.cabecera.cabSolOCAprobPresup = this.cabecera.cabSolOCAprobPresup.trim();
     this.numeroSolicitudEmail = this.cabecera.cabSolOCNumerico;
@@ -1053,33 +1052,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
       this.cabecera.cabSolOCFecha.slice(1);
 
     // Formatear la fecha máxima de entrega en formato 'yyyy-MM-dd' 
-    this.cabecera.cabSolOCFechaMaxentrega = this.cabecera.cabSolOCFechaMaxentrega === "0001-01-01T00:00:00" ? '':format(parseISO(this.cabecera.cabSolOCFechaMaxentrega),'yyyy-MM-dd'
-    );
-    setTimeout(() => {
-      for (let empl of this.inspectoresEdit) {
-        if (empl.empleadoIdNomina == this.cabecera.cabSolOCInspector) {
-          this.inspector = empl.empleadoNombres + ' ' + empl.empleadoApellidos;
-        }
-      }
-      this.getNivelRuteoArea();
-    }, 200);
+    this.formatFehchaMaxEntrega();
+    this.getInspector();
     
-    setTimeout(() => {
-      for (let i = 0; i < this.nivelSolAsignado.length; i++) {
-        const element = this.nivelSolAsignado[i];
-        //guardar el ultimo elemento de la lista
-        if (i === this.nivelSolAsignado.length - 1) {
-          const nivel = element.rutareaNivel;
-          this.lastNivel = nivel.toString();
-        }
-      }
-    }, 500);
+    this.getLastNivel();
 
     // Formatear el plazo de entrega en formato 'yyyy-MM-dd'
-    this.cabecera.cabSolOCPlazoEntrega = this.cabecera.cabSolOCPlazoEntrega === "0001-01-01T00:00:00" ? '':format(
-      parseISO(this.cabecera.cabSolOCPlazoEntrega),
-      'yyyy-MM-dd'
-    );
+    this.formatFehchaPlazoEntrega();
 
     //ordena los items de la lista segun el id del detalle de menor a mayor
     this.item.sort((a, b) => a.itmIdDetalle - b.itmIdDetalle);
@@ -1088,6 +1067,71 @@ export class SoliocComponent implements OnInit, OnDestroy {
   }
 
   lastNivel: string = '';
+
+  async getInspector() {
+    await this.empService.getEmpleadosList().subscribe((data) => {
+      this.inspectoresEdit = data;
+      for (let emp of this.inspectoresEdit) {    
+        if (emp.empleadoIdNomina == this.cabecera.cabSolOCInspector) {
+          this.inspector = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
+        }
+      }
+    });
+    this.getNivelRuteoArea();
+  }
+
+  getLastNivel(){
+    for (let i = 0; i < this.nivelSolAsignado.length; i++) {
+        const element = this.nivelSolAsignado[i];
+  
+        //guardar el ultimo elemento de la lista
+        if (i === this.nivelSolAsignado.length - 1) {
+          const nivel = element.rutareaNivel;
+          this.lastNivel = nivel.toString();
+        }
+        //console.log(this.estadoSol)
+      }
+  }
+
+  formatFehchaMaxEntrega(){
+    // Formatear la fecha máxima de entrega en formato 'yyyy-MM-dd'
+   /* this.cabecera.cabSolOCFechaMaxentrega = this.cabecera.cabSolOCFechaMaxentrega === null ?   '':format(parseISO(this.cabecera.cabSolOCFechaMaxentrega),
+    'yyyy-MM-dd');*/
+    if (this.cabecera.cabSolOCFechaMaxentrega) {
+      const fechaMaxEntrega = parseISO(this.cabecera.cabSolOCFechaMaxentrega);
+      
+      if (!isNaN(fechaMaxEntrega.getTime())) {
+        // La fecha es válida, ahora puedes formatearla
+        this.cabecera.cabSolOCFechaMaxentrega = format(fechaMaxEntrega, 'yyyy-MM-dd');
+      } else {
+        // La fecha no es válida, maneja el caso según tus necesidades
+        console.error('Fecha máxima de entrega no válida:', this.cabecera.cabSolOCFechaMaxentrega);
+      }
+    } else {
+      // La fecha es undefined, maneja el caso según tus necesidades
+      console.error('La fecha máxima de entrega es undefined.');
+    }
+  }
+
+  formatFehchaPlazoEntrega(){
+        // Formatear el plazo de entrega en formato 'yyyy-MM-dd'
+        /*this.cabecera.cabSolOCPlazoEntrega = this.cabecera.cabSolOCPlazoEntrega === null ?   '':format(parseISO(this.cabecera.cabSolOCPlazoEntrega),
+        'yyyy-MM-dd');*/
+    if (this.cabecera.cabSolOCPlazoEntrega) {
+      const fechaPlazoEntrega = parseISO(this.cabecera.cabSolOCPlazoEntrega);
+      
+      if (!isNaN(fechaPlazoEntrega.getTime())) {
+        // La fecha es válida, ahora puedes formatearla
+        this.cabecera.cabSolOCPlazoEntrega = format(fechaPlazoEntrega, 'yyyy-MM-dd');
+      } else {
+        // La fecha no es válida, maneja el caso según tus necesidades
+        console.error('Fecha plazo de entrega no válida:', this.cabecera.cabSolOCPlazoEntrega);
+      }
+    } else {
+      // La fecha es undefined, maneja el caso según tus necesidades
+      console.error('La fecha plazo de entrega es undefined.');
+    }
+  }
 
   get estadoTexto(): string {
     switch (this.cabecera.cabSolOCEstado) {
@@ -1728,6 +1772,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   noSolTmp: number = 0;//asegurarse que el numero de solicitud actual de la cabecera este llegando aqui
   estadoTrkTmp: number = 10;//asegurarse que el estado actual de la cabecera este llegando aqui
   depSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
+  areaSolTmp: number = 0;//asegurarse que el area actual de la cabecera este llegando aqui
 
 
   aprobadopor: string = 'XXXXXX';
@@ -1845,7 +1890,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
               const msjExito = `La solicitud ha sido enviada exitosamente.`;
               this.callMensaje(msjExito,true)
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
-              this.sendNotify(newEstado, newestadoSt, 1);
+              this.sendNotify(newEstado, newestadoSt, 1,0);
 
               setTimeout(() => {
                 this.clear();
@@ -1957,7 +2002,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
           this.callMensaje(msjExito,true);
 
           //notificar al emisor de la solicitud que ha sido anulada
-          this.sendMail(mailToNotify,2);
+          this.sendMail(mailToNotify,2,0);
 
           setTimeout(() => {
             this.clear();
@@ -1994,63 +2039,101 @@ export class SoliocComponent implements OnInit, OnDestroy {
       }
     );
 
-    for(let i = 0; i < this.nivelRuteotoAut.length; i++){
-      let niv = this.nivelRuteotoAut[i];
-      if(niv.rutareaNivel == this.estadoTrkTmp){
-        let newEstado = this.nivelRuteotoAut[i-1].rutareaNivel;
-        let newestadoSt = '';
-        
-        //extrae el tipo de proceso del nivel actual
-        this.nivRuteService.getNivelInfo(newEstado).subscribe(
-          (response) => {
-            newestadoSt = response[0].procesoRuteo;
-            //console.log("tipo de proceso de nivel: ", newestadoSt);
-          },
-          (error) => {
-            console.log('Error al obtener el nuevo estado de tracking: ', error);
-          }
-        );
-        
-        this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
-          (response) => {
-            //console.log('Estado de tracknig actualizado exitosamente');
-            const msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido devuelta al nivel anterior.`;
-            this.callMensaje(msjExito,true)
-
-            if(newEstado == 10){
-              //notificar al emisor
-              this.sendMail(mailToNotify,3);
-
-            } else {
-              //notificar al nivel correspondiente
-              this.sendNotify(newEstado, newestadoSt, 3); 
+    if(this.areaSolTmp == 12){
+      for(let i = 0; i < this.nivelRuteotoAut.length; i++){
+        let niv = this.nivelRuteotoAut[i];
+        if(niv.rutareaNivel == this.estadoTrkTmp){
+          let newEstado = this.nivelRuteotoAut[i-1].rutareaNivel;
+          let newestadoSt = '';
+          
+          //extrae el tipo de proceso del nivel actual
+          this.nivRuteService.getNivelInfo(newEstado).subscribe(
+            (response) => {
+              newestadoSt = response[0].procesoRuteo;
+              //console.log("tipo de proceso de nivel: ", newestadoSt);
+            },
+            (error) => {
+              console.log('Error al obtener el nuevo estado de tracking: ', error);
             }
-
-            setTimeout(() => {
-              this.clear();
-              this.serviceGlobal.solView = 'crear';
-              this.router.navigate(['allrequest']);
-            }, 3000);
-          },
-          (error) => {
-            console.log('Error al actualizar el estado: ', error);
-            this.showmsjerror = true;
-            const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
-            this.callMensaje(msjError,false)
-          }
-        );
-        
-        //console.log("Nuevo estado: ", newEstado);
-        break;
+          );
+          
+          this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+            (response) => {
+              //console.log('Estado de tracknig actualizado exitosamente');
+              const msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido devuelta al nivel anterior.`;
+              this.callMensaje(msjExito,true)
+  
+              if(newEstado == 10){
+                //notificar al emisor
+                this.sendMail(mailToNotify,3,1);
+  
+              } else {
+                //notificar al nivel correspondiente
+                this.sendNotify(newEstado, newestadoSt, 3,2); 
+              }
+  
+              setTimeout(() => {
+                this.clear();
+                this.serviceGlobal.solView = 'crear';
+                this.router.navigate(['allrequest']);
+              }, 3000);
+            },
+            (error) => {
+              console.log('Error al actualizar el estado: ', error);
+              this.showmsjerror = true;
+              const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+              this.callMensaje(msjError,false)
+            }
+          );
+          
+          //console.log("Nuevo estado: ", newEstado);
+          break;
+        }
+  
       }
+    } else {
+      //regresar la solicitud al nivel 10 y notificar a todos los niveles anteriores
+      this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10).subscribe(
+        (response) => {
+          //console.log('Estado de tracknig actualizado exitosamente');
+          const msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido devuelta al nivel inicial.`;
+          this.callMensaje(msjExito,true)
+
+          //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
+          for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
+            let niv = this.nivelRuteotoAut[i];
+            if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
+              //console.log("Nivel a notificar: ", niv.rutareaNivel);
+              this.sendNotify(niv.rutareaNivel, 'E', 3,3);
+            }
+          }
+
+          //notificar al emisor
+          this.sendMail(mailToNotify,3,1);
+
+          setTimeout(() => {
+            this.clear();
+            this.serviceGlobal.solView = 'crear';
+            this.router.navigate(['allrequest']);
+          }, 3000);
+        },
+        (error) => {
+          console.log('Error al actualizar el estado: ', error);
+          this.showmsjerror = true;
+          const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+          this.callMensaje(msjError,false)
+        }
+      );
 
     }
+
+    
   }
 
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL//////////////////////////////////////////////////
 
 
-  async sendNotify(nivelStr: number, nivelStatus: string, tipoNotificacion: number) {
+  async sendNotify(nivelStr: number, nivelStatus: string, tipoNotificacion: number, tipoDevolucion: number) {
     //nivelStr: numero del nivel de ruteo al que se le va a enviar la notificacion
     //nivelStatus: tipo de proceso del nivel de ruteo al que se le va a enviar la notificacion
     //tipoNotificacion: tipo de notificacion que se va a enviar (1: solicitud nueva, 2: solicitud anulada, 3: solicitud devuelta)
@@ -2077,7 +2160,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
                   //console.log('Empleado: ', response);
                   mailToNotify = response[0].empleadoCorreo;
                   //enviar la notificacion al correo guardado en mailnotify
-                  this.sendMail(mailToNotify,tipoNotificacion);
+                  this.sendMail(mailToNotify,tipoNotificacion, tipoDevolucion);
                   //console.log("Correo enviado a: ", mailToNotify)
                 },
                 (error) => {
@@ -2098,12 +2181,18 @@ export class SoliocComponent implements OnInit, OnDestroy {
   emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Orden de Compra.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.<br>No. Solicitud: `;
 
   asuntoDevuelto: string = 'Notificación - Solicitud de Orden de Compra Devuelta';
-  emailContent1: string = `Estimado(a), le notificamos que la solicitud de orden de compra autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
+  emailContent1: string = `Estimado(a), le notificamos que la solicitud de orden de compra generada por usted ha sido devuelta al nivel de EMISIÓN, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
+
+    //correo de devolucion para los niveles de autorizacion (OPERACIONES)
+    emailContent3: string = `Estimado(a), le notificamos que la solicitud de orden de compra autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
+  
+    //correo de devolucion para los niveles de autorizacion (operacionesn't)
+    emailContent4: string = `Estimado(a), para su conocimiento, la solicitud de orden de compra autorizada por usted ha sido devuelta al nivel de EMISIÓN. El usuario correspondiente a ese rol deberá revisar y tomar las acciones necesarias para continuar con el proceso.<br>No. Solicitud: `;
 
   asuntoAnulado: string = 'Notificación - Solicitud de Orden de Compra Anulada';
   emailContent2: string = `Estimado(a), le notificamos que la solicitud de orden de compra generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.<br>No. Solicitud: `;
 
-  sendMail(mailToNotify: string, type: number) {
+  sendMail(mailToNotify: string, type: number, typeDev: number) {
     let contenidoMail = '';
     let asuntoMail = '';
 
@@ -2115,7 +2204,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
       contenidoMail = this.emailContent2 + this.numeroSolicitudEmail;
     } else if(type == 3){
       asuntoMail = this.asuntoDevuelto;
-      contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
+      if(typeDev == 1){
+        contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
+      } else if(typeDev == 2) {
+        contenidoMail = this.emailContent3 + this.numeroSolicitudEmail;
+      } else if(typeDev == 3) {
+        contenidoMail = this.emailContent4 + this.numeroSolicitudEmail;
+      }
     }
 
     setTimeout(() => {

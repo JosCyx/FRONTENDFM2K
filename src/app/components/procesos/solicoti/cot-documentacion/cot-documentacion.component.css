@@ -18,3 +18,61 @@
 a{
     color: black;
 }
+
+.file-tip{
+    border-radius: 5px;
+    background-color: #d3d3d3;
+    display: inline-block;
+    width: auto;
+    height: 25px;
+}
+
+.tip{
+    font-style: italic;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/*SUSTITUYE AL ESTILO DEL INPUT-GROUP DE BOOSTRAP*/
+.custom-input-group {
+    width: auto;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px; /* Ajusta según sea necesario */
+}
+
+.custom-label {
+    background-color: #e0e0e0; /* Color de fondo del label */
+    padding: 10px;
+    border-radius: 5px 0 0 5px; /* Bordes redondeados a la izquierda */
+    cursor: pointer;
+    margin: 0 !important;
+}
+
+.custom-label,
+.custom-input,
+.custom-button {
+    height: 40px; /* Ajusta la altura según sea necesario */
+}
+.custom-input {
+
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc; /* Borde del input */
+    background-color: white;
+}
+
+.custom-button {
+    background-color: rgb(21, 115, 71); /* Color de fondo del botón */
+    color: #fff; /* Color del texto del botón */
+    padding: 10px;
+    border: 1px solid rgb(21, 115, 71); /* Borde del botón */
+    border-radius: 0 5px 5px 0; /* Bordes redondeados a la derecha */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.custom-button:hover {
+    background-color: #218838; /* Cambia el color al pasar el ratón sobre el botón */
+}
