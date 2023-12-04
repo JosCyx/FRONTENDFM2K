@@ -49,4 +49,10 @@ export class DetPagoService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/DetSolPagoes/${id}`, data, { headers: headers });
   }
+
+  //Detalles de la orden compras
+  DetOrdenCompras(codigo:string): Observable<any>{
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(`${this.APIUrl}/DetSolPagoes/DetOrdenCompra?codigo=${codigo}`, { headers: headers });
+  }
 }

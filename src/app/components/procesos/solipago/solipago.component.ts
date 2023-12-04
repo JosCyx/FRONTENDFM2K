@@ -612,119 +612,151 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.showItDt = valor;
   }
 
+  obtenerOrdenCom(){
+    console.log("obtener orden de compra",this.valorinput);
+    this.detPagoService.DetOrdenCompras(this.valorinput).subscribe(
+      {
+        next: data => {
+          console.log("data",data);
+          this.detalleSolPagos=data.map((ini:any)=>({
+            idDetalle: ini.detId,
+            itemDesc: ini.detdesProducto,
+            itemCant: ini.detCantidad,
+            cantidadRecibid : ini.detCantidad,
+            valorUnitario: ini.detprecio,
+            subTotal: ini.detTotal
+          }))
 
-  async Obtener() {
-    if (this.tipoSolOc == 'F'){
-      this.solicitudFrom = 'F';
-      this.cab_NoSolOC = this.valorinput;
-      this.setDestino = true;//inhabilita la validacion del destino
-      if(this.valorinput == ''){
+          this.destinoIO = true;
+          this.detallesToDestino = data.map((detalle: any) => {
+            return {
+              idDetalle: detalle.detId,
+              descpDetalle: detalle.detdesProducto,
+              destinoDetalle: false
+            };
+          });
 
-        this.alertBool = true;
-        this.alertText = 'Por favor ingrese el nombre de la solicitud a asociar.';
+          this.cab_NoSolOC = this.valorinput;
 
-        setTimeout(() => {
-          this.alertBool = false;
-          this.alertText = '';
-        }, 2500);
-      } else {
-        this.alertBool = true;
-        this.alertText = '  Usted ha seleccionado solicitud física, por favor suba la documentacion de la orden de compra y las evidencias del destino en la pestaña Documentación ubicada en la parte superior.';
-        this.cab_NoSolOC = this.valorinput;
-      }
-    } else if (this.tipoSolOc == 'S'){
-      this.solicitudFrom = 'S';
-      this.cab_NoSolOC = this.valorinput;
-      this.setDestino = false;//habilita la validacion del destino
-      this.alertBool = false;
-      this.alertText = '';
-      if (this.valorinput == '') {
-        this.detalleSolPagos = [];
-        this.destinoIO = false;
-        this.detallesToDestino = [];
-        
-        this.alertBool = true;
-        this.alertText = 'Por favor ingrese el nombre de la solicitud a asociar.';
-        setTimeout(() => {
-          this.alertBoolError = false;
-          this.alertBool = false;
-          this.alertText = '';
-        }, 1000);
-      } else {
-        const partes = this.valorinput.match(/(\d+)-(\d+)/);
-        if (partes && partes.length === 3) {
-          if (partes[1] != '2') {
-            this.alertBool = true;
-            this.alertText = 'No se ha encontrado la solicitud';
-            this.detalleSolPagos = [];
-            setTimeout(() => {
-              this.alertBool = false;
-              this.alertText = '';
-            }, 1000);
-          } else {
-            this.noSolicinput = parseInt(partes[2], 10);
-            try {
-              this.detSolService
-                .getDetalle_solicitud(2, this.noSolicinput)
-                .subscribe(
-                  (response) => {
-  
-                    //console.log('response', response);
-                    this.detalleSolPagos = response.map((ini: any) => ({
-                      idDetalle: ini.solCotIdDetalle,
-                      itemDesc: ini.solCotDescripcion,
-                      itemCant: ini.solCotCantidadTotal,
-                      cantidadRecibid : undefined,
-                      valorUnitario: undefined,
-                      subTotal: undefined
-                    }));
-  
-                    //variables para controlar los datos ue se le pasan a destino
-                    this.destinoIO = true;
-                    this.detallesToDestino = response.map((detalle: any) => {
-                      return {
-                        idDetalle: detalle.solCotIdDetalle,
-                        descpDetalle: detalle.solCotDescripcion,
-                        destinoDetalle: false
-                      };
-                    });
-
-                    this.cab_NoSolOC = this.valorinput;
-                    //console.log('cambios en el map ', this.detalleSolPagos);
-                  },
-                  (error) => {
-                    //console.log('error al guardar la cabecera: ', error);
-                    this.alertBoolError = true;
-                    this.alertText = 'No se ha encontrado la solicitud';
-
-                    setTimeout(() => {
-                      this.alertBoolError = false;
-                      this.alertText = '';
-                    }, 3000);
-                  }
-                );
-            } catch (error) {
-              console.log('error', error);
-            }
-  
-          }
-  
-  
+        },
+        error: error => {
+          console.error('Error al obtener la orden de compra: ', error);
         }
-        else {
-          console.log('No tiene ningun formato realizado');
-          this.alertBoolError = true;
-          this.alertText = 'Error, no se ha ingresado el formato correcto';
-          setTimeout(() => {
-            this.alertBoolError = false;
-            this.alertText = '';
-          }, 3000);
-        }
-  
-      }
-    }
-    this.setNoSolDocumentacion();
+      })
+
   }
+  // async Obtener() {
+  //   if (this.tipoSolOc == 'F'){
+  //     this.solicitudFrom = 'F';
+  //     this.cab_NoSolOC = this.valorinput;
+  //     this.setDestino = true;//inhabilita la validacion del destino
+  //     if(this.valorinput == ''){
+
+  //       this.alertBool = true;
+  //       this.alertText = 'Por favor ingrese el nombre de la solicitud a asociar.';
+
+  //       setTimeout(() => {
+  //         this.alertBool = false;
+  //         this.alertText = '';
+  //       }, 2500);
+  //     } else {
+  //       this.alertBool = true;
+  //       this.alertText = '  Usted ha seleccionado solicitud física, por favor suba la documentacion de la orden de compra y las evidencias del destino en la pestaña Documentación ubicada en la parte superior.';
+  //       this.cab_NoSolOC = this.valorinput;
+  //     }
+  //   } else if (this.tipoSolOc == 'S'){
+  //     this.solicitudFrom = 'S';
+  //     this.cab_NoSolOC = this.valorinput;
+  //     this.setDestino = false;//habilita la validacion del destino
+  //     this.alertBool = false;
+  //     this.alertText = '';
+  //     if (this.valorinput == '') {
+  //       this.detalleSolPagos = [];
+  //       this.destinoIO = false;
+  //       this.detallesToDestino = [];
+        
+  //       this.alertBool = true;
+  //       this.alertText = 'Por favor ingrese el nombre de la solicitud a asociar.';
+  //       setTimeout(() => {
+  //         this.alertBoolError = false;
+  //         this.alertBool = false;
+  //         this.alertText = '';
+  //       }, 1000);
+  //     } else {
+  //       const partes = this.valorinput.match(/(\d+)-(\d+)/);
+  //       if (partes && partes.length === 3) {
+  //         if (partes[1] != '2') {
+  //           this.alertBool = true;
+  //           this.alertText = 'No se ha encontrado la solicitud';
+  //           this.detalleSolPagos = [];
+  //           setTimeout(() => {
+  //             this.alertBool = false;
+  //             this.alertText = '';
+  //           }, 1000);
+  //         } else {
+  //           this.noSolicinput = parseInt(partes[2], 10);
+  //           try {
+  //             this.detSolService
+  //               .getDetalle_solicitud(2, this.noSolicinput)
+  //               .subscribe(
+  //                 (response) => {
+  
+  //                   //console.log('response', response);
+  //                   this.detalleSolPagos = response.map((ini: any) => ({
+  //                     idDetalle: ini.solCotIdDetalle,
+  //                     itemDesc: ini.solCotDescripcion,
+  //                     itemCant: ini.solCotCantidadTotal,
+  //                     cantidadRecibid : undefined,
+  //                     valorUnitario: undefined,
+  //                     subTotal: undefined
+  //                   }));
+  
+  //                   //variables para controlar los datos ue se le pasan a destino
+  //                   this.destinoIO = true;
+  //                   this.detallesToDestino = response.map((detalle: any) => {
+  //                     return {
+  //                       idDetalle: detalle.solCotIdDetalle,
+  //                       descpDetalle: detalle.solCotDescripcion,
+  //                       destinoDetalle: false
+  //                     };
+  //                   });
+
+  //                   this.cab_NoSolOC = this.valorinput;
+  //                   //console.log('cambios en el map ', this.detalleSolPagos);
+  //                 },
+  //                 (error) => {
+  //                   //console.log('error al guardar la cabecera: ', error);
+  //                   this.alertBoolError = true;
+  //                   this.alertText = 'No se ha encontrado la solicitud';
+
+  //                   setTimeout(() => {
+  //                     this.alertBoolError = false;
+  //                     this.alertText = '';
+  //                   }, 3000);
+  //                 }
+  //               );
+  //           } catch (error) {
+  //             console.log('error', error);
+  //           }
+  
+  //         }
+  
+  
+  //       }
+  //       else {
+  //         console.log('No tiene ningun formato realizado');
+  //         this.alertBoolError = true;
+  //         this.alertText = 'Error, no se ha ingresado el formato correcto';
+  //         setTimeout(() => {
+  //           this.alertBoolError = false;
+  //           this.alertText = '';
+  //         }, 3000);
+  //       }
+  
+  //     }
+  //   }
+  //   this.setNoSolDocumentacion();
+  // }
   //* Agregamos los detalles de pago a base
   AddDetSolPago() {
     for (let detPago of this.detalleSolPagos) {

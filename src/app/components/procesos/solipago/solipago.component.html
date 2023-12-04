@@ -192,7 +192,7 @@
               class="custom-input mr-1"
               placeholder="Ejemplo: OC OB 2-0012"
             />
-            <button class="btn btn-success" data-toggle="modal" data-target="#elegirTipoSolOC">
+            <button class="btn btn-success" (click)="obtenerOrdenCom()" >
               <i class="bi bi-search"></i>
             </button>
           </div>
@@ -1060,30 +1060,7 @@
     <!--  -->
 </div>
 
-<!-- Modal para verificar el envío de la solcitud guardada-->
-<div class="modal fade" #exampleModal id="elegirTipoSolOC" data-backdrop="static" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header justify-content-center">
-                <h3 class="font-weight-bold" id="exampleModalLabel">
-                    Seleccione el tipo de solicitud de orden de compra que desea asociar
-                </h3>
-            </div>
-            <div class="modal-body">
-                <select class="form-select"  [(ngModel)]="tipoSolOc">
-                  <option value="F">Solicitud física</option>
-                  <option value="S">Solicitud del sistema</option>
-                </select>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="Obtener()">
-                    Confirmar
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 
 <!-- Modal para verificar el envío de la solcitud guardada-->
