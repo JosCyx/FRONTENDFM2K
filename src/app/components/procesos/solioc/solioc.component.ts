@@ -176,6 +176,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
    motivoDevEditar: string = '';
    numeroSolicitudEmail: string = '';
+   tipoSolicitudEmail: string = '';
+   nivelProcesoEmail: string = '';
 
   constructor(
     private empService: EmpleadosService,
@@ -566,6 +568,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
     await this.guardarTrancking();
     this.getSolName(this.trLastNoSol);
     this.numeroSolicitudEmail = this.solNumerico;
+    this.tipoSolicitudEmail = 'Orden de Compra';
 
     const dataCAB = {
       cabSolOCTipoSolicitud: this.trTipoSolicitud,
@@ -1013,6 +1016,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
     this.depSolTmp = this.cabecera.cabSolOCIdDept;
     this.cabecera.cabSolOCAprobPresup = this.cabecera.cabSolOCAprobPresup.trim();
     this.numeroSolicitudEmail = this.cabecera.cabSolOCNumerico;
+    this.tipoSolicitudEmail = 'Orden de Compra';
+    this.getNombreNivel(this.cabecera.cabSolOCEstadoTracking);
 
     this.checkAprobPrep(this.cabecera.cabSolOCEstadoTracking);
 
@@ -1131,6 +1136,19 @@ export class SoliocComponent implements OnInit, OnDestroy {
       // La fecha es undefined, maneja el caso según tus necesidades
       console.error('La fecha plazo de entrega es undefined.');
     }
+  }
+
+  getNombreNivel(nivel:number){
+    this.nivRuteService.getNivelruteo().subscribe(
+      (data)=>{
+        const response = data;
+        for (let nivelR of response) {
+          if (nivelR.nivel == nivel) {
+            this.nivelProcesoEmail = nivelR.descRuteo;
+          }
+        }
+      }
+    )
   }
 
   get estadoTexto(): string {
@@ -1837,7 +1855,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
               this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
                 (response) => {
 
-                  const msjExito = 'La solicitud ha sido enviada exitosamente.';
+                  const msjExito = 'La solicitud ha finalizado exitosamente.';
                   this.callMensaje(msjExito,true);
                   setTimeout(() => {
                     this.clear();
@@ -1889,8 +1907,9 @@ export class SoliocComponent implements OnInit, OnDestroy {
               //console.log("Solicitud enviada");
               const msjExito = `La solicitud ha sido enviada exitosamente.`;
               this.callMensaje(msjExito,true)
+
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
-              this.sendNotify(newEstado, newestadoSt, 1,0);
+              this.getMailContentSN(10, newEstado, newestadoSt); 
 
               setTimeout(() => {
                 this.clear();
@@ -1928,6 +1947,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   nivelRuteotoAut: RuteoArea[] = [];
   nivelesRuteo: any[] = [];
   async getNivelRuteoArea() {
+    await this.solve();
     this.nivelRut$.subscribe((response) => { this.nivelesRuteo = response; });
     try {
       const response = await this.ruteoService.getRuteosByArea(this.depSolTmp).toPromise();
@@ -1940,6 +1960,11 @@ export class SoliocComponent implements OnInit, OnDestroy {
     }
   }
 
+  async solve() {
+    this.nivelRut$ = this.nivRuteService.getNivelruteo().pipe(
+      map(niv => niv.sort((a, b) => a.nivel - b.nivel))
+    );
+  }
   metodo(){
     this.ruteoService.getRuteosByArea(this.depSolTmp).subscribe(
       response => {
@@ -2002,7 +2027,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
           this.callMensaje(msjExito,true);
 
           //notificar al emisor de la solicitud que ha sido anulada
-          this.sendMail(mailToNotify,2,0);
+          this.getMailContentSM(30,mailToNotify);
 
           setTimeout(() => {
             this.clear();
@@ -2064,12 +2089,12 @@ export class SoliocComponent implements OnInit, OnDestroy {
               this.callMensaje(msjExito,true)
   
               if(newEstado == 10){
-                //notificar al emisor
-                this.sendMail(mailToNotify,3,1);
+                //extraer el contenido del email correspondiente
+                this.getMailContentSM(20,mailToNotify);
   
               } else {
-                //notificar al nivel correspondiente
-                this.sendNotify(newEstado, newestadoSt, 3,2); 
+                //extraer el contenido del email correspondiente
+                this.getMailContentSN(21, newEstado, newestadoSt);
               }
   
               setTimeout(() => {
@@ -2099,17 +2124,18 @@ export class SoliocComponent implements OnInit, OnDestroy {
           const msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido devuelta al nivel inicial.`;
           this.callMensaje(msjExito,true)
 
-          //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
-          for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
-            let niv = this.nivelRuteotoAut[i];
-            if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
-              //console.log("Nivel a notificar: ", niv.rutareaNivel);
-              this.sendNotify(niv.rutareaNivel, 'E', 3,3);
-            }
-          }
+          this.getMailContentSM(20,mailToNotify);
 
-          //notificar al emisor
-          this.sendMail(mailToNotify,3,1);
+          //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
+          setTimeout(() => {
+            
+            for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
+              let niv = this.nivelRuteotoAut[i];
+              if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
+                this.getMailContentSN(22, niv.rutareaNivel, 'E');
+              }
+            }
+          }, 300);
 
           setTimeout(() => {
             this.clear();
@@ -2132,8 +2158,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL//////////////////////////////////////////////////
 
-
-  async sendNotify(nivelStr: number, nivelStatus: string, tipoNotificacion: number, tipoDevolucion: number) {
+  async sendNotify(nivelStr: number, nivelStatus: string) {
     //nivelStr: numero del nivel de ruteo al que se le va a enviar la notificacion
     //nivelStatus: tipo de proceso del nivel de ruteo al que se le va a enviar la notificacion
     //tipoNotificacion: tipo de notificacion que se va a enviar (1: solicitud nueva, 2: solicitud anulada, 3: solicitud devuelta)
@@ -2154,14 +2179,14 @@ export class SoliocComponent implements OnInit, OnDestroy {
           //console.log('Niveles de gerencia para este nivel: ', response);
           for (let emp of response) {
             if (emp.empNivImp == 'T') {
-              //buscar el correo del empleado y setear su correo en la variable maltonotify
+              //buscar el correo del empleado y setear su correo en la variable mailtonotify
               this.empService.getEmpleadoByNomina(emp.empNivEmpelado).subscribe(
                 (response: any) => {
                   //console.log('Empleado: ', response);
                   mailToNotify = response[0].empleadoCorreo;
                   //enviar la notificacion al correo guardado en mailnotify
-                  this.sendMail(mailToNotify,tipoNotificacion, tipoDevolucion);
-                  //console.log("Correo enviado a: ", mailToNotify)
+                  this.sendMail(mailToNotify);
+                  console.log("Correo enviado a: ", mailToNotify)
                 },
                 (error) => {
                   console.log('Error al obtener el empleado: ', error);
@@ -2177,41 +2202,10 @@ export class SoliocComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
-  asunto: string = 'Nueva Solicitud de Orden de Compra Recibida - Acción Requerida';
-  emailContent: string = `Estimado(a),<br>Hemos recibido una nueva Solicitud de Orden de Compra.<br>Para continuar con el proceso, le solicitamos que revise y apruebe esta solicitud para que pueda avanzar al siguiente nivel de ruteo.<br>Esto garantizará una gestión eficiente y oportuna en el Proceso de Compras.<br>Por favor ingrese a la app <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud.<br>No. Solicitud: `;
 
-  asuntoDevuelto: string = 'Notificación - Solicitud de Orden de Compra Devuelta';
-  emailContent1: string = `Estimado(a), le notificamos que la solicitud de orden de compra generada por usted ha sido devuelta al nivel de EMISIÓN, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
-
-    //correo de devolucion para los niveles de autorizacion (OPERACIONES)
-    emailContent3: string = `Estimado(a), le notificamos que la solicitud de orden de compra autorizada por usted ha sido devuelta, por favor ingrese a la aplicación <a href="http://192.168.1.71/solicitudesfm2k/">SOLICITUDES</a> para acceder a la solicitud y realizar las correcciones necesarias.<br>No. Solicitud: `;
-  
-    //correo de devolucion para los niveles de autorizacion (operacionesn't)
-    emailContent4: string = `Estimado(a), para su conocimiento, la solicitud de orden de compra autorizada por usted ha sido devuelta al nivel de EMISIÓN. El usuario correspondiente a ese rol deberá revisar y tomar las acciones necesarias para continuar con el proceso.<br>No. Solicitud: `;
-
-  asuntoAnulado: string = 'Notificación - Solicitud de Orden de Compra Anulada';
-  emailContent2: string = `Estimado(a), le notificamos que la solicitud de orden de compra generada por usted ha sido anulada, si desea conocer más detalles pónganse en contacto con el responsable de la anulación.<br>No. Solicitud: `;
-
-  sendMail(mailToNotify: string, type: number, typeDev: number) {
-    let contenidoMail = '';
-    let asuntoMail = '';
-
-    if(type == 1){
-      asuntoMail = this.asunto;
-      contenidoMail = this.emailContent + this.numeroSolicitudEmail;
-    } else if(type == 2){
-      asuntoMail = this.asuntoAnulado;
-      contenidoMail = this.emailContent2 + this.numeroSolicitudEmail;
-    } else if(type == 3){
-      asuntoMail = this.asuntoDevuelto;
-      if(typeDev == 1){
-        contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
-      } else if(typeDev == 2) {
-        contenidoMail = this.emailContent3 + this.numeroSolicitudEmail;
-      } else if(typeDev == 3) {
-        contenidoMail = this.emailContent4 + this.numeroSolicitudEmail;
-      }
-    }
+  sendMail(mailToNotify: string) {
+    let contenidoMail = this.mailContent.emailContContenido;
+    let asuntoMail = this.mailContent.emailContAsunto;
 
     setTimeout(() => {
       const data = {
@@ -2233,13 +2227,64 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
         },
         error => {
-          console.log(`Error, no se ha podido enviar el correo al proveedor.`, error)
-          const msjError = `Error, no se ha podido enviar el correo al proveedor, intente nuevamente.`;
-          this.callMensaje(msjError,false)
+          console.log(`Error, no se ha podido enviar el correo al empleado correspondiente.`, error)
+          const msjError = `Error, no se ha podido enviar el correo al empleado correspondiente, intente nuevamente.`;
+          this.callMensaje(msjError, false)
         }
       );
     }, 500);
   }
+
+
+
+  mailContent: any;
+  setMailInfo(){
+    //sustituir las palabras tiposol por la variable this.tipoSolicitudEmail, nivelproceso por this.nivelProcesoEmail y numsol por this.numeroSolicitudEmail de la propiedad emailContContenido del objeto mailContent
+    let asuntoMail = this.mailContent.emailContAsunto;
+    let contenidoMail = this.mailContent.emailContContenido;
+    asuntoMail = asuntoMail.replace('tiposol', this.tipoSolicitudEmail);
+    contenidoMail = contenidoMail.replace('tiposol', this.tipoSolicitudEmail);
+    contenidoMail = contenidoMail.replace('nivelproceso', this.nivelProcesoEmail);
+    contenidoMail = contenidoMail.replace('numsol', this.numeroSolicitudEmail);
+
+    this.mailContent.emailContAsunto = asuntoMail;
+    this.mailContent.emailContContenido = contenidoMail;
+  }
+
+  //CORREGIR LAS LLAMADAS A LOS METODOS PARA ENVIAR MAILS
+  //obtiene el contenido deo correo y llama al metodo sendnotify
+  getMailContentSN(idMail: number, nivel: number, typeProceso: string) {
+    this.sendMailService.getMailContent(idMail).subscribe(
+      response => {
+        this.mailContent = response;
+        this.setMailInfo();
+        //enviar el mail 
+        this.sendNotify(nivel, typeProceso);
+      },
+      error => {
+        console.log(`Error, no se ha podido obtener el contenido de los correos.`, error)
+      }
+    );
+  }
+
+
+  //obtiene el contenido del correo y llama al metodo sendmail
+  getMailContentSM(idMail: number, mailToNotify: string) {
+
+    this.sendMailService.getMailContent(idMail).subscribe(
+      response => {
+        this.mailContent = response;
+        this.setMailInfo();
+        //enviar el mail 
+        this.sendMail(mailToNotify);
+      },
+      error => {
+        console.log(`Error, no se ha podido obtener el contenido de los correos.`, error)
+      }
+    );
+  }
+
+  //////////////////////////////////////////////////APROBACION PRESUPUESTARIA/////////////////////////////////////////////
 
 
   setAprobadoPor(id: string){

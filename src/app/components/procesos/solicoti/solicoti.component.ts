@@ -1706,7 +1706,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
             (response) => {
               this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
                 (response) => {
-                  const msjExito = `La solicitud ha sido enviada exitosamente.`;
+                  const msjExito = `La solicitud ha finalizado exitosamente.`;
                   this.callMensaje(msjExito, true)
                   setTimeout(() => {
                     this.clear();
@@ -1759,18 +1759,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
 
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
-              this.sendMailService.getMailContent(10).subscribe(
-                response => {
-                  this.mailContent = response;
-                  this.setMailInfo();
-                  //enviar el mail 
-                  this.sendNotify(newEstado, newestadoSt);
-                },
-                error => {
-                  console.log(`Error, no se ha podido obtener el contenido de los correos.`, error)
-                }
-              );
-              
+              this.getMailContentSN(10, newEstado, newestadoSt);              
 
               setTimeout(() => {
                 this.clear();
@@ -1876,17 +1865,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido anulada exitosamente.`;
           this.callMensaje(msjExito, true)
           //notificar al emisor de la solicitud que ha sido anulada
-          this.sendMailService.getMailContent(30).subscribe(
-            response => {
-              this.mailContent = response;
-              this.setMailInfo();
-              //enviar el mail 
-              this.sendMail(mailToNotify);
-            },
-            error => {
-              console.log(`Error, no se ha podido obtener el contenido de los correos.`, error)
-            }
-          );
+          this.getMailContentSM(30,mailToNotify);
 
           setTimeout(() => {
             this.clear();
@@ -1956,32 +1935,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
               if (newEstado == 10) {
                 //extraer el contenido del email correspondiente
-                this.sendMailService.getMailContent(20).subscribe(
-                  response => {
-                    this.mailContent = response;
-                    this.setMailInfo();
-                    //enviar el mail 
-                    this.sendMail(mailToNotify);
-                  },
-                  error => {
-                    console.log(`Error, no se ha podido obtener el contenido de los correos.`, error)
-                  }
-                );
+                this.getMailContentSM(20,mailToNotify);
 
               } else {
 
                 //extraer el contenido del email correspondiente
-                this.sendMailService.getMailContent(21).subscribe(
-                  response => {
-                    this.mailContent = response;
-                    this.setMailInfo();
-                    //enviar el mail 
-                    this.sendNotify(newEstado, newestadoSt);
-                  },
-                  error => {
-                    console.log(`Error, no se ha podido obtener el contenido de los correos.`, error)
-                  }
-                );
+                this.getMailContentSN(21, newEstado, newestadoSt);
               }
 
 
@@ -2012,17 +1971,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel inicial.`;
           this.callMensaje(msjExito, true)
 
-          this.sendMailService.getMailContent(20).subscribe(
-            response => {
-              this.mailContent = response;
-              this.setMailInfo();
-              //enviar el mail 
-              this.sendMail(mailToNotify);
-            },
-            error => {
-              console.log(`Error, no se ha podido obtener el contenido de los correos.`, error)
-            }
-          );
+          this.getMailContentSM(20,mailToNotify);
 
           //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
           setTimeout(() => {
@@ -2030,20 +1979,10 @@ export class SolicotiComponent implements OnInit, OnDestroy {
               let niv = this.nivelRuteotoAut[i];
               if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
                 
-                this.sendMailService.getMailContent(22).subscribe(
-                  response => {
-                    this.mailContent = response;
-                    this.setMailInfo();
-                    //enviar el mail 
-                    this.sendNotify(niv.rutareaNivel, 'E');
-                  },
-                  error => {
-                    console.log(`Error, no se ha podido obtener el contenido de los correos.`, error)
-                  }
-                );
+                this.getMailContentSN(22, niv.rutareaNivel, 'E');
               }
             }
-          }, 200);
+          }, 300);
 
           setTimeout(() => {
             this.clear();
@@ -2135,23 +2074,6 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   sendMail(mailToNotify: string) {
     let contenidoMail = this.mailContent.emailContContenido;
     let asuntoMail = this.mailContent.emailContAsunto;
-
-    // if (type == 1) {
-    //   asuntoMail = this.asunto;
-    //   contenidoMail = this.emailContent + this.numeroSolicitudEmail;
-    // } else if (type == 2) {
-    //   asuntoMail = this.asuntoAnulado;
-    //   contenidoMail = this.emailContent2 + this.numeroSolicitudEmail;
-    // } else if (type == 3) {
-    //   asuntoMail = this.asuntoDevuelto;
-    //   if (typeDev == 1) {
-    //     contenidoMail = this.emailContent1 + this.numeroSolicitudEmail;
-    //   } else if (typeDev == 2) {
-    //     contenidoMail = this.emailContent3 + this.numeroSolicitudEmail;
-    //   } else if (typeDev == 3) {
-    //     contenidoMail = this.emailContent4 + this.numeroSolicitudEmail;
-    //   }
-    // }
 
     setTimeout(() => {
       const data = {
