@@ -225,7 +225,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.fechamaxima=new Date(new Date().getFullYear(),new Date().getMonth()+6,new Date().getDate());
     this.fechaMax=this.formatDateToYYYYMMDD(this.fechamaxima);
     this.fechaMin=this.formatDateToYYYYMMDD(this.fechaminina);
-    //console.log(this.sharedNoSol);
+    // console.log(this.sharedNoSol);
     setTimeout(() => {
       this.empService.getEmpleadosList().subscribe((data) => {
         this.empleadoEdi = data;
@@ -613,28 +613,27 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   obtenerOrdenCom(){
-    console.log("obtener orden de compra",this.valorinput);
     this.detPagoService.DetOrdenCompras(this.valorinput).subscribe(
       {
         next: data => {
-          console.log("data",data);
           this.detalleSolPagos=data.map((ini:any)=>({
             idDetalle: ini.detId,
             itemDesc: ini.detdesProducto,
-            itemCant: ini.detCantidad,
-            cantidadRecibid : ini.detCantidad,
+            itemCant: ini.detcantidad,
+            cantidadRecibid : ini.detcantidad,
             valorUnitario: ini.detprecio,
             subTotal: ini.detTotal
           }))
 
           this.destinoIO = true;
-          this.detallesToDestino = data.map((detalle: any) => {
-            return {
-              idDetalle: detalle.detId,
-              descpDetalle: detalle.detdesProducto,
-              destinoDetalle: false
-            };
-          });
+          // this.detallesToDestino = data.map((detalle: any) => {
+          //   console.log("detalle",detalle);
+          //   return {
+          //     idDetalle: detalle.detOrden,
+          //     descpDetalle: detalle.detdesProducto,
+          //     destinoDetalle: false
+          //   };
+          // });
 
           this.cab_NoSolOC = this.valorinput;
 
@@ -837,6 +836,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.estadoSol = this.cabecera.cabPagoEstadoTrack.toString();
     this.sharedTipoSol = this.cabecera.cabPagoTipoSolicitud;
     this.sharedNoSol = this.cabecera.cabPagoNoSolicitud;
+    console.log("sdf Nosol",this.sharedNoSol)
     for (let det of this.solicitudEdit.detalles) {
       this.detallePago.push(det as DetallePago);
     }
@@ -844,13 +844,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.detallePago.sort((a, b) => a.detPagoIdDetalle - b.detPagoIdDetalle);
 
     //lista de detalles para el destino
-    this.detallesToDestino = this.detallePago.map((detalle: any) => {
-      return {
-        idDetalle: detalle.detPagoIdDetalle,
-        descpDetalle: detalle.detPagoItemDesc,
-        destinoDetalle: true
-      };
-    });
+    // this.detallesToDestino = this.detallePago.map((detalle: any) => {
+    //   return {
+    //     idDetalle: detalle.detPagoIdDetalle,
+    //     descpDetalle: detalle.detPagoItemDesc,
+    //     destinoDetalle: true
+    //   };
+    // });
     //formatear la fecha de la solicitud de pago
     this.fechaFormateada = this.formatDateToSpanish(new Date(this.cabecera.cabPagoFechaEmision))
     //
