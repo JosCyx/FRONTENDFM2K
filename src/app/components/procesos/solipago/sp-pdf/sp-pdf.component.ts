@@ -423,9 +423,10 @@ export class SpPdfComponent implements OnInit {
         detPagoSubtotal: item.detPagoSubtotal,
       };
     });
+    let detPagoIdDetalle = 1;
     for (let index = 0; index < datosDetalles.length; index++) {
       const {
-        detPagoIdDetalle,
+        
         detPagoItemDesc,
         detPagoCantContratada,
         detPagoCantRecibida,
@@ -433,7 +434,7 @@ export class SpPdfComponent implements OnInit {
         detPagoSubtotal,
       } = datosDetalles[index];
       const datos = [
-        { text: detPagoIdDetalle },
+        { text: detPagoIdDetalle++ },
         { text: detPagoItemDesc },
         { text: detPagoCantContratada },
         { text: detPagoCantRecibida },
