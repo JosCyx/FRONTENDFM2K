@@ -8,7 +8,7 @@ import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/
 import { GlobalService } from 'src/app/services/global.service';
 import { SolipagoComponent } from '../solipago.component';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
-import { set } from 'date-fns';
+
 
 interface Detalle {
   idDetalle: number;
@@ -42,7 +42,7 @@ export class SpDestinoComponent implements OnInit {
   @Input() numericoSol!: string;
   @Input() estadoSol!: string;
   @Input() areaSol!: number;
-  @Input() detalles!: Detalle[];
+  // @Input() detalles!: Detalle[];
 
   archivo!: File;
   archivos: Evidencias[] = [];
@@ -79,7 +79,6 @@ export class SpDestinoComponent implements OnInit {
     private sectorServices: SectoresService,private dialogService:DialogServiceService) { }
 
   ngOnInit(): void {
-    console.log(this.tipoSol, this.noSol)
     setTimeout(() => {
 
       this.empleadoService.getEmpleadosList().subscribe(
@@ -169,9 +168,9 @@ export class SpDestinoComponent implements OnInit {
   }
 
   //guarda el id del item seleccionado para registrar su destino (se ejecuta en el click al tr)
-  saveIdItem(item: any) {
-    this.idItem = item.idDetalle;
-  }
+  // saveIdItem(item: any) {
+  //   this.idItem = item.idDetalle;
+  // }
 
   //guarda los datos del destino segun su item (se ejecuta en el boton confirmar del modal)
   setItemDestino() {
@@ -186,11 +185,12 @@ export class SpDestinoComponent implements OnInit {
     this.itemDestino.push(itemDestino);
 
     //cambiar de estado el campo de asignado
-    this.detalles.forEach((det) => {
-      if (det.idDetalle === this.idItem) {
-        det.destinoDetalle = true;
-      }
-    });
+    // this.detalles.forEach((det) => {
+    //   console.log("eso son mis cambios ",det.idDetalle);
+    //   if (det.idDetalle === this.idItem) {
+    //     det.destinoDetalle = true;
+    //   }
+    // });
 
     //limpiar las variables
     this.sectorDestino = 9999;
@@ -199,8 +199,11 @@ export class SpDestinoComponent implements OnInit {
     this.empleadoBusq = '';
     this.idItem = 0;
     this.archivo = null as any;
-    this.checkDestinos();
+    // this.checkDestinos();
     this.resetInputFile();
+    setTimeout(() => {
+      this.registrar();
+    }, 1000);
   }
 
   resetInputFile() {
@@ -217,11 +220,11 @@ export class SpDestinoComponent implements OnInit {
   }
 
   //verifica que todos los items tengan un destino asignado
-  checkDestinos() {
-    this.checkdestino = this.detalles.every(
-      (det) => det.destinoDetalle === true
-    );
-  }
+  // checkDestinos() {
+  //   this.checkdestino = this.detalles.every(
+  //     (det) => det.destinoDetalle === true
+  //   );
+  // }
 
   cancelarDestino() {
     //limpiar las variables usadas en el modal del destino y la variable idItem
@@ -233,11 +236,11 @@ export class SpDestinoComponent implements OnInit {
     this.archivo = null as any;
     this.resetInputFile();
     this.idItem = 0;
-    if (this.detalles != undefined) {
-      this.detalles.forEach((det) => {
-        det.destinoDetalle = false;
-      });
-    }
+    // if (this.detalles != undefined) {
+    //   this.detalles.forEach((det) => {
+    //     det.destinoDetalle = false;
+    //   });
+    // }
     this.evidenciasConsultadas = [];
   }
 
@@ -319,34 +322,39 @@ export class SpDestinoComponent implements OnInit {
 
   //envía los destinos a la API para ser guardados
   registrar() {
-    // console.log(this.itemDestino);
-    // console.log(this.archivos);
-    this.itemDestino.forEach((item) => {
-      this.archivos.forEach((arch) => {
-        if (arch.evIdDetalle === item.dtIdItem) {
+    this.itemDestino
+    console.log(this.itemDestino);
+    this.archivos
+    console.log(this.archivos[0].evArchivo);
           //guardar el archivo en el servidor
 
 
-          this.sendfile(arch.evArchivo, item.dtIdItem.toString()).subscribe(
+          this.sendfile(this.archivos[0].evArchivo,this.itemDestino[0].dtIdItem.toString() ).subscribe(
             (url) => {
               this.urlArchivo = url;
 
               const data: any = {
-                destPagTipoSol: item.dtTipoSol,
-                destPagNoSol: item.dtNoSol,
-                destPagIdDetalle: item.dtIdItem,
-                destPagEmpleado: item.dtEmpleado,
-                destPagSector: item.dtSector,
-                destPagObervacion: item.dtObservaciones,
+                destPagTipoSol: this.tipoSol,
+                destPagNoSol: this.noSol,
+                destPagIdDetalle: 1,
+                destPagEmpleado: this.itemDestino[0].dtEmpleado,
+                destPagSector: this.itemDestino[0].dtSector,
+                destPagObervacion: this.itemDestino[0].dtObservaciones,
                 destPagEvidencia: this.urlArchivo,
               };
 
-              //console.log("Datos: ",data);
+              console.log("Datos: ",data);
 
               this.destinoService.agregarEvidenciaPago(data).subscribe(
                 res => {
-                  const msjExito = 'Se ha agregado el destino correctamente.';
-                  this.callMensaje(msjExito, true);
+                  // const msjExito = 'Se ha agregado el destino correctamente.';
+                  this.showExito= true;
+                  this.msjExito= 'Se ha agregado el destino correctamente';
+                  setTimeout(() => {
+                    // this.callMensaje(msjExito, true);
+                    this.showExito = false;
+                    this.msjExito = '';
+                  },900)
                 },
                 error => {
                   console.log("Error: ", error);
@@ -363,12 +371,13 @@ export class SpDestinoComponent implements OnInit {
 
 
 
-        }
+        
 
-      });
-    });
+      
+    
     this.cabPago.setDestino = true;
     this.archivos = [];
+    this.viewFile();
   }
 
 
