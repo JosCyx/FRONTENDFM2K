@@ -246,7 +246,7 @@
                   <td class="align-middle">
                     <input
                       type="number"
-                      (input)="validarNumero($event)"
+                     
                       min="1"
                       class="form-control text-center"
                       [(ngModel)]="det.itemCant"
@@ -260,6 +260,7 @@
                       (input)="validarCantidad(det,$event)"   
                       class="form-control text-center"
                       [(ngModel)]="det.cantidadRecibid"
+                      disabled
                     />
                   </td>
                   <td class="align-middle cel-prep">
@@ -269,6 +270,7 @@
                       min="1"
                       class="form-control text-center"
                       [(ngModel)]="det.valorUnitario"
+                      disabled
                     />
                   </td>
                   <td class="align-middle">
@@ -277,8 +279,9 @@
                       (input)="validarNumero($event)"
                       min="1"
                       class="form-control text-center"
-                      [value]="calculateSubtotal(det.idDetalle)"
+                      
                       [(ngModel)]="det.subTotal"
+                      step="0.01"
                       disabled
                     />
                   </td>
@@ -307,7 +310,7 @@
   
           <div *ngIf="showItDt == 'destino'">
             <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol" 
-                            [areaSol]="areaUserCookie" [detalles]="detallesToDestino" [numericoSol]="numericoSol"></app-sp-destino>
+                            [areaSol]="areaUserCookie"  [numericoSol]="numericoSol"></app-sp-destino>
           </div>
         </div>
         
@@ -707,7 +710,7 @@
       </div>
         <div *ngIf="actionEdit == 'destino'">
           <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol" 
-                          [areaSol]="areaUserCookie" [detalles]="detallesToDestino" [numericoSol]="numericoSol"></app-sp-destino>
+                          [areaSol]="areaUserCookie"  [numericoSol]="numericoSol"></app-sp-destino>
         </div>
         <div class="detalle" *ngIf="actionEdit =='edicion'" >
           <table class="table table-striped text-center">
@@ -773,7 +776,7 @@
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoSubtotal"
                     (input)="calculoEditotal()"
-                    [value]="calculateSubtotalEdit(det.detPagoIdDetalle)"
+                    
                   />
                 </td>
               </tr>
