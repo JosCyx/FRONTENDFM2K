@@ -3,7 +3,10 @@
         <h3 class="strong">Destino de la solicitud</h3>
     </div>
     <div>
-        <table class="table table-hover table-bordered table-rounded text-center">
+        <div>
+            <button class="btn btn-success"  data-toggle="modal" data-target="#asignarDestino" >Añadir</button>
+        </div>
+        <!-- <table class="table table-hover table-bordered table-rounded text-center">
             <thead>
                 <tr>
                     <th class="align-middle">Item</th>
@@ -20,7 +23,7 @@
                     </td>
                 </tr>
             </tbody>
-        </table>
+        </table> -->
         <div>
             <div *ngIf="showExito" class="alert alert-success text-center" role="alert">
                 <span><i class="bi bi-upload"> {{ msjExito }}</i></span>
@@ -29,9 +32,9 @@
                 <span><i class="bi bi-x-circle"> {{ msjError }}</i></span>
             </div>
         </div>
-        <div class="text-end">
-            <button class="primary-button" (click)="registrar()" [disabled]="!checkdestino">Guardar evidencias</button>
-        </div>
+        <!-- <div class="text-end">
+            <button class="primary-button" (click)="registrar()" >Guardar evidencias</button>
+        </div> -->
     </div>
 
     <!-- iterar la lista de evidencias y mostrar su contenido -->
@@ -152,6 +155,7 @@
                     Cancelar
                 </button>
             </div>
+           
         </div>
     </div>
 </div>
