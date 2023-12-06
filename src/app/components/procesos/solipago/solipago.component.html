@@ -213,7 +213,7 @@
                     <a class="nav-link" [ngClass]="{'active': showItDt === 'items'}" (click)="setID('items')">Items</a>
                 </li>
                 <li class="nav-item nav-items">
-                  <a class="nav-link" [ngClass]="{'active': showItDt === 'destino'}" (click)="setID('destino')" >Destino</a>
+                  <a class="nav-link" [ngClass]="{'active': showItDt === 'destino'}" (click)="setNoSolDocumentacion()"  (click)="setID('destino')" >Destino</a>
               </li>
             </ul>
           </div>
@@ -755,6 +755,7 @@
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoCantRecibida"
                     [appSecureDisable]="estadoSol"
+                    disabled
                   />
                 </td>
                 <td class="align-middle cel-prep">
@@ -765,6 +766,7 @@
                     class="form-control text-center"
                     [(ngModel)]="det.detPagoValUnitario"
                     [appSecureDisable]="estadoSol"
+                    disabled
                   />
                 </td>
                 <td class="align-middle">
