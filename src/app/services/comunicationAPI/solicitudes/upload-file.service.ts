@@ -81,4 +81,9 @@ export class UploadFileService {
     return this.http.get(`${this.APIUrl}/Documento/GetUserManual`, {responseType:'blob'});
   }
 
+  DeleteDestino(id:number){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(`${this.APIUrl}/DestinoSolPagos/${id}`, { headers: headers });
+  }
+
 }
