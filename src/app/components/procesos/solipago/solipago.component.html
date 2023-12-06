@@ -682,6 +682,15 @@
               </div>
             </div>
           </div>
+          <div class="custom-input-group mb-1" *ngIf="cabecera.cabPagoMotivoDev != 'NOHAYMOTIVO'">
+            <label class="custom-label motivo-dev-label">Motivo de devolución:</label>
+            <input
+              type="text"
+              class="custom-input  motivo-dev"
+              [value]="cabecera.cabPagoMotivoDev"
+              disabled
+            />
+          </div>
         </div>
         <div *ngIf="actionEdit == 'documentacion'" >
           <app-sp-documentacion  [view]="changeview" [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-sp-documentacion>
@@ -944,7 +953,7 @@
           </button>
           <button 
           mat-raised-button 
-          class="button-danger m-2" (click)="cancelarEdi()">
+          class="danger-button m-2" (click)="cancelarEdi()">
             Cancelar
           </button>
         </div>
