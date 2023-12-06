@@ -195,10 +195,14 @@
                 <td rowspan="4">
                   <img width="400" [src]="ev.image" alt="Imagen" />
                 </td>
-                <th>Item {{ i + 1 }}
-                    <a class="text-end" (click)="eliminaritemdestino(ev.destPagId)"
-                ><i class="bi bi-x-circle h5"></i
+                <th>
+                    <div class="d-flex justify-content-between" >
+                        Item {{ i + 1 }}
+                        <a  (click)="eliminaritemdestino(ev.destPagId)"
+                ><i class=" text-danger bi bi-x-circle h5"></i
               ></a>
+                </div>
+                    
                 </th>
               </tr>
               <tr>
