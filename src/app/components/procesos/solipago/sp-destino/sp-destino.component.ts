@@ -9,7 +9,6 @@ import { GlobalService } from 'src/app/services/global.service';
 import { SolipagoComponent } from '../solipago.component';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 
-
 interface Detalle {
   idDetalle: number;
   descpDetalle: string;
@@ -49,7 +48,7 @@ export class SpDestinoComponent implements OnInit {
 
   //Alerta
   alert: boolean = false;
-  alertText: string = "";
+  alertText: string = '';
 
   private inputTimer: any;
   empleados!: any[];
@@ -70,17 +69,19 @@ export class SpDestinoComponent implements OnInit {
   showError: boolean = false;
   msjError: string = '';
 
-  constructor(private sectoresService: SectoresService,
+  constructor(
+    private sectoresService: SectoresService,
     private empleadoService: EmpleadosService,
     private uploadService: UploadFileService,
     private destinoService: DestinoPagoServiceService,
     private globalService: GlobalService,
     private cabPago: SolipagoComponent,
-    private sectorServices: SectoresService,private dialogService:DialogServiceService) { }
+    private sectorServices: SectoresService,
+    private dialogService: DialogServiceService
+  ) {}
 
   ngOnInit(): void {
     setTimeout(() => {
-
       this.empleadoService.getEmpleadosList().subscribe(
         (data: any[]) => {
           this.empleadosEv = data;
@@ -108,7 +109,6 @@ export class SpDestinoComponent implements OnInit {
         }
       );
     }, 100);
-
     setTimeout(() => {
       this.viewFile();
     }, 500);
@@ -117,18 +117,16 @@ export class SpDestinoComponent implements OnInit {
   empleadosEv: any[] = [];
   sectorEv: any[] = [];
   //Mensajes de Dialogo
-  callMensaje(mensaje: string, type: boolean){
+  callMensaje(mensaje: string, type: boolean) {
     this.dialogService.openAlertDialog(mensaje, type);
   }
   //busca los empleados segun su area
   searchEmpleado(): void {
     this.searchSectores();
     if (this.empleadoBusq.length > 2) {
-      this.empleadoService
-        .getEmpleadosList()
-        .subscribe((data: any[]) => {
-          this.empleados = data;
-        });
+      this.empleadoService.getEmpleadosList().subscribe((data: any[]) => {
+        this.empleados = data;
+      });
     } else {
       this.empleados = [];
     }
@@ -201,9 +199,6 @@ export class SpDestinoComponent implements OnInit {
     this.archivo = null as any;
     // this.checkDestinos();
     this.resetInputFile();
-    setTimeout(() => {
-      this.registrar();
-    }, 1000);
   }
 
   resetInputFile() {
@@ -244,38 +239,56 @@ export class SpDestinoComponent implements OnInit {
     this.evidenciasConsultadas = [];
   }
 
- deleteFilesUnsaved() {
+  deleteFilesUnsaved() {
     //eliminar de la base los archivos que se hayan creado pero no se hayan guardado
     this.destinoService.deleteEvidencia(this.tipoSol, this.noSol).subscribe(
-      res => {
-        console.log("Se han eliminado correctamente las evidencias de la base: ", res);
+      (res) => {
+        console.log(
+          'Se han eliminado correctamente las evidencias de la base: ',
+          res
+        );
         //eliminar del servidor la carpeta que se haya creado pero no se haya guardado
 
         this.uploadService.deleteFolder(this.numericoSol).subscribe(
-          res => {
-            console.log("Se ha eliminado la carpeta creada de esta solicitud: ", res);
+          (res) => {
+            console.log(
+              'Se ha eliminado la carpeta creada de esta solicitud: ',
+              res
+            );
           },
-          error => {
-            console.log("Error: ", error);
+          (error) => {
+            console.log('Error: ', error);
           }
         );
       },
-      error => {
-        console.log("Error: ", error);
+      (error) => {
+        console.log('Error: ', error);
       }
     );
-
-
   }
 
   deleteArchivoModal(idDlt: number) {
+    console.log('Id a eliminar:', idDlt);
     for (let i = 0; i < this.archivos.length; i++) {
       if (this.archivos[i].evIdDetalle === idDlt) {
-        //console.log('Archivo a eliminar:', this.archivos[i]);
+        console.log('Archivo a eliminar:', this.archivos[i]);
         this.archivos.splice(i, 1);
-
       }
     }
+  }
+  eliminaritemdestino(id: number) {
+    this.uploadService.DeleteDestino(id).subscribe(
+      (res) => {
+        this.callMensaje('Se ha eliminado el destino correctamente.', true);
+        setTimeout(() => {
+          this.viewFile();
+        }, 600); 
+      },
+      (error) => {
+        console.log('Error: ', error);
+      }
+    );
+    
   }
 
   deleteArchivo(index: number) {
@@ -290,20 +303,23 @@ export class SpDestinoComponent implements OnInit {
     this.archivo = event.target.files[0];
     //console.log('tamañlan sd', this.archivo);
     //200KB
-    if (this.archivo.type !== 'image/jpeg' && this.archivo.type !== 'image/jpg') {
+    if (
+      this.archivo.type !== 'image/jpeg' &&
+      this.archivo.type !== 'image/jpg'
+    ) {
       this.alert = true;
-      this.alertText = " ‎  El archivo debe ser de tipo JPEG o JPG";
+      this.alertText = ' ‎  El archivo debe ser de tipo JPEG o JPG';
       setTimeout(() => {
         this.alert = false;
-        this.alertText = "";
+        this.alertText = '';
         this.resetInputFile();
       }, 2000);
     } else if (this.archivo.size > 500000) {
       this.alert = true;
-      this.alertText = " ‎ El Tamaño del archivo no debe superar los 500kB";
+      this.alertText = ' ‎ El Tamaño del archivo no debe superar los 500kB';
       setTimeout(() => {
         this.alert = false;
-        this.alertText = "";
+        this.alertText = '';
         this.resetInputFile();
       }, 2000);
     } else {
@@ -322,66 +338,60 @@ export class SpDestinoComponent implements OnInit {
 
   //envía los destinos a la API para ser guardados
   registrar() {
-    this.itemDestino
-    console.log(this.itemDestino);
-    this.archivos
+    this.archivos;
     console.log(this.archivos[0].evArchivo);
-          //guardar el archivo en el servidor
+    //guardar el archivo en el servidor
 
+    this.sendfile(this.archivos[0].evArchivo, '1').subscribe(
+      (url) => {
+        this.urlArchivo = url;
 
-          this.sendfile(this.archivos[0].evArchivo,this.itemDestino[0].dtIdItem.toString() ).subscribe(
-            (url) => {
-              this.urlArchivo = url;
+        const data: any = {
+          destPagTipoSol: this.tipoSol,
+          destPagNoSol: this.noSol,
+          destPagIdDetalle: 1,
+          destPagEmpleado: this.empleadoDestino,
+          destPagSector: this.sectorDestino,
+          destPagObervacion: this.observacionesDestino,
+          destPagEvidencia: this.urlArchivo,
+        };
 
-              const data: any = {
-                destPagTipoSol: this.tipoSol,
-                destPagNoSol: this.noSol,
-                destPagIdDetalle: 1,
-                destPagEmpleado: this.itemDestino[0].dtEmpleado,
-                destPagSector: this.itemDestino[0].dtSector,
-                destPagObervacion: this.itemDestino[0].dtObservaciones,
-                destPagEvidencia: this.urlArchivo,
-              };
+        console.log('Datos: ', data);
 
-              console.log("Datos: ",data);
+        this.destinoService.agregarEvidenciaPago(data).subscribe(
+          (res) => {
+             const msjExito = 'Se ha agregado el destino correctamente.';
+            this.callMensaje(msjExito, true);
+            setTimeout(() => {
+              this.sectorDestino = 9999;
+              this.empleadoDestino = 'XXXXXX';
+              this.observacionesDestino = '';
+              this.empleadoBusq = '';
+              this.idItem = 0;
+              this.archivo = null as any;
+              // this.checkDestinos();
+              this.resetInputFile();
+              this.viewFile();
+            }, 2000);
+          },
+          (error) => {
+            console.log('Error: ', error);
+            const msjError =
+              'No se ha podido agregar el destino, intente nuevamente.';
+            this.callMensaje(msjError, false);
+          }
+        );
 
-              this.destinoService.agregarEvidenciaPago(data).subscribe(
-                res => {
-                  // const msjExito = 'Se ha agregado el destino correctamente.';
-                  this.showExito= true;
-                  this.msjExito= 'Se ha agregado el destino correctamente';
-                  setTimeout(() => {
-                    // this.callMensaje(msjExito, true);
-                    this.showExito = false;
-                    this.msjExito = '';
-                  },900)
-                },
-                error => {
-                  console.log("Error: ", error);
-                  const msjError = 'No se ha podido agregar el destino, intente nuevamente.';
-                  this.callMensaje(msjError, false);
-                }
-              );
+        this.urlArchivo = '';
+      },
+      (error) => {
+        console.log('Error al subir el archivo:', error);
+      }
+    );
 
-              this.urlArchivo = '';
-            }
-
-
-          );
-
-
-
-        
-
-      
-    
     this.cabPago.setDestino = true;
     this.archivos = [];
-    this.viewFile();
   }
-
-
-
 
   //Enviar archivos al servidor
   sendfile(file: File, idItem: string): Observable<string> {
@@ -401,20 +411,24 @@ export class SpDestinoComponent implements OnInit {
   evidenciasConsultadas: any[] = [];
   //visualizar los archivos registrados
   viewFile() {
-    this.destinoService.getEvidenciasBySolicitud(this.tipoSol, this.noSol).subscribe(
-      (data: any[]) => {
-        this.evidenciasConsultadas = data;
-        this.setImages();
-        console.log("Evidencias: ", this.evidenciasConsultadas);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.destinoService
+      .getEvidenciasBySolicitud(this.tipoSol, this.noSol)
+      .subscribe(
+        (data: any[]) => {
+          this.evidenciasConsultadas = data;
+          this.setImages();
+          console.log('Evidencias: ', this.evidenciasConsultadas);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   setImages() {
-    const observables = this.evidenciasConsultadas.map(ev => this.destinoService.getImage(ev.destPagEvidencia));
+    const observables = this.evidenciasConsultadas.map((ev) =>
+      this.destinoService.getImage(ev.destPagEvidencia)
+    );
 
     forkJoin(observables).subscribe(
       (data: any[]) => {
@@ -428,11 +442,9 @@ export class SpDestinoComponent implements OnInit {
           reader.readAsDataURL(blob);
         });
       },
-      error => {
+      (error) => {
         console.log('Error al obtener las imágenes:', error);
       }
     );
   }
-
-
 }
