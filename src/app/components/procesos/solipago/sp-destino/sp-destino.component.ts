@@ -280,9 +280,9 @@ export class SpDestinoComponent implements OnInit {
     this.uploadService.DeleteDestino(id).subscribe(
       (res) => {
         this.callMensaje('Se ha eliminado el destino correctamente.', true);
-        setTimeout(() => {
+        
           this.viewFile();
-        }, 600); 
+         
       },
       (error) => {
         console.log('Error: ', error);
@@ -418,9 +418,19 @@ export class SpDestinoComponent implements OnInit {
           this.evidenciasConsultadas = data;
           this.setImages();
           console.log('Evidencias: ', this.evidenciasConsultadas);
+          if(this.evidenciasConsultadas.length==0){
+            this.cabPago.setDestino = false;
+          }
         },
         (error) => {
           console.log(error);
+          if(error.status==404){
+            this.evidenciasConsultadas = [];
+          if(this.evidenciasConsultadas.length==0){
+            this.cabPago.setDestino = false;
+          }
+          }
+          
         }
       );
   }
