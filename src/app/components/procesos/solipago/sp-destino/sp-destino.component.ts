@@ -339,7 +339,6 @@ export class SpDestinoComponent implements OnInit {
   //envía los destinos a la API para ser guardados
   registrar() {
     this.archivos;
-    console.log(this.archivos[0].evArchivo);
     //guardar el archivo en el servidor
 
     this.sendfile(this.archivos[0].evArchivo, '1').subscribe(
@@ -355,8 +354,6 @@ export class SpDestinoComponent implements OnInit {
           destPagObervacion: this.observacionesDestino,
           destPagEvidencia: this.urlArchivo,
         };
-
-        console.log('Datos: ', data);
 
         this.destinoService.agregarEvidenciaPago(data).subscribe(
           (res) => {

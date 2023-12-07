@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, OnDestroy, HostListener  } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
 import { GlobalService } from 'src/app/services/global.service';
 import { DetallePago } from 'src/app/models/procesos/solcotizacion/DetallePago';
@@ -168,6 +168,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     private sharedService: SharedService,
     private dialogService:DialogServiceService
   ) {
+
+    router.events.subscribe((event) => {
+      if (event instanceof NavigationStart) {
+        if(!this.isSaved){
+          this.deleteLastTracking();
+        }
+      }
+    });
     
     /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobarsp$.subscribe(() => {
@@ -225,12 +233,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
   
   ngOnInit(): void {
+    
     this.fechaminina=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate());
     this.fechamaxima=new Date(new Date().getFullYear(),new Date().getMonth()+6,new Date().getDate());
     this.fechaMax=this.formatDateToYYYYMMDD(this.fechamaxima);
     this.fechaMin=this.formatDateToYYYYMMDD(this.fechaminina);
     // console.log(this.sharedNoSol);
     setTimeout(() => {
+      
       this.empService.getEmpleadosList().subscribe((data) => {
         this.empleadoEdi = data;
       });
@@ -248,18 +258,24 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     if (this.changeview == 'editar') {
       this.editSolicitud();
     } else if (this.changeview == 'crear') {
-
+      setTimeout(async () => {
+        await this.guardarTrancking();
+      }, 1500);
+    }
+  }
+  
+  // Manejar el evento beforeunload
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHandler(): void {
+    if(!this.isSaved){
+      this.deleteLastTracking();
     }
   }
 
   ngOnDestroy(): void {
-    if(!this.isSaved){
-      this.deleteLastTracking();
-    }
-    // this.cancelar();
-    //this.cancelarEdi();
-    //this.cancelarDes();
+    window.removeEventListener('beforeunload', this.beforeUnloadHandler);
   }
+
 
 
 
@@ -302,7 +318,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
             this.depSolTmp = emp.empleadoIdDpto;
             this.cab_id_dept = emp.empleadoIdDpto;
             this.cab_id_area = emp.empleadoIdArea;
-            await this.guardarTrancking();
+            
             for (let area of this.areas) {
               if (area.areaIdNomina == emp.empleadoIdArea) {
   
@@ -312,10 +328,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   
                 //busca el nuevo nombre de la solicitud y lo asigna a las variables para poder usarlo en el destino
                 setTimeout(async () => {
-                  this.trLastNoSol = await this.getLastSol();
-                  this.getSolName(this.trLastNoSol);
-                  console.log(this.solNumerico);
-                  console.log(this.numericoSol);
+                  
+              
+                  this.getSolName(this.responseTRK.solTrNumSol);
                 }, 1000);
   
                 //console.log("Empleado area ID:",this.cab_area);
@@ -376,6 +391,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
   //Limpiar en modulo de crear pago
   cancelar(): void {
+    this.deleteLastTracking();
     this.clear();
     this.ngOnInit();
     this.cancelarDes();
@@ -497,7 +513,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           solTrTipoSol: this.trTipoSolicitud,
           solTrNumSol: this.trLastNoSol,
           solTrNivel: this.trNivelEmision,
-          solTrIdEmisor: this.trIdNomEmp,
+          solTrIdEmisor: this.cookieService.get('userIdNomina'),
         };
 
         console.log('1. guardando tracking: ', dataTRK);
@@ -509,7 +525,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
             this.sharedNoSol = this.responseTRK.solTrNumSol;
             this.sharedTipoSol = this.responseTRK.solTrTipoSol;
 
-            //console.log('Tracking guardado con éxito.',response.solTrTipoSol);
+            console.log('Tracking asignado: ', this.responseTRK.solTrNumSol);
             resolve();
           },
           (error) => {
