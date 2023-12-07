@@ -133,6 +133,7 @@
             <th class="align-middle cab-x">Estado</th>
             <th class="align-middle cab-x">Tracking</th>
             <th class="align-middle cab-x">Encargado</th>
+            <th class="align-middle cab-x" *ngIf="btp == 3">Destino</th>
           </tr>
         </thead>
         <tbody>
@@ -218,7 +219,7 @@
             <tr *ngFor="
                 let sol of allSol
                   | paginate : { itemsPerPage: 10, currentPage: currentPage }
-              " (click)="selectSol(sol.cabPagoID)">
+              " (click)="selectSol(sol.cabPagoID)"  [ngClass]="{'fromfisica':sol.cabPagoFrom === 'F'}"  >
               <td class="align-middle">{{ sol.cabPagoNumerico }}</td>
               <ng-container *ngFor="let area of areaList$ | async">
                 <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabPagoIdAreaSolicitante">
@@ -246,6 +247,10 @@
                 </td>
               </ng-container>
               <td class="align-middle">{{sol.encargado}}</td>
+              <td class="align-middle" [ngSwitch]="sol.cabPagoIfDestino">
+                <span *ngSwitchCase="'S'"><i class="bi bi-check-circle-fill text-success h5"></i></span>
+                <span *ngSwitchCase="'N'"><i class="bi bi-x-circle-fill text-danger h5"></i></span>
+              </td>
             </tr>
           </ng-container>
         </tbody>
