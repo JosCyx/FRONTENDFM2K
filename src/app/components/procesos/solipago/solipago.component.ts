@@ -148,6 +148,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   motivoDevEditar: string = '';
   solicitudFrom: string = '';
 
+  isSaved: boolean = false;
+
   constructor(
     private empService: EmpleadosService,
     private areaService: AreasService,
@@ -245,10 +247,15 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }, 100);
     if (this.changeview == 'editar') {
       this.editSolicitud();
+    } else if (this.changeview == 'crear') {
+
     }
   }
 
   ngOnDestroy(): void {
+    if(!this.isSaved){
+      this.deleteLastTracking();
+    }
     // this.cancelar();
     //this.cancelarEdi();
     //this.cancelarDes();
@@ -279,7 +286,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }
   }
   selectEmpleado(): void {
-    setTimeout(() => {
+    setTimeout(async () => {
       
       this.showArea = '';
       if (!this.empleado) {
@@ -295,6 +302,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
             this.depSolTmp = emp.empleadoIdDpto;
             this.cab_id_dept = emp.empleadoIdDpto;
             this.cab_id_area = emp.empleadoIdArea;
+            await this.guardarTrancking();
             for (let area of this.areas) {
               if (area.areaIdNomina == emp.empleadoIdArea) {
   
@@ -498,6 +506,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
             this.responseTRK = response?.solTrTipoSol && response?.solTrNumSol ? response : { solTrTipoSol: 0, solTrNumSol: 0 };
 
+            this.sharedNoSol = this.responseTRK.solTrNumSol;
+            this.sharedTipoSol = this.responseTRK.solTrTipoSol;
+
             //console.log('Tracking guardado con éxito.',response.solTrTipoSol);
             resolve();
           },
@@ -513,7 +524,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
   //Guarda la solicitud con  estado emitido
   async generarSolicitud() {
-    await this.guardarTrancking();
+    this.isSaved = true;//controla que la solicitud se haya guardado
     await this.getSolName(this.trLastNoSol);
     this.numeroSolicitudEmail = this.solNumerico;
     this.tipoSolicitudEmail = 'Orden de Pago';
@@ -616,12 +627,17 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   obtenerOrdenCom(){
-    this.detPagoService.DetOrdenCompras(this.valorinput).subscribe(
-      {
-        next: data => {
-          this.detalleSolPagos=data.map((ini:any)=>({
-            idDetalle: ini.detId,
-            itemDesc: ini.detdesProducto,
+    this.detalleSolPagos = [];
+    if(this.valorinput == ''){
+      this.callMensaje('Por favor ingrese el número de orden de compra.',false);
+    } else {
+
+      this.detPagoService.DetOrdenCompras(this.valorinput).subscribe(
+        {
+          next: data => {
+            this.detalleSolPagos=data.map((ini:any)=>({
+              idDetalle: ini.detId,
+              itemDesc: ini.detdesProducto,
             itemCant: ini.detcantidad,
             cantidadRecibid : ini.detcantidad,
             valorUnitario: ini.detprecio,
@@ -630,21 +646,25 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
           this.destinoIO = true;
           // this.detallesToDestino = data.map((detalle: any) => {
-          //   console.log("detalle",detalle);
-          //   return {
-          //     idDetalle: detalle.detOrden,
-          //     descpDetalle: detalle.detdesProducto,
-          //     destinoDetalle: false
-          //   };
-          // });
-
-          this.cab_NoSolOC = this.valorinput;
-
-        },
-        error: error => {
-          console.error('Error al obtener la orden de compra: ', error);
+            //   console.log("detalle",detalle);
+            //   return {
+              //     idDetalle: detalle.detOrden,
+              //     descpDetalle: detalle.detdesProducto,
+              //     destinoDetalle: false
+              //   };
+              // });
+              
+              this.cab_NoSolOC = this.valorinput;
+              
+            },
+            error: error => {
+              console.error('Error al obtener la orden de compra: ', error);
+              if(error.status == 404){
+                this.callMensaje('Error, no se ha encontrado una orden de compra con los datos ingresados.',false);
+              }
+            }
+          })
         }
-      })
 
   }
   // async Obtener() {
@@ -779,6 +799,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         },
         (error) => {
           console.log('No se puede guardar el detalle', error);
+          this.callMensaje('No se ha podido guardar el detalle.',false);
         }
       );
     }
@@ -889,7 +910,6 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           const nivel = element.rutareaNivel;
           this.lastNivel = nivel.toString();
         }
-        //console.log(this.estadoSol)
       }
   }
 
@@ -1390,11 +1410,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     );
   }
   ///////////////////////////////////////////DOCUMENTACION DE CREACION DE PAGO/////////////////////////////////////////
-  showDoc: boolean = false;
-  async setNoSolDocumentacion() {
+  //showDoc: boolean = false;
+  /*async setNoSolDocumentacion() {
     this.sharedNoSol = await this.getLastSol();
-    this.showDoc = this.showDoc ? false : true;
-  }
+    //this.showDoc = this.showDoc ? false : true;
+  }*/
 
   actionCreate: string = 'creacion';
 

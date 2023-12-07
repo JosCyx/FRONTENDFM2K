@@ -38,7 +38,7 @@
             </li>
             <li class="nav-item" >
                 <a class="nav-link" [ngClass]="{'active': actionCreate === 'documentacion'}"
-                    (click)="selectCreateAction('documentacion')" (click)="setNoSolDocumentacion()">Documentación</a>
+                    (click)="selectCreateAction('documentacion')" >Documentación</a>
             </li>
         </ul>
     </div>
@@ -190,7 +190,7 @@
               [(ngModel)]="valorinput"
               type="text"
               class="custom-input mr-1"
-              placeholder="Ejemplo: OC OB 2-0012"
+              placeholder="Ejemplo: OC_000073865"
             />
             <button class="btn btn-success" (click)="obtenerOrdenCom()" >
               <i class="bi bi-search"></i>
@@ -213,7 +213,7 @@
                     <a class="nav-link" [ngClass]="{'active': showItDt === 'items'}" (click)="setID('items')">Items</a>
                 </li>
                 <li class="nav-item nav-items">
-                  <a class="nav-link" [ngClass]="{'active': showItDt === 'destino'}" (click)="setNoSolDocumentacion()"  (click)="setID('destino')" >Destino</a>
+                  <a class="nav-link" [ngClass]="{'active': showItDt === 'destino'}" (click)="setID('destino')" >Destino</a>
               </li>
             </ul>
           </div>
