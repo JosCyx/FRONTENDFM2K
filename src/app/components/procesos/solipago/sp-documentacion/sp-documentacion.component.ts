@@ -56,7 +56,6 @@ export class SPDocumentacionComponent implements OnInit {
  
   getFiles(event: any): void {
     const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB en bytes
-
     try {
       const file = event.target.files[0];
 
@@ -72,7 +71,6 @@ export class SPDocumentacionComponent implements OnInit {
         const modifiedName = file.name.replace(/#/g, " No.");
         this.filesAll = new File([file], modifiedName, { type: file.type });
       }
-  
     } catch (error) {
       const msjError = 'Error al cargar el archivo';
       this.callMensaje(msjError, false);
@@ -103,6 +101,7 @@ export class SPDocumentacionComponent implements OnInit {
           if (inputFile) {
             inputFile.value = '';
           }
+          this.filesAll = new File([], '');
       },
       error: (error) => {
         if (error.status == 400) {
@@ -119,6 +118,7 @@ export class SPDocumentacionComponent implements OnInit {
         //console.log('Proceso completado');
       },
     });
+    
   }
 
   //Capturar la url del servidor y lo convierte
