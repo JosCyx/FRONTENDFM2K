@@ -107,6 +107,7 @@ export class OCDocumentacionComponent implements OnInit, OnDestroy {
           if (inputFile) {
             inputFile.value = '';
           }
+          this.filesAll = new File([], '');
         },
         error: (error) => {
           if (error.status == 400) {
