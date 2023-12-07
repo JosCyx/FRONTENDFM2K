@@ -257,7 +257,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
 
   verificartexto(): void {
-    const patron: RegExp = /^[a-zA-Z\s]*$/;
+    const patron: RegExp = /^[a-zA-ZñÑ\s]*$/;
     if (!patron.test(this.receptor)) {
       //borrar el ultimo caracter ingresado
       console.log('El inspector no puede contener el número',this.receptor);
