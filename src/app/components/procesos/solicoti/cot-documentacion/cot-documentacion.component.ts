@@ -98,6 +98,7 @@ export class CotDocumentacionComponent implements OnInit {
           if (inputFile) {
             inputFile.value = '';
           }
+          this.filesAll=new File([], '');
         },
         error: (error) => {
           if (error.status == 400) {
