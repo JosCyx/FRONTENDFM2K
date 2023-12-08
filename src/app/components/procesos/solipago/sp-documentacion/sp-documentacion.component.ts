@@ -106,11 +106,11 @@ export class SPDocumentacionComponent implements OnInit {
       error: (error) => {
         if (error.status == 400) {
           console.error('este es mi error', error);
-          const msjError = 'Error deberia seleccionar un archivo';
+          const msjError = 'Error, no se ha seleccionado un archivo o la solicitud no tiene un numero asignado. Asegúrese de ingresar el NOMBRE DEL SOLICITANTE para asignar un número a esta nueva solicitud.';
           this.callMensaje(msjError, false);
         } else {
           console.error('este es mi error', error);
-          const msjError = 'Error no se puede Subir el archivo intente nuevamente';
+          const msjError = 'Error no se puede subir el archivo intente nuevamente';
           this.callMensaje(msjError, false);
         }
       },
