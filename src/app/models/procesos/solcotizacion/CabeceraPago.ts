@@ -6,7 +6,6 @@ export class CabeceraPago {
   public cabPagoIdAreaSolicitante: number;
   public cabPagoIdDeptSolicitante: number;
   public cabPagoSolicitante: string;
-  public cabPagoNoOrdenCompra: string;
   public cabPagoFechaEmision: string;
   public cabPagoFechaEnvio: string;
   public cabPagoNumFactura: string;
@@ -40,7 +39,6 @@ export class CabeceraPago {
     this.cabPagoIdAreaSolicitante = data.cabPagoIdAreaSolicitante;
     this.cabPagoIdDeptSolicitante = data.cabPagoIdDeptSolicitante;
     this.cabPagoSolicitante = data.cabPagoSolicitante;
-    this.cabPagoNoOrdenCompra = data.cabPagoNoOrdenCompra;
     this.cabPagoFechaEmision = data.cabPagoFechaEmision;
     this.cabPagoFechaEnvio = data.cabPagoFechaEnvio;
     this.cabPagoNumFactura = data.cabPagoNumFactura;

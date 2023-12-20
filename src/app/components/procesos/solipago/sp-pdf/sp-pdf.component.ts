@@ -127,14 +127,16 @@ export class SpPdfComponent implements OnInit {
                       '',
                     ],
                     [
-                      { text: 'FECHA DE FACTURA', style: 'tableHeader' },
-                      {
-                        text: (this.datosSP.cabecera.cabPagoFechaFactura === null ? 'Sin fecha' :  format(
-                          parseISO(this.datosSP.cabecera.cabPagoFechaFactura),'yyyy-MM-dd'))
-                      },
                       { text: 'NO DE FACTURA ', style: 'tableHeader' },
                       {
                         text: this.datosSP.cabecera.cabPagoNumFactura,
+                        
+                      },
+                      { text: 'FECHA DE FACTURA', style: 'tableHeader'  },
+                      
+                      {
+                        text: (this.datosSP.cabecera.cabPagoFechaFactura === null ? 'Sin fecha' :  format(
+                          parseISO(this.datosSP.cabecera.cabPagoFechaFactura),'yyyy-MM-dd')),
                         colSpan: 2,
                       },
                       '',

@@ -51,7 +51,7 @@ export class AllrequestComponent implements OnInit {
 
   changeview: string = 'consultar';
 
-  currentPage: number = 1;
+  currentPage!: number;
 
   bsqContenido: string = '';
   tipoBusqueda: string = 'emp';
@@ -73,7 +73,8 @@ export class AllrequestComponent implements OnInit {
     private cabOCService: CabOrdCompraService,
     private cabPagoService: CabPagoService,
     private cookieService: CookieService,
-    private emplNivService: NivGerenciaService) { }
+    private emplNivService: NivGerenciaService,
+    private globalService: GlobalService) { }
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -97,6 +98,14 @@ export class AllrequestComponent implements OnInit {
 
       this.chooseSearchMethod();
     }, 200);
+    
+    
+    setTimeout(() => {
+      this.bsqTipoSol = this.globalService.tipoSolBsq;
+      this.consultarSol();
+    }, 500);
+    this.bsqTipoSol = 1;
+
   }
 
   nextPage(): void {
@@ -109,7 +118,7 @@ export class AllrequestComponent implements OnInit {
     } else {
       this.currentPage++
     }
-
+    console.log("currentPage", this.currentPage)
   }
 
   //decrementa el valor de la variable que controla la pagina actual que se muestra
@@ -122,7 +131,7 @@ export class AllrequestComponent implements OnInit {
 
   consultarSol(): void {
     this.btp = this.bsqTipoSol;
-    this.currentPage = 1;
+    this.currentPage = this.globalService.currentPage;
     this.isConsulta = true;
     if (this.bsqTipoSol == 1) {
       this.getAllCotizaciones();
@@ -153,7 +162,7 @@ export class AllrequestComponent implements OnInit {
 
   //guardar el valor del id en una variable y ejecuta los metodos para traer la solicitud y para guardar los datos en los objetos respectivos
   async selectSol(id: number) {
-
+    this.globalService.currentPage = this.currentPage;
     this.serviceGlobal.solView = 'editar';
     this.serviceGlobal.solID = id;
     this.serviceGlobal.changePage = true;
@@ -165,7 +174,6 @@ export class AllrequestComponent implements OnInit {
     } else if (this.bsqTipoSol == 3) {
       this.router.navigate(['solipago']);
     }
-
   }
 
 
@@ -188,9 +196,9 @@ export class AllrequestComponent implements OnInit {
       this.metodoBusq = 1;
     } else if (maxNivel >= 20 && maxNivel <= 40) {
       this.metodoBusq = 2;
-    } else if ((maxNivel >= 50 && maxNivel <= 70) || maxNivel == 999){
+    } else if ((maxNivel >= 50 && maxNivel <= 70) || maxNivel == 999) {
       this.metodoBusq = 3;
-    } 
+    }
   }
 
   reorderCotizaciones(): void {
@@ -511,9 +519,9 @@ export class AllrequestComponent implements OnInit {
       } else if (this.tipoBusqueda == 'area') {
         this.BuscarArea();
         this.allSol = this.allSol.filter(item => item.cabSolCotIdArea == this.idAreabus);
-      } else if (this.tipoBusqueda == 'asunto'){
+      } else if (this.tipoBusqueda == 'asunto') {
         this.allSol = this.allSol.filter(item => item.cabSolCotAsunto.toLowerCase().includes(this.bsqContenido));
-      } else if (this.tipoBusqueda == 'num'){
+      } else if (this.tipoBusqueda == 'num') {
         this.allSol = this.allSol.filter(item => item.cabSolCotNumerico.toLowerCase().includes(this.bsqContenido));
       }
     } else if (this.bsqTipoSol == 2) {
@@ -527,9 +535,9 @@ export class AllrequestComponent implements OnInit {
         this.BuscarArea();
         this.allSol = this.allSol.filter(item => item.cabSolOCIdArea == this.idAreabus);
         console.log("entro a buscar area", this.allSol);
-      } else if (this.tipoBusqueda == 'asunto'){
+      } else if (this.tipoBusqueda == 'asunto') {
         this.allSol = this.allSol.filter(item => item.cabSolOCAsunto.toLowerCase().includes(this.bsqContenido));
-      } else if (this.tipoBusqueda == 'num'){
+      } else if (this.tipoBusqueda == 'num') {
         this.allSol = this.allSol.filter(item => item.cabSolOCNumerico.toLowerCase().includes(this.bsqContenido));
       }
     } else if (this.bsqTipoSol == 3) {
@@ -544,9 +552,9 @@ export class AllrequestComponent implements OnInit {
         this.BuscarArea();
         this.allSol = this.allSol.filter(item => item.cabPagoIdAreaSolicitante == this.idAreabus);
         console.log("entro a buscar area", this.allSol);
-      } else if (this.tipoBusqueda == 'asunto'){
+      } else if (this.tipoBusqueda == 'asunto') {
         this.allSol = this.allSol.filter(item => item.cabPagoAsunto.toLowerCase().includes(this.bsqContenido));
-      } else if (this.tipoBusqueda == 'num'){
+      } else if (this.tipoBusqueda == 'num') {
         this.allSol = this.allSol.filter(item => item.cabPagoNumerico.toLowerCase().includes(this.bsqContenido));
       }
     }
@@ -554,52 +562,52 @@ export class AllrequestComponent implements OnInit {
 
   BuscarArea() {
     const bsqContenido = this.bsqContenido.toUpperCase().trim();
-  
+
     // Encontrar áreas que contengan la cadena de búsqueda
     const areasCoincidentes = this.areas.filter(element => {
       const areaNom = element.areaDecp.trim().toUpperCase();
       return areaNom.includes(bsqContenido);
     });
-  
+
     // Ordenar las áreas por la posición de la coincidencia más cercana
     areasCoincidentes.sort((a, b) => {
       const posA = a.areaDecp.toUpperCase().indexOf(bsqContenido);
       const posB = b.areaDecp.toUpperCase().indexOf(bsqContenido);
       return posA - posB;
     });
-  
+
     // Tomar el área con la coincidencia más cercana
     const foundArea = areasCoincidentes[0];
-  
+
     if (foundArea) {
       this.idAreabus = foundArea.areaIdNomina;
     } else {
       this.idAreabus = 0;
     }
   }
-  
+
 
   BuscarEmpleado() {
     const bsqContenido = this.bsqContenido.toUpperCase().trim();
-  
+
     // Encontrar empleados que contengan la cadena de búsqueda
     const empleadosCoincidentes = this.empleados.filter(element => {
       const empleadoNom = (element.empleadoNombres + ' ' + element.empleadoApellidos).trim().toUpperCase();
       return empleadoNom.includes(bsqContenido);
     });
-  
+
     // Ordenar los empleados por la posición de la coincidencia más cercana
     empleadosCoincidentes.sort((a, b) => {
       const posA = (a.empleadoNombres + ' ' + a.empleadoApellidos).toUpperCase().indexOf(bsqContenido);
       const posB = (b.empleadoNombres + ' ' + b.empleadoApellidos).toUpperCase().indexOf(bsqContenido);
       return posA - posB;
     });
-  
+
     // Tomar el empleado con la coincidencia más cercana
     const foundEmpleado = empleadosCoincidentes[0];
-  
+
     console.log("Empleado encontrado:", foundEmpleado);
-  
+
     if (foundEmpleado) {
       this.idEmpleadobus = foundEmpleado.empleadoIdNomina;
     } else {

@@ -109,6 +109,12 @@ export class CabPagoService {
     return this.http.put(this.APIUrl + `/CabSolPago/UpdateMotivoDevolucion?tipoSol=${tipoSol}&noSol=${noSol}&motivo=${motivo}`,null, { headers: headers });
   }
 
+  updateIfDestino(tipoSol: number, noSol: number, destino: string) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/CabSolPago/UpdateIfDestino?tipoSol=${tipoSol}&noSol=${noSol}&destino=${destino}`,null, { headers: headers });
+
+  }
+
     //Metodo eliminar solicitud de pago , detalles  y documentoss
     DeleteSolPago(TipoSol:number,NoSol:number){
       const headers = this.getHeadersWithAuthToken();

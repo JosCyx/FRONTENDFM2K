@@ -8,6 +8,7 @@ import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/
 import { GlobalService } from 'src/app/services/global.service';
 import { SolipagoComponent } from '../solipago.component';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
+import { CabPagoService } from 'src/app/services/comunicationAPI/solicitudes/cab-pago.service';
 
 interface Detalle {
   idDetalle: number;
@@ -77,7 +78,8 @@ export class SpDestinoComponent implements OnInit {
     private globalService: GlobalService,
     private cabPago: SolipagoComponent,
     private sectorServices: SectoresService,
-    private dialogService: DialogServiceService
+    private dialogService: DialogServiceService,
+    private cabPagoService: CabPagoService
   ) {}
 
   ngOnInit(): void {
@@ -386,6 +388,15 @@ export class SpDestinoComponent implements OnInit {
       }
     );
 
+    this.cabPagoService.updateIfDestino(this.tipoSol, this.noSol, 'S').subscribe(
+      (response) => {
+        console.log("If destino actualizado", response);
+
+      },
+      (error) => {
+        console.log('Error al actualizar el if destino: ', error);
+      }
+    );
     this.cabPago.setDestino = true;
     this.archivos = [];
   }
@@ -415,17 +426,35 @@ export class SpDestinoComponent implements OnInit {
           this.evidenciasConsultadas = data;
           this.setImages();
           console.log('Evidencias: ', this.evidenciasConsultadas);
-          if(this.evidenciasConsultadas.length==0){
+          if(this.evidenciasConsultadas.length == 0){
             this.cabPago.setDestino = false;
+            this.cabPagoService.updateIfDestino(this.tipoSol, this.noSol, 'N').subscribe(
+              (response) => {
+                console.log("If destino actualizado N", response);
+        
+              },
+              (error) => {
+                console.log('Error al actualizar el if destino: ', error);
+              }
+            );
           }
         },
         (error) => {
           console.log(error);
           if(error.status==404){
             this.evidenciasConsultadas = [];
-          if(this.evidenciasConsultadas.length==0){
-            this.cabPago.setDestino = false;
-          }
+            if(this.evidenciasConsultadas.length==0){
+              this.cabPago.setDestino = false;
+              this.cabPagoService.updateIfDestino(this.tipoSol, this.noSol, 'N').subscribe(
+                (response) => {
+                  console.log("If destino actualizado N 404", response);
+          
+                },
+                (error) => {
+                  console.log('Error al actualizar el if destino: ', error);
+                }
+              );
+            }
           }
           
         }

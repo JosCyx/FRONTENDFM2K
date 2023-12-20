@@ -1,4 +1,4 @@
-import { Component, OnInit,Input, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit,Input, ViewChild, OnDestroy, HostListener } from '@angular/core';
 
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -179,6 +179,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
    tipoSolicitudEmail: string = '';
    nivelProcesoEmail: string = '';
 
+   isSaved: boolean = false;
+
   constructor(
     private empService: EmpleadosService,
     private sectService: SectoresService,
@@ -278,15 +280,29 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
     if (this.changeview == 'editar') {
       this.editSolicitud();
+      this.isSaved = true;
+    } else if (this.changeview == 'crear') {
+      setTimeout(async () => {
+        await this.guardarTrancking();
+      }, 1500);
     }
   }
 
+  // Manejar el evento beforeunload
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHandler(): void {
+    if(!this.isSaved){
+      this.deleteLastTracking();
+    }
+  }
 
   ngOnDestroy(): void {
-    //this.cancelar();
-    //this.cancelarAll();
-    //this.cancelarItem();
+    if(!this.isSaved){
+      this.deleteLastTracking();
+    }
+    window.removeEventListener('beforeunload', this.beforeUnloadHandler);
   }
+
   //Mensaje 
   callMensaje(mensaje: string, type: boolean){
     this.dialogService.openAlertDialog(mensaje, type);
@@ -297,7 +313,6 @@ export class SoliocComponent implements OnInit, OnDestroy {
   }
   showDoc: boolean = false;
   async setNoSolDocumentacion(){
-    this.sharedNoSol = await this.getLastSol();
     this.showDoc = this.showDoc ? false : true;
   }
 
@@ -444,6 +459,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   }
 
   cancelarAll(): void {
+    this.deleteLastTracking();
     this.clear();
     this.ngOnInit();
     this.sharedService.ocDocumentacionChange();
@@ -482,29 +498,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
   getSolName(noSol: number) {
     const noSolString = noSol.toString();
-    if (noSolString.length == 1) {
-      this.solNumerico =
-        'OC ' +
-        this.areaNmco +
-        ' ' +
-        this.trTipoSolicitud +
-        '-000' +
-        noSolString;
-    } else if (noSolString.length == 2) {
-      this.solNumerico =
-        'OC ' +
-        this.areaNmco +
-        ' ' +
-        this.trTipoSolicitud +
-        '-00' +
-        noSolString;
-    } else if (noSolString.length == 3) {
-      this.solNumerico =
-        'OC ' + this.areaNmco + ' ' + this.trTipoSolicitud + '-0' + noSolString;
-    } else if (noSolString.length == 4) {
-      this.solNumerico =
-        'OC ' + this.areaNmco + ' ' + this.trTipoSolicitud + '-' + noSolString;
-    }
+    const paddedNoSol = noSolString.padStart(6, '0');
+    this.solNumerico = `OC ${this.areaNmco} ${this.trTipoSolicitud}-${paddedNoSol}`;
   }
 
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
@@ -542,14 +537,18 @@ export class SoliocComponent implements OnInit, OnDestroy {
           solTrTipoSol: this.trTipoSolicitud,
           solTrNumSol: this.trLastNoSol,
           solTrNivel: this.trNivelEmision,
-          solTrIdEmisor: this.trIdNomEmp,
+          solTrIdEmisor: this.cookieService.get('userIdNomina'),
         };
 
         //console.log('1. guardando tracking: ', dataTRK);
         this.solTrckService.generateTracking(dataTRK).subscribe(
           (response: any) => {
             this.responseTRK = response?.solTrTipoSol && response?.solTrNumSol ? response : { solTrTipoSol: 0, solTrNumSol: 0 };
-            //console.log('Tracking guardado con éxito.');
+
+            this.sharedNoSol = this.responseTRK.solTrNumSol;
+            this.sharedTipoSol = this.responseTRK.solTrTipoSol;
+            
+            console.log('Tracking asignado: ', this.responseTRK.solTrNumSol);
             resolve();
           },
           (error) => {
@@ -565,7 +564,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
   //guarda la solicitud con estado emitido
   async generarSolicitud() {
-    await this.guardarTrancking();
+    this.isSaved = true;//controla que la solicitud se haya guardado
     this.getSolName(this.trLastNoSol);
     this.numeroSolicitudEmail = this.solNumerico;
     this.tipoSolicitudEmail = 'Orden de Compra';
@@ -611,6 +610,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
         //console.log('Cuerpo agregado.');
       },
       (error) => {
+        this.isSaved = false;
         this.deleteLastTracking();
         console.log('error al guardar la cabecera: ', error);
         const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
@@ -645,6 +645,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
       setTimeout(() => {
         this.clear();
+        this.serviceGlobal.tipoSolBsq = 2;
         this.router.navigate(['allrequest']);
       }, 3000);
     } catch (error) {
@@ -1014,6 +1015,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
     this.estadoTrkTmp = this.cabecera.cabSolOCEstadoTracking;
     this.areaSolTmp = this.cabecera.cabSolOCIdArea;
     this.depSolTmp = this.cabecera.cabSolOCIdDept;
+    this.searchNombrePRV = this.cabecera.cabSolOCProveedor;
     this.cabecera.cabSolOCAprobPresup = this.cabecera.cabSolOCAprobPresup.trim();
     this.numeroSolicitudEmail = this.cabecera.cabSolOCNumerico;
     this.tipoSolicitudEmail = 'Orden de Compra';
@@ -1170,6 +1172,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   }
 
   cancelar(): void {
+    this.deleteLastTracking();
     this.router.navigate(['allrequest']);
     this.clear();
     this.changeView('consultar');
@@ -1629,6 +1632,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
       const msjExito ='Solicitud N°' +this.cabecera.cabSolOCNumerico +' editada exitosamente.';
       this.callMensaje(msjExito,true);
       setTimeout(() => {
+        this.serviceGlobal.tipoSolBsq = 2;
         this.router.navigate(['allrequest']);
         this.clear();
       }, 3000);
@@ -1637,6 +1641,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
       this.callMensaje(msjError,false)
     }
   }
+  searchNombrePRV: string = '';
   //Buscar Proveedor y guardar
   searchProveedor(datos: string): void {
     if (datos.length > 2) {
@@ -1661,6 +1666,9 @@ export class SoliocComponent implements OnInit, OnDestroy {
       );
     }
   }
+
+
+
   //Limpiar los campos al momento de cambiar el tipo de busqueda
   limpiarCampos(): void {
     this.cab_ruc_prov = '';
@@ -1860,6 +1868,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
                   setTimeout(() => {
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
+                    this.serviceGlobal.tipoSolBsq = 2;
                     this.router.navigate(['allrequest']);
                   }, 3000);
                 },
@@ -1914,6 +1923,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
               setTimeout(() => {
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
+                this.serviceGlobal.tipoSolBsq = 2;
                 this.router.navigate(['allrequest']);
               }, 3000);
             },

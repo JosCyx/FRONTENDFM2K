@@ -979,9 +979,11 @@ export class CotProveedoresComponent implements OnInit {
                                         En caso de no tener en stock el mencionado requerimiento, enviar un correo indicando la situación.<br><br><br>
                                         </p>
                                       <p style="line-height: 140%;">&nbsp;</p>
-                                      <p style="line-height: 140%;">(593) 2524-530 | 128<br>
+                                      <p style="line-height: 140%;">
+                                      Enviar la proforma a la siguiente dirección de correo:<br>
+                                      jzuleta@malecon2000.org.ec<br>
+                                      (593) 2524-530 | 128<br>
 
-                                        jzuleta@malecon2000.org.ec<br>
                                         
                                         http://malecon2000.com/<br>
                                         

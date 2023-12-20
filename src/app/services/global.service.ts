@@ -17,7 +17,8 @@ export class GlobalService {
   changePage: boolean = false;
   solID: number = 0;
   //setDestino: boolean = false;
-
+  tipoSolBsq: number = 1;
+  currentPage: number = 1;
 
   rutaJSON: string = 'assets/configfm2k.json';
   configJSON: any = {};

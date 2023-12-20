@@ -106,3 +106,61 @@
     flex-direction: row;
     gap: 10px;
 }
+
+.label-facturas{
+    font-weight: bold;
+    background-color:#e9ecef ;
+    border-radius: .3125rem;
+    margin: 0 0 20px 0;
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.factura-input{
+    background-color: rgb(172, 172, 172);
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.det-fact-input{
+    max-width: 80px;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.det-fact-input:focus{
+    outline: none;
+}
+
+.invalid-det{
+    background-color: rgb(255, 186, 186);
+}
+
+.descuento-select{
+    border: none;
+    font-weight: bold;
+
+}
+
+.descuento-select:focus{
+    outline: none;
+}
+
+.detalle-input-error{
+    color: rgb(177, 0, 0);
+    font-size: 10pt;
+    font-style: italic;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.detalle-input-exito{
+    color: rgb(0, 100, 0);
+    font-size: 10pt;
+    font-style: italic;
+}

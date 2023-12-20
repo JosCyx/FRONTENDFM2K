@@ -535,12 +535,12 @@
                 <option value="ruc">Ruc</option>
               </select>
               <input
-                [(ngModel)]="cabecera.cabSolOCProveedor"
+                [(ngModel)]="searchNombrePRV"
                 *ngIf="tipobusqProv == 'nombre'"
                 type="text"
                 class="custom-input "
                 list="proveedor"
-                (keyup)="searchProveedor(cabecera.cabSolOCProveedor)"
+                (keyup)="searchProveedor(searchNombrePRV)"
                 [appSecureDisable]="estadoSol"
               />
               <input

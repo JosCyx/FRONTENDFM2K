@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, OnDestroy, HostListener } from '@angular/core';
 //servicios de comunicacion
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
@@ -181,6 +181,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   tipoSolicitudEmail: string = '';
   nivelProcesoEmail: string = '';
 
+  isSaved: boolean = false;
+
   constructor(private router: Router,
     private empService: EmpleadosService,
     private sectService: SectoresService,
@@ -269,14 +271,28 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     }, 100)
     if (this.changeview == 'editar') {
       this.editSolicitud();
+      this.isSaved = true;
+    } else if (this.changeview == 'crear') {
+      setTimeout(async () => {
+        await this.guardarTrancking();
+      }, 1500);
     }
 
   }
 
+  // Manejar el evento beforeunload
+  @HostListener('window:beforeunload', ['$event'])
+  beforeUnloadHandler(): void {
+    if (!this.isSaved) {
+      this.deleteLastTracking();
+    }
+  }
+
   ngOnDestroy(): void {
-    //this.cancelar();
-    //this.cancelarAll();
-    //this.cancelarItem();
+    if (!this.isSaved) {
+      this.deleteLastTracking();
+    }
+    window.removeEventListener('beforeunload', this.beforeUnloadHandler);
   }
 
   callMensaje(mensaje: string, type: boolean) {
@@ -421,6 +437,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }
 
   cancelarAll(): void {
+    this.deleteLastTracking();
     this.clear();
     this.ngOnInit();
     try {
@@ -454,26 +471,15 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
   getSolName(noSol: number) {
     const noSolString = noSol.toString();
-    if (noSolString.length == 1) {
-      this.solNumerico = "COT " + this.areaNmco + " " + this.trTipoSolicitud + "-000" + noSolString;
-    } else if (noSolString.length == 2) {
-      this.solNumerico = "COT " + this.areaNmco + " " + this.trTipoSolicitud + "-00" + noSolString;
-    } else if (noSolString.length == 3) {
-      this.solNumerico = "COT " + this.areaNmco + " " + this.trTipoSolicitud + "-0" + noSolString;
-    } else if (noSolString.length == 4) {
-      this.solNumerico = "COT " + this.areaNmco + " " + this.trTipoSolicitud + "-" + noSolString;
-    }
+    const paddedNoSol = noSolString.padStart(6, '0');
+    this.solNumerico = `COT ${this.areaNmco} ${this.trTipoSolicitud}-${paddedNoSol}`;
   }
-  //metodo para asignar numero nuevo de solicitud
-  async setNoSol() {
-    this.sharedNoSol = await this.getLastSol();
-  }
+
+
 
   showDoc: boolean = false;
   async setNoSolDocumentacion() {
-    await this.setNoSol();
     this.showDoc = this.showDoc ? false : true;
-
   }
 
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
@@ -508,7 +514,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           solTrTipoSol: this.trTipoSolicitud,
           solTrNumSol: this.trLastNoSol,
           solTrNivel: this.trNivelEmision,
-          solTrIdEmisor: this.trIdNomEmp
+          solTrIdEmisor: this.cookieService.get('userIdNomina'),
         };
 
 
@@ -516,7 +522,11 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         this.solTrckService.generateTracking(dataTRK).subscribe(
           (response: any) => {
             this.responseTRK = response?.solTrTipoSol && response?.solTrNumSol ? response : { solTrTipoSol: 0, solTrNumSol: 0 };
-            //console.log("Tracking guardado con éxito.", this.responseTRK);
+
+            this.sharedNoSol = this.responseTRK.solTrNumSol;
+            this.sharedTipoSol = this.responseTRK.solTrTipoSol;
+
+            console.log('Tracking asignado: ', this.responseTRK.solTrNumSol);
             resolve();
           },
           (error) => {
@@ -534,8 +544,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
   //guarda la solicitud con estado emitido
   async generarSolicitud() {
-
-    await this.guardarTrancking();
+    this.isSaved = true;//controla que la solicitud se haya guardado
     this.getSolName(this.trLastNoSol);
     this.numeroSolicitudEmail = this.solNumerico;
     this.tipoSolicitudEmail = 'Cotización';
@@ -577,6 +586,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         this.addBodySol();
       },
       error => {
+        this.isSaved = false;
         this.deleteLastTracking();
         console.log("error al guardar la cabecera: ", error)
         //AGREGAR MENSAJE DE ERROR 
@@ -617,6 +627,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       this.callMensaje(msjExito, true);
       setTimeout(() => {
         this.clear();
+        this.serviceGlobal.tipoSolBsq = 1;
         this.router.navigate(['allrequest']);
       }, 3000);
     }
@@ -1166,9 +1177,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     }
   }
 
-  getNombreNivel(nivel:number){
+  getNombreNivel(nivel: number) {
     this.nivRuteService.getNivelruteo().subscribe(
-      (data)=>{
+      (data) => {
         const response = data;
         for (let nivelR of response) {
           if (nivelR.nivel == nivel) {
@@ -1529,6 +1540,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
         this.clear();
         this.serviceGlobal.solView = 'crear';
+        this.serviceGlobal.tipoSolBsq = 1;
         this.router.navigate(['allrequest']);
       }, 3000);
 
@@ -1711,6 +1723,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
                   setTimeout(() => {
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
+                    this.serviceGlobal.tipoSolBsq = 1;
                     this.router.navigate(['allrequest']);
                   }, 3000);
                 },
@@ -1759,11 +1772,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
 
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
-              this.getMailContentSN(10, newEstado, newestadoSt);              
+              this.getMailContentSN(10, newEstado, newestadoSt);
 
               setTimeout(() => {
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
+                this.serviceGlobal.tipoSolBsq = 1;
                 this.router.navigate(['allrequest']);
               }, 3000);
             },
@@ -1865,7 +1879,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido anulada exitosamente.`;
           this.callMensaje(msjExito, true)
           //notificar al emisor de la solicitud que ha sido anulada
-          this.getMailContentSM(30,mailToNotify);
+          this.getMailContentSM(30, mailToNotify);
 
           setTimeout(() => {
             this.clear();
@@ -1935,7 +1949,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
               if (newEstado == 10) {
                 //extraer el contenido del email correspondiente
-                this.getMailContentSM(20,mailToNotify);
+                this.getMailContentSM(20, mailToNotify);
 
               } else {
 
@@ -1971,14 +1985,14 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel inicial.`;
           this.callMensaje(msjExito, true)
 
-          this.getMailContentSM(20,mailToNotify);
+          this.getMailContentSM(20, mailToNotify);
 
           //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
           setTimeout(() => {
             for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
               let niv = this.nivelRuteotoAut[i];
               if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
-                
+
                 this.getMailContentSN(22, niv.rutareaNivel, 'E');
               }
             }
@@ -2104,7 +2118,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }
 
   mailContent: any;
-  setMailInfo(){
+  setMailInfo() {
     //sustituir las palabras tiposol por la variable this.tipoSolicitudEmail, nivelproceso por this.nivelProcesoEmail y numsol por this.numeroSolicitudEmail de la propiedad emailContContenido del objeto mailContent
     let asuntoMail = this.mailContent.emailContAsunto;
     let contenidoMail = this.mailContent.emailContContenido;

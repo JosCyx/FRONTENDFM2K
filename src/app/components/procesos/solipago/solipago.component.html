@@ -32,192 +32,177 @@
 
       <div class="tabs-edit">
         <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link" [ngClass]="{'active': actionCreate === 'creacion'}"
-                    (click)="selectCreateAction('creacion')">Creación</a>
-            </li>
-            <li class="nav-item" >
-                <a class="nav-link" [ngClass]="{'active': actionCreate === 'documentacion'}"
-                    (click)="selectCreateAction('documentacion')" >Documentación</a>
-            </li>
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': actionCreate === 'creacion'}"
+              (click)="selectCreateAction('creacion')">Creación</a>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': actionCreate === 'facturas'}"
+              (click)="selectCreateAction('facturas')">Facturas</a>
+          </li> -->
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': actionCreate === 'documentacion'}"
+              (click)="selectCreateAction('documentacion')">Documentación</a>
+          </li>
         </ul>
-    </div>
-  
+      </div>
+
       <div class="solicitud">
         <div class="cabecera mb-3">
-          <div class="custom-row">
+          <div class="custom-input-group mb-1">
+            <label class="custom-label">Fecha:</label>
+            <input type="text" class="custom-input" disabled [value]="fechaFormateada" />
+          </div>
+          <!-- <div class="custom-row">
             <div class="custom-input-group mb-1">
               <label class="custom-label">Fecha:</label>
-              <input
-                type="text"
-                class="custom-input"
-                disabled
-                [value]="fechaFormateada"
-              />
+              <input type="text" class="custom-input" disabled [value]="fechaFormateada" />
             </div>
-            <!--  -->
+            
             <div class="custom-input-group  mb-1">
               <label class="custom-label">No orden de compra :</label>
-              <input
-              maxlength="10"
-                type="text"
-                class="custom-input"
-                placeholder="Ingrese el numero de compra"
-                [(ngModel)]="cab_ordencompra"
-              />
+              <input maxlength="10" type="text" class="custom-input" placeholder="Ingrese el numero de compra"
+                [(ngModel)]="cab_ordencompra" />
             </div>
-          </div>
+          </div> -->
           <div class="custom-row mb-1">
             <div class="custom-input-group ">
               <label class="custom-label">Solicitado por*:</label>
-              <input
-                type="text"
-                class="custom-input"
-                id="busqueda"
-                list="sugerencias"
-                [(ngModel)]="empleado"
-                (keyup)="searchEmpleado()"
-                (input)="selectEmpleado()"
-                placeholder="Ingrese el nombre del empleado"
-              />
-              
+              <input type="text" class="custom-input" id="busqueda" list="sugerencias" [(ngModel)]="empleado"
+                (keyup)="searchEmpleado()" (input)="selectEmpleado()" placeholder="Ingrese el nombre del empleado" />
+
               <!-- <button class="btn btn-success" (click)="selectEmpleado()">
                 <i class="bi bi-check-lg"></i>
               </button> -->
             </div>
             <datalist id="sugerencias">
               <ng-container *ngFor="let emp of empleados">
-                <option
-                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-                ></option>
+                <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
               </ng-container>
             </datalist>
             <div class="custom-input-group ">
               <label class="custom-label">Area:</label>
-              <input
-                type="text"
-                class="custom-input"
-                [value]="showArea"
-                disabled 
-              />
+              <input type="text" class="custom-input" [value]="showArea" disabled />
             </div>
           </div>
-          <div class="custom-row">
-            <div class="custom-input-group mb-1">
+          <!-- <div class="custom-row">
+            <div class="custom-input-group mb-1" style="width: 60%;">
               <label class="custom-label">No factura:</label>
-              <input
-                type="text"
-                maxlength="20"
-                class="custom-input"
-                placeholder="Ingrese el numero Factura"
-                [(ngModel)]="cab_nofactura"
-              />
+              <input type="text" maxlength="60" class="custom-input" placeholder="Ingrese el numero Factura"
+                [(ngModel)]="cab_nofactura" />
             </div>
-            <div class="custom-input-group mb-1">
+            <div class="custom-input-group mb-1" style="width: 40%;">
               <label class="custom-label">Fecha de Factura:</label>
-              <input
-                type="date"
-                class="custom-input"
-                [max]="fechaMax"
-                [(ngModel)]="cab_fechafactura"
-              />
+              <input type="date" class="custom-input" [max]="fechaMax" [(ngModel)]="cab_fechafactura" />
             </div>
-          </div>
+          </div> -->
           <div class="custom-row mb-1">
             <div class="custom-input-group ">
-              <select
-                class="form-select"
-                style="background-color: #d6d6d6"
-                [(ngModel)]="tipobusqueda"
-                (ngModelChange)="limpiarCampos()"
-              >
+              <select class="form-select" style="background-color: #d6d6d6" [(ngModel)]="tipobusqueda"
+                (ngModelChange)="limpiarCampos()">
                 <option value="nombre" selected>Proveedor</option>
-                <option value="ruc" >Ruc</option>
+                <option value="ruc">Ruc</option>
               </select>
               <!--  -->
-              <input
-                *ngIf="tipobusqueda == 'nombre'"
-                [(ngModel)]="buscarProveedor"
-                type="text"
-                class="custom-input"
-                list="proveedor"
-                placeholder="Ingrese el nombre del proveedor"
-                (keyup)="searchProveedor(buscarProveedor)"
-              />
-              <input
-                *ngIf="tipobusqueda == 'ruc'"
-                [(ngModel)]="buscarProveedor"
-                type="text"
-                maxlength="15"
-                class="custom-input"
-                list="proveedor"
-                placeholder="Ingrese el RUC"
-              />
+              <input *ngIf="tipobusqueda == 'nombre'" [(ngModel)]="buscarProveedor" type="text" class="custom-input"
+                list="proveedor" placeholder="Ingrese el nombre del proveedor"
+                (keyup)="searchProveedor(buscarProveedor)" />
+              <input *ngIf="tipobusqueda == 'ruc'" [(ngModel)]="buscarProveedor" type="text" maxlength="15"
+                class="custom-input" list="proveedor" placeholder="Ingrese el RUC" />
               <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'">
                 <ng-container *ngFor="let prov of proveedores">
                   <option [value]="prov.prov_nombre"></option>
                 </ng-container>
               </datalist>
-               
+              <button *ngIf="tipobusqueda == 'ruc'" class="btn btn-success"
+                (click)="searchProveedorRuc(buscarProveedor)" [appSecureDisable]="estadoSol">
+                <i class="bi bi-check-lg"></i>
+              </button>
             </div>
             <div class="custom-input-group ">
               <label class="custom-label">
                 <span *ngIf="tipobusqueda == 'nombre'"> RUC:</span>
                 <span *ngIf="tipobusqueda == 'ruc'">Nombre:</span>
               </label>
-              <input
-                type="text"
-                class="custom-input"
-                maxlength="15"
-                disabled
-                placeholder="-----"
-                *ngIf="tipobusqueda == 'nombre'"
-                [(ngModel)]="cab_rucproveedor"
-              />
-              <input
-                type="text "
-                class="custom-input"
-                *ngIf="tipobusqueda == 'ruc'"
-                disabled
-                placeholder="-----"
-                [(ngModel)]="cab_proveedor"
-              />
+              <input type="text" class="custom-input" maxlength="15" disabled placeholder=""
+                *ngIf="tipobusqueda == 'nombre'" [(ngModel)]="cab_rucproveedor" />
+              <input type="text " class="custom-input" *ngIf="tipobusqueda == 'ruc'" disabled placeholder=""
+                [(ngModel)]="cab_proveedor" />
             </div>
           </div>
-          <div class="custom-input-group">
+          <!-- <div class="custom-input-group">
             <label class="custom-label"> Solicitud Asociada</label>
-            <input
-              [(ngModel)]="valorinput"
-              type="text"
-              class="custom-input mr-1"
-              placeholder="Ejemplo: OC_000073865"
-            />
-            <button class="btn btn-success" (click)="obtenerOrdenCom()" >
+            <input [(ngModel)]="valorinput" type="text" class="custom-input mr-1" placeholder="Ejemplo: OC_000073865" />
+            <button class="btn btn-success" (click)="obtenerOrdenCom()">
               <i class="bi bi-search"></i>
             </button>
-          </div>
+          </div> -->
           <!-- Mensaje de error -->
-          <div  *ngIf="alertBool" class=  "alert alert-warning d-flex align-items-center mt-2" role="alert">
-            <i class="bi bi-exclamation-triangle-fill" style="padding-right: 2px;" >  {{alertText}}</i>
+          <div *ngIf="alertBool" class="alert alert-warning d-flex align-items-center mt-2" role="alert">
+            <i class="bi bi-exclamation-triangle-fill" style="padding-right: 2px;"> {{alertText}}</i>
           </div>
-          <div  *ngIf="alertBoolError" class=  "alert alert-danger d-flex align-items-center mt-2" role="alert">
-            <i class="bi bi-x-circle-fill" style="padding-right: 2px;">  {{alertText}}</i>
-            
+          <div *ngIf="alertBoolError" class="alert alert-danger d-flex align-items-center mt-2" role="alert">
+            <i class="bi bi-x-circle-fill" style="padding-right: 2px;"> {{alertText}}</i>
+
           </div>
 
         </div>
         <div *ngIf="actionCreate == 'creacion'">
-          <div class="tabs-edit" *ngIf="destinoIO">
+          <table class="table table-striped text-center">
+            <thead>
+              <tr>
+                <th scope="col">Orden de compra</th>
+                <th scope="col">Número de factura</th>
+                <th scope="col">Fecha de la factura</th>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Ruc del proveedor</th>
+                <th scope="col">Monto total</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let fact of facturasList; let i = index">
+                <td class="align-middle">
+                  {{fact.ordCompra}}
+                </td>
+                <td class="align-middle">
+                  {{fact.numero}}
+                </td>
+                <td class="align-middle">
+                  {{fact.fecha}}
+                </td>
+                <td class="align-middle">
+                  {{fact.proveedor}}
+                </td>
+                <td class="align-middle" style="width: 150px">
+                  {{ fact.provRuc }}
+                </td>
+                <td class="align-middle cel-prep">
+                  {{fact.valorTotal}}
+                </td>
+                <td><a class="text-danger" (click)="deleteFactura(i)"><i class="bi bi-x-circle"></i></a></td>
+              </tr>
+              <tr>
+                <td class="align-middle text-end" colspan="7">
+                  <button class="btn btn-primary" data-toggle="modal" data-target="#agregarNuevaFactura">Agregar nueva
+                    factura</button>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+          <!-- <div class="tabs-edit" *ngIf="destinoIO">
             <ul class="nav nav-tabs">
-                <li class="nav-item nav-items">
-                    <a class="nav-link" [ngClass]="{'active': showItDt === 'items'}" (click)="setID('items')">Items</a>
-                </li>
-                <li class="nav-item nav-items">
-                  <a class="nav-link" [ngClass]="{'active': showItDt === 'destino'}" (click)="setID('destino')" >Destino</a>
+              <li class="nav-item nav-items">
+                <a class="nav-link" [ngClass]="{'active': showItDt === 'items'}" (click)="setID('items')">Items</a>
+              </li>
+              <li class="nav-item nav-items">
+                <a class="nav-link" [ngClass]="{'active': showItDt === 'destino'}"
+                  (click)="setID('destino')">Destino</a>
               </li>
             </ul>
           </div>
-    
+
           <div class="detalle" *ngIf="showItDt == 'items'">
             <table class="table table-striped text-center">
               <thead>
@@ -234,56 +219,24 @@
                 <tr *ngFor="let det of detalleSolPagos; let i = index">
                   <th class="align-middle">{{ i + 1 }}</th>
                   <td class="align-middle">
-                    <textarea
-                      name="descripcion"
-                      class="form-control"
-                      rows="2"
-                      cols="50"
-                      disabled
-                      >{{ det.itemDesc }}</textarea
-                    >
+                    <textarea name="descripcion" class="form-control" rows="2" cols="50"
+                      disabled>{{ det.itemDesc }}</textarea>
                   </td>
                   <td class="align-middle">
-                    <input
-                      type="number"
-                     
-                      min="1"
-                      class="form-control text-center"
-                      [(ngModel)]="det.itemCant"
-                      disabled
-                    />
+                    <input type="number" min="1" class="form-control text-center" [(ngModel)]="det.itemCant" disabled />
                   </td>
                   <td class="align-middle" style="width: 150px">
-                    <input
-                      type="number"
-                      (input)="ValidarcantidadRe($event)"
-                      (input)="validarCantidad(det,$event)"   
-                      class="form-control text-center"
-                      [(ngModel)]="det.cantidadRecibid"
-                      disabled
-                    />
+                    <input type="number" (input)="ValidarcantidadRe($event)" (input)="validarCantidad(det,$event)"
+                      (input)="calcularSubtotal(det)" class="form-control text-center"
+                      [(ngModel)]="det.cantidadRecibid" />
                   </td>
                   <td class="align-middle cel-prep">
-                    <input
-                      type="number"
-                      (input)="validarNumero($event)"
-                      min="1"
-                      class="form-control text-center"
-                      [(ngModel)]="det.valorUnitario"
-                      disabled
-                    />
+                    <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                      [(ngModel)]="det.valorUnitario" disabled />
                   </td>
                   <td class="align-middle">
-                    <input
-                      type="number"
-                      (input)="validarNumero($event)"
-                      min="1"
-                      class="form-control text-center"
-                      
-                      [(ngModel)]="det.subTotal"
-                      step="0.01"
-                      disabled
-                    />
+                    <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                      [(ngModel)]="det.subTotal" step="0.01" disabled />
                   </td>
                 </tr>
                 <tr *ngIf="detalleSolPagos.length != 0">
@@ -294,104 +247,102 @@
                 <tr>
                   <td class="align-middle text-end" colspan="5">Total</td>
                   <td class="align-middle text-end">
-                    <input
-                      type="number"
-                      (input)="validarNumero($event)"
-                      min="1"
-                      class="form-control text-center"
-                      [(ngModel)]="Total"
-                      disabled
-                    />
+                    <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                      [(ngModel)]="Total" disabled />
                   </td>
                 </tr>
               </tbody>
-            </table>
-          </div>
-  
+            </table> 
+            </div>-->
+
           <div *ngIf="showItDt == 'destino'">
-            <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol" 
-                            [areaSol]="areaUserCookie"  [numericoSol]="numericoSol"></app-sp-destino>
+            <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"
+              [areaSol]="areaUserCookie" [numericoSol]="numericoSol"></app-sp-destino>
           </div>
         </div>
-        
+
         <div *ngIf="actionCreate == 'documentacion'">
           <app-sp-documentacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
-              [estadoSol]="estadoSol"></app-sp-documentacion>
+            [estadoSol]="estadoSol"></app-sp-documentacion>
         </div>
-  
+
+        <!-- <div *ngIf="actionCreate == 'facturas'">
+          
+          <table class="table table-striped text-center">
+            <thead>
+              <tr>
+                <th scope="col">N°</th>
+                <th scope="col">Número de factura</th>
+                <th scope="col">Fecha de la factura</th>                
+                <th scope="col">Descripción</th>
+                <th scope="col">Cantidad total</th>
+                <th scope="col">Monto total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let fact of facturasList; let i = index">
+                <th class="align-middle">{{ i + 1 }}</th>
+                <td class="align-middle">
+                  {{fact.numero}}
+                </td>
+                <td class="align-middle">
+                  {{fact.fecha}}
+                </td>
+                <td class="align-middle">
+                  {{fact.descripcion}}
+                </td>
+                <td class="align-middle" style="width: 150px">
+                  {{ fact.cantidad }} 
+                </td>
+                <td class="align-middle cel-prep">
+                  {{fact.valorTotal}}
+                </td>
+              </tr>
+              <tr>
+                <td class="align-middle text-end" colspan="6">
+                  <button class="btn btn-primary" data-toggle="modal" data-target="#agregarNuevaFactura">Agregar nueva factura</button>
+                </td>
+              </tr>
+              
+            </tbody>
+          </table>
+        </div> -->
+
         <div class="foot-cabecera">
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              placeholder=""
-              [(ngModel)]="cab_observa"
-            />
+            <input type="text" class="form-control" id="floatingInput" placeholder="" [(ngModel)]="cab_observa" />
             <label for="floatingInput">Observaciones:</label>
           </div>
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInputM"
-              placeholder=""
-              [(ngModel)]="cab_aplicarmult"
-            />
+            <input type="text" class="form-control" id="floatingInputM" placeholder="" [(ngModel)]="cab_aplicarmult" />
             <label for="floatingInputM">Aplicar multa:</label>
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Valor a descontar:</label>
-            <input
-              class="form-control"
-              type="number"
-              (input)="validarNumero($event)"
-              min="1"
-              placeholder="Ingrese el valor a descontar"
-              [(ngModel)]="cab_valordescontar"
-            />
+            <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
+              placeholder="Ingrese el valor a descontar" [(ngModel)]="cab_valordescontar" />
             <label class="input-group-text">Pago total autorizado*:</label>
-            <input
-              class="form-control"
-              type="number"
-              (input)="validarNumero($event)"
-              min="1"
-              placeholder="Ingrese el valor Total"
-              [(ngModel)]="cab_totalautorizado"
-            />
+            <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
+              placeholder="Ingrese el valor Total" [(ngModel)]="cab_totalautorizado" />
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Recibe*:</label>
-            <input
-              type="text"
-              maxlength="100"
-              class="form-control"
-              id="busqueda"
-              list="sugerencias"
-              [(ngModel)]="receptor"
-              (keyup)="searchEmpleado()"
-              (input)="verificartexto()"
-              placeholder="Ingrese el nombre del empleado"
-            />
+            <input type="text" maxlength="100" class="form-control" id="busqueda" list="sugerencias"
+              [(ngModel)]="receptor" (keyup)="searchEmpleado()" (input)="verificartexto()"
+              placeholder="Ingrese el nombre del empleado" />
             <datalist id="sugerencias">
               <ng-container *ngFor="let emp of empleados">
-                <option
-                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-                ></option>
+                <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
               </ng-container>
             </datalist>
             <label class="input-group-text">Fecha de Inspeccion*:</label>
-            <input
-              class="form-control"
-              type="date"
-              for="fechamaxima"
-              [max]="fechaMax"
-              [(ngModel)]="cab_fechaInspeccion"
-            />
+            <input class="form-control" type="date" for="fechamaxima" [max]="fechaMax"
+              [(ngModel)]="cab_fechaInspeccion" />
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Cancelación de orden*:</label>
-            <select class="form-select" [(ngModel)]="cab_cancelarOrden" (change)="setCancelacionOrden(cab_cancelarOrden)">
+            <select class="form-select" [(ngModel)]="cab_cancelarOrden"
+              (change)="setCancelacionOrden(cab_cancelarOrden)">
               <option disabled selected value="">Seleccione un opcion....</option>
               <option value="TTL">TOTAL</option>
               <option value="PCL">PARCIAL</option>
@@ -399,7 +350,8 @@
           </div>
           <div class="input-group mb-3" *ngIf="showCancelacion">
             <label class="input-group-text">Comentarios de orden*:</label>
-            <textarea style="max-height: 200px;" type="text" class="form-control" cols="2" [(ngModel)]="cab_observCancelacion"></textarea>
+            <textarea style="max-height: 200px;" type="text" class="form-control" cols="2"
+              [(ngModel)]="cab_observCancelacion"></textarea>
           </div>
           <div class="text-end">
             <p class="tip">*Campos obligatorios</p>
@@ -422,26 +374,19 @@
             >
           </div> -->
         </div>
-  
+
         <div class="col text-end">
-          <button
-          mat-raised-button
-            class="primary-button m-2"
-            data-toggle="modal"
-            data-target="#guardarOrdenPago"
-            (click)="saveReceptor()"
-            *appAuthorize="'31'"
-          >
+          <button mat-raised-button class="primary-button m-2" data-toggle="modal" data-target="#guardarOrdenPago"
+            (click)="saveReceptor()" *appAuthorize="'31'"
+            [disabled]="!destinoIO || !cab_NoSolOC || !trIdNomEmp || !cab_nofactura || !cab_fechafactura || !cab_ordencompra || !cab_proveedor || !cab_rucproveedor || Total == 0 || !Total || cab_totalautorizado == 0 || !cab_totalautorizado  || !cab_cancelarOrden || !cab_fechaInspeccion">
             Guardar
           </button>
-          <button 
-          mat-raised-button
-          class="success-button m-2" data-toggle="modal" data-target="#enviarSolicitud" *appAuthorize="'27'" (click)="saveReceptor()">
+          <button mat-raised-button class="success-button m-2" data-toggle="modal" data-target="#enviarSolicitud"
+            *appAuthorize="'27'" (click)="saveReceptor()"
+            [disabled]="!destinoIO || !cab_NoSolOC || !trIdNomEmp || !cab_nofactura || !cab_fechafactura || !cab_ordencompra || !cab_proveedor || !cab_rucproveedor || Total == 0 || !Total || cab_totalautorizado == 0 || !cab_totalautorizado  || !cab_cancelarOrden || !cab_fechaInspeccion">
             Guardar y enviar
-        </button>
-          <button 
-          mat-raised-button
-          class="danger-button m-2" (click)="cancelar()">
+          </button>
+          <button mat-raised-button class="danger-button m-2" (click)="cancelar()">
             Cancelar
           </button>
         </div>
@@ -461,83 +406,57 @@
       <!-- Inicio -->
       <div class="tabs-edit">
         <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link" [ngClass]="{'active': actionEdit === 'edicion'}" (click)="selectEditAction('edicion')">Edición</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}" (click)="selectEditAction('documentacion')">Documentación</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" [ngClass]="{'active': actionEdit === 'destino'}" (click)="selectEditAction('destino')">Destino</a>
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': actionEdit === 'edicion'}"
+              (click)="selectEditAction('edicion')">Edición</a>
           </li>
-          <ng-container *ngIf="cabecera.cabPagoEstadoTrack > 10 && cabecera.cabPagoEstadoTrack != 0 && cabecera.cabPagoEstadoTrack != 9999">
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}"
+              (click)="selectEditAction('documentacion')">Documentación</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" [ngClass]="{'active': actionEdit === 'destino'}"
+              (click)="selectEditAction('destino')">Destino</a>
+          </li>
+          <ng-container
+            *ngIf="cabecera.cabPagoEstadoTrack > 10 && cabecera.cabPagoEstadoTrack != 0 && cabecera.cabPagoEstadoTrack != 9999">
             <li class="nav-item" *appAuthorize="'53'">
               <a class="nav-link" [ngClass]="{'active': actionEdit === 'autorizacion'}"
-                  (click)="selectEditAction('autorizacion')">Autorizacion</a>
-          </li>
+                (click)="selectEditAction('autorizacion')">Autorizacion</a>
+            </li>
           </ng-container>
         </ul>
-    </div>
+      </div>
       <!-- Fin -->
       <div class="solicitud">
         <div class="cabecera mb-3">
-            <div class="custom-input-group mb-1 ">
-              <label class="custom-label">Código:</label>
-              <input
-                type="text"
-                class="custom-input"
-                [(ngModel)]="cabecera.cabPagoNumerico"
-                disabled
-              />
-            </div>
-         
+          
+
           <div class="custom-row">
             <div class="custom-input-group  mb-1">
               <label class="custom-label">Fecha:</label>
-              <input
-                type="text"
-                class="custom-input"
-                disabled
-                [value]="fechaFormateada"
-              />
+              <input type="text" class="custom-input" disabled [value]="fechaFormateada" />
             </div>
             <!--  -->
-            <div class="custom-input-group  mb-1">
-              <label class="custom-label">No orden de compra :</label>
-              <input
-                type="text"
-                class="custom-input"
-                placeholder="Ingrese el numero de compra"
-                [(ngModel)]="cabecera.cabPagoNoOrdenCompra"
-                [appSecureDisable]="estadoSol"
-              />
+            <div class="custom-input-group mb-1 ">
+              <label class="custom-label">Código:</label>
+              <input type="text" class="custom-input" [(ngModel)]="cabecera.cabPagoNumerico" disabled />
             </div>
           </div>
           <div class="custom-row mb-1">
             <div class="custom-input-group ">
               <label class="custom-label">Solicitado por*:</label>
               <ng-container *ngFor="let emPa of empleadoEdi">
-                <input
-                  *ngIf="emPa.empleadoIdNomina == cabecera.cabPagoSolicitante"
-                  type="text"
-                  class="custom-input"
-                  id="busqueda"
-                  list="sugerencias"
-                  [value]="emPa.empleadoNombres + ' ' + emPa.empleadoApellidos"
-                  disabled
-                />
+                <input *ngIf="emPa.empleadoIdNomina == cabecera.cabPagoSolicitante" type="text" class="custom-input"
+                  id="busqueda" list="sugerencias" [value]="emPa.empleadoNombres + ' ' + emPa.empleadoApellidos"
+                  disabled />
               </ng-container>
             </div>
             <div class="custom-input-group ">
               <label class="custom-label">Area:</label>
               <ng-container *ngFor="let are of areas">
-                <input
-                  *ngIf="are.areaIdNomina == cabecera.cabPagoIdAreaSolicitante"
-                  type="text"
-                  class="custom-input"
-                  [value]="are.areaDecp"
-                  disabled
-                />
+                <input *ngIf="are.areaIdNomina == cabecera.cabPagoIdAreaSolicitante" type="text" class="custom-input"
+                  [value]="are.areaDecp" disabled />
               </ng-container>
             </div>
             <!--  -->
@@ -546,83 +465,50 @@
           <div class="custom-row">
             <div class="custom-input-group  mb-1">
               <label class="custom-label">Aprobado por:</label>
-              
+
               <ng-container *ngIf="cabecera.cabPagoApprovedBy === 'XXXXXX'; else showValue">
                 <input type="text" class="custom-input" value="Nivel no alcanzado." disabled />
-            </ng-container>
-            <ng-template #showValue>
+              </ng-container>
+              <ng-template #showValue>
                 <ng-container *ngFor="let emp of empleadoEdi">
-                    <input *ngIf="emp.empleadoIdNomina == cabecera.cabPagoApprovedBy" type="text"
-                        class="custom-input" id="busqueda"
-                        [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled />
+                  <input *ngIf="emp.empleadoIdNomina == cabecera.cabPagoApprovedBy" type="text" class="custom-input"
+                    id="busqueda" [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled />
                 </ng-container>
-            </ng-template>
+              </ng-template>
             </div>
           </div>
           <!--  -->
           <div class="custom-row">
-            <div class="custom-input-group mb-1">
+            <div class="custom-input-group mb-1" style="width: 60%;">
               <label class="custom-label">No factura:</label>
-              <input
-                type="text"
-                class="custom-input"
-                placeholder="Ingrese el numero Factura"
-                [(ngModel)]="cabecera.cabPagoNumFactura"
-                [appSecureDisable]="estadoSol"
-              />
+              <input type="text" class="custom-input" placeholder="Ingrese el numero Factura"
+                [(ngModel)]="cabecera.cabPagoNumFactura" [appSecureDisable]="estadoSol" />
             </div>
-            <div class="custom-input-group  mb-1">
+            <div class="custom-input-group  mb-1" style="width: 40%;">
               <label class="custom-label">Fecha de Factura:</label>
-              <input
-                type="date"
-                class="custom-input"
-                [max]="FechaMaxEntrega(cabecera.cabPagoFechaFactura)"
-                [(ngModel)]="cabecera.cabPagoFechaFactura"
-                [appSecureDisable]="estadoSol"
-              />
+              <input type="date" class="custom-input" [max]="FechaMaxEntrega(cabecera.cabPagoFechaFactura)"
+                [(ngModel)]="cabecera.cabPagoFechaFactura" [appSecureDisable]="estadoSol" />
             </div>
           </div>
           <div class="custom-row mb-1">
             <div class="custom-input-group ">
-              <select
-                name=""
-                class="custom-input"
-                style="background-color: #d6d6d6"
-                [(ngModel)]="tipobusqueda"
-                (ngModelChange)="limpiarCampos()"
-                [appSecureDisable]="estadoSol"
-              >
+              <select name="" class="custom-input" style="background-color: #d6d6d6" [(ngModel)]="tipobusqueda"
+                (ngModelChange)="limpiarCampos()" [appSecureDisable]="estadoSol">
                 <option value="nombre" selected>Proveedor</option>
                 <option value="ruc">Ruc</option>
               </select>
-              <input
-                [(ngModel)]="cabecera.cabPagoProveedor"
-                *ngIf="tipobusqueda == 'nombre'"
-                type="text"
-                class="custom-input"
-                list="proveedor"
-                (keyup)="searchProveedor(cabecera.cabPagoProveedor)"
-                [appSecureDisable]="estadoSol"
-              />
-              <input
-                [(ngModel)]="cabecera.cabPagoRucProveedor"
-                *ngIf="tipobusqueda == 'ruc'"
-                type="text"
-                class="custom-input"
-                list="proveedor"
-                [appSecureDisable]="estadoSol"
-              />
+              <input [(ngModel)]="cabecera.cabPagoProveedor" *ngIf="tipobusqueda == 'nombre'" type="text"
+                class="custom-input" list="proveedor" (keyup)="searchProveedor(cabecera.cabPagoProveedor)"
+                [appSecureDisable]="estadoSol" />
+              <input [(ngModel)]="cabecera.cabPagoRucProveedor" *ngIf="tipobusqueda == 'ruc'" type="text"
+                class="custom-input" list="proveedor" [appSecureDisable]="estadoSol" />
               <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'">
                 <ng-container *ngFor="let prov of proveedores">
                   <option [value]="prov.prov_nombre"></option>
                 </ng-container>
               </datalist>
-              <button
-                *ngIf="tipobusqueda == 'ruc'"
-                class="btn btn-success"
-                (click)="searchProveedorRuc(cabecera.cabPagoRucProveedor)"
-                [appSecureDisable]="estadoSol"
-              >
+              <button *ngIf="tipobusqueda == 'ruc'" class="btn btn-success"
+                (click)="searchProveedorRuc(cabecera.cabPagoRucProveedor)" [appSecureDisable]="estadoSol">
                 <i class="bi bi-check-lg"></i>
               </button>
             </div>
@@ -631,97 +517,70 @@
                 <span *ngIf="tipobusqueda == 'nombre'"> RUC:</span>
                 <span *ngIf="tipobusqueda == 'ruc'">Nombre:</span>
               </label>
-              <input
-                type="text "
-                class="custom-input"
-                *ngIf="tipobusqueda == 'nombre'"
-                [(ngModel)]="cabecera.cabPagoRucProveedor"
-                [appSecureDisable]="estadoSol"
-              />
-              <input
-                type="text "
-                class="custom-input"
-                *ngIf="tipobusqueda == 'ruc'"
-                [(ngModel)]="cabecera.cabPagoProveedor"
-                [appSecureDisable]="estadoSol"
-              />
+              <input type="text " class="custom-input" *ngIf="tipobusqueda == 'nombre'"
+                [(ngModel)]="cabecera.cabPagoRucProveedor" [appSecureDisable]="estadoSol" />
+              <input type="text " class="custom-input" *ngIf="tipobusqueda == 'ruc'"
+                [(ngModel)]="cabecera.cabPagoProveedor" [appSecureDisable]="estadoSol" />
             </div>
           </div>
 
           <div class="custom-row mb-1">
             <div class="custom-input-group " style="width: 50%;">
               <label class="custom-label">Solicitud Asociada:</label>
-              <input
-                type="text"
-                class="custom-input"
-                [value]="cabecera.cabPagoNoSolOC"
-                disabled
-              />
+              <input type="text" class="custom-input" [value]="cabecera.cabPagoNoSolOC" disabled />
             </div>
             <div class="custom-row " style="width: 50%;">
               <div class="custom-input-group ">
                 <label class="custom-label">Estado:</label>
-                <input
-                type="text"
-                class="custom-input"
-                [value]="estadoTexto"
-                disabled
-              />
+                <input type="text" class="custom-input" [value]="estadoTexto" disabled />
               </div>
               <div class="custom-input-group  ">
                 <label class="custom-label">Tracking:</label>
                 <ng-container *ngFor="let nvTRK of nivelRut$ | async">
-                  <input
-                    *ngIf="nvTRK.nivel === cabecera.cabPagoEstadoTrack"
-                    type="text"
-                    class="custom-input"
-                    [value]="nvTRK.descRuteo"
-                    disabled
-                  />
+                  <input *ngIf="nvTRK.nivel === cabecera.cabPagoEstadoTrack" type="text" class="custom-input"
+                    [value]="nvTRK.descRuteo" disabled />
                 </ng-container>
               </div>
             </div>
           </div>
           <div class="custom-input-group mb-1" *ngIf="cabecera.cabPagoMotivoDev != 'NOHAYMOTIVO'">
             <label class="custom-label motivo-dev-label">Motivo de devolución:</label>
-            <input
-              type="text"
-              class="custom-input  motivo-dev"
-              [value]="cabecera.cabPagoMotivoDev"
-              disabled
-            />
+            <input type="text" class="custom-input  motivo-dev" [value]="cabecera.cabPagoMotivoDev" disabled />
           </div>
         </div>
-        <div *ngIf="actionEdit == 'documentacion'" >
-          <app-sp-documentacion  [view]="changeview" [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"></app-sp-documentacion>
+        <div *ngIf="actionEdit == 'documentacion'">
+          <app-sp-documentacion [view]="changeview" [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+            [estadoSol]="estadoSol"></app-sp-documentacion>
         </div>
         <div *ngIf="actionEdit == 'autorizacion'">
           <div class="anulacion mb-3">
-              <div class="m-2">
-                  <h2>Autorización de solicitud</h2>
-                  <div class="text-center">
-                      <div class="row buttons-ruteo">
-                          
-                          <ng-container *appAuthorize="'56'" >
-                            <button *ngIf="estadoSol == lastNivel" class="btn btn-success col m-2" data-toggle="modal"
-                              data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Finalizar</button>
-                            <button *ngIf="estadoSol != lastNivel" class="btn btn-success col m-2" data-toggle="modal"
-                              data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
-                          </ng-container>
-                          <button *appAuthorize="'59'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>
-                          <button *appAuthorize="'62'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud" [appSecureDisable]="estadoSol">Anular</button>
-                      </div>
-                  </div> 
+            <div class="m-2">
+              <h2>Autorización de solicitud</h2>
+              <div class="text-center">
+                <div class="row buttons-ruteo">
+
+                  <ng-container *appAuthorize="'56'">
+                    <button *ngIf="estadoSol == lastNivel" class="btn btn-success col m-2" data-toggle="modal"
+                      data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Finalizar</button>
+                    <button *ngIf="estadoSol != lastNivel" class="btn btn-success col m-2" data-toggle="modal"
+                      data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
+                  </ng-container>
+                  <button *appAuthorize="'59'" class="btn btn-warning col m-2" data-toggle="modal"
+                    data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>
+                  <button *appAuthorize="'62'" class="btn btn-danger col m-2" data-toggle="modal"
+                    data-target="#anularSolicitud" [appSecureDisable]="estadoSol">Anular</button>
+                </div>
               </div>
+            </div>
           </div>
           <!-- <app-oc-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
               [estadoSol]="estadoSol"></app-oc-anulacion> -->
-      </div>
-        <div *ngIf="actionEdit == 'destino'">
-          <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol" 
-                          [areaSol]="areaUserCookie"  [numericoSol]="numericoSol"></app-sp-destino>
         </div>
-        <div class="detalle" *ngIf="actionEdit =='edicion'" >
+        <div *ngIf="actionEdit == 'destino'">
+          <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"
+            [areaSol]="areaUserCookie" [numericoSol]="numericoSol"></app-sp-destino>
+        </div>
+        <div class="detalle" *ngIf="actionEdit =='edicion'">
           <table class="table table-striped text-center">
             <thead>
               <tr>
@@ -737,61 +596,30 @@
               <tr *ngFor="let det of detallePago; let i = index">
                 <th class="align-middle">{{ i + 1 }}</th>
                 <td class="align-middle">
-                  <textarea
-                    name="descripcion"
-                    class="form-control"
-                    rows="2"
-                    cols="50"
-                    disabled
-                    >{{ det.detPagoItemDesc }}</textarea
-                  >
+                  <textarea name="descripcion" class="form-control" rows="2" cols="50"
+                    disabled>{{ det.detPagoItemDesc }}</textarea>
                 </td>
                 <td class="align-middle">
-                  <input
-                    type="number"
-                    (input)="validarNumero($event)"
-                    min="1"
-                    class="form-control text-center"
-                    [(ngModel)]="det.detPagoCantContratada"
-                    disabled
-                  />
+                  <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                    [(ngModel)]="det.detPagoCantContratada" disabled />
                 </td>
                 <td class="align-middle" style="width: 150px">
-                  <input
-                    type="number"
-                    (input)="validarNumero($event)"
-                    min="1"
-                    class="form-control text-center"
-                    [(ngModel)]="det.detPagoCantRecibida"
-                    disabled
-                  />
+                  <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                    [(ngModel)]="det.detPagoCantRecibida" disabled />
                 </td>
                 <td class="align-middle cel-prep">
-                  <input
-                    type="number"
-                    (input)="validarNumero($event)"
-                    min="1"
-                    class="form-control text-center"
-                    [(ngModel)]="det.detPagoValUnitario"
-                    disabled
-                  />
+                  <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                    [(ngModel)]="det.detPagoValUnitario" disabled />
                 </td>
                 <td class="align-middle">
-                  <input
-                    disabled
-                    type="number"
-                    (input)="validarNumero($event)"
-                    min="1"
-                    class="form-control text-center"
-                    [(ngModel)]="det.detPagoSubtotal"
-                    (input)="calculoEditotal()"
-                    
-                  />
+                  <input disabled type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                    [(ngModel)]="det.detPagoSubtotal" (input)="calculoEditotal()" />
                 </td>
               </tr>
               <tr>
                 <td class="align-middle text-end" colspan="6">
-                  <button class="btn btn-outline-primary" (click)="calculoEditotal()">Calcular total</button>
+                  <button class="btn btn-outline-primary" [appSecureDisable]="estadoSol"
+                    (click)="calculoEditotal()">Calcular total</button>
                 </td>
               </tr>
               <tr>
@@ -801,98 +629,52 @@
                 <td class="align-middle text-end"></td>
                 <td class="align-middle text-end">Total</td>
                 <td class="align-middle text-end">
-                  <input
-                  disabled
-                    type="number"
-                    (input)="validarNumero($event)"
-                    min="1"
-                    class="form-control text-center"
-                    [(ngModel)]="cabecera.cabpagototal"
-                  />
+                  <input disabled type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                    [(ngModel)]="cabecera.cabpagototal" />
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-  
+
         <div class="foot-cabecera">
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              [(ngModel)]="cabecera.cabPagoObservaciones"
-              [appSecureDisable]="estadoSol"
-            />
+            <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cabecera.cabPagoObservaciones"
+              [appSecureDisable]="estadoSol" />
             <label for="floatingInput">Observaciones:</label>
           </div>
           <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              [(ngModel)]="cabecera.cabPagoAplicarMulta"
-              [appSecureDisable]="estadoSol"
-            />
+            <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cabecera.cabPagoAplicarMulta"
+              [appSecureDisable]="estadoSol" />
             <label for="floatingInput">Aplicar multa:</label>
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Valor a descontar:</label>
-            <input
-              class="form-control"
-              type="number"
-              (input)="validarNumero($event)"
-              min="1"
-              placeholder="Ingrese el valor a descontar"
-              [(ngModel)]="cabecera.cabPagoValorMulta"
-              [appSecureDisable]="estadoSol"
-            />
+            <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
+              placeholder="Ingrese el valor a descontar" [(ngModel)]="cabecera.cabPagoValorMulta"
+              [appSecureDisable]="estadoSol" />
             <label class="input-group-text">Pago total autorizado*:</label>
-            <input
-              class="form-control"
-              type="number"
-              (input)="validarNumero($event)"
-              min="1"
-              placeholder="Ingrese el valor Total"
-              [(ngModel)]="cabecera.cabPagoValorTotalAut"
-              [appSecureDisable]="estadoSol"
-            />
+            <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
+              placeholder="Ingrese el valor Total" [(ngModel)]="cabecera.cabPagoValorTotalAut"
+              [appSecureDisable]="estadoSol" />
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Recibe*:</label>
-            <input
-              type="text"
-              class="form-control"
-              list="sugerenciasEdit"
-              [(ngModel)]="receptor"
-              (keyup)="searchEmpleado()"
-              [appSecureDisable]="estadoSol"
-            />
+            <input type="text" class="form-control" list="sugerenciasEdit" [(ngModel)]="receptor"
+              (keyup)="searchEmpleado()" [appSecureDisable]="estadoSol" />
             <datalist id="sugerenciasEdit">
               <ng-container *ngFor="let emp of empleadoEdi">
-                <option
-                  [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"
-                ></option>
+                <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
               </ng-container>
             </datalist>
             <label class="input-group-text">Fecha de Inspeccion*:</label>
-            <input
-            [max]="FechaMaxEntrega(cabecera.cabPagoFechaInspeccion)"
-              class="form-control"
-              type="date"
-              for="fechamaxima"
-              [(ngModel)]="cabecera.cabPagoFechaInspeccion"
-              [appSecureDisable]="estadoSol"
-            />
+            <input [max]="FechaMaxEntrega(cabecera.cabPagoFechaInspeccion)" class="form-control" type="date"
+              for="fechamaxima" [(ngModel)]="cabecera.cabPagoFechaInspeccion" [appSecureDisable]="estadoSol" />
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Cancelación de orden*:</label>
-            <select
-              (change)="setCancelacionOrden(cabecera.cabPagoCancelacionOrden)"
-              class="form-select"
-              [(ngModel)]="cabecera.cabPagoCancelacionOrden"
-              [appSecureDisable]="estadoSol"
-            >
+            <select (change)="setCancelacionOrden(cabecera.cabPagoCancelacionOrden)" class="form-select"
+              [(ngModel)]="cabecera.cabPagoCancelacionOrden" [appSecureDisable]="estadoSol">
               <option disabled selected value="">Seleccione un opcion....</option>
               <option value="TTL">TOTAL</option>
               <option value="PCL">PARCIAL</option>
@@ -900,11 +682,11 @@
           </div>
           <div class="input-group mb-3" *ngIf="showCancelacion">
             <label class="input-group-text">Comentarios de orden*:</label>
-            <textarea style="max-height: 200px;" type="text" class="form-control" cols="2" [(ngModel)]="cabecera.cabPagoObservCancelacion" 
-            [appSecureDisable]="estadoSol" ></textarea>
+            <textarea style="max-height: 200px;" type="text" class="form-control" cols="2"
+              [(ngModel)]="cabecera.cabPagoObservCancelacion" [appSecureDisable]="estadoSol"></textarea>
           </div>
           <div class="text-end">
-            <app-sp-pdf  ></app-sp-pdf>
+            <app-sp-pdf></app-sp-pdf>
             <p class="tip">*Campos obligatorios</p>
           </div>
         </div>
@@ -924,34 +706,24 @@
             >
           </div> -->
         </div>
-  
+
         <div class="col text-end">
           <ng-container *ngIf="cabecera.cabPagoEstadoTrack == 10">
 
-            <button
-            mat-raised-button 
-              class="primary-button m-2"
-              data-toggle="modal"
-              data-target="#guardarEdicion"
-              (click)="saveReceptor()"
-              [appSecureDisable]= "estadoSol"
-            >
+            <button mat-raised-button class="primary-button m-2" data-toggle="modal" data-target="#guardarEdicion"
+              (click)="saveReceptor()" [appSecureDisable]="estadoSol">
               Guardar
             </button>
-            <button 
-            mat-raised-button 
-            class="success-button m-2" data-toggle="modal" data-target="#enviarSolicitudGuardada" *appAuthorize="'33'" [appSecureDisable]= "estadoSol">
+            <button mat-raised-button class="success-button m-2" data-toggle="modal"
+              data-target="#enviarSolicitudGuardada" *appAuthorize="'33'" [appSecureDisable]="estadoSol">
               Guardar y enviar
-          </button>
+            </button>
           </ng-container>
-          <button 
-          mat-raised-button 
-          *ngIf="cabecera.cabPagoEstadoTrack == 10" class="danger-button m-2" data-toggle="modal" data-target="#deleteSolP" [appSecureDisable]="estadoSol">
+          <button mat-raised-button *ngIf="cabecera.cabPagoEstadoTrack == 10" class="danger-button m-2"
+            data-toggle="modal" data-target="#deleteSolP" [appSecureDisable]="estadoSol">
             Eliminar solicitud
           </button>
-          <button 
-          mat-raised-button 
-          class="danger-button m-2" (click)="cancelarEdi()">
+          <button mat-raised-button class="danger-button m-2" (click)="cancelarEdi()">
             Cancelar
           </button>
         </div>
@@ -963,28 +735,28 @@
 <!-- MODALES PARA VERIFICAR EL GUARDADO DE LA SOLICITUD -->
 <!--Modal para guardar edicion de solicitud  -->
 <div class="modal fade" #exampleModal id="guardarOrdenPago" data-backdrop="static" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div  class="modal-content">
-            <div class="modal-header justify-content-center">
-                <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea guardar esta solicitud?
-                </h3>
-            </div>
-            <div class="modal-body">
-                <p>Esta acción guardará los datos ingresados en la solicitud pero no la enviará para su revisón.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="generarSolicitud()" >
-                    Confirmar
-                </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                    Cancelar
-                </button>
-            </div>
-        </div>
-        <!--  -->
-        <!-- <div  *ngIf="!setDestino" class="modal-content">
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea guardar esta solicitud?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Esta acción guardará los datos ingresados en la solicitud pero no la enviará para su revisón.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="generarSolicitud()">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
+    </div>
+    <!--  -->
+    <!-- <div  *ngIf="!setDestino" class="modal-content">
           <div class="modal-header justify-content-center">
               <h3 class="font-weight-bold" id="exampleModalLabel">
                   Error
@@ -999,61 +771,65 @@
               </button>
           </div>
       </div> -->
-    </div>
+  </div>
 </div>
 
 
 
 <!--Modal para guardar edicion de solicitud  -->
 <div class="modal fade" #exampleModal id="guardarEdicion" data-backdrop="static" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header justify-content-center">
-                <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea guardar los cambios realizados en la solicitud?
-                </h3>
-            </div>
-            <div class="modal-body">
-                <p>Esta acción guardará los cambios hechos en la solicitud pero no enviará la solicitud.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="savePagoEdit()">
-                    Confirmar
-                </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                    Cancelar
-                </button>
-            </div>
-        </div>
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea guardar los cambios realizados en la solicitud?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Esta acción guardará los cambios hechos en la solicitud pero no enviará la solicitud.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="savePagoEdit()">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 
 
 <!-- MODALES PARA VERIFICAR EL ENVIO DE LA SOLICITUD -->
 <!-- Modal para verificar el envío de la soliitud recien registrada-->
 <div class="modal fade" #exampleModal id="enviarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div  *ngIf="setDestino" class="modal-content">
-            <div class="modal-header justify-content-center">
-                <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea guardar la solicitud y enviarla para su revisión?
-                </h3>
-            </div>
-            <div class="modal-body">
-                <p>Al enviar la solicitud no podrá volver a editarla y pasará al siguiente nivel.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolNueva()">
-                    Confirmar
-                </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                    Cancelar
-                </button>
-            </div>
-        </div>
-        <div  *ngIf="!setDestino" class="modal-content">
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea guardar la solicitud y enviarla para su revisión?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Al enviar la solicitud no podrá volver a editarla y pasará al siguiente nivel.</p>
+        <span *ngIf="!setDestino" style="color: red;font-style: italic;">
+          <p><strong>RECUERDE:</strong> Es obligatorio que registre el destino cuando ya se haya recibido el producto o
+            servicio.</p>
+        </span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolNueva()">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
+    </div>
+    <!-- <div  *ngIf="!setDestino" class="modal-content">
           <div class="modal-header justify-content-center">
               <h3 class="font-weight-bold" id="exampleModalLabel">
                   Error
@@ -1067,9 +843,9 @@
                   Aceptar
               </button>
           </div>
-      </div>
-    </div>
-    <!--  -->
+      </div> -->
+  </div>
+  <!--  -->
 </div>
 
 
@@ -1077,27 +853,32 @@
 
 <!-- Modal para verificar el envío de la solcitud guardada-->
 <div class="modal fade" #exampleModal id="enviarSolicitudGuardada" data-backdrop="static" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div *ngIf="setDestino" class="modal-content">
-            <div class="modal-header justify-content-center">
-                <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea guardar los cambios realizados en la solicitud y enviarla para su revisión?
-                </h3>
-            </div>
-            <div class="modal-body">
-                <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
-                    Confirmar
-                </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                    Cancelar
-                </button>
-            </div>
-        </div>
-        <div  *ngIf="!setDestino" class="modal-content">
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea guardar los cambios realizados en la solicitud y enviarla para su revisión?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Esta acción guardará los cambios hechos en la solicitud y enviará la solicitud a su siguiente estado.
+        <p>
+          <span *ngIf="!setDestino" style="color: red;font-style: italic;">
+            <p><strong>RECUERDE:</strong> Es obligatorio que registre el destino cuando ya se haya recibido el producto
+              o servicio.</p>
+          </span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
+    </div>
+    <!-- <div  *ngIf="!setDestino" class="modal-content">
           <div class="modal-header justify-content-center">
               <h3 class="font-weight-bold" id="exampleModalLabel">
                   Error
@@ -1110,119 +891,256 @@
               <button type="button" class="btn btn-danger" data-dismiss="modal">
                   Aceptar
               </button>
-          </div>
-      </div>
-    </div>
+          </div> 
+      </div>-->
+  </div>
 </div>
 
 
 <!-- Modal para verificar el envío de la soliitud recien registrada-->
 <div class="modal fade" #exampleModal id="aprobarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header justify-content-center">
-                <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea enviar esta solicitud?
-                </h3>
-            </div>
-            <div class="modal-body">
-                <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente nivel.</p>
-               
-            </div>
-            <div class="modal-footer">
-                <button *appAuthorize="'67'" type="button" class="btn btn-warning" data-dismiss="modal" (click)="guardarEnviarSolEditada()">
-                  Guardar y confirmar
-                </button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="enviarSolicitud()">
-                    Confirmar
-                </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                    Cancelar
-                </button>
-            </div>
-        </div>
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea enviar esta solicitud?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente nivel.</p>
+
+      </div>
+      <div class="modal-footer">
+        <button *appAuthorize="'67'" type="button" class="btn btn-warning" data-dismiss="modal"
+          (click)="guardarEnviarSolEditada()">
+          Guardar y confirmar
+        </button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="enviarSolicitud()">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Modal para verificar el envío de la soliitud recien registrada-->
 <div class="modal fade" #exampleModal id="rechazarSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header justify-content-center">
-                <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea no autorizar esta solicitud?
-                </h3>
-            </div>
-            <div class="modal-body">
-                <p>Al no autorizar la solicitud, esta se regresará al nivel anterior para su revisión.</p>
-                <div>
-                  <input type="checkbox" [(ngModel)]="showMotivoDev">
-                  <label for="devolucion">Asignar motivo de la devolución:</label>
-                  <p class="text-danger font-italic">Advertencia: si la solicitud ya posee un motivo asignado, no lo debe modificar.</p>
-                  <textarea class="form-control" name="devolucion" cols="30" rows="5" [(ngModel)]="motivoDevEditar" [disabled]="!showMotivoDev"></textarea>
-              </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="guardarDevolverSolEditada()">
-                    Confirmar
-                </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                    Cancelar
-                </button>
-            </div>
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea no autorizar esta solicitud?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Al no autorizar la solicitud, esta se regresará al nivel anterior para su revisión.</p>
+        <div>
+          <input type="checkbox" [(ngModel)]="showMotivoDev">
+          <label for="devolucion">Asignar motivo de la devolución:</label>
+          <p class="text-danger font-italic">Advertencia: si la solicitud ya posee un motivo asignado, no lo debe
+            modificar.</p>
+          <textarea class="form-control" name="devolucion" cols="30" rows="5" [(ngModel)]="motivoDevEditar"
+            [disabled]="!showMotivoDev"></textarea>
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="guardarDevolverSolEditada()">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 
 
 <!-- Modal para verificar el envío de la soliitud recien registrada-->
 <div class="modal fade" #exampleModal id="anularSolicitud" data-backdrop="static" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header justify-content-center">
-                <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea anular esta solicitud?
-                </h3>
-            </div>
-            <div class="modal-body">
-                <p>Al anular la solicitud, esta tendrá el estado ANULADO y el proceso quedará finalizado.</p>
-               
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal"  (click)="anularSolicitud()">
-                    Confirmar
-                </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                    Cancelar
-                </button>
-            </div>
-        </div>
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea anular esta solicitud?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Al anular la solicitud, esta tendrá el estado ANULADO y el proceso quedará finalizado.</p>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="anularSolicitud()">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 <!-- Modal para eliminar Orden Compra-->
 <div class="modal fade" #exampleModal id="deleteSolP" data-backdrop="static" tabindex="-1" role="dialog"
-    aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header justify-content-center">
-                <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea eliminar esta Solicitud de Pago?
-                </h3>
-            </div>
-            <div class="modal-body">
-                <p>Esta acción eliminará esta solicitud y ya no podrá acceder a ella.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="EliminarSolPo(cabecera.cabPagoTipoSolicitud,cabecera.cabPagoNoSolicitud)">
-                    Confirmar
-                </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
-                    Cancelar
-                </button>
-            </div>
-        </div>
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea eliminar esta Solicitud de Pago?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Esta acción eliminará esta solicitud y ya no podrá acceder a ella.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal"
+          (click)="EliminarSolPo(cabecera.cabPagoTipoSolicitud,cabecera.cabPagoNoSolicitud)">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
     </div>
+  </div>
 </div>
+
+
+<div class="modal fade" #exampleModal id="agregarNuevaFactura" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          Agregar una nueva factura
+        </h3>
+      </div>
+      <div class="modal-body">
+        <div class="mb-2 factura-input">
+          <div class="custom-row mb-1">
+            <div class="custom-input-group">
+              <label class="custom-label">No. factura:</label>
+              <input type="text" class="custom-input" placeholder="Ingrese el número de la factura"
+                [(ngModel)]="factura.numero" />
+            </div>
+            <div class="custom-input-group">
+              <label class="custom-label">Fecha de Factura:</label>
+              <input type="date" class="custom-input" [(ngModel)]="factura.fecha" />
+            </div>
+          </div>
+
+          <div class="custom-row mb-1">
+            <div class="custom-input-group">
+              <label class="custom-label">Proveedor:</label>
+              <input type="text" class="custom-input" placeholder="Ingrese el proveedor de la factura"
+                [(ngModel)]="factura.proveedor" readonly/>
+            </div>
+            <div class="custom-input-group">
+              <label class="custom-label">Ruc:</label>
+              <input type="text" class="custom-input" [(ngModel)]="factura.provRuc" placeholder="Ingrese el ruc del proveedor de la factura" readonly>
+            </div>
+          </div>
+          <div class="custom-row mb-1">
+            <div class="custom-input-group">
+              <label class="custom-label"> Solicitud Asociada</label>
+              <input [(ngModel)]="valorinputOC" type="text" class="custom-input mr-1"
+                placeholder="Ejemplo: OC_000073865" />
+              <button class="btn btn-success" (click)="getDetFromOC()">
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
+            <div class="custom-input-group">
+              <label class="custom-label">Monto total:</label>
+              <input type="number" class="custom-input" (input)="validarNumero($event)" min="1" [(ngModel)]="factura.valorTotal">
+            </div>
+          </div>
+          <div class="factura-content">
+            <!-- tabla de detalles de la factura -->
+            <table class="table table-striped text-center" *ngIf="detalleFacturaList.length != 0">
+              <thead>
+                <tr>
+                  <th scope="col">Item</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">Cantidad</th>
+                  <th scope="col">Precio unitario</th>
+                  <th scope="col">
+                    <select class="descuento-select" [(ngModel)]="tipoDescuentoFact" (change)="x100change()">
+                      <option value="x100">Descuento %</option>
+                      <option value="cash">Descuento $</option>
+                    </select>
+                  </th>
+                  <th scope="col">Subtotal</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                <tr *ngFor="let det of detalleFacturaList; let i = index" >
+                  <td class="align-middle">{{ det.itemProd }}</td>
+                  <td class="align-middle">{{ det.descProd }}</td>
+                  <td class="align-middle" [ngClass]="{'invalid-det':det.checkC === false}"><input class="det-fact-input" type="number" [(ngModel)]="det.cantidad" (input)="ValidarcantidadRe($event)" (input)="calculateSubtotalDet(det)" min="0"></td>
+                  <td class="align-middle">$<input class="det-fact-input" type="number" [value]="det.valorUnitario" readonly></td>
+                  <td class="align-middle">{{ $prefix }}
+
+                    <input *ngIf="tipoDescuentoFact == 'x100'" class="det-fact-input" type="number" 
+                    [(ngModel)]="det.descuento"
+                    (input)="ValidarcantidadRe($event)" (input)="calculateSubtotalDet(det)" 
+                    min="0" max="100">
+
+                    <input *ngIf="tipoDescuentoFact == 'cash'" class="det-fact-input" type="number" 
+                    [(ngModel)]="det.descuento"
+                    (input)="validarNumero($event)" (input)="calculateSubtotalDet(det)" 
+                    min="0">
+
+                    {{ x100prefix }}</td>
+                  <td class="align-middle" [ngClass]="{'invalid-det':det.checkS === false}">$<input class="det-fact-input" type="number" [value]="det.subTotal" readonly></td>
+                  <td><a class="text-danger" (click)="deleteDetalleFactura(i)"><i class="bi bi-x-circle"></i></a></td>
+                </tr>
+                <tr>
+                  <td colspan="7" class="text-end">
+                    <button class="btn btn-outline-primary" (click)="verificarMontoFactura()">Verificar monto</button>
+                  </td>
+                </tr>
+                
+              </tbody>
+            </table>
+            <div class="detalle-input-error" *ngIf="detError">
+              <ul>
+                <ng-container *ngFor="let error of erroresDet">
+                  <li>Error: {{error.mensaje}}</li>
+                </ng-container>
+              </ul>
+            </div>
+            <div class="detalle-input-exito" *ngIf="detExito">
+              <p>Los valores ingresados están dentro del rango autorizado.</p>
+            </div>
+          </div>
+          <!-- <div class="custom-input-group">
+            <label class="custom-label"> Solicitud Asociada</label>
+            <input [(ngModel)]="valorinput" type="text" class="custom-input mr-1" placeholder="Ejemplo: OC_000073865" />
+            <button class="btn btn-success" (click)="obtenerOrdenCom()">
+              <i class="bi bi-search"></i>
+            </button>
+          </div> -->
+        </div>
+        <div class="modal-footer">
+          <ng-container *ngIf="checkTotal">
+            <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="addFactura()">
+              Confirmar
+            </button>
+          </ng-container>
+          <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="cancelarFactura()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+    <!--  -->
+  </div>

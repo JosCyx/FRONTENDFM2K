@@ -110,7 +110,7 @@ export class SPDocumentacionComponent implements OnInit {
           this.callMensaje(msjError, false);
         } else {
           console.error('este es mi error', error);
-          const msjError = 'Error no se puede subir el archivo intente nuevamente';
+          const msjError = 'Ha ocurrido un error, por favor intente nuevamente';
           this.callMensaje(msjError, false);
         }
       },

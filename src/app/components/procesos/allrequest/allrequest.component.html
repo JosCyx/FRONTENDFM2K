@@ -25,11 +25,6 @@
         </select>
         <button class="success-button-outline" (click)="consultarSol()">Consultar</button>
       </div>
-    </form>
-    <!-- busqueda de solicitudes por empleados-->
-
-    <div class="d-flex align-items-center mb-3 justify-content-between">
-    
       <div>
         <div class="custom-input-group">
           <label class="custom-label" style="padding-top: 8px; padding-bottom: 8px;">Filtrar por:</label>
@@ -47,8 +42,8 @@
             [(ngModel)]="bsqContenido" />
           <input *ngIf="tipoBusqueda == 'num'" type="text" class="custom-form-control" placeholder="Buscar por numero"
             [(ngModel)]="bsqContenido" />
-          <button style="margin-right: 10px;" class="custom-btn success-button-outline" type="button" (click)="filtrarSolicitudes()">Buscar</button>
-          <button style="padding-left: 10px; padding-right: 10px;" class="custom-btn success-button" (click)="clearBusqueda()">
+          <button style="border-radius: 0px;" class="custom-btn success-button-outline" type="button" (click)="filtrarSolicitudes()">Buscar</button>
+          <button style="border-radius: 0 5px 5px 0; padding: 10px;" class="custom-btn success-button" (click)="clearBusqueda()">
             <i class="bi bi-arrow-clockwise"></i>
           </button>
         </div>
@@ -63,6 +58,12 @@
           <option [value]="area.areaDecp"></option>
         </ng-container>
       </datalist>
+    </form>
+    <!-- busqueda de solicitudes por empleados-->
+
+    <div class="mb-3 text-end">
+    
+      
       <div>
         <button class="pagination-btnl primary-button mr-2" (click)="prevPage()">
           <i class="bi bi-arrow-left"></i>

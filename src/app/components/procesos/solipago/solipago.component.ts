@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, ViewChild, OnDestroy, HostListener  } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, OnDestroy, HostListener } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { Router, NavigationStart } from '@angular/router';
+import { Router } from '@angular/router';
 import { CabeceraPago } from 'src/app/models/procesos/solcotizacion/CabeceraPago';
 import { GlobalService } from 'src/app/services/global.service';
 import { DetallePago } from 'src/app/models/procesos/solcotizacion/DetallePago';
@@ -22,12 +22,33 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SpDestinoComponent } from './sp-destino/sp-destino.component';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 
+interface Factura {
+  numero: string;
+  fecha: Date;
+  proveedor: string;
+  provRuc: string;
+  ordCompra: string;
+  valorTotal: number;
+  detalles: DetalleFactura[];
+}
+
+interface DetalleFactura {
+  itemProd: string;
+  descProd: string;
+  cantidad: number;
+  valorUnitario: number;
+  descuento: number;
+  subTotal: number;
+  checkC: boolean;
+  checkS: boolean;
+}
+
 interface RuteoArea {
   rutareaNivel: number;
   // Otras propiedades si es necesario
 }
 
-interface ResponseTrack{
+interface ResponseTrack {
   solTrTipoSol: number;
   solTrNumSol: number;
 }
@@ -66,7 +87,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   fechaFormateada: string = this.formatDateToSpanish(this.fecha);
   receptor!: string;
   //*Variables de input para solicitar tipo de solicitud  y no solicitud
-  valorinput: string = '';
+  valorinputOC: string = '';
   noSolicinput!: number;
   //Creacion de Lista para guardar los tipos de solicit y no solicitud
   detalleSolPagos: any[] = [];
@@ -134,12 +155,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   setDestino: boolean = false;
   tipoSolOc: string = 'F';
 
-   //Variables para validacion de fecha 
-   fechaminina: Date = new Date();
-   fechamaxima: Date = new Date();
- 
-   fechaMin: string = '';
-   fechaMax: string = '';
+  //Variables para validacion de fecha 
+  fechaminina: Date = new Date();
+  fechamaxima: Date = new Date();
+
+  fechaMin: string = '';
+  fechaMax: string = '';
   areaUserCookie: number = Number(this.cookieService.get('userArea'));
   numeroSolicitudEmail: string = '';
   tipoSolicitudEmail: string = '';
@@ -149,6 +170,26 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   solicitudFrom: string = '';
 
   isSaved: boolean = false;
+
+  /////////////////////////////////////////FACTURAS///////////////////////////////////////////////////
+  facturasList: Factura[] = [];//almacena las facturas que se enviaran a la API
+
+  //almacena la cabecera de la factura que se registra en el momento
+  factura: Factura = { 
+    numero: '', 
+    fecha: new Date(), 
+    proveedor: '', 
+    provRuc: '', 
+    ordCompra: '', 
+    valorTotal: 0, 
+    detalles: [] 
+  };
+
+  //almacena los detalles de una factura que se registra en el momento
+  detalleFacturaList: DetalleFactura[] = [];
+
+  //almacena los detalles de una factura que se registra en el momento sin modificaciones
+  detalleFactDefault: DetalleFactura[] = [];
 
   constructor(
     private empService: EmpleadosService,
@@ -166,17 +207,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     private sendMailService: SendEmailService,
     private nivGerenciaService: NivGerenciaService,
     private sharedService: SharedService,
-    private dialogService:DialogServiceService
+    private dialogService: DialogServiceService
   ) {
 
-    router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        if(!this.isSaved){
-          this.deleteLastTracking();
-        }
-      }
-    });
-    
     /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobarsp$.subscribe(() => {
       //console.log("Aprobando solicitud...");
@@ -196,11 +229,15 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     });*/
   }
 
-  callMensaje(mensaje: string, type: boolean){
+  callMensaje(mensaje: string, type: boolean) {
     this.dialogService.openAlertDialog(mensaje, type);
   }
 
-  validarCantidad(det:any,event:Event){
+  calcularSubtotal(det: any): void {
+    det.subTotal = det.cantidadRecibid * det.valorUnitario;
+  }
+
+  validarCantidad(det: any, event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = parseInt(inputElement.value, 10);
     if (valorIngresado > det.itemCant) {
@@ -210,83 +247,81 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
     }
   }
-  ValidarcantidadRe(event: Event):void{
-    const patron: RegExp=/^[0-9]+$/;
+  ValidarcantidadRe(event: Event): void {
+    const patron: RegExp = /^[0-9]+$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
 
     if (!patron.test(valorIngresado)) {
-      console.log("entro ");
-      inputElement.value = inputElement.defaultValue; 
+      inputElement.value = inputElement.defaultValue;
     }
 
   }
   validarNumero(event: Event): void {
-    const patron: RegExp=/^[0-9]+(\.[0-9]+)?$/;
+    const patron: RegExp = /^[0-9]+(\.[0-9]+)?$/;
     const inputElement = event.target as HTMLInputElement;
     const valorIngresado = inputElement.value;
 
     if (!patron.test(valorIngresado)) {
-      console.log("entro ");
-      inputElement.value = inputElement.defaultValue; 
+      inputElement.value = inputElement.defaultValue;
     }
   }
-  
+
   ngOnInit(): void {
-    
-    this.fechaminina=new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate());
-    this.fechamaxima=new Date(new Date().getFullYear(),new Date().getMonth()+6,new Date().getDate());
-    this.fechaMax=this.formatDateToYYYYMMDD(this.fechamaxima);
-    this.fechaMin=this.formatDateToYYYYMMDD(this.fechaminina);
-    // console.log(this.sharedNoSol);
+
+    this.fechaminina = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+    this.fechamaxima = new Date(new Date().getFullYear(), new Date().getMonth() + 6, new Date().getDate());
+    this.fechaMax = this.formatDateToYYYYMMDD(this.fechamaxima);
+    this.fechaMin = this.formatDateToYYYYMMDD(this.fechaminina);
     setTimeout(() => {
-      
+
       this.empService.getEmpleadosList().subscribe((data) => {
         this.empleadoEdi = data;
       });
-  
+
       this.areaList$ = this.areaService.getAreaList();
-  
+
       this.nivelRut$ = this.nivRuteService
         .getNivelruteo()
         .pipe(map((niv) => niv.sort((a, b) => a.nivel - b.nivel)));
-  
+
       this.areaList$.subscribe((data) => {
         this.areas = data;
       });
     }, 100);
     if (this.changeview == 'editar') {
       this.editSolicitud();
+      this.isSaved = true;
     } else if (this.changeview == 'crear') {
       setTimeout(async () => {
         await this.guardarTrancking();
       }, 1500);
     }
   }
-  
+
   // Manejar el evento beforeunload
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler(): void {
-    if(!this.isSaved){
+    if (!this.isSaved) {
       this.deleteLastTracking();
     }
   }
 
   ngOnDestroy(): void {
+    if (!this.isSaved) {
+      this.deleteLastTracking();
+    }
     window.removeEventListener('beforeunload', this.beforeUnloadHandler);
   }
-
-
-
 
   verificartexto(): void {
     const patron: RegExp = /^[a-zA-ZñÑ\s]*$/;
     if (!patron.test(this.receptor)) {
       //borrar el ultimo caracter ingresado
-      console.log('El inspector no puede contener el número',this.receptor);
+      console.log('El inspector no puede contener el número', this.receptor);
       // this.inspector = this.inspector.substring(0, this.inspector.length - 1);
       this.receptor = this.receptor.replace(/[^a-zA-Z\s]/g, '');
-    } 
+    }
   }
   searchEmpleado(): void {
     if (this.empleado.length > 2) {
@@ -301,9 +336,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       this.empleados = [];
     }
   }
+
   selectEmpleado(): void {
     setTimeout(async () => {
-      
+
       this.showArea = '';
       if (!this.empleado) {
         this.showArea = '';
@@ -318,21 +354,22 @@ export class SolipagoComponent implements OnInit, OnDestroy {
             this.depSolTmp = emp.empleadoIdDpto;
             this.cab_id_dept = emp.empleadoIdDpto;
             this.cab_id_area = emp.empleadoIdArea;
-            
+
             for (let area of this.areas) {
               if (area.areaIdNomina == emp.empleadoIdArea) {
-  
+
                 this.showArea = area.areaDecp;
-  
+
                 this.areaNmco = area.areaNemonico.trim();
-  
+                console.log("setDestino", this.setDestino);
+
                 //busca el nuevo nombre de la solicitud y lo asigna a las variables para poder usarlo en el destino
                 setTimeout(async () => {
-                  
-              
+
+
                   this.getSolName(this.responseTRK.solTrNumSol);
                 }, 1000);
-  
+
                 //console.log("Empleado area ID:",this.cab_area);
               } else if (emp.empleadoIdArea === 0) {
                 this.showArea = 'El empleado no posee un area asignada.';
@@ -399,32 +436,33 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
   //Limpiar en modulo Editar
   cancelarEdi(): void {
+    this.serviceGlobal.tipoSolBsq = 3;
     this.router.navigate(['allrequest']);
     this.clear();
   }
-  EliminarSolPo(TipoSolicitud:number, NoSolicitud:number) {
-    console.log("tipo solicitud",TipoSolicitud,"no solicitud",NoSolicitud);
-    this.cabPagoService.DeleteSolPago(TipoSolicitud,NoSolicitud).subscribe(
+  EliminarSolPo(TipoSolicitud: number, NoSolicitud: number) {
+    console.log("tipo solicitud", TipoSolicitud, "no solicitud", NoSolicitud);
+    this.cabPagoService.DeleteSolPago(TipoSolicitud, NoSolicitud).subscribe(
       {
         next: data => {
-          const msjExito ='Solicitud de Pago Eliminada Exitosamente';
-          this.callMensaje(msjExito,true)
-          setTimeout(()=>{
+          const msjExito = 'Solicitud de Pago Eliminada Exitosamente';
+          this.callMensaje(msjExito, true)
+          setTimeout(() => {
             this.router.navigate(['allrequest']);
-          },3000);
+          }, 3000);
         },
         error: error => {
           console.error('Error al eliminar la solicitud: ', error);
           const msjError = 'Error al eliminar la solicitud';
-          this.callMensaje(msjError,false)
+          this.callMensaje(msjError, false)
         }
       }
-      )
+    )
 
-  
+
   }
 
-  cancelarDes(){
+  cancelarDes() {
     console.log("cancelar destino")
     this.sharedService.spDestinoChange();
     //this.spDestino.cancelarDestino();
@@ -447,37 +485,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.cab_fechaInspeccion = new Date();
     this.cab_cancelarOrden = '';
   }
-  //inicial SP
+
   getSolName(noSol: number) {
     const noSolString = noSol.toString();
-    if (noSolString.length == 1) {
-      this.solNumerico =
-        'SP ' +
-        this.areaNmco +
-        ' ' +
-        this.trTipoSolicitud +
-        '-000' +
-        noSolString;
-      this.numericoSol = this.solNumerico;
-    } else if (noSolString.length == 2) {
-      this.solNumerico =
-        'SP ' +
-        this.areaNmco +
-        ' ' +
-        this.trTipoSolicitud +
-        '-00' +
-        noSolString;
-      this.numericoSol = this.solNumerico;
-    } else if (noSolString.length == 3) {
-      this.solNumerico =
-        'SP ' + this.areaNmco + ' ' + this.trTipoSolicitud + '-0' + noSolString;
-      this.numericoSol = this.solNumerico;
-    } else if (noSolString.length == 4) {
-      this.solNumerico =
-        'SP ' + this.areaNmco + ' ' + this.trTipoSolicitud + '-' + noSolString;
-      this.numericoSol = this.solNumerico;
-    }
+    const paddedNoSol = noSolString.padStart(6, '0');
+    this.solNumerico = `SP ${this.areaNmco} ${this.trTipoSolicitud}-${paddedNoSol}`;
   }
+
+
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
   getLastSol(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
@@ -546,9 +561,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.tipoSolicitudEmail = 'Orden de Pago';
 
     let ifDestino = '';
-    if(this.setDestino == true){
+    if (this.setDestino == true) {
       ifDestino = 'S';
-    } else if(this.setDestino == false){
+    } else if (this.setDestino == false) {
       ifDestino = 'N';
     }
 
@@ -559,7 +574,6 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoIdAreaSolicitante: this.cab_id_area,
       cabPagoIdDeptSolicitante: this.cab_id_dept,
       cabPagoSolicitante: this.trIdNomEmp,
-      cabPagoNoOrdenCompra: this.cab_ordencompra,
       cabPagoFechaEmision: this.cab_fecha,
       cabPagoFechaEnvio: this.cab_fecha,
       cabPagoNumFactura: this.cab_nofactura,
@@ -591,22 +605,24 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     await this.cabPagoService.addSolPag(dataCAB).subscribe(
       (response) => {
         const msjExito = 'Solicitud de Pago Generada Exitosamente';
-        this.callMensaje(msjExito,true);
+        this.callMensaje(msjExito, true);
         this.AddDetSolPago();
-        setTimeout(()=>{
+        setTimeout(() => {
+          this.serviceGlobal.tipoSolBsq = 3;
           this.router.navigate(['allrequest']);
-        },3000)
+        }, 3000)
       },
       (error) => {
+        this.isSaved = false;
         this.deleteLastTracking();
         console.log('error al guardar la cabecera: ', error);
         const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
-        this.callMensaje(mensaje,false);
+        this.callMensaje(mensaje, false);
       }
     );
   }
 
-  async deleteLastTracking(){
+  async deleteLastTracking() {
     const tipoSol = this.responseTRK.solTrTipoSol;
     const noSol = this.responseTRK.solTrNumSol;
 
@@ -622,6 +638,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
   //Guardar el ID DEL QUE RECIBE
   saveReceptor() {
+    console.log("setDestino", this.setDestino);
     for (let emp of this.empleados) {
       if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
         this.cab_recibe = emp.empleadoIdNomina
@@ -642,159 +659,71 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.showItDt = valor;
   }
 
-  obtenerOrdenCom(){
+  getDetFromOC() {
     this.detalleSolPagos = [];
-    if(this.valorinput == ''){
-      this.callMensaje('Por favor ingrese el número de orden de compra.',false);
+    if (this.valorinputOC == '') {
+      this.callMensaje('Por favor ingrese el número de orden de compra.', false);
     } else {
 
-      this.detPagoService.DetOrdenCompras(this.valorinput).subscribe(
+      this.detPagoService.DetOrdenCompras(this.valorinputOC).subscribe(
         {
           next: data => {
-            this.detalleSolPagos=data.map((ini:any)=>({
-              idDetalle: ini.detId,
-              itemDesc: ini.detdesProducto,
-            itemCant: ini.detcantidad,
-            cantidadRecibid : ini.detcantidad,
-            valorUnitario: ini.detprecio,
-            subTotal: ini.detTotal
-          }))
+            //console.log("data", data);
+            if (data[0].detEstadoOC != 1) {
+              this.callMensaje('Error, la orden de compra ingresada no se encuentra abierta, por favor intente con una orden abierta.', false);
+            } else {
 
-          this.destinoIO = true;
-          // this.detallesToDestino = data.map((detalle: any) => {
-            //   console.log("detalle",detalle);
-            //   return {
-              //     idDetalle: detalle.detOrden,
-              //     descpDetalle: detalle.detdesProducto,
-              //     destinoDetalle: false
-              //   };
-              // });
-              
-              this.cab_NoSolOC = this.valorinput;
-              
-            },
-            error: error => {
-              console.error('Error al obtener la orden de compra: ', error);
-              if(error.status == 404){
-                this.callMensaje('Error, no se ha encontrado una orden de compra con los datos ingresados.',false);
-              }
+              this.detalleFacturaList = data.map((det: any) => ({
+                itemProd: det.detcodProducto,
+                descProd: det.detdesProducto,
+                cantidad: det.detcantidad,
+                valorUnitario: det.detprecio,
+                descuento: 0,
+                subTotal: det.detTotal,
+                checkC: true,
+                checkS: true
+              }));
+
+              //guarda los datos de la orden de compra sin modificaciones
+              this.detalleFactDefault = data.map((det: any) => ({
+                itemProd: det.detcodProducto,
+                descProd: det.detdesProducto,
+                cantidad: det.detcantidad,
+                valorUnitario: det.detprecio,
+                descuento: 0,
+                subTotal: det.detTotal,
+                check: true,
+                checkS: true
+              }));
+
+              /*this.detalleSolPagos = data.map((ini: any) => ({
+                idDetalle: ini.detId,
+                itemDesc: ini.detdesProducto,
+                itemCant: ini.detcantidad,
+                cantidadRecibid: ini.detcantidad,
+                valorUnitario: ini.detprecio,
+                subTotal: ini.detTotal
+              }))*/
+
+              this.destinoIO = true;
+              this.factura.ordCompra = this.valorinputOC.toUpperCase();
+              this.cab_NoSolOC = this.valorinputOC.toUpperCase();
             }
-          })
-        }
+
+
+          },
+          error: error => {
+            console.error('Error al obtener la orden de compra: ', error);
+            if (error.status == 404) {
+              this.callMensaje('Error, no se ha encontrado una orden de compra con los datos ingresados.', false);
+            }
+          }
+        })
+    }
 
   }
-  // async Obtener() {
-  //   if (this.tipoSolOc == 'F'){
-  //     this.solicitudFrom = 'F';
-  //     this.cab_NoSolOC = this.valorinput;
-  //     this.setDestino = true;//inhabilita la validacion del destino
-  //     if(this.valorinput == ''){
-
-  //       this.alertBool = true;
-  //       this.alertText = 'Por favor ingrese el nombre de la solicitud a asociar.';
-
-  //       setTimeout(() => {
-  //         this.alertBool = false;
-  //         this.alertText = '';
-  //       }, 2500);
-  //     } else {
-  //       this.alertBool = true;
-  //       this.alertText = '  Usted ha seleccionado solicitud física, por favor suba la documentacion de la orden de compra y las evidencias del destino en la pestaña Documentación ubicada en la parte superior.';
-  //       this.cab_NoSolOC = this.valorinput;
-  //     }
-  //   } else if (this.tipoSolOc == 'S'){
-  //     this.solicitudFrom = 'S';
-  //     this.cab_NoSolOC = this.valorinput;
-  //     this.setDestino = false;//habilita la validacion del destino
-  //     this.alertBool = false;
-  //     this.alertText = '';
-  //     if (this.valorinput == '') {
-  //       this.detalleSolPagos = [];
-  //       this.destinoIO = false;
-  //       this.detallesToDestino = [];
-        
-  //       this.alertBool = true;
-  //       this.alertText = 'Por favor ingrese el nombre de la solicitud a asociar.';
-  //       setTimeout(() => {
-  //         this.alertBoolError = false;
-  //         this.alertBool = false;
-  //         this.alertText = '';
-  //       }, 1000);
-  //     } else {
-  //       const partes = this.valorinput.match(/(\d+)-(\d+)/);
-  //       if (partes && partes.length === 3) {
-  //         if (partes[1] != '2') {
-  //           this.alertBool = true;
-  //           this.alertText = 'No se ha encontrado la solicitud';
-  //           this.detalleSolPagos = [];
-  //           setTimeout(() => {
-  //             this.alertBool = false;
-  //             this.alertText = '';
-  //           }, 1000);
-  //         } else {
-  //           this.noSolicinput = parseInt(partes[2], 10);
-  //           try {
-  //             this.detSolService
-  //               .getDetalle_solicitud(2, this.noSolicinput)
-  //               .subscribe(
-  //                 (response) => {
   
-  //                   //console.log('response', response);
-  //                   this.detalleSolPagos = response.map((ini: any) => ({
-  //                     idDetalle: ini.solCotIdDetalle,
-  //                     itemDesc: ini.solCotDescripcion,
-  //                     itemCant: ini.solCotCantidadTotal,
-  //                     cantidadRecibid : undefined,
-  //                     valorUnitario: undefined,
-  //                     subTotal: undefined
-  //                   }));
-  
-  //                   //variables para controlar los datos ue se le pasan a destino
-  //                   this.destinoIO = true;
-  //                   this.detallesToDestino = response.map((detalle: any) => {
-  //                     return {
-  //                       idDetalle: detalle.solCotIdDetalle,
-  //                       descpDetalle: detalle.solCotDescripcion,
-  //                       destinoDetalle: false
-  //                     };
-  //                   });
-
-  //                   this.cab_NoSolOC = this.valorinput;
-  //                   //console.log('cambios en el map ', this.detalleSolPagos);
-  //                 },
-  //                 (error) => {
-  //                   //console.log('error al guardar la cabecera: ', error);
-  //                   this.alertBoolError = true;
-  //                   this.alertText = 'No se ha encontrado la solicitud';
-
-  //                   setTimeout(() => {
-  //                     this.alertBoolError = false;
-  //                     this.alertText = '';
-  //                   }, 3000);
-  //                 }
-  //               );
-  //           } catch (error) {
-  //             console.log('error', error);
-  //           }
-  
-  //         }
-  
-  
-  //       }
-  //       else {
-  //         console.log('No tiene ningun formato realizado');
-  //         this.alertBoolError = true;
-  //         this.alertText = 'Error, no se ha ingresado el formato correcto';
-  //         setTimeout(() => {
-  //           this.alertBoolError = false;
-  //           this.alertText = '';
-  //         }, 3000);
-  //       }
-  
-  //     }
-  //   }
-  //   this.setNoSolDocumentacion();
-  // }
+  //ESTE METODO YA NO FUNCIONARÁ
   //* Agregamos los detalles de pago a base
   AddDetSolPago() {
     for (let detPago of this.detalleSolPagos) {
@@ -808,30 +737,32 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         detPagoValUnitario: detPago.valorUnitario,
         detPagoSubtotal: detPago.subTotal,
       };
-      console.log('listas', dataDetPag);
       this.detPagoService.addSolDetPago(dataDetPag).subscribe(
         (response) => {
           console.log('Detalle Guardado ');
         },
         (error) => {
           console.log('No se puede guardar el detalle', error);
-          this.callMensaje('No se ha podido guardar el detalle.',false);
+          this.callMensaje('No se ha podido guardar el detalle.', false);
         }
       );
     }
   }
+
+
+
   //Calculo de Total
   calculoTotal() {
-      this.Total = 0;
-      for (let PagoTotal of this.detalleSolPagos) {
-        this.Total = this.Total + PagoTotal.subTotal;
-      }
+    this.Total = 0;
+    for (let PagoTotal of this.detalleSolPagos) {
+      this.Total = this.Total + PagoTotal.subTotal;
+    }
   }
   //Calculo  Total de Edicion
   calculoEditotal() {
     this.cabecera.cabpagototal = 0;
     for (let PagoTotal of this.detallePago) {
-      this.cabecera.cabpagototal =  this.cabecera.cabpagototal + PagoTotal.detPagoSubtotal;
+      this.cabecera.cabpagototal = this.cabecera.cabpagototal + PagoTotal.detPagoSubtotal;
     }
   }
   async editSolicitud() {
@@ -860,15 +791,15 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.tipoSolicitudEmail = 'Orden de Pago';
     this.getNombreNivel(this.cabecera.cabPagoEstadoTrack);
 
-    if(this.cabecera.cabPagoIfDestino == 'S'){
+    if (this.cabecera.cabPagoIfDestino == 'S') {
       this.setDestino = true;
-    } else if (this.cabecera.cabPagoIfDestino == 'N'){
+    } else if (this.cabecera.cabPagoIfDestino == 'N') {
       this.setDestino = false;
     }
 
-    if(this.cabecera.cabPagoFrom == 'F'){
+    if (this.cabecera.cabPagoFrom == 'F') {
       this.setDestino = true;
-    } else if(this.cabecera.cabPagoFrom == 'S'){
+    } else if (this.cabecera.cabPagoFrom == 'S') {
       this.setDestino = this.setDestino;
     }
 
@@ -878,7 +809,6 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.estadoSol = this.cabecera.cabPagoEstadoTrack.toString();
     this.sharedTipoSol = this.cabecera.cabPagoTipoSolicitud;
     this.sharedNoSol = this.cabecera.cabPagoNoSolicitud;
-    console.log("sdf Nosol",this.sharedNoSol)
     for (let det of this.solicitudEdit.detalles) {
       this.detallePago.push(det as DetallePago);
     }
@@ -897,7 +827,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.fechaFormateada = this.formatDateToSpanish(new Date(this.cabecera.cabPagoFechaEmision))
     //
     this.formatFechaInspeccion();
-      //
+    //
     this.formatFechaFactura();
     this.getInspector();
     this.getLastNivel();
@@ -908,7 +838,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   async getInspector() {
     await this.empService.getEmpleadosList().subscribe((data) => {
       this.empleadoEdi = data;
-      for (let emp of this.empleadoEdi) { 
+      for (let emp of this.empleadoEdi) {
         if (emp.empleadoIdNomina == this.cabecera.cabPagoReceptor) {
           this.receptor = emp.empleadoNombres + ' ' + emp.empleadoApellidos;
         }
@@ -917,24 +847,24 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.getNivelRuteoArea();
   }
 
-  getLastNivel(){
+  getLastNivel() {
     for (let i = 0; i < this.nivelSolAsignado.length; i++) {
-        const element = this.nivelSolAsignado[i];
-  
-        //guardar el ultimo elemento de la lista
-        if (i === this.nivelSolAsignado.length - 1) {
-          const nivel = element.rutareaNivel;
-          this.lastNivel = nivel.toString();
-        }
+      const element = this.nivelSolAsignado[i];
+
+      //guardar el ultimo elemento de la lista
+      if (i === this.nivelSolAsignado.length - 1) {
+        const nivel = element.rutareaNivel;
+        this.lastNivel = nivel.toString();
       }
+    }
   }
 
-  formatFechaInspeccion(){
+  formatFechaInspeccion() {
     /*this.cabecera.cabPagoFechaInspeccion = this.cabecera.cabPagoFechaInspeccion === null ? '':   format(
       parseISO(this.cabecera.cabPagoFechaInspeccion),'yyyy-MM-dd');*/
     if (this.cabecera.cabPagoFechaInspeccion) {
       const fechaMaxEntrega = parseISO(this.cabecera.cabPagoFechaInspeccion);
-      
+
       if (!isNaN(fechaMaxEntrega.getTime())) {
         // La fecha es válida, ahora puedes formatearla
         this.cabecera.cabPagoFechaInspeccion = format(fechaMaxEntrega, 'yyyy-MM-dd');
@@ -948,12 +878,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }
   }
 
-  formatFechaFactura(){
+  formatFechaFactura() {
     /*this.cabecera.cabPagoFechaFactura= this.cabecera.cabPagoFechaFactura === null ? '':format(
       parseISO(this.cabecera.cabPagoFechaFactura),'yyyy-MM-dd');*/
     if (this.cabecera.cabPagoFechaFactura) {
       const fechaMaxEntrega = parseISO(this.cabecera.cabPagoFechaFactura);
-      
+
       if (!isNaN(fechaMaxEntrega.getTime())) {
         // La fecha es válida, ahora puedes formatearla
         this.cabecera.cabPagoFechaFactura = format(fechaMaxEntrega, 'yyyy-MM-dd');
@@ -967,9 +897,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }
   }
 
-  getNombreNivel(nivel:number){
+  getNombreNivel(nivel: number) {
     this.nivRuteService.getNivelruteo().subscribe(
-      (data)=>{
+      (data) => {
         const response = data;
         for (let nivelR of response) {
           if (nivelR.nivel == nivel) {
@@ -999,33 +929,34 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       await this.saveEditCabeceraPago();
       await this.saveEditdetPago();
       const msjExito = `Solicitud N° ${this.cabecera.cabPagoNumerico},editada exitosamente`;
-      this.callMensaje(msjExito,true);
+      this.callMensaje(msjExito, true);
       setTimeout(() => {
+        this.serviceGlobal.tipoSolBsq = 3;
         this.router.navigate(['allrequest']);
       }, 3000);
     } catch (error) {
       console.error('Error: ' + error);
       const msjError =
         'No se ha podido guardar la solicitud, intente nuevamente.';
-      this.callMensaje(msjError,false);
+      this.callMensaje(msjError, false);
     }
   }
   async saveEditCabeceraPago() {
     let motivoDevolucion = '';
     let aprobPresp = '';
-    if(this.devolucion == true){
+    if (this.devolucion == true) {
       motivoDevolucion = this.motivoDevEditar;
       aprobPresp = 'NO';
-    } else if(this.devolucion == false){
+    } else if (this.devolucion == false) {
       motivoDevolucion = 'NOHAYMOTIVO';
       aprobPresp = 'SI';
-    } 
+    }
 
 
     let ifDestino = '';
-    if(this.setDestino == true){
+    if (this.setDestino == true) {
       ifDestino = 'S';
-    } else if(this.setDestino == false){
+    } else if (this.setDestino == false) {
       ifDestino = 'N';
     }
 
@@ -1037,7 +968,6 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoIdAreaSolicitante: this.cabecera.cabPagoIdAreaSolicitante,
       cabPagoIdDeptSolicitante: this.cabecera.cabPagoIdDeptSolicitante,
       cabPagoSolicitante: this.cabecera.cabPagoSolicitante,
-      cabPagoNoOrdenCompra: this.cabecera.cabPagoNoOrdenCompra,
       cabPagoFechaEmision: this.cabecera.cabPagoFechaEmision,
       cabPagoFechaEnvio: this.cabecera.cabPagoFechaEnvio,
       cabPagoNumFactura: this.cabecera.cabPagoNumFactura,
@@ -1074,7 +1004,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         (error) => {
           console.log('Error', error);
           const mensaje = "Ha habido un error al guardar los datos de la cabecera, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
-        this.callMensaje(mensaje,false);
+          this.callMensaje(mensaje, false);
         }
       );
   }
@@ -1099,7 +1029,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         (error) => {
           console.log('Error', error);
           const mensaje = "Ha habido un error al guardar los datos de los detalles, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
-        this.callMensaje(mensaje,false);
+          this.callMensaje(mensaje, false);
         }
       );
     }
@@ -1125,15 +1055,20 @@ export class SolipagoComponent implements OnInit, OnDestroy {
               if (this.changeview == 'crear') {
                 this.cab_proveedor = this.proveedores[0].prov_nombre;
                 this.cab_rucproveedor = this.proveedores[0].prov_ruc;
+                this.factura.proveedor = data[0].prov_nombre;
+              this.factura.provRuc = data[0].prov_ruc;
               } else if (this.changeview == 'editar') {
                 this.cabecera.cabPagoProveedor =
                   this.proveedores[0].prov_nombre;
                 this.cabecera.cabPagoRucProveedor =
                   this.proveedores[0].prov_ruc;
+                  this.factura.proveedor = data[0].prov_nombre;
+              this.factura.provRuc = data[0].prov_ruc;
               }
             }
           },
-          error: (error) => {;
+          error: (error) => {
+            ;
             console.error('error en buscar proveedor: ', error.error.title);
           },
           complete: () => console.info('completado'),
@@ -1154,11 +1089,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
             if (this.changeview == 'crear') {
               this.cab_proveedor = data[0].prov_nombre;
               this.cab_rucproveedor = data[0].prov_ruc;
-              console.log('Proveedor ', this.cab_proveedor);
-              console.log('RUC ', this.cab_rucproveedor);
+              this.factura.proveedor = data[0].prov_nombre;
+              this.factura.provRuc = data[0].prov_ruc;
             } else if (this.changeview == 'editar') {
               this.cabecera.cabPagoProveedor = data[0].prov_nombre;
               this.cabecera.cabPagoRucProveedor = data[0].prov_ruc;
+              this.factura.proveedor = data[0].prov_nombre;
+              this.factura.provRuc = data[0].prov_ruc;
               console.log(
                 'Proveedor  de cabecera',
                 this.cabecera.cabPagoProveedor
@@ -1198,7 +1135,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.log('Error:', error);
       const msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
-      this.callMensaje(msjError,false);
+      this.callMensaje(msjError, false);
     }
   }
 
@@ -1212,24 +1149,24 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.log('Error:', error);
       const msjError = "No se ha podido enviar la solicitud, intente nuevamente.";
-      this.callMensaje(msjError,false);
+      this.callMensaje(msjError, false);
     }
   }
 
-  guardarDevolverSolEditada(){
+  guardarDevolverSolEditada() {
     this.devolucion = true;
     try {
       //this.saveEdit();
       let motivoDevolucion = '';
       let aprobPresp = '';
-      if(this.devolucion){
+      if (this.devolucion) {
         motivoDevolucion = this.motivoDevEditar;
         aprobPresp = 'NO';
-      } else{
+      } else {
         motivoDevolucion = 'NOHAYMOTIVO';
         aprobPresp = 'SI';
       }
-      
+
       this.cabPagoService.updateMotivoDevolucion(this.trTipoSolicitud, this.noSolTmp, motivoDevolucion).subscribe(
         (response) => {
           //console.log("Motivo de devolucion actualizado");
@@ -1240,11 +1177,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       );
       setTimeout(() => {
         this.noAutorizar();
-      }, 500);     
+      }, 500);
     } catch (error) {
       console.log('Error:', error);
       const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
-      this.callMensaje(msjError,false)
+      this.callMensaje(msjError, false)
     }
   }
 
@@ -1258,14 +1195,15 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   financieropor: string = 'XXXXXX';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
+    //console.log("setDestino", this.setDestino);
     this.devolucion = false;
 
     let motivoDevolucion = 'NOHAYMOTIVO';
     let aprobPresp = '';
-    if(this.devolucion){
+    if (this.devolucion) {
       motivoDevolucion = this.motivoDevEditar;
       aprobPresp = 'NO';
-    } else{
+    } else {
       motivoDevolucion = 'NOHAYMOTIVO';
       aprobPresp = 'SI';
     }
@@ -1317,10 +1255,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
                   this.showmsj = true;
                   const msjExito = `La solicitud ha sido enviada exitosamente.`;
-                  this.callMensaje(msjExito,true);
+                  this.callMensaje(msjExito, true);
                   setTimeout(() => {
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
+                    this.serviceGlobal.tipoSolBsq = 3;
                     this.router.navigate(['allrequest']);
                   }, 3000);
                 },
@@ -1367,13 +1306,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
             (response) => {
               console.log("Solicitud enviada");
               const msjExito = `La solicitud ha sido enviada exitosamente.`;
-              this.callMensaje(msjExito,true);
+              this.callMensaje(msjExito, true);
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
               this.getMailContentSN(10, newEstado, newestadoSt);
 
               setTimeout(() => {
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
+                this.serviceGlobal.tipoSolBsq = 3;
                 this.router.navigate(['allrequest']);
               }, 3000);
             },
@@ -1426,11 +1366,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     );
   }
   ///////////////////////////////////////////DOCUMENTACION DE CREACION DE PAGO/////////////////////////////////////////
-  //showDoc: boolean = false;
-  /*async setNoSolDocumentacion() {
-    this.sharedNoSol = await this.getLastSol();
-    //this.showDoc = this.showDoc ? false : true;
-  }*/
+
 
   actionCreate: string = 'creacion';
 
@@ -1482,10 +1418,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
         if (exito && exitotrk) {
           const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido anulada exitosamente.`;
-          this.callMensaje(msjExito,true);
+          this.callMensaje(msjExito, true);
 
           //notificar al emisor de la solicitud que ha sido anulada
-          this.getMailContentSM(30,mailToNotify);
+          this.getMailContentSM(30, mailToNotify);
 
           setTimeout(() => {
             this.showmsj = false;
@@ -1500,7 +1436,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.log('Error:', error);
       const msjError = "No se ha podido anular la solicitud, intente nuevamente.";
-      this.callMensaje(msjError,false);
+      this.callMensaje(msjError, false);
     }
 
   }
@@ -1523,13 +1459,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       }
     );
 
-    if(this.areaSolTmp == 12){
+    if (this.areaSolTmp == 12) {
       for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
         let niv = this.nivelRuteotoAut[i];
         if (niv.rutareaNivel == this.estadoTrkTmp) {
           let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
           let newestadoSt = '';
-  
+
           //extrae el tipo de proceso del nivel actual
           this.nivRuteService.getNivelInfo(newEstado).subscribe(
             (response) => {
@@ -1540,21 +1476,21 @@ export class SolipagoComponent implements OnInit, OnDestroy {
               console.log('Error al obtener el nuevo estado de tracking: ', error);
             }
           );
-  
+
           this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
               //console.log('Estado de tracknig actualizado exitosamente');
               const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel anterior.`;
-              this.callMensaje(msjExito,true)
-              if(newEstado == 10){
+              this.callMensaje(msjExito, true)
+              if (newEstado == 10) {
                 //extraer el contenido del email correspondiente
-                this.getMailContentSM(20,mailToNotify);
-  
+                this.getMailContentSM(20, mailToNotify);
+
               } else {
                 //extraer el contenido del email correspondiente
                 this.getMailContentSN(21, newEstado, newestadoSt);
               }
-  
+
               setTimeout(() => {
                 this.showmsj = false;
                 this.msjExito = '';
@@ -1566,14 +1502,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
             (error) => {
               console.log('Error al actualizar el estado: ', error);
               const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
-              this.callMensaje(msjError,false);
+              this.callMensaje(msjError, false);
             }
           );
-  
+
           //console.log("Nuevo estado: ", newEstado);
           break;
         }
-  
+
       }
     } else {
       //regresar la solicitud al nivel 10 y notificar a todos los niveles anteriores
@@ -1581,13 +1517,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         (response) => {
           //console.log('Estado de tracknig actualizado exitosamente');
           const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel inicial.`;
-          this.callMensaje(msjExito,true)
+          this.callMensaje(msjExito, true)
 
-          this.getMailContentSM(20,mailToNotify);
+          this.getMailContentSM(20, mailToNotify);
 
           //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
           setTimeout(() => {
-            
+
             for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
               let niv = this.nivelRuteotoAut[i];
               if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
@@ -1595,7 +1531,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
               }
             }
           }, 300);
-          
+
 
           setTimeout(() => {
             this.clear();
@@ -1606,12 +1542,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         (error) => {
           console.log('Error al actualizar el estado: ', error);
           const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
-          this.callMensaje(msjError,false);
+          this.callMensaje(msjError, false);
         }
       );
     }
 
-    
+
   }
 
   ////////////////////////////////////NOTIFICACION AL SIGUIENTE NIVEL/////////////////////////////////////////////////
@@ -1695,7 +1631,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
 
   mailContent: any;
-  setMailInfo(){
+  setMailInfo() {
     //sustituir las palabras tiposol por la variable this.tipoSolicitudEmail, nivelproceso por this.nivelProcesoEmail y numsol por this.numeroSolicitudEmail de la propiedad emailContContenido del objeto mailContent
     let asuntoMail = this.mailContent.emailContAsunto;
     let contenidoMail = this.mailContent.emailContContenido;
@@ -1764,43 +1700,214 @@ export class SolipagoComponent implements OnInit, OnDestroy {
      );
    }*/
 
-   ///////////////////////////////////////////CANCELACION DE ORDEN///////////////////////////////////////////////////
+  ///////////////////////////////////////////CANCELACION DE ORDEN///////////////////////////////////////////////////
 
-   showCancelacion: boolean = false;
+  showCancelacion: boolean = false;
 
-   setCancelacionOrden(valor: string){
-    if(valor == 'TTL'){
+  setCancelacionOrden(valor: string) {
+    if (valor == 'TTL') {
       this.showCancelacion = false;
-    } else if(valor == 'PCL'){
+    } else if (valor == 'PCL') {
       this.showCancelacion = true;
     }
-   }
-  
-   calculateSubtotal(id:number){
-    for(let detalle of this.detalleSolPagos){
-      if(detalle.idDetalle == id){
+  }
+
+  calculateSubtotal(id: number) {
+    for (let detalle of this.detalleSolPagos) {
+      if (detalle.idDetalle == id) {
         detalle.subTotal = detalle.cantidadRecibid * detalle.valorUnitario;
       }
     }
-   }
+  }
 
-   calculateSubtotalEdit(id:number){
-    for(let detalle of this.detallePago){
-      if(detalle.detPagoIdDetalle == id){
+  calculateSubtotalEdit(id: number) {
+    for (let detalle of this.detallePago) {
+      if (detalle.detPagoIdDetalle == id) {
         detalle.detPagoSubtotal = detalle.detPagoCantRecibida * detalle.detPagoValUnitario;
       }
     }
-   }
-   FechaMaxEntrega(fechas: string) {
+  }
+  FechaMaxEntrega(fechas: string) {
     let fecha = new Date(fechas);
-    fecha.setMonth(fecha.getMonth()+6)
-    let Fechatrans=this.formatDateToYYYYMMDD(fecha)
+    fecha.setMonth(fecha.getMonth() + 6)
+    let Fechatrans = this.formatDateToYYYYMMDD(fecha)
     return Fechatrans
     // return fechaMax;
   }
 
   showMotivoDev: boolean = false;
-  enableMotivoDev(){
+  enableMotivoDev() {
     this.showMotivoDev = !this.showMotivoDev;
   }
+
+  
+
+
+  //AGREGA UNA FACTURA A LA LISTA DE FACTURAS QUE LUEGO SE ENVIARAN A LA API
+  addFactura() {
+
+    const data: Factura = {
+      numero: this.factura.numero,
+      fecha: this.factura.fecha,
+      proveedor: this.factura.proveedor,
+      provRuc: this.factura.provRuc,
+      ordCompra: this.factura.ordCompra,
+      valorTotal: this.factura.valorTotal,
+      detalles: this.detalleFacturaList
+    }
+
+    this.facturasList.push(data);
+
+    //limpiar la cabecera del objeto factura
+    this.factura = {
+      numero: '',
+      fecha: new Date(),
+      proveedor: this.cab_proveedor,
+      provRuc: this.cab_rucproveedor,
+      ordCompra: '',
+      valorTotal: 0,
+      detalles: []
+    }
+
+    //limpiar la lista de detalles de factura
+    this.detalleFacturaList = [];
+
+    this.valorinputOC = '';
   }
+
+  cancelarFactura(){
+    this.factura = {
+      numero: '',
+      fecha: new Date(),
+      proveedor: this.cab_proveedor,
+      provRuc: this.cab_rucproveedor,
+      ordCompra: '',
+      valorTotal: 0,
+      detalles: []
+    }
+    this.valorinputOC = '';
+    this.detalleFacturaList = [];
+  }
+
+  deleteDetalleFactura(id: number) {
+    this.detalleFacturaList.splice(id, 1);
+  }
+
+  deleteFactura(id: number) {
+    this.facturasList.splice(id, 1);
+  }
+
+  /////////////////////////////////////////////SELECCIONA EL TIPO DE DESCUENTO A APLICAR//////////////////////////////////////
+  tipoDescuentoFact: string = 'cash';
+  $prefix: string = '$';
+  x100prefix: string = '';
+
+  x100change(){
+    if(this.tipoDescuentoFact == 'x100'){
+      this.$prefix = '';
+      this.x100prefix = '%';
+    }else if(this.tipoDescuentoFact == 'cash'){
+      this.$prefix = '$';
+      this.x100prefix = '';
+    }
+  }
+
+  ////////////////////////////VERIFICA QUE LOS VALORES DE A FACTURA NO SOBREPASEN A LOS DE LA ORDEN DE COMPRA/////////////////////////////////
+  detError: boolean = false;
+  detExito: boolean = false;
+  erroresDet: { mensaje: string }[] = [];
+  checkTotal: boolean = false;
+  verificarMontoFactura() {
+    this.detError = false;
+    this.erroresDet = [];
+    this.checkTotal = false;
+
+    //recorrer la lista detalleFacturaList y verificar si la cantidad de cada detalle es igual o menor a la cantidad del mismo detalle de la lista detalleFactDefault
+    for (let detalle of this.detalleFacturaList) {
+      for (let detalleDefault of this.detalleFactDefault) {
+        if ((detalle.descProd == detalleDefault.descProd) && (detalle.itemProd == detalleDefault.itemProd)) {//encuentra los items que sean iguales
+          if (detalle.cantidad > detalleDefault.cantidad) {
+            console.log("item: ",detalle.descProd,", no coincide en la cantidad");
+            detalle.checkC = false;//setea como false el check que verifica si la cantidad es correcta
+
+            this.detError = true;
+            this.erroresDet.push({ mensaje: `El item "${detalle.descProd}" no coincide en la cantidad autorizada. Cantidad autorizada: ${detalleDefault.cantidad}.` });
+
+          } else {
+            detalle.checkC = true;//setea como true el check que verifica si la cantidad es correcta
+          }
+        }
+      }
+    }
+
+    //recorrer la lista detalleFacturaList y verificar si el subtotal de cada detalle es igual o menos a al subtotal del mismo detalle de la lista detalleFactDefault
+    for (let detalle of this.detalleFacturaList) {
+      for (let detalleDefault of this.detalleFactDefault) {
+        if ((detalle.descProd == detalleDefault.descProd) && (detalle.itemProd == detalleDefault.itemProd)) {//encuentra los items que sean iguales
+          if (detalle.subTotal > detalleDefault.subTotal) {
+            console.log("item: ",detalle.descProd,", no coincide en el subtotal");
+            detalle.checkS = false;//setea como false el check que verifica si el subtotal es correcto
+
+            this.detError = true;
+            this.erroresDet.push({ mensaje: `El item "${detalle.descProd}" no coincide en el subtotal autorizado. Subtotal autorizado: ${detalleDefault.subTotal}.` });
+
+          } else {
+            detalle.checkS = true;//setea como true el check que verifica si el subtotal es correcto
+          }
+        }
+      }
+    }
+
+    //recorrer la lista detalleFacturaList y sumar todos los subtotales
+    let totalFactura = 0;
+    for (let detalle of this.detalleFacturaList) {
+      totalFactura = totalFactura + detalle.subTotal;
+    }
+
+    //evaluar si todos los checks de cantidad y subtotal son true
+    for (let detalle of this.detalleFacturaList) {
+      if (detalle.checkC && detalle.checkS) {
+        this.checkTotal = true;
+      } else {
+        this.checkTotal = false;
+        break;
+      }
+    }
+
+    if(totalFactura != this.factura.valorTotal){
+      this.checkTotal = false;
+
+      this.detError = true;
+      this.erroresDet.push({ mensaje: `El valor total de los items no coincide con el valor total de la factura.` });
+    } else {
+      this.checkTotal = true;
+
+      this.detExito = true;
+      setTimeout(() => {
+        this.detExito = false;
+      }, 3000);
+    }
+  }
+
+  /////////////////////////////////////////////////CALCULOS DE DESCUENTOS Y SUBTOTAL//////////////////////////////////////////////
+  calculateSubtotalDet(det: DetalleFactura) {
+    if(this.tipoDescuentoFact == 'cash'){
+      det.subTotal = det.cantidad * det.valorUnitario;
+      det.subTotal = det.subTotal - det.descuento;
+    }else if(this.tipoDescuentoFact == 'x100'){
+      det.subTotal = det.cantidad * det.valorUnitario;
+      det.subTotal = det.subTotal - (det.subTotal * (det.descuento/100));
+    }
+  }
+
+  ////////////////////////////////////////////////////ENVIO DE LISTAS A LA API//////////////////////////////////////////
+  //envio de la lista de facturas
+
+
+  //envio de la lista de detalles de las facturas
+
+
+  //actualizacion de los registros de la orden de compra consultada
+
+
+}
