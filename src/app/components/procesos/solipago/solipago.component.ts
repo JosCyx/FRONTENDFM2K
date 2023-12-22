@@ -21,6 +21,7 @@ import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes
 import { SharedService } from 'src/app/services/shared.service';
 import { SpDestinoComponent } from './sp-destino/sp-destino.component';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
+import { FacturasPagoService } from 'src/app/services/comunicationAPI/solicitudes/facturas-pago.service';
 
 interface Factura {
   numero: string;
@@ -62,7 +63,8 @@ interface DetalleSolPagos {
 }
 interface SolicitudData {
   cabecera: any;
-  detalles: any[];
+  facturas: any[];
+  detalleFacturas: any[];
 }
 
 @Component({
@@ -175,18 +177,15 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   facturasList: Factura[] = [];//almacena las facturas que se enviaran a la API
 
   //almacena la cabecera de la factura que se registra en el momento
-  factura: Factura = { 
-    numero: '', 
-    fecha: new Date(), 
-    proveedor: '', 
-    provRuc: '', 
-    ordCompra: '', 
-    valorTotal: 0, 
-    detalles: [] 
+  factura: Factura = {
+    numero: '',
+    fecha: new Date(),
+    proveedor: '',
+    provRuc: '',
+    ordCompra: '',
+    valorTotal: 0,
+    detalles: []
   };
-
-  //almacena los detalles de una factura que se registra en el momento
-  detalleFacturaList: DetalleFactura[] = [];
 
   //almacena los detalles de una factura que se registra en el momento sin modificaciones
   detalleFactDefault: DetalleFactura[] = [];
@@ -207,7 +206,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     private sendMailService: SendEmailService,
     private nivGerenciaService: NivGerenciaService,
     private sharedService: SharedService,
-    private dialogService: DialogServiceService
+    private dialogService: DialogServiceService,
+    private facturasService: FacturasPagoService
   ) {
 
     /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
@@ -576,7 +576,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoSolicitante: this.trIdNomEmp,
       cabPagoFechaEmision: this.cab_fecha,
       cabPagoFechaEnvio: this.cab_fecha,
-      cabPagoNumFactura: this.cab_nofactura,
+      cabPagoNumFactura: '',
       cabPagoFechaFactura: this.cab_fechafactura,
       cabPagoProveedor: this.cab_proveedor,
       cabPagoRucProveedor: this.cab_rucproveedor,
@@ -604,9 +604,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     console.log('2. guardando solicitud...', dataCAB);
     await this.cabPagoService.addSolPag(dataCAB).subscribe(
       (response) => {
-        const msjExito = 'Solicitud de Pago Generada Exitosamente';
-        this.callMensaje(msjExito, true);
-        this.AddDetSolPago();
+        /*const msjExito = 'Solicitud de Pago Generada Exitosamente.';
+        this.callMensaje(msjExito, true);*/
+
+
+        //this.AddDetSolPago();
+        this.saveFacturas(this.solNumerico);
         setTimeout(() => {
           this.serviceGlobal.tipoSolBsq = 3;
           this.router.navigate(['allrequest']);
@@ -673,7 +676,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
               this.callMensaje('Error, la orden de compra ingresada no se encuentra abierta, por favor intente con una orden abierta.', false);
             } else {
 
-              this.detalleFacturaList = data.map((det: any) => ({
+              this.factura.detalles = data.map((det: any) => ({
                 itemProd: det.detcodProducto,
                 descProd: det.detdesProducto,
                 cantidad: det.detcantidad,
@@ -722,10 +725,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }
 
   }
-  
+
   //ESTE METODO YA NO FUNCIONARÁ
   //* Agregamos los detalles de pago a base
-  AddDetSolPago() {
+  /*AddDetSolPago() {
     for (let detPago of this.detalleSolPagos) {
       const dataDetPag = {
         detPagoTipoSol: this.trTipoSolicitud,
@@ -747,12 +750,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         }
       );
     }
-  }
+  }*/
 
 
 
   //Calculo de Total
-  calculoTotal() {
+  /*calculoTotal() {
     this.Total = 0;
     for (let PagoTotal of this.detalleSolPagos) {
       this.Total = this.Total + PagoTotal.subTotal;
@@ -764,7 +767,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     for (let PagoTotal of this.detallePago) {
       this.cabecera.cabpagototal = this.cabecera.cabpagototal + PagoTotal.detPagoSubtotal;
     }
-  }
+  }*/
+
+
   async editSolicitud() {
     await this.getSoliPagos();
     await this.saveData();
@@ -809,11 +814,61 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.estadoSol = this.cabecera.cabPagoEstadoTrack.toString();
     this.sharedTipoSol = this.cabecera.cabPagoTipoSolicitud;
     this.sharedNoSol = this.cabecera.cabPagoNoSolicitud;
-    for (let det of this.solicitudEdit.detalles) {
+
+    //agrega los detalles de la solicitud a la lista de detalles
+    /*for (let det of this.solicitudEdit.detalles) {
       this.detallePago.push(det as DetallePago);
     }
     //ordenamiento de detalle de solicitud pago
-    this.detallePago.sort((a, b) => a.detPagoIdDetalle - b.detPagoIdDetalle);
+    this.detallePago.sort((a, b) => a.detPagoIdDetalle - b.detPagoIdDetalle);*/
+
+    let detallesTMP: any[] = [];
+
+    for (let det of this.solicitudEdit.detalleFacturas) {
+
+      //formatear la fecha al formato
+
+      const detalle: any = {
+        idFactura: det.detFactIdFactura,
+        itemProd: det.detFactIdProducto,
+        descProd: det.detFactDescpProducto,
+        cantidad: det.detFactCantProducto,
+        valorUnitario: det.detFactValorUnit,
+        descuento: det.detFactDescuento,
+        subTotal: det.detFactTotal,
+        checkC: true,
+        checkS: true
+      };
+
+      detallesTMP.push(detalle);
+    }
+
+    //agrega las facturas a la lista de facturasList mapeando las propiedades con los nombres del tipo Factura
+    for (let fact of this.solicitudEdit.facturas) {
+
+      const factura: Factura = {
+        numero: fact.factSpNumFactura,
+        fecha: fact.factSpFechaFactura,
+        proveedor: fact.factSpProvFactura,
+        provRuc: fact.factSpRucProvFactura,
+        ordCompra: fact.factSpNumOrdenCompra,
+        valorTotal: fact.factSpMontoFactura,
+        detalles: []
+      };
+
+      for (let det of detallesTMP) {
+        if (det.idFactura == fact.factSpId) {
+          factura.detalles.push(det);
+        }
+      }
+
+      //agregar la factura a la lista de facturas
+      this.facturasList.push(factura);
+
+    }
+    this.cargarOCDefault(this.cabecera.cabPagoNoSolOC)
+
+    console.log("facturasList", this.facturasList);
 
     //lista de detalles para el destino
     // this.detallesToDestino = this.detallePago.map((detalle: any) => {
@@ -834,6 +889,54 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
   }
   lastNivel: string = '';
+
+  facturaTMP: Factura = {
+    numero: '',
+    fecha: new Date(),
+    proveedor: '',
+    provRuc: '',
+    ordCompra: '',
+    valorTotal: 0,
+    detalles: []
+  }
+
+  valorTotalTMP: number = 0;
+
+  selectFactura(factura: Factura) {
+    // Crear una copia superficial del objeto factura y asignarla a this.facturaTMP
+    this.facturaTMP = Object.freeze(Object.assign({}, factura));
+
+    // Asignar la factura original a this.factura
+    this.factura = factura;
+
+    //console.log("facturatmp", this.facturaTMP);
+    this.valorinputOC = factura.ordCompra;
+    //console.log("factura seleccionada: ", this.factura);
+
+  }
+
+  cargarOCDefault(valorBusqueda: string) {
+    this.detPagoService.DetOrdenCompras(valorBusqueda).subscribe(
+      {
+        next: data => {
+          //guarda los datos de la orden de compra sin modificaciones
+          this.detalleFactDefault = data.map((det: any) => ({
+            itemProd: det.detcodProducto,
+            descProd: det.detdesProducto,
+            cantidad: det.detcantidad,
+            valorUnitario: det.detprecio,
+            descuento: 0,
+            subTotal: det.detTotal,
+            check: true,
+            checkS: true
+          }));
+        },
+        error: error => {
+          console.error('Error al obtener la orden de compra: ', error);
+
+        }
+      })
+  }
 
   async getInspector() {
     await this.empService.getEmpleadosList().subscribe((data) => {
@@ -1056,14 +1159,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                 this.cab_proveedor = this.proveedores[0].prov_nombre;
                 this.cab_rucproveedor = this.proveedores[0].prov_ruc;
                 this.factura.proveedor = data[0].prov_nombre;
-              this.factura.provRuc = data[0].prov_ruc;
+                this.factura.provRuc = data[0].prov_ruc;
               } else if (this.changeview == 'editar') {
                 this.cabecera.cabPagoProveedor =
                   this.proveedores[0].prov_nombre;
                 this.cabecera.cabPagoRucProveedor =
                   this.proveedores[0].prov_ruc;
-                  this.factura.proveedor = data[0].prov_nombre;
-              this.factura.provRuc = data[0].prov_ruc;
+                this.factura.proveedor = data[0].prov_nombre;
+                this.factura.provRuc = data[0].prov_ruc;
               }
             }
           },
@@ -1740,25 +1843,41 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.showMotivoDev = !this.showMotivoDev;
   }
 
-  
+
 
 
   //AGREGA UNA FACTURA A LA LISTA DE FACTURAS QUE LUEGO SE ENVIARAN A LA API
   addFactura() {
+    const facturaExistente = this.facturasList.find(factura => factura.numero === this.factura.numero);
 
-    const data: Factura = {
-      numero: this.factura.numero,
-      fecha: this.factura.fecha,
-      proveedor: this.factura.proveedor,
-      provRuc: this.factura.provRuc,
-      ordCompra: this.factura.ordCompra,
-      valorTotal: this.factura.valorTotal,
-      detalles: this.detalleFacturaList
+
+    if (facturaExistente) {
+      console.log('Ya existe una factura con el mismo número.');
+    } else {
+
+      const nuevaFactura: Factura = {
+        numero: this.factura.numero,
+        fecha: this.factura.fecha,
+        proveedor: this.factura.proveedor,
+        provRuc: this.factura.provRuc,
+        ordCompra: this.factura.ordCompra,
+        valorTotal: this.factura.valorTotal,
+        detalles: this.factura.detalles
+      };
+
+      // Agregar la nueva factura a la lista
+      this.facturasList.push(nuevaFactura);
+
+      // Limpiar la cabecera del objeto factura
     }
+    setTimeout(() => {
+      this.clearFactura();
+      this.checkTotal = false;
+    }, 500);
+  }
 
-    this.facturasList.push(data);
-
-    //limpiar la cabecera del objeto factura
+  clearFactura() {
+    // Limpiar la cabecera del objeto factura
     this.factura = {
       numero: '',
       fecha: new Date(),
@@ -1767,34 +1886,41 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       ordCompra: '',
       valorTotal: 0,
       detalles: []
-    }
-
-    //limpiar la lista de detalles de factura
-    this.detalleFacturaList = [];
+    };
 
     this.valorinputOC = '';
   }
 
-  cancelarFactura(){
-    this.factura = {
-      numero: '',
-      fecha: new Date(),
-      proveedor: this.cab_proveedor,
-      provRuc: this.cab_rucproveedor,
-      ordCompra: '',
-      valorTotal: 0,
-      detalles: []
+  cancelarFactura() {
+
+    // Buscar el índice del elemento en la lista
+    const index = this.facturasList.findIndex(factura => factura === this.factura);
+
+    if (index !== -1) {
+      // Sobrescribir el contenido del elemento en la lista con los valores de this.facturaTMP
+      this.facturasList[index] = Object.assign({}, this.facturaTMP);
     }
-    this.valorinputOC = '';
-    this.detalleFacturaList = [];
+
+    setTimeout(() => {
+
+      console.log("facturatmp: ", this.facturaTMP);
+      console.log("factura: ", this.factura);
+      console.log("facturaslist: ", this.facturasList);
+      this.clearFactura();
+    }, 100);
   }
 
   deleteDetalleFactura(id: number) {
-    this.detalleFacturaList.splice(id, 1);
+    this.factura.detalles.splice(id, 1);
   }
 
   deleteFactura(id: number) {
     this.facturasList.splice(id, 1);
+  }
+
+  setProveedorFactura() {
+    this.factura.proveedor = this.cabecera.cabPagoProveedor;
+    this.factura.provRuc = this.cabecera.cabPagoRucProveedor;
   }
 
   /////////////////////////////////////////////SELECCIONA EL TIPO DE DESCUENTO A APLICAR//////////////////////////////////////
@@ -1802,11 +1928,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   $prefix: string = '$';
   x100prefix: string = '';
 
-  x100change(){
-    if(this.tipoDescuentoFact == 'x100'){
+  x100change() {
+    if (this.tipoDescuentoFact == 'x100') {
       this.$prefix = '';
       this.x100prefix = '%';
-    }else if(this.tipoDescuentoFact == 'cash'){
+    } else if (this.tipoDescuentoFact == 'cash') {
       this.$prefix = '$';
       this.x100prefix = '';
     }
@@ -1822,12 +1948,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.erroresDet = [];
     this.checkTotal = false;
 
-    //recorrer la lista detalleFacturaList y verificar si la cantidad de cada detalle es igual o menor a la cantidad del mismo detalle de la lista detalleFactDefault
-    for (let detalle of this.detalleFacturaList) {
+    //recorrer la lista this.factura.detalles y verificar si la cantidad de cada detalle es igual o menor a la cantidad del mismo detalle de la lista detalleFactDefault
+    for (let detalle of this.factura.detalles) {
       for (let detalleDefault of this.detalleFactDefault) {
         if ((detalle.descProd == detalleDefault.descProd) && (detalle.itemProd == detalleDefault.itemProd)) {//encuentra los items que sean iguales
           if (detalle.cantidad > detalleDefault.cantidad) {
-            console.log("item: ",detalle.descProd,", no coincide en la cantidad");
+            console.log("item: ", detalle.descProd, ", no coincide en la cantidad");
             detalle.checkC = false;//setea como false el check que verifica si la cantidad es correcta
 
             this.detError = true;
@@ -1840,12 +1966,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       }
     }
 
-    //recorrer la lista detalleFacturaList y verificar si el subtotal de cada detalle es igual o menos a al subtotal del mismo detalle de la lista detalleFactDefault
-    for (let detalle of this.detalleFacturaList) {
+    //recorrer la lista this.factura.detalles y verificar si el subtotal de cada detalle es igual o menos a al subtotal del mismo detalle de la lista detalleFactDefault
+    for (let detalle of this.factura.detalles) {
       for (let detalleDefault of this.detalleFactDefault) {
         if ((detalle.descProd == detalleDefault.descProd) && (detalle.itemProd == detalleDefault.itemProd)) {//encuentra los items que sean iguales
           if (detalle.subTotal > detalleDefault.subTotal) {
-            console.log("item: ",detalle.descProd,", no coincide en el subtotal");
+            console.log("item: ", detalle.descProd, ", no coincide en el subtotal");
             detalle.checkS = false;//setea como false el check que verifica si el subtotal es correcto
 
             this.detError = true;
@@ -1858,14 +1984,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       }
     }
 
-    //recorrer la lista detalleFacturaList y sumar todos los subtotales
+    //recorrer la lista this.factura.detalles y sumar todos los subtotales
     let totalFactura = 0;
-    for (let detalle of this.detalleFacturaList) {
+    for (let detalle of this.factura.detalles) {
       totalFactura = totalFactura + detalle.subTotal;
     }
 
     //evaluar si todos los checks de cantidad y subtotal son true
-    for (let detalle of this.detalleFacturaList) {
+    for (let detalle of this.factura.detalles) {
       if (detalle.checkC && detalle.checkS) {
         this.checkTotal = true;
       } else {
@@ -1874,7 +2000,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       }
     }
 
-    if(totalFactura != this.factura.valorTotal){
+    if (totalFactura != this.valorTotalTMP) {
       this.checkTotal = false;
 
       this.detError = true;
@@ -1891,20 +2017,85 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
   /////////////////////////////////////////////////CALCULOS DE DESCUENTOS Y SUBTOTAL//////////////////////////////////////////////
   calculateSubtotalDet(det: DetalleFactura) {
-    if(this.tipoDescuentoFact == 'cash'){
+    if (this.tipoDescuentoFact == 'cash') {
       det.subTotal = det.cantidad * det.valorUnitario;
       det.subTotal = det.subTotal - det.descuento;
-    }else if(this.tipoDescuentoFact == 'x100'){
+    } else if (this.tipoDescuentoFact == 'x100') {
       det.subTotal = det.cantidad * det.valorUnitario;
-      det.subTotal = det.subTotal - (det.subTotal * (det.descuento/100));
+      det.subTotal = det.subTotal - (det.subTotal * (det.descuento / 100));
     }
   }
 
+
   ////////////////////////////////////////////////////ENVIO DE LISTAS A LA API//////////////////////////////////////////
   //envio de la lista de facturas
+  saveFacturas(nombre: string) {
+    let numOrdenPago = nombre;
+
+    // Recorrer la lista de facturas y enviarlas a la API
+    let iFactura = 1;
+    for (let factura of this.facturasList) {
+
+      // Crear el objeto de datos para la factura actual
+      const dataFactura = {
+        factSpTipoSol: this.responseTRK.solTrTipoSol,
+        factSpNoSol: this.responseTRK.solTrNumSol,
+        factSpNoFactura: iFactura,
+        factSpNumFactura: factura.numero,
+        factSpFechaFactura: factura.fecha,
+        factSpProvFactura: factura.proveedor,
+        factSpRucProvFactura: factura.provRuc,
+        factSpNumOrdenCompra: factura.ordCompra,
+        factSpMontoFactura: factura.valorTotal,
+      };
+
+      // Enviar la solicitud a la API
+      this.facturasService.addFacturaPago(dataFactura).subscribe(
+        (response: any) => {
+          console.log("Factura creada exitosamente", response);
+          //this.callMensaje(`La factura N° ${factura.numero} se guardó exitosamente.`, true);
+
+          const idFactura = response.factSpId;
 
 
-  //envio de la lista de detalles de las facturas
+          let iDetalle = 1;
+          // Recorrer la lista de detalles de la factura actual
+          for (let detalle of factura.detalles) {
+
+            const detalleData = {
+              detFactIdFactura: idFactura,
+              detFactNoDetalle: iDetalle,
+              detFactNumOrdenCompra: factura.ordCompra,
+              detFactIdProducto: detalle.itemProd,
+              detFactDescpProducto: detalle.descProd,
+              detFactCantProducto: detalle.cantidad,
+              detFactValorUnit: detalle.valorUnitario,
+              detFactDescuento: detalle.descuento,
+              detFactTotal: detalle.subTotal
+            };
+
+            // enviar el detalle a la api
+            this.facturasService.addDetallePago(detalleData).subscribe(
+              (response) => {
+                console.log("Detalle de factura creado exitosamente");
+
+                //this.callMensaje(`El detalle del producto "${detalle.descProd}" se guardó exitosamente.`, true);
+              },
+              (error) => {
+                console.log('Error al crear el detalle de la factura: ', error);
+              }
+            );
+            iDetalle++;
+          }
+        },
+        (error) => {
+          console.log('Error al crear la factura: ', error);
+        }
+      );
+      iFactura++;
+    }
+    this.callMensaje(`Solicitud de Pago N°${numOrdenPago} generada exitosamente.`, true);
+  }
 
 
   //actualizacion de los registros de la orden de compra consultada
