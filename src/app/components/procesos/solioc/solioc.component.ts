@@ -28,6 +28,7 @@ import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/s
 import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
 import { SharedService } from 'src/app/services/shared.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
+import { SolTimeService } from 'src/app/services/comunicationAPI/solicitudes/sol-time.service';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -199,7 +200,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
     private sendMailService: SendEmailService,
     private nivGerenciaService: NivGerenciaService,
     private sharedService: SharedService,
-    private dialogService:DialogServiceService
+    private dialogService:DialogServiceService,
+    private solTimeService: SolTimeService
   ) {
     /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobaroc$.subscribe(() => {
@@ -607,6 +609,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
         //console.log('Solicitud', this.solNumerico);
         //console.log('Agregando cuerpo de la cabecera...');
         this.addBodySol();
+        this.solTimeService.saveSolTime(this.trTipoSolicitud, this.trLastNoSol, this.trIdNomEmp, this.empleado, this.trNivelEmision);
         //console.log('Cuerpo agregado.');
       },
       (error) => {
@@ -1863,6 +1866,15 @@ export class SoliocComponent implements OnInit, OnDestroy {
               this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
                 (response) => {
 
+                  this.solTimeService.saveSolTime(
+                    this.cabecera.cabSolOCTipoSolicitud, 
+                    this.cabecera.cabSolOCNoSolicitud, 
+                    this.cookieService.get('userIdNomina'), 
+                    this.cookieService.get('userName'), 
+                    0
+                  );
+
+
                   const msjExito = 'La solicitud ha finalizado exitosamente.';
                   this.callMensaje(msjExito,true);
                   setTimeout(() => {
@@ -1914,6 +1926,17 @@ export class SoliocComponent implements OnInit, OnDestroy {
           this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
               //console.log("Solicitud enviada");
+
+              this.solTimeService.saveSolTime(
+                this.cabecera.cabSolOCTipoSolicitud, 
+                this.cabecera.cabSolOCNoSolicitud, 
+                this.cookieService.get('userIdNomina'), 
+                this.cookieService.get('userName'), 
+                newEstado
+              );
+
+
+
               const msjExito = `La solicitud ha sido enviada exitosamente.`;
               this.callMensaje(msjExito,true)
 

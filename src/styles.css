@@ -209,3 +209,12 @@ a:hover {
   background-color: rgb(249, 208, 87)!important;
   color: rgb(107, 107, 107) !important;
 }
+
+.mat-dialog-container {
+  position: absolute !important; /* o relative, fixed, etc. según sea necesario */
+  z-index: 2000 !important;
+}
+
+.modal{
+  z-index: 1500 !important;
+}
