@@ -579,7 +579,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoSolicitante: this.trIdNomEmp,
       cabPagoFechaEmision: this.cab_fecha,
       cabPagoFechaEnvio: this.cab_fecha,
-      cabPagoNumFactura: '',
+      cabPagoNumFactura: this.cab_nofactura,
       cabPagoFechaFactura: this.cab_fechafactura,
       cabPagoProveedor: this.cab_proveedor,
       cabPagoRucProveedor: this.cab_rucproveedor,
@@ -615,7 +615,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         this.AddDetSolPago();
         this.callMensaje(`Solicitud de Pago N°${this.solNumerico} generada exitosamente.`, true);
 
-        this.solTimeService.saveSolTime(this.trTipoSolicitud, this.trLastNoSol, this.trIdNomEmp, this.empleado, this.trNivelEmision);
+        this.solTimeService.saveSolTime(
+          this.trTipoSolicitud, 
+          this.trLastNoSol, 
+          this.cookieService.get('userIdNomina'), 
+          this.cookieService.get('userName'), 
+          this.trNivelEmision
+        );
         //agrega las facturas a la solicitud
         //this.saveFacturas(this.solNumerico);
 
@@ -1380,8 +1386,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                   this.callMensaje(msjExito, true);
 
                   this.solTimeService.saveSolTime(
-                    this.cabecera.cabPagoTipoSolicitud, 
-                    this.cabecera.cabPagoNoSolicitud, 
+                    this.trTipoSolicitud, 
+                    this.noSolTmp, 
                     this.cookieService.get('userIdNomina'), 
                     this.cookieService.get('userName'), 
                     0
@@ -1440,8 +1446,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
               console.log("Solicitud enviada");
 
               this.solTimeService.saveSolTime(
-                this.cabecera.cabPagoTipoSolicitud, 
-                this.cabecera.cabPagoNoSolicitud, 
+                this.trTipoSolicitud, 
+                this.noSolTmp, 
                 this.cookieService.get('userIdNomina'), 
                 this.cookieService.get('userName'), 
                 newEstado

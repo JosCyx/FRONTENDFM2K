@@ -609,7 +609,13 @@ export class SoliocComponent implements OnInit, OnDestroy {
         //console.log('Solicitud', this.solNumerico);
         //console.log('Agregando cuerpo de la cabecera...');
         this.addBodySol();
-        this.solTimeService.saveSolTime(this.trTipoSolicitud, this.trLastNoSol, this.trIdNomEmp, this.empleado, this.trNivelEmision);
+        this.solTimeService.saveSolTime(
+          this.trTipoSolicitud, 
+          this.trLastNoSol, 
+          this.cookieService.get('userIdNomina'), 
+          this.cookieService.get('userName'), 
+          this.trNivelEmision
+        );
         //console.log('Cuerpo agregado.');
       },
       (error) => {
@@ -1177,6 +1183,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   cancelar(): void {
     this.deleteLastTracking();
     this.router.navigate(['allrequest']);
+    this.serviceGlobal.tipoSolBsq = 2;
     this.clear();
     this.changeView('consultar');
   }
@@ -1857,6 +1864,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
         }
       }
 
+      //evalua si esta en el ultimo nivel de su ruteo
       if (this.estadoTrkTmp == lastNivel) {
         //console.log("FINALIZADO");
         try {
@@ -1867,8 +1875,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
                 (response) => {
 
                   this.solTimeService.saveSolTime(
-                    this.cabecera.cabSolOCTipoSolicitud, 
-                    this.cabecera.cabSolOCNoSolicitud, 
+                    this.trTipoSolicitud, 
+                    this.noSolTmp, 
                     this.cookieService.get('userIdNomina'), 
                     this.cookieService.get('userName'), 
                     0
@@ -1900,10 +1908,14 @@ export class SoliocComponent implements OnInit, OnDestroy {
         }
 
       } else {
+        //
         for (let i = 0; i < this.nivelSolAsignado.length; i++) {
           var nivel = this.nivelSolAsignado[i];
+          //se aprueba cuando actual de la solicitud coincide con un nivel de la lista
           if (nivel.rutareaNivel == this.estadoTrkTmp) {
+            //guarda el siguiente nivel de la lista que sería el nuevo nivel al que ira la solicitud
             newEstado = this.nivelSolAsignado[i + 1].rutareaNivel;
+            //guarda el indice de nuevo estado que se guardará para verificar si se modifica la fecha mostrada o no (fecha de emision y fecha de aprobacion)
             indiceNewEstado = i;
             //extrae el tipo de proceso del nivel actual
             this.nivRuteService.getNivelInfo(newEstado).subscribe(
@@ -1928,8 +1940,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
               //console.log("Solicitud enviada");
 
               this.solTimeService.saveSolTime(
-                this.cabecera.cabSolOCTipoSolicitud, 
-                this.cabecera.cabSolOCNoSolicitud, 
+                this.trTipoSolicitud, 
+                this.noSolTmp, 
                 this.cookieService.get('userIdNomina'), 
                 this.cookieService.get('userName'), 
                 newEstado

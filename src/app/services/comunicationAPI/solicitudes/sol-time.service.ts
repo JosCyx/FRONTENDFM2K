@@ -11,13 +11,14 @@ import { NivelRuteoService } from '../seguridad/nivel-ruteo.service';
 })
 export class SolTimeService {
   APIUrl = this.globalService.APIUrl;
+  nivelesRuteo: any[] = [];
 
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
     private globalService: GlobalService,
     private nivelRuteo: NivelRuteoService
-  ) { 
+  ) {
     this.globalService.getConfigLoadedObservable().subscribe(
       (configLoaded) => {
         if (configLoaded) {
@@ -27,6 +28,19 @@ export class SolTimeService {
         }
       }
     );
+
+
+    // Buscar el nombre del nivel de ruteo según el nivel traido como parámetro
+    this.nivelRuteo.getNivelruteo().subscribe(
+      (response) => {
+        //console.log("Niveles:", response);
+        this.nivelesRuteo = response;
+      },
+      (error) => {
+        console.log("Error al obtener el nombre del nivel de ruteo:", error);
+      }
+    );
+
   }
 
   private getHeadersWithAuthToken(): HttpHeaders {
@@ -43,51 +57,43 @@ export class SolTimeService {
   saveSolTime(tipoSol: number, noSol: number, id_emp: string, name_emp: string, nivel: number) {
     let nivel_name = '';
 
-    // Buscar el nombre del nivel de ruteo según el nivel traido como parámetro
-    this.nivelRuteo.getNivelInfo(nivel).subscribe(
-        (response) => {
-            console.log("Respuesta de la API:", response);
-            nivel_name = response[0].descRuteo;
+    //buscar el nivel cuando coincida con el parametro nivel usando find()
+    const nivelEncontrado = this.nivelesRuteo.find(n => n.nivel === nivel);
+    nivel_name = nivelEncontrado.descRuteo;
+    
+    // Obtener la fecha y la hora local en tu zona horaria
+    const fechaLocal = new Date();
 
-            // Obtener la fecha y la hora local en tu zona horaria
-            const fechaLocal = new Date();
-            //fechaLocal.setHours(fechaLocal.getHours() - 5);
+    const horaLocal = fechaLocal.toTimeString();
+    const horaFormateada = horaLocal.replace(" GMT-0500 (hora de Ecuador)", "")
 
-            const horaLocal = fechaLocal.toTimeString();
-            const horaFormateada = horaLocal.replace(" GMT-0500 (hora de Ecuador)", "")
-
-            fechaLocal.setHours(fechaLocal.getHours() - 5);
+    fechaLocal.setHours(fechaLocal.getHours() - 5);
 
 
-            // Crear el objeto de datos con la fecha y hora locales
-            const data = {
-                solTmTipoSol: tipoSol,
-                solTmNoSol: noSol,
-                solTmIdEmpleado: id_emp,
-                solTmNameEmpleado: name_emp,
-                solTmNivelRuteo: nivel,
-                solTmNameRuteo: nivel_name,
-                solTmFecha: fechaLocal,
-                solTmHora: horaFormateada
-            };
+    // Crear el objeto de datos con la fecha y hora locales
+    const data = {
+      solTmTipoSol: tipoSol,
+      solTmNoSol: noSol,
+      solTmIdEmpleado: id_emp,
+      solTmNameEmpleado: name_emp,
+      solTmNivelRuteo: nivel,
+      solTmNameRuteo: nivel_name,
+      solTmFecha: fechaLocal,
+      solTmHora: horaFormateada
+    };
 
-            // Enviar los datos al servidor
-            console.log("Datos a enviar:", data);
-            this.postSolTime(data).subscribe(
-                (response) => {
-                    console.log("Respuesta de la API:", response);
-                },
-                (error) => {
-                    console.log("Error al guardar el tiempo de solicitud:", error);
-                }
-            );
-        },
-        (error) => {
-            console.log("Error al obtener el nombre del nivel de ruteo:", error);
-        }
+    // Enviar los datos al servidor
+    //console.log("Datos a enviar:", data);
+    this.postSolTime(data).subscribe(
+      (response) => {
+        console.log("Respuesta de la API:", response);
+      },
+      (error) => {
+        console.log("Error al guardar el tiempo de solicitud:", error);
+      }
     );
-}
-  
+  }
+
 
 
   postSolTime(data: any) {
