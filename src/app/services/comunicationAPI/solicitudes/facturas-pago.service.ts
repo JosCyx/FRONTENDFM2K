@@ -39,14 +39,34 @@ export class FacturasPagoService {
     });
   }
 
-  addFacturaPago(data: any){
+  addFacturaPago(data: any) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(this.APIUrl + '/FacturaSolPagoes', data, { headers: headers });
   }
 
-  addDetallePago(data: any){
+  addDetallePago(data: any) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(this.APIUrl + '/FacturaSolPagoes/DetalleFacturaPago', data, { headers: headers });
+  }
+
+  updateFacturaPago(noSol: number | undefined, noFact: number | undefined, data: any) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/FacturaSolPagoes/UpdateFactura?noSol=${noSol}&noFact=${noFact}`, data, { headers: headers });
+  }
+
+  updateDetalleFactura(idFacDet: number | undefined, noDet: number | undefined, data: any) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/FacturaSolPagoes/UpdateDetalleFactura?idFacDet=${idFacDet}&noDet=${noDet}`, data, { headers: headers });
+  }
+
+  changeEstadoFactura(noSol: number | undefined, noFact: number | undefined, estado: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/FacturaSolPagoes/ChangeEstadoFactura?noSol=${noSol}&noFact=${noFact}&estado=${estado}`, { headers: headers });
+  }
+
+  postOCTemplateAX(data: any) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(this.APIUrl + '/FacturaSolPagoes/OCTemplateAX', data, { headers: headers });
   }
 
 }

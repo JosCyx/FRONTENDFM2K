@@ -1174,6 +1174,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   cancelar(): void {
     this.deleteLastTracking();
     this.router.navigate(['allrequest']);
+    this.serviceGlobal.tipoSolBsq = 2;
     this.clear();
     this.changeView('consultar');
   }

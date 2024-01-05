@@ -30,6 +30,7 @@ export class CabeceraPago {
   public cabPagoMotivoDev: string;
   public cabPagoFrom: string;
   public cabPagoIfDestino: string;
+  public cabPagoType: string;
 
   constructor(data: any) {
     this.cabPagoID = data.cabPagoID;
@@ -63,5 +64,6 @@ export class CabeceraPago {
     this.cabPagoMotivoDev = data.cabPagoMotivoDev;
     this.cabPagoFrom = data.cabPagoFrom;
     this.cabPagoIfDestino = data.cabPagoIfDestino;
+    this.cabPagoType = data.cabPagoType;
   }
 }

@@ -22,18 +22,29 @@ import { SharedService } from 'src/app/services/shared.service';
 import { SpDestinoComponent } from './sp-destino/sp-destino.component';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { FacturasPagoService } from 'src/app/services/comunicationAPI/solicitudes/facturas-pago.service';
+import * as _ from 'lodash';
+
 
 interface Factura {
+  noSol?: number;
+  idFactura?: number;
+  noFactura?: number;
   numero: string;
-  fecha: Date;
+  fecha: Date | string;
   proveedor: string;
   provRuc: string;
   ordCompra: string;
   valorTotal: number;
   detalles: DetalleFactura[];
+  new: boolean;
 }
 
 interface DetalleFactura {
+  id?: number;
+  ordenCompra?: string;
+  idDetalle?: number;
+  idFactura?: number;
+  noDetalle?: number;
   itemProd: string;
   descProd: string;
   cantidad: number;
@@ -62,6 +73,7 @@ interface DetalleSolPagos {
   subTotal: number;
 }
 interface SolicitudData {
+  detalles: any[];
   cabecera: any;
   facturas: any[];
   detalleFacturas: any[];
@@ -184,7 +196,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     provRuc: '',
     ordCompra: '',
     valorTotal: 0,
-    detalles: []
+    detalles: [],
+    new: false
   };
 
   //almacena los detalles de una factura que se registra en el momento sin modificaciones
@@ -597,7 +610,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoValido: 1,
       cabPagoMotivoDev: 'NOHAYMOTIVO',
       cabPagoFrom: this.solicitudFrom,
-      cabPagoIfDestino: ifDestino
+      cabPagoIfDestino: ifDestino,
+      cabPagoType: 'new'
     };
 
     //enviar datos de cabecera a la API
@@ -606,10 +620,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       (response) => {
         /*const msjExito = 'Solicitud de Pago Generada Exitosamente.';
         this.callMensaje(msjExito, true);*/
-
-
         //this.AddDetSolPago();
         this.saveFacturas(this.solNumerico);
+        this.saveOCValues();
         setTimeout(() => {
           this.serviceGlobal.tipoSolBsq = 3;
           this.router.navigate(['allrequest']);
@@ -662,14 +675,25 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.showItDt = valor;
   }
 
+  showNewFactBTN: boolean = false;
   getDetFromOC() {
+    this.showNewFactBTN = false;
     this.detalleSolPagos = [];
+    this.factura.detalles = [];
+    this.detalleFactDefault = [];
+
     if (this.valorinputOC == '') {
       this.callMensaje('Por favor ingrese el número de orden de compra.', false);
     } else {
+      if (this.detalleFactDefault.length != 0) {
+        //setear factura.detalles con los datos de detalleFactDefault
+        this.factura.detalles = _.cloneDeep(this.detalleFactDefault);
+        this.factura.ordCompra = this.valorinputOC.toUpperCase();
+        this.cab_NoSolOC = this.valorinputOC.toUpperCase();
+        this.showNewFactBTN = true;
 
-      this.detPagoService.DetOrdenCompras(this.valorinputOC).subscribe(
-        {
+      } else {
+        this.detPagoService.DetOrdenCompras(this.valorinputOC).subscribe({
           next: data => {
             //console.log("data", data);
             if (data[0].detEstadoOC != 1) {
@@ -689,6 +713,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
               //guarda los datos de la orden de compra sin modificaciones
               this.detalleFactDefault = data.map((det: any) => ({
+                ordenCompra: det.detOrden,
                 itemProd: det.detcodProducto,
                 descProd: det.detdesProducto,
                 cantidad: det.detcantidad,
@@ -711,6 +736,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
               this.destinoIO = true;
               this.factura.ordCompra = this.valorinputOC.toUpperCase();
               this.cab_NoSolOC = this.valorinputOC.toUpperCase();
+              this.showNewFactBTN = true;
+              if (this.changeview == 'crear') {
+                this.callMensaje('Orden de compra encontrada, a continuación continúe a registrar las facturas.', true);
+              }
             }
 
 
@@ -722,8 +751,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
             }
           }
         })
+      }
     }
-
   }
 
   //ESTE METODO YA NO FUNCIONARÁ
@@ -755,7 +784,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
 
   //Calculo de Total
-  /*calculoTotal() {
+  calculoTotal() {
     this.Total = 0;
     for (let PagoTotal of this.detalleSolPagos) {
       this.Total = this.Total + PagoTotal.subTotal;
@@ -767,10 +796,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     for (let PagoTotal of this.detallePago) {
       this.cabecera.cabpagototal = this.cabecera.cabpagototal + PagoTotal.detPagoSubtotal;
     }
-  }*/
+  }
 
 
   async editSolicitud() {
+
     await this.getSoliPagos();
     await this.saveData();
   }
@@ -781,6 +811,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         .getSolPagobyId(this.SolID)
         .toPromise();
       this.solicitudEdit = data;
+      //console.log('solicitudEdit', this.solicitudEdit);
     } catch (error) {
       console.error('Error en la solicitud', error);
     }
@@ -792,9 +823,11 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.areaSolTmp = this.cabecera.cabPagoIdAreaSolicitante;
     this.depSolTmp = this.cabecera.cabPagoIdDeptSolicitante;
     this.numericoSol = this.cabecera.cabPagoNumerico;
+    this.solNumerico = this.cabecera.cabPagoNumerico;//se usa para mostrar el mensaje de exito
     this.numeroSolicitudEmail = this.cabecera.cabPagoNumerico;
     this.tipoSolicitudEmail = 'Orden de Pago';
     this.getNombreNivel(this.cabecera.cabPagoEstadoTrack);
+
 
     if (this.cabecera.cabPagoIfDestino == 'S') {
       this.setDestino = true;
@@ -815,60 +848,81 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.sharedTipoSol = this.cabecera.cabPagoTipoSolicitud;
     this.sharedNoSol = this.cabecera.cabPagoNoSolicitud;
 
-    //agrega los detalles de la solicitud a la lista de detalles
-    /*for (let det of this.solicitudEdit.detalles) {
-      this.detallePago.push(det as DetallePago);
-    }
-    //ordenamiento de detalle de solicitud pago
-    this.detallePago.sort((a, b) => a.detPagoIdDetalle - b.detPagoIdDetalle);*/
+    if (this.cabecera.cabPagoType == 'legacy') {
+      console.log("solicitud antigua")
+      //agrega los detalles de la solicitud a la lista de detalles
+      for (let det of this.solicitudEdit.detalles) {
+        this.detallePago.push(det as DetallePago);
+      }
+      //ordenamiento de detalle de solicitud pago
+      this.detallePago.sort((a, b) => a.detPagoIdDetalle - b.detPagoIdDetalle);
+    } else if (this.cabecera.cabPagoType == 'new') {
+      console.log("solicitud nueva")
 
-    let detallesTMP: any[] = [];
+      //detalles de las facturas
+      let detallesTMP: any[] = [];
 
-    for (let det of this.solicitudEdit.detalleFacturas) {
+      for (let det of this.solicitudEdit.detalleFacturas) {
 
-      //formatear la fecha al formato
+        //formatear la fecha al formato
 
-      const detalle: any = {
-        idFactura: det.detFactIdFactura,
-        itemProd: det.detFactIdProducto,
-        descProd: det.detFactDescpProducto,
-        cantidad: det.detFactCantProducto,
-        valorUnitario: det.detFactValorUnit,
-        descuento: det.detFactDescuento,
-        subTotal: det.detFactTotal,
-        checkC: true,
-        checkS: true
-      };
+        const detalle: DetalleFactura = {
+          idDetalle: det.detFactId,
+          idFactura: det.detFactIdFactura, //guarda el id de la fcatura al que pertenece el detalle
+          noDetalle: det.detFactNoDetalle, //guarda el numero de detalle de la factura
+          itemProd: det.detFactIdProducto,
+          descProd: det.detFactDescpProducto,
+          cantidad: det.detFactCantProducto,
+          valorUnitario: det.detFactValorUnit,
+          descuento: det.detFactDescuento,
+          subTotal: det.detFactTotal,
+          checkC: true,
+          checkS: true
+        };
 
-      detallesTMP.push(detalle);
-    }
-
-    //agrega las facturas a la lista de facturasList mapeando las propiedades con los nombres del tipo Factura
-    for (let fact of this.solicitudEdit.facturas) {
-
-      const factura: Factura = {
-        numero: fact.factSpNumFactura,
-        fecha: fact.factSpFechaFactura,
-        proveedor: fact.factSpProvFactura,
-        provRuc: fact.factSpRucProvFactura,
-        ordCompra: fact.factSpNumOrdenCompra,
-        valorTotal: fact.factSpMontoFactura,
-        detalles: []
-      };
-
-      for (let det of detallesTMP) {
-        if (det.idFactura == fact.factSpId) {
-          factura.detalles.push(det);
-        }
+        detallesTMP.push(detalle);
       }
 
-      //agregar la factura a la lista de facturas
-      this.facturasList.push(factura);
+      //agrega las facturas a la lista de facturasList mapeando las propiedades con los nombres del tipo Factura
+      for (let fact of this.solicitudEdit.facturas) {
 
+        const factura: Factura = {
+          noSol: fact.factSpNoSol, //guarda el numero de solicitud de pago
+          idFactura: fact.factSpId, //guarda el id de la factura
+          noFactura: fact.factSpNoFactura, //guarda el numero de factura de la solicitud
+          numero: fact.factSpNumFactura,
+          //fecha: fact.factSpFechaFactura,
+          fecha: this.formatFechaFact(fact.factSpFechaFactura),
+          proveedor: fact.factSpProvFactura,
+          provRuc: fact.factSpRucProvFactura,
+          ordCompra: fact.factSpNumOrdenCompra,
+          valorTotal: fact.factSpMontoFactura,
+          detalles: [],
+          new: false
+        };
+
+        for (let det of detallesTMP) {
+          if (det.idFactura == fact.factSpId) {
+            factura.detalles.push(det);
+          }
+        }
+
+        //agregar la factura a la lista de facturas
+        this.facturasList.push(factura);
+
+      }
+
+      //agrega los detalles de la solicitud a la lista de detalles del objeto factura
+      this.valorinputOC = this.cabecera.cabPagoNoSolOC;
+      this.getDetFromOC();
+
+      this.cargarOCDefault(this.cabecera.cabPagoNoSolOC)
+
+      console.log("facturasList", this.facturasList);
+      setTimeout(() => {
+        this.verifyTotal();
+      }, 500);
     }
-    this.cargarOCDefault(this.cabecera.cabPagoNoSolOC)
-
-    console.log("facturasList", this.facturasList);
 
     //lista de detalles para el destino
     // this.detallesToDestino = this.detallePago.map((detalle: any) => {
@@ -888,6 +942,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.getLastNivel();
 
   }
+  //2023-12-29T00:00:00
+  formatFechaFact(fecha: string) {
+    //recortar "T00:00:00" al contenido del parametro fecha
+    const fechaRecortada = fecha.substring(0, 10);
+    return fechaRecortada;
+  }
+
+
   lastNivel: string = '';
 
   facturaTMP: Factura = {
@@ -897,14 +959,22 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     provRuc: '',
     ordCompra: '',
     valorTotal: 0,
-    detalles: []
+    detalles: [],
+    new: false
   }
 
   valorTotalTMP: number = 0;
+  detallesTmpforEdit: DetalleFactura[] = [];
 
+  //SE EJECUTA AL DARLE CLICK A UNA FACTURA DE LA LISTA
   selectFactura(factura: Factura) {
     // Crear una copia superficial del objeto factura y asignarla a this.facturaTMP
-    this.facturaTMP = Object.freeze(Object.assign({}, factura));
+    //this.facturaTMP = Object.freeze(Object.assign({}, factura));
+
+    //clona el objeto factura y lo asigna a this.facturaTMP
+    this.facturaTMP = _.cloneDeep(factura);
+    this.detallesTmpforEdit = _.cloneDeep(factura.detalles);
+    console.log("detalles sin edicion", this.detallesTmpforEdit);
 
     // Asignar la factura original a this.factura
     this.factura = factura;
@@ -913,14 +983,21 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.valorinputOC = factura.ordCompra;
     //console.log("factura seleccionada: ", this.factura);
 
+    this.verifyTotal();
   }
 
+  metodo() {
+    console.log("lista de facturas:", this.detalleFactDefault);
+  }
   cargarOCDefault(valorBusqueda: string) {
     this.detPagoService.DetOrdenCompras(valorBusqueda).subscribe(
       {
         next: data => {
+          console.log("data", data);
           //guarda los datos de la orden de compra sin modificaciones
           this.detalleFactDefault = data.map((det: any) => ({
+            id: det.id,
+            ordenCompra: det.detOrden,
             itemProd: det.detcodProducto,
             descProd: det.detdesProducto,
             cantidad: det.detcantidad,
@@ -936,6 +1013,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
         }
       })
+    
   }
 
   async getInspector() {
@@ -1025,14 +1103,36 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         return ''; // Manejo por defecto si el valor no es A, F o C
     }
   }
+  correctSave: boolean = true;
+  errors: string[] = [];
   //Guardar lo editado de  solicitud de pago
   async savePagoEdit() {
     try {
       console.log('Se guardo la edicion ');
       await this.saveEditCabeceraPago();
-      await this.saveEditdetPago();
-      const msjExito = `Solicitud N° ${this.cabecera.cabPagoNumerico},editada exitosamente`;
-      this.callMensaje(msjExito, true);
+
+
+      //se mantiene la logica de guardado de solicitudes anteriores puesto que aun existen solicitudes de pago anteriores en proceso
+      if (this.cabecera.cabPagoType == 'legacy') {
+        await this.saveEditdetPago();
+      } else if (this.cabecera.cabPagoType == 'new') {
+        await this.saveEditFacturas(this.solNumerico);
+        await this.saveFacturas(this.solNumerico);
+        this.saveOCValues();
+
+        //controlar que este mensaje solo se muestre si todas las facturas se guardaron exitosamente con todos sus detalles
+        if (this.correctSave) {
+          this.callMensaje(`Solicitud de Pago N°${this.solNumerico} editada exitosamente.`, true);
+          //this.saveOCValues();
+        } else {
+          console.log("Error al guardar la solicitud de pago");
+          console.log("Errores: ", this.errors);
+          this.callMensaje(`Error al generar la solicitud de pago N° ${this.solNumerico}.`, false);
+        }
+      }
+
+
+
       setTimeout(() => {
         this.serviceGlobal.tipoSolBsq = 3;
         this.router.navigate(['allrequest']);
@@ -1095,7 +1195,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoValido: this.cabecera.cabPagoValido,
       cabPagoMotivoDev: motivoDevolucion,
       cabPagoFrom: this.cabecera.cabPagoFrom,
-      cabPagoIfDestino: ifDestino
+      cabPagoIfDestino: ifDestino,
+      cabPagoType: 'new'
     };
 
     this.cabPagoService
@@ -1845,15 +1946,33 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
 
 
-
+  //totalFacturas: number = 0;
   //AGREGA UNA FACTURA A LA LISTA DE FACTURAS QUE LUEGO SE ENVIARAN A LA API
   addFactura() {
     const facturaExistente = this.facturasList.find(factura => factura.numero === this.factura.numero);
 
-
     if (facturaExistente) {
       console.log('Ya existe una factura con el mismo número.');
+
+      //sobreescribir los datos de la factura existente con los datos de this.factura
+      facturaExistente.numero = this.factura.numero;
+      facturaExistente.fecha = this.factura.fecha;
+      facturaExistente.proveedor = this.factura.proveedor;
+      facturaExistente.provRuc = this.factura.provRuc;
+      facturaExistente.ordCompra = this.factura.ordCompra;
+      facturaExistente.valorTotal = this.factura.valorTotal;
+      facturaExistente.new = this.factura.new;
+      facturaExistente.detalles = _.cloneDeep(this.detallesTmpforEdit);
+
     } else {
+
+      let detallestmp: DetalleFactura[] = [];
+
+      if (this.checkTotal == true) {
+        detallestmp = this.factura.detalles;
+      } else {
+        detallestmp = this.detallesTmpforEdit;
+      }
 
       const nuevaFactura: Factura = {
         numero: this.factura.numero,
@@ -1862,18 +1981,41 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         provRuc: this.factura.provRuc,
         ordCompra: this.factura.ordCompra,
         valorTotal: this.factura.valorTotal,
-        detalles: this.factura.detalles
+        detalles: detallestmp,
+        new: true
       };
 
       // Agregar la nueva factura a la lista
       this.facturasList.push(nuevaFactura);
 
-      // Limpiar la cabecera del objeto factura
+      //actualiza los datos de la lista default segun las facturas creadas
+      this.updateOCvalues();
     }
+
     setTimeout(() => {
+      //recorrer la lista de facturas y sumar todos los valores totales
+      this.sumTotalFacturas();
+
+      // Limpiar la cabecera del objeto factura
       this.clearFactura();
       this.checkTotal = false;
-    }, 500);
+    }, 300);
+    console.log('Lista de facturas: ', this.facturasList);
+    this.verifyTotal();
+
+  }
+
+  sumTotalFacturas() {
+    let totalFacturas = 0;
+    this.facturasList.forEach(factura => totalFacturas = totalFacturas + factura.valorTotal);
+
+    if (this.changeview == 'crear') {
+      this.cab_totalautorizado = totalFacturas;
+      //console.log("total autorizado: ", this.cab_totalautorizado);
+    } else if (this.changeview == 'editar') {
+      this.cabecera.cabPagoValorTotalAut = totalFacturas;
+      //console.log("total autorizado: ", this.cabecera.cabPagoValorTotalAut);
+    }
   }
 
   clearFactura() {
@@ -1883,39 +2025,58 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       fecha: new Date(),
       proveedor: this.cab_proveedor,
       provRuc: this.cab_rucproveedor,
-      ordCompra: '',
+      ordCompra: this.factura.ordCompra,
       valorTotal: 0,
-      detalles: []
+      detalles: _.cloneDeep(this.detalleFactDefault),
+      new: false
     };
-
-    this.valorinputOC = '';
   }
 
   cancelarFactura() {
+    this.detError = false;
+    this.checkTotal = false;
 
     // Buscar el índice del elemento en la lista
     const index = this.facturasList.findIndex(factura => factura === this.factura);
 
     if (index !== -1) {
       // Sobrescribir el contenido del elemento en la lista con los valores de this.facturaTMP
-      this.facturasList[index] = Object.assign({}, this.facturaTMP);
+      //this.facturasList[index] = Object.assign({}, this.facturaTMP);
+      //this.facturasList[index] = _.cloneDeep(this.facturaTMP);
+
+      //setear las propiedades de this.facturasList[index] con los valores de this.facturaTMP excepto el numero
+      this.facturasList[index].fecha = _.cloneDeep(this.facturaTMP.fecha);
+      this.facturasList[index].proveedor = _.cloneDeep(this.facturaTMP.proveedor);
+      this.facturasList[index].provRuc = _.cloneDeep(this.facturaTMP.provRuc);
+      this.facturasList[index].ordCompra = _.cloneDeep(this.facturaTMP.ordCompra);
+      this.facturasList[index].valorTotal = _.cloneDeep(this.facturaTMP.valorTotal);
+      this.facturasList[index].detalles = _.cloneDeep(this.detallesTmpforEdit);
+
+
     }
 
     setTimeout(() => {
-
-      console.log("facturatmp: ", this.facturaTMP);
-      console.log("factura: ", this.factura);
-      console.log("facturaslist: ", this.facturasList);
       this.clearFactura();
     }, 100);
   }
 
   deleteDetalleFactura(id: number) {
     this.factura.detalles.splice(id, 1);
+    this.sumTotalFacturas();
   }
 
-  deleteFactura(id: number) {
-    this.facturasList.splice(id, 1);
+  facDlt!: Factura;
+  selectFacturaID(id: Factura) {
+    this.facDlt = id;
+  }
+
+  deleteFactura() {
+    this.recoverOcValues(this.facDlt);
+
+    //extraer el index de this.facIdDlt de la lista this.facturasList
+    const index = this.facturasList.findIndex(factura => factura === this.facDlt);
+    this.facturasList.splice(index, 1);
+    this.sumTotalFacturas();
   }
 
   setProveedorFactura() {
@@ -1943,76 +2104,117 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   detExito: boolean = false;
   erroresDet: { mensaje: string }[] = [];
   checkTotal: boolean = false;
+  showVerifyTotal: boolean = true;
+
+  verifyTotal() {
+
+    //console.log("verificando el total de la orden de compra")
+    let sumaCantidades = 0;
+    for (let detalle of this.detalleFactDefault) {
+      sumaCantidades = sumaCantidades + detalle.cantidad;
+    }
+
+    if (sumaCantidades == 0) {
+      //console.log("la suma es 0")
+      this.showVerifyTotal = false;
+      this.showNewFactBTN = false;
+      //this.detError = true;
+      //this.erroresDet.push({ mensaje: `Todos los items de la orden de compra ya han sido registrados, no existen valores pendientes de pago.` });
+    }
+  }
+
+
   verificarMontoFactura() {
     this.detError = false;
     this.erroresDet = [];
     this.checkTotal = false;
 
-    //recorrer la lista this.factura.detalles y verificar si la cantidad de cada detalle es igual o menor a la cantidad del mismo detalle de la lista detalleFactDefault
-    for (let detalle of this.factura.detalles) {
-      for (let detalleDefault of this.detalleFactDefault) {
-        if ((detalle.descProd == detalleDefault.descProd) && (detalle.itemProd == detalleDefault.itemProd)) {//encuentra los items que sean iguales
-          if (detalle.cantidad > detalleDefault.cantidad) {
-            console.log("item: ", detalle.descProd, ", no coincide en la cantidad");
-            detalle.checkC = false;//setea como false el check que verifica si la cantidad es correcta
-
-            this.detError = true;
-            this.erroresDet.push({ mensaje: `El item "${detalle.descProd}" no coincide en la cantidad autorizada. Cantidad autorizada: ${detalleDefault.cantidad}.` });
-
-          } else {
-            detalle.checkC = true;//setea como true el check que verifica si la cantidad es correcta
-          }
-        }
-      }
-    }
-
-    //recorrer la lista this.factura.detalles y verificar si el subtotal de cada detalle es igual o menos a al subtotal del mismo detalle de la lista detalleFactDefault
-    for (let detalle of this.factura.detalles) {
-      for (let detalleDefault of this.detalleFactDefault) {
-        if ((detalle.descProd == detalleDefault.descProd) && (detalle.itemProd == detalleDefault.itemProd)) {//encuentra los items que sean iguales
-          if (detalle.subTotal > detalleDefault.subTotal) {
-            console.log("item: ", detalle.descProd, ", no coincide en el subtotal");
-            detalle.checkS = false;//setea como false el check que verifica si el subtotal es correcto
-
-            this.detError = true;
-            this.erroresDet.push({ mensaje: `El item "${detalle.descProd}" no coincide en el subtotal autorizado. Subtotal autorizado: ${detalleDefault.subTotal}.` });
-
-          } else {
-            detalle.checkS = true;//setea como true el check que verifica si el subtotal es correcto
-          }
-        }
-      }
-    }
-
-    //recorrer la lista this.factura.detalles y sumar todos los subtotales
-    let totalFactura = 0;
-    for (let detalle of this.factura.detalles) {
-      totalFactura = totalFactura + detalle.subTotal;
-    }
-
-    //evaluar si todos los checks de cantidad y subtotal son true
-    for (let detalle of this.factura.detalles) {
-      if (detalle.checkC && detalle.checkS) {
-        this.checkTotal = true;
-      } else {
-        this.checkTotal = false;
-        break;
-      }
-    }
-
-    if (totalFactura != this.valorTotalTMP) {
-      this.checkTotal = false;
-
-      this.detError = true;
-      this.erroresDet.push({ mensaje: `El valor total de los items no coincide con el valor total de la factura.` });
-    } else {
+    //verificar si la suma de las cantidades de los detalles de la lista default es cero
+    if (this.showVerifyTotal == false) {
+      //saltar todas las validaciones y habilitar el boton confirmar
       this.checkTotal = true;
-
       this.detExito = true;
       setTimeout(() => {
         this.detExito = false;
       }, 3000);
+
+    } else {
+
+      //recorrer la lista this.factura.detalles y verificar si la cantidad de cada detalle es igual o menor a la cantidad del mismo detalle de la lista detalleFactDefault
+      for (let detalle of this.factura.detalles) {
+        for (let detalleDefault of this.detalleFactDefault) {
+          if ((detalle.descProd == detalleDefault.descProd) && (detalle.itemProd == detalleDefault.itemProd)) {//encuentra los items que sean iguales
+            if (detalle.cantidad > detalleDefault.cantidad) {
+              console.log("item: ", detalle.descProd, ", no coincide en la cantidad");
+              detalle.checkC = false;//setea como false el check que verifica si la cantidad es correcta
+
+              this.detError = true;
+              this.erroresDet.push({ mensaje: `El item "${detalle.descProd}" no coincide en la cantidad autorizada. Cantidad autorizada: ${detalleDefault.cantidad}.` });
+
+            } else {
+              detalle.checkC = true;//setea como true el check que verifica si la cantidad es correcta
+            }
+          }
+        }
+      }
+
+      //recorrer la lista this.factura.detalles y verificar si el subtotal de cada detalle es igual o menos a al subtotal del mismo detalle de la lista detalleFactDefault
+      for (let detalle of this.factura.detalles) {
+        for (let detalleDefault of this.detalleFactDefault) {
+          if ((detalle.descProd == detalleDefault.descProd) && (detalle.itemProd == detalleDefault.itemProd)) {//encuentra los items que sean iguales
+            if (detalle.subTotal > detalleDefault.subTotal) {
+              console.log("item: ", detalle.descProd, ", no coincide en el subtotal");
+              detalle.checkS = false;//setea como false el check que verifica si el subtotal es correcto
+
+              this.detError = true;
+              this.erroresDet.push({ mensaje: `El item "${detalle.descProd}" no coincide en el subtotal autorizado. Subtotal autorizado: ${detalleDefault.subTotal}.` });
+
+            } else {
+              detalle.checkS = true;//setea como true el check que verifica si el subtotal es correcto
+            }
+          }
+        }
+      }
+
+      //recorrer la lista this.factura.detalles y sumar todos los subtotales
+      let totalFactura = 0;
+      for (let detalle of this.factura.detalles) {
+        totalFactura = totalFactura + detalle.subTotal;
+      }
+
+      //evaluar si todos los checks de cantidad y subtotal son true
+      for (let detalle of this.factura.detalles) {
+        if (detalle.checkC && detalle.checkS) {
+          this.checkTotal = true;
+        } else {
+          this.checkTotal = false;
+          break;
+        }
+      }
+
+      if (this.factura.valorTotal == 0) {
+        this.checkTotal = false;
+
+        this.detError = true;
+        this.erroresDet.push({ mensaje: `El valor total de la factura no puede ser cero.` });
+
+      } else if (totalFactura != this.factura.valorTotal) {
+        this.checkTotal = false;
+
+        this.detError = true;
+        this.erroresDet.push({ mensaje: `El valor total de los items no coincide con el valor total de la factura.` });
+      } else {
+        this.checkTotal = true;
+
+        this.detExito = true;
+        setTimeout(() => {
+          this.detExito = false;
+        }, 3000);
+      }
     }
+
+
+
   }
 
   /////////////////////////////////////////////////CALCULOS DE DESCUENTOS Y SUBTOTAL//////////////////////////////////////////////
@@ -2032,73 +2234,292 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   saveFacturas(nombre: string) {
     let numOrdenPago = nombre;
 
+    let tipoSol, noSol = 0;
+
+    if (this.changeview == 'crear') {
+      tipoSol = this.responseTRK.solTrTipoSol;
+      noSol = this.responseTRK.solTrNumSol;
+    } else if (this.changeview == 'editar') {
+      tipoSol = this.cabecera.cabPagoTipoSolicitud;
+      noSol = this.cabecera.cabPagoNoSolicitud;
+    }
+
     // Recorrer la lista de facturas y enviarlas a la API
     let iFactura = 1;
     for (let factura of this.facturasList) {
+      if (factura.new == true) {
+        // Crear el objeto de datos para la factura actual
+        const dataFactura = {
+          factSpTipoSol: tipoSol,
+          factSpNoSol: noSol,
+          factSpNoFactura: iFactura,
+          factSpNumFactura: factura.numero,
+          factSpFechaFactura: factura.fecha,
+          factSpProvFactura: factura.proveedor,
+          factSpRucProvFactura: factura.provRuc,
+          factSpNumOrdenCompra: factura.ordCompra,
+          factSpMontoFactura: factura.valorTotal,
+          factSpEstado: 1
+        };
 
-      // Crear el objeto de datos para la factura actual
-      const dataFactura = {
-        factSpTipoSol: this.responseTRK.solTrTipoSol,
-        factSpNoSol: this.responseTRK.solTrNumSol,
-        factSpNoFactura: iFactura,
-        factSpNumFactura: factura.numero,
-        factSpFechaFactura: factura.fecha,
-        factSpProvFactura: factura.proveedor,
-        factSpRucProvFactura: factura.provRuc,
-        factSpNumOrdenCompra: factura.ordCompra,
-        factSpMontoFactura: factura.valorTotal,
-      };
+        // Enviar la solicitud a la API
+        this.facturasService.addFacturaPago(dataFactura).subscribe(
+          (response: any) => {
+            console.log("Factura creada exitosamente", response);
+            //this.callMensaje(`La factura N° ${factura.numero} se guardó exitosamente.`, true);
 
-      // Enviar la solicitud a la API
-      this.facturasService.addFacturaPago(dataFactura).subscribe(
-        (response: any) => {
-          console.log("Factura creada exitosamente", response);
-          //this.callMensaje(`La factura N° ${factura.numero} se guardó exitosamente.`, true);
+            const idFactura = response.factSpId;
 
-          const idFactura = response.factSpId;
+            let iDetalle = 1;
+            // Recorrer la lista de detalles de la factura actual
+            for (let detalle of factura.detalles) {
 
+              const detalleData = {
+                detFactIdFactura: idFactura,
+                detFactNoDetalle: iDetalle,
+                detFactNumOrdenCompra: factura.ordCompra,
+                detFactIdProducto: detalle.itemProd,
+                detFactDescpProducto: detalle.descProd,
+                detFactCantProducto: detalle.cantidad,
+                detFactValorUnit: detalle.valorUnitario,
+                detFactDescuento: detalle.descuento,
+                detFactTotal: detalle.subTotal,
+                detFactEstado: 1
+              };
 
-          let iDetalle = 1;
-          // Recorrer la lista de detalles de la factura actual
-          for (let detalle of factura.detalles) {
+              // enviar el detalle a la api
+              this.facturasService.addDetallePago(detalleData).subscribe(
+                (response) => {
+                  console.log("Detalle de factura creado exitosamente");
 
-            const detalleData = {
-              detFactIdFactura: idFactura,
-              detFactNoDetalle: iDetalle,
-              detFactNumOrdenCompra: factura.ordCompra,
-              detFactIdProducto: detalle.itemProd,
-              detFactDescpProducto: detalle.descProd,
-              detFactCantProducto: detalle.cantidad,
-              detFactValorUnit: detalle.valorUnitario,
-              detFactDescuento: detalle.descuento,
-              detFactTotal: detalle.subTotal
-            };
-
-            // enviar el detalle a la api
-            this.facturasService.addDetallePago(detalleData).subscribe(
-              (response) => {
-                console.log("Detalle de factura creado exitosamente");
-
-                //this.callMensaje(`El detalle del producto "${detalle.descProd}" se guardó exitosamente.`, true);
-              },
-              (error) => {
-                console.log('Error al crear el detalle de la factura: ', error);
-              }
-            );
-            iDetalle++;
+                  //this.callMensaje(`El detalle del producto "${detalle.descProd}" se guardó exitosamente.`, true);
+                },
+                (error) => {
+                  console.log('Error al crear el detalle de la factura: ', error);
+                  this.correctSave = false;
+                  this.erroresDet.push(error.error.message);
+                }
+              );
+              iDetalle++;
+            }
+          },
+          (error) => {
+            console.log('Error al crear la factura: ', error);
+            this.correctSave = false;
+            this.erroresDet.push(error.error.message);
           }
-        },
-        (error) => {
-          console.log('Error al crear la factura: ', error);
-        }
-      );
-      iFactura++;
+        );
+        iFactura++;
+      }
+
     }
-    this.callMensaje(`Solicitud de Pago N°${numOrdenPago} generada exitosamente.`, true);
+
+
+  }
+
+
+  saveEditFacturas(nombre: string) {
+    let numOrdenPago = nombre;
+
+    // Recorrer la lista de facturas y enviarlas a la API
+    let iFactura = 1;
+    for (let factura of this.facturasList) {
+      if (factura.new == false) {
+
+        // Crear el objeto de datos para la factura actual
+        const dataFactura = {
+          factSpId: factura.idFactura,
+          factSpTipoSol: this.cabecera.cabPagoTipoSolicitud,
+          factSpNoSol: this.cabecera.cabPagoNoSolicitud,
+          factSpNoFactura: factura.noFactura,
+          factSpNumFactura: factura.numero,
+          factSpFechaFactura: factura.fecha,
+          factSpProvFactura: factura.proveedor,
+          factSpRucProvFactura: factura.provRuc,
+          factSpNumOrdenCompra: factura.ordCompra,
+          factSpMontoFactura: factura.valorTotal,
+          factSpEstado: 1
+        };
+
+        // Enviar la solicitud a la API
+        console.log("factura nueva: ", dataFactura)
+        this.facturasService.updateFacturaPago(factura.noSol, factura.noFactura, dataFactura).subscribe(
+          (response: any) => {
+            console.log("Factura editada exitosamente", response);
+            //this.callMensaje(`La factura N° ${factura.numero} se guardó exitosamente.`, true);
+
+            //const idFactura = response.factSpId;
+
+
+            //let iDetalle = 1;
+            // Recorrer la lista de detalles de la factura actual
+            for (let detalle of factura.detalles) {
+
+              const detalleData = {
+                detFactId: detalle.idDetalle,
+                detFactIdFactura: factura.idFactura,
+                detFactNoDetalle: detalle.noDetalle,
+                detFactNumOrdenCompra: factura.ordCompra,
+                detFactIdProducto: detalle.itemProd,
+                detFactDescpProducto: detalle.descProd,
+                detFactCantProducto: detalle.cantidad,
+                detFactValorUnit: detalle.valorUnitario,
+                detFactDescuento: detalle.descuento,
+                detFactTotal: detalle.subTotal,
+                detFactEstado: 1
+              };
+
+              // enviar el detalle a la api
+              //idFactura: det.detFactIdFactura, //guarda el id de la fcatura al que pertenece el detalle
+              //noDetalle: det.detFactNoDetalle, //guarda el numero de detalle de la factura
+              this.facturasService.updateDetalleFactura(detalle.idFactura, detalle.noDetalle, detalleData).subscribe(
+                (response) => {
+                  console.log("Detalle de factura editada exitosamente");
+
+                  //this.callMensaje(`El detalle del producto "${detalle.descProd}" se guardó exitosamente.`, true);
+                },
+                (error) => {
+                  console.log('Error al editar el detalle de la factura: ', error);
+                  this.correctSave = false;
+                  this.erroresDet.push(error.error.message);
+                }
+              );
+              //iDetalle++;
+            }
+          },
+          (error) => {
+            console.log('Error al editar la factura: ', error);
+            this.correctSave = false;
+            this.erroresDet.push(error.error.message);
+          }
+        );
+        //iFactura++;
+      }
+    }
+
+
+  }
+
+  //eliminar la factura en la vista de edicion
+  factDltEdit!: Factura;
+  selectFacturaIDEdit(fact: Factura) {
+    this.factDltEdit = fact;
+  }
+
+  //elimina la factura de la lista de facturas y cambia el estado de la factura a 0 para que no vuelva a aparecer
+  deleteFacturaEdit() {
+    //devuelve los valores de la factura a la lista default
+    this.recoverOcValues(this.factDltEdit);
+
+    setTimeout(() => {
+      this.saveOCValues();
+    }, 200);
+
+    //buscar el index del objeto factura en la lista de facturas
+    const index = this.facturasList.findIndex(factura => factura === this.factDltEdit);
+    this.facturasList.splice(index, 1);
+    this.sumTotalFacturas();
+
+    //cambiar estado de la factura a 0
+    this.facturasService.changeEstadoFactura(this.factDltEdit.noSol, this.factDltEdit.noFactura, 0).subscribe(
+      (response) => {
+        console.log("Estado de factura cambiado exitosamente");
+        this.callMensaje(`La factura N° ${this.factDltEdit.numero} ha sido eliminada exitosamente.`, true);
+      },
+      (error) => {
+        console.log('Error al cambiar el estado de la factura: ', error);
+      }
+    );
+
+    this.factDltEdit = {
+      idFactura: 0,
+      noSol: 0,
+      noFactura: 0,
+      numero: '',
+      fecha: new Date(),
+      proveedor: '',
+      provRuc: '',
+      ordCompra: this.factDltEdit.ordCompra,
+      valorTotal: 0,
+      detalles: [],
+      new: false
+    };
+    this.showNewFactBTN = true;
   }
 
 
   //actualizacion de los registros de la orden de compra consultada
+  updateOCvalues() {
+    for (let factura of this.facturasList) {
+      //console.log("factura que se va descontar: ", factura);
+      for (let detalle of factura.detalles) {
+        for (let detalleDefault of this.detalleFactDefault) {
+          if ((factura.ordCompra === detalleDefault.ordenCompra) && (detalle.itemProd == detalleDefault.itemProd) && (detalle.descProd == detalleDefault.descProd) && detalleDefault.cantidad > 0) {
+            //console.log("detalle que se va a descontar: ", detalleDefault);
+            /*const difCantidad = detalleDefault.cantidad - detalle.cantidad;
+            const difSubtotal = detalleDefault.subTotal - detalle.subTotal;
+            
+            detalleDefault.cantidad = detalleDefault.cantidad - difCantidad;
+            detalleDefault.subTotal = detalleDefault.subTotal - difSubtotal;*/
 
+            //calcula el resto de la cantidad y el subtotal que quedan pendiente de pago
+            detalleDefault.cantidad = detalleDefault.cantidad - detalle.cantidad;
+            detalleDefault.subTotal = detalleDefault.subTotal - detalle.subTotal;
+          }
+        }
+      }
+    }
+  }
 
+  recoverOcValues(factura: Factura) {
+    for (let detalle of factura.detalles) {
+      for (let detalleDefault of this.detalleFactDefault) {
+        if ((factura.ordCompra === detalleDefault.ordenCompra) && (detalle.itemProd == detalleDefault.itemProd) && (detalle.descProd == detalleDefault.descProd)) {
+          //calcula el resto de la cantidad y el subtotal que quedan pendiente de pago
+          detalleDefault.cantidad = detalleDefault.cantidad + detalle.cantidad;
+          detalleDefault.subTotal = detalleDefault.subTotal + detalle.subTotal;
+        }
+      }
+    }
+  }
+
+  saveOCValues() {
+    //enviar la lista de detalles default a la api
+    //console.log("lista de detalles default: ", this.detalleFactDefault);
+    for (let detalle of this.detalleFactDefault) {
+      const detalleData = {
+        //id: detalle.id,
+        detOrden: detalle.ordenCompra,
+        detcodProducto: detalle.itemProd,
+        detdesProducto: detalle.descProd,
+        detcantidad: detalle.cantidad,
+        detprecio: detalle.valorUnitario,
+        detTotal: detalle.subTotal,
+        detEstadoOC: 1
+      }
+
+      //console.log("detalle a enviar: ", detalleData);
+      this.facturasService.postOCTemplateAX(detalleData).subscribe(
+        (response) => {
+          console.log("Detalle de OC actualizado exitosamente");
+        },
+        (error) => {
+          console.log('Error al actualizar el detalle de la OC: ', error);
+        }
+      );
+    }
+  }
+
+  updateCabeceraFact(){
+    //actualizar los valores del elemento de la lista facturasList que tenga el mismo numero de factura que this.factura
+    const index = this.facturasList.findIndex(factura => factura === this.factura);
+    
+    if (index !== -1) {
+      // Sobrescribir el contenido del elemento en la lista con los valores de this.factura
+      this.facturasList[index].numero = this.factura.numero;
+      //console.log("numero de factura actualizada: ", this.facturasList[index].numero);
+      //this.facturasList[index].fecha = this.factura.fecha;
+    }
+  }
 }
+

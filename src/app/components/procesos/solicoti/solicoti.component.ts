@@ -29,6 +29,7 @@ import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/s
 import { CotAnulacionComponent } from './cot-anulacion/cot-anulacion.component';
 import { SharedService } from 'src/app/services/shared.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
+import { SolTimeService } from 'src/app/services/comunicationAPI/solicitudes/sol-time.service';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -199,7 +200,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     private nivGerenciaService: NivGerenciaService,
     private sendMailService: SendEmailService,
     private sharedService: SharedService,
-    private dialogService: DialogServiceService) {
+    private dialogService: DialogServiceService,
+    private solTimeService: SolTimeService) {
     /*  
     //se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobar$.subscribe(() => {
@@ -584,6 +586,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         //console.log("Solicitud", this.solNumerico);
         //console.log("Agregando cuerpo de la cabecera...");
         this.addBodySol();
+        this.solTimeService.saveSolTime(this.trTipoSolicitud, this.trLastNoSol, this.trIdNomEmp, this.empleado, this.trNivelEmision);
       },
       error => {
         this.isSaved = false;
@@ -1212,6 +1215,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
   cancelar(): void {
     this.serviceGlobal.solView = 'crear';
+    this.serviceGlobal.tipoSolBsq = 1;
     this.router.navigate(['allrequest']);
     this.clear();
     this.changeView('consultar');
@@ -1720,6 +1724,15 @@ export class SolicotiComponent implements OnInit, OnDestroy {
                 (response) => {
                   const msjExito = `La solicitud ha finalizado exitosamente.`;
                   this.callMensaje(msjExito, true)
+
+                  this.solTimeService.saveSolTime(
+                    this.cabecera.cabSolCotTipoSolicitud, 
+                    this.cabecera.cabSolCotNoSolicitud, 
+                    this.cookieService.get('userIdNomina'), 
+                    this.cookieService.get('userName'), 
+                    0
+                  );
+
                   setTimeout(() => {
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
@@ -1766,6 +1779,16 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
+
+              //guardar la fecha actual del momento en que se envía la solicitud
+              this.solTimeService.saveSolTime(
+                this.cabecera.cabSolCotTipoSolicitud, 
+                this.cabecera.cabSolCotNoSolicitud, 
+                this.cookieService.get('userIdNomina'), 
+                this.cookieService.get('userName'), 
+                newEstado
+              );
+
               //console.log("Solicitud enviada");
               const msjExito = `La solicitud ha sido enviada exitosamente.`;
               this.callMensaje(msjExito, true)
@@ -2225,4 +2248,5 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   enableMotivoDev() {
     this.showMotivoDev = !this.showMotivoDev;
   }
+
 }

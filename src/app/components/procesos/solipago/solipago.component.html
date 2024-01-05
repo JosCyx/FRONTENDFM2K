@@ -134,6 +134,14 @@
                 [(ngModel)]="cab_proveedor" />
             </div>
           </div>
+          <div class="custom-input-group">
+            <label class="custom-label"> Solicitud Asociada</label>
+            <input [(ngModel)]="valorinputOC" type="text" class="custom-input mr-1"
+              placeholder="Ejemplo: OC_000073865"/>
+            <button class="btn btn-success" (click)="getDetFromOC()">
+              <i class="bi bi-search"></i>
+            </button>
+          </div>
           <!-- <div class="custom-input-group">
             <label class="custom-label"> Solicitud Asociada</label>
             <input [(ngModel)]="valorinput" type="text" class="custom-input mr-1" placeholder="Ejemplo: OC_000073865" />
@@ -149,8 +157,8 @@
             <i class="bi bi-x-circle-fill" style="padding-right: 2px;"> {{alertText}}</i>
 
           </div>
-
         </div>
+        
         <div *ngIf="actionCreate == 'creacion'">
           <!-- TABLA DE FACTURAS NUEVA -->
           <table class="table table-striped text-center table-hover">
@@ -166,31 +174,31 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let fact of facturasList; let i = index" (click)="selectFactura(fact)" data-toggle="modal"
-                data-target="#detallesFactura">
-                <td class="align-middle">
+              <tr *ngFor="let fact of facturasList; let i = index" >
+                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
                   {{fact.ordCompra}}
                 </td>
-                <td class="align-middle">
+                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
                   {{fact.numero}}
                 </td>
-                <td class="align-middle">
+                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
                   {{fact.fecha}}
                 </td>
-                <td class="align-middle">
+                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
                   {{fact.proveedor}}
                 </td>
-                <td class="align-middle" style="width: 150px">
+                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura" style="width: 150px">
                   {{ fact.provRuc }}
                 </td>
-                <td class="align-middle cel-prep">
+                <td class="align-middle cel-prep" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
                   {{fact.valorTotal}}
                 </td>
-                <td><a class="text-danger" (click)="deleteFactura(i)"><i class="bi bi-x-circle"></i></a></td>
+                <td><a class="text-danger" data-toggle="modal" data-target="#eliminarFactura"
+                    (click)="selectFacturaID(fact)"><i class="bi bi-x-circle"></i></a></td>
               </tr>
               <tr>
                 <td class="align-middle text-end" colspan="7">
-                  <button class="btn btn-primary" data-toggle="modal" data-target="#detallesFactura">Agregar nueva
+                  <button *ngIf="showNewFactBTN" class="btn btn-primary" data-toggle="modal" data-target="#detallesFactura">Agregar nueva
                     factura</button>
                 </td>
               </tr>
@@ -329,7 +337,7 @@
               placeholder="Ingrese el valor a descontar" [(ngModel)]="cab_valordescontar" />
             <label class="input-group-text">Pago total*:</label>
             <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
-              placeholder="Ingrese el valor Total" [(ngModel)]="cab_totalautorizado" />
+              placeholder="Ingrese el valor Total" [(ngModel)]="cab_totalautorizado" disabled/>
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Recibe*:</label>
@@ -587,104 +595,108 @@
             [areaSol]="areaUserCookie" [numericoSol]="numericoSol"></app-sp-destino>
         </div>
         <div class="detalle" *ngIf="actionEdit =='edicion'">
-          <table class="table table-striped text-center table-hover">
-            <thead>
-              <tr>
-                <th scope="col">Orden de compra</th>
-                <th scope="col">Número de factura</th>
-                <th scope="col">Fecha de la factura</th>
-                <th scope="col">Proveedor</th>
-                <th scope="col">Ruc del proveedor</th>
-                <th scope="col">Monto total</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let fact of facturasList; let i = index" (click)="selectFactura(fact)" data-toggle="modal"
-                data-target="#detallesFactura">
-                <td class="align-middle">
-                  {{fact.ordCompra}}
-                </td>
-                <td class="align-middle">
-                  {{fact.numero}}
-                </td>
-                <td class="align-middle">
-                  {{fact.fecha}}
-                </td>
-                <td class="align-middle">
-                  {{fact.proveedor}}
-                </td>
-                <td class="align-middle" style="width: 150px">
-                  {{ fact.provRuc }}
-                </td>
-                <td class="align-middle cel-prep">
-                  {{fact.valorTotal}}
-                </td>
-                <td><a class="text-danger" (click)="deleteFactura(i)"><i class="bi bi-x-circle"></i></a></td>
-              </tr>
-              <tr>
-                <td class="align-middle text-end" colspan="7">
-                  <button class="btn btn-primary" data-toggle="modal" data-target="#detallesFactura"
-                    (click)="setProveedorFactura()">Agregar nueva factura</button>
-                </td>
-              </tr>
+          <ng-container *ngIf="this.cabecera.cabPagoType == 'new'">
+            <table class="table table-striped text-center table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Orden de compra</th>
+                  <th scope="col">Número de factura</th>
+                  <th scope="col">Fecha de la factura</th>
+                  <th scope="col">Proveedor</th>
+                  <th scope="col">Ruc del proveedor</th>
+                  <th scope="col">Monto total</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let fact of facturasList; let i = index">
+                  <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
+                    {{fact.ordCompra}}
+                  </td>
+                  <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
+                    {{fact.numero}}
+                  </td>
+                  <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
+                    {{fact.fecha}}
+                  </td>
+                  <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
+                    {{fact.proveedor}}
+                  </td>
+                  <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura" style="width: 150px">
+                    {{ fact.provRuc }}
+                  </td>
+                  <td class="align-middle cel-prep" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
+                    {{fact.valorTotal}}
+                  </td>
+                  <td><a class="text-danger" data-toggle="modal" data-target="#eliminarFacturaEdicion"
+                      (click)="selectFacturaIDEdit(fact)"><i class="bi bi-x-circle"></i></a></td>
+                </tr>
+                <tr>
+                  <td class="align-middle text-end" colspan="7">
+                    <button *ngIf="showNewFactBTN" class="btn btn-primary" data-toggle="modal" data-target="#detallesFactura" (click)="setProveedorFactura()">Agregar nueva factura</button>
+                  </td>
+                </tr>
+  
+              </tbody>
+            </table>
+          </ng-container>
+          <ng-container *ngIf="this.cabecera.cabPagoType == 'legacy'">
 
-            </tbody>
-          </table>
-          <!-- <table class="table table-striped text-center">
-            <thead>
-              <tr>
-                <th scope="col"></th>
-                <th scope="col">Item a Cancelar*</th>
-                <th scope="col">Cantidad contratada</th>
-                <th scope="col">Cantidad recibida</th>
-                <th scope="col">Valor unitario</th>
-                <th scope="col">Subtotal</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let det of detallePago; let i = index">
-                <th class="align-middle">{{ i + 1 }}</th>
-                <td class="align-middle">
-                  <textarea name="descripcion" class="form-control" rows="2" cols="50"
-                    disabled>{{ det.detPagoItemDesc }}</textarea>
-                </td>
-                <td class="align-middle">
-                  <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
-                    [(ngModel)]="det.detPagoCantContratada" disabled />
-                </td>
-                <td class="align-middle" style="width: 150px">
-                  <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
-                    [(ngModel)]="det.detPagoCantRecibida" disabled />
-                </td>
-                <td class="align-middle cel-prep">
-                  <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
-                    [(ngModel)]="det.detPagoValUnitario" disabled />
-                </td>
-                <td class="align-middle">
-                  <input disabled type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
-                    [(ngModel)]="det.detPagoSubtotal" (input)="calculoEditotal()" />
-                </td>
-              </tr>
-              <tr>
-                <td class="align-middle text-end" colspan="6">
-                  <button class="btn btn-outline-primary" [appSecureDisable]="estadoSol"
-                    (click)="calculoEditotal()">Calcular total</button>
-                </td>
-              </tr>
-              <tr>
-                <td class="align-middle text-end"></td>
-                <td class="align-middle text-end"></td>
-                <td class="align-middle text-end"></td>
-                <td class="align-middle text-end"></td>
-                <td class="align-middle text-end">Total</td>
-                <td class="align-middle text-end">
-                  <input disabled type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
-                    [(ngModel)]="cabecera.cabpagototal" />
-                </td>
-              </tr>
-            </tbody>
-          </table> -->
+            <table class="table table-striped text-center">
+              <thead>
+                <tr>
+                  <th scope="col"></th>
+                  <th scope="col">Item a Cancelar*</th>
+                  <th scope="col">Cantidad contratada</th>
+                  <th scope="col">Cantidad recibida</th>
+                  <th scope="col">Valor unitario</th>
+                  <th scope="col">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let det of detallePago; let i = index">
+                  <th class="align-middle">{{ i + 1 }}</th>
+                  <td class="align-middle">
+                    <textarea name="descripcion" class="form-control" rows="2" cols="50"
+                      disabled>{{ det.detPagoItemDesc }}</textarea>
+                  </td>
+                  <td class="align-middle">
+                    <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                      [(ngModel)]="det.detPagoCantContratada" disabled />
+                  </td>
+                  <td class="align-middle" style="width: 150px">
+                    <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                      [(ngModel)]="det.detPagoCantRecibida"/>
+                  </td>
+                  <td class="align-middle cel-prep">
+                    <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                      [(ngModel)]="det.detPagoValUnitario" disabled />
+                  </td>
+                  <td class="align-middle">
+                    <input disabled type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                      [(ngModel)]="det.detPagoSubtotal" (input)="calculoEditotal()" />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="align-middle text-end" colspan="6">
+                    <button class="btn btn-outline-primary" [appSecureDisable]="estadoSol"
+                      (click)="calculoEditotal()">Calcular total</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="align-middle text-end"></td>
+                  <td class="align-middle text-end"></td>
+                  <td class="align-middle text-end"></td>
+                  <td class="align-middle text-end"></td>
+                  <td class="align-middle text-end">Total</td>
+                  <td class="align-middle text-end">
+                    <input disabled type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                      [(ngModel)]="cabecera.cabpagototal" />
+                  </td>
+                </tr>
+              </tbody>
+            </table> 
+          </ng-container>
         </div>
 
         <div class="foot-cabecera">
@@ -705,8 +717,7 @@
               [appSecureDisable]="estadoSol" />
             <label class="input-group-text">Pago total*:</label>
             <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
-              placeholder="Ingrese el valor Total" [(ngModel)]="cabecera.cabPagoValorTotalAut"
-              [appSecureDisable]="estadoSol" />
+            placeholder="Ingrese el valor Total" [(ngModel)]="cabecera.cabPagoValorTotalAut" disabled/>
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Recibe*:</label>
@@ -1078,7 +1089,7 @@
             <div class="custom-input-group">
               <label class="custom-label">No. factura:</label>
               <input type="text" class="custom-input" placeholder="Ingrese el número de la factura"
-                [(ngModel)]="factura.numero" />
+                [(ngModel)]="factura.numero" (keyup)="updateCabeceraFact()"/>
             </div>
             <div class="custom-input-group">
               <label class="custom-label">Fecha de Factura:</label>
@@ -1101,11 +1112,8 @@
           <div class="custom-row mb-1">
             <div class="custom-input-group">
               <label class="custom-label"> Solicitud Asociada</label>
-              <input [(ngModel)]="valorinputOC" type="text" class="custom-input mr-1"
-                placeholder="Ejemplo: OC_000073865" />
-              <button class="btn btn-success" (click)="getDetFromOC()">
-                <i class="bi bi-search"></i>
-              </button>
+              <input [(ngModel)]="valorinputOC" type="text" class="custom-input"
+                placeholder="Ejemplo: OC_000073865" disabled/>
             </div>
             <div class="custom-input-group">
               <label class="custom-label">Monto total:</label>
@@ -1160,7 +1168,7 @@
                 </tr>
                 <tr>
                   <td colspan="7" class="text-end">
-                    <button class="btn btn-outline-primary" (click)="verificarMontoFactura()">Verificar monto</button>
+                    <button *ngIf="showVerifyTotal" class="btn btn-outline-primary" (click)="verificarMontoFactura()">Verificar monto</button>
                   </td>
                 </tr>
 
@@ -1180,16 +1188,66 @@
         </div>
         <div class="modal-footer">
           <ng-container *ngIf="checkTotal">
-            <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="addFactura()">
-              Confirmar
+            <button type="button" class="btn btn-warning" data-dismiss="modal" (click)="addFactura()">
+              Confirmar cambios
             </button>
           </ng-container>
-          <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="cancelarFactura()">
-            Cancelar
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="cancelarFactura()">
+            Ok
           </button>
         </div>
       </div>
     </div>
     <!--  -->
+  </div>
+</div>
+
+<!-- Modal para eliminar una factura en la creación-->
+<div class="modal fade" #exampleModal id="eliminarFactura" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea eliminar esta factura?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Al eliminar esta factura ya no se mostrará su información y no se podrá recuperar.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteFactura()">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para eliminar una factura en la edicion-->
+<div class="modal fade" #exampleModal id="eliminarFacturaEdicion" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          ¿Está seguro que desea eliminar esta factura?
+        </h3>
+      </div>
+      <div class="modal-body">
+        <p>Al eliminar esta factura ya no se mostrará su información y no se podrá recuperar.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="deleteFacturaEdit()">
+          Confirmar
+        </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cancelar
+        </button>
+      </div>
+    </div>
   </div>
 </div>
