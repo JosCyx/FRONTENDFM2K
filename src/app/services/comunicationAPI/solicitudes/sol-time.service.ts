@@ -33,7 +33,7 @@ export class SolTimeService {
     // Buscar el nombre del nivel de ruteo según el nivel traido como parámetro
     this.nivelRuteo.getNivelruteo().subscribe(
       (response) => {
-        console.log("Niveles:", response);
+        //console.log("Niveles:", response);
         this.nivelesRuteo = response;
       },
       (error) => {
@@ -83,7 +83,7 @@ export class SolTimeService {
     };
 
     // Enviar los datos al servidor
-    console.log("Datos a enviar:", data);
+    //console.log("Datos a enviar:", data);
     this.postSolTime(data).subscribe(
       (response) => {
         console.log("Respuesta de la API:", response);

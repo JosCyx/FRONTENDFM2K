@@ -23,6 +23,7 @@ import { SpDestinoComponent } from './sp-destino/sp-destino.component';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { FacturasPagoService } from 'src/app/services/comunicationAPI/solicitudes/facturas-pago.service';
 import * as _ from 'lodash';
+import { SolTimeService } from 'src/app/services/comunicationAPI/solicitudes/sol-time.service';
 
 
 interface Factura {
@@ -220,7 +221,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     private nivGerenciaService: NivGerenciaService,
     private sharedService: SharedService,
     private dialogService: DialogServiceService,
-    private facturasService: FacturasPagoService
+    private facturasService: FacturasPagoService,
+    private solTimeService: SolTimeService
   ) {
 
     /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
@@ -623,6 +625,15 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         //this.AddDetSolPago();
         this.saveFacturas(this.solNumerico);
         this.saveOCValues();
+
+        this.solTimeService.saveSolTime(
+          this.trTipoSolicitud, 
+          this.trLastNoSol, 
+          this.cookieService.get('userIdNomina'), 
+          this.cookieService.get('userName'), 
+          this.trNivelEmision
+        );
+
         setTimeout(() => {
           this.serviceGlobal.tipoSolBsq = 3;
           this.router.navigate(['allrequest']);
@@ -1460,6 +1471,15 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                   this.showmsj = true;
                   const msjExito = `La solicitud ha sido enviada exitosamente.`;
                   this.callMensaje(msjExito, true);
+
+                  this.solTimeService.saveSolTime(
+                    this.trTipoSolicitud, 
+                    this.noSolTmp, 
+                    this.cookieService.get('userIdNomina'), 
+                    this.cookieService.get('userName'), 
+                    0
+                  );
+
                   setTimeout(() => {
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
@@ -1509,6 +1529,16 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
             (response) => {
               console.log("Solicitud enviada");
+
+              this.solTimeService.saveSolTime(
+                this.trTipoSolicitud, 
+                this.noSolTmp, 
+                this.cookieService.get('userIdNomina'), 
+                this.cookieService.get('userName'), 
+                newEstado
+              );
+
+
               const msjExito = `La solicitud ha sido enviada exitosamente.`;
               this.callMensaje(msjExito, true);
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
@@ -1657,47 +1687,83 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         //console.log('Empleado: ', response);
         mailToNotify = response[0].empleadoCorreo;
         console.log("Correo enviado a: ", mailToNotify)
-      },
-      (error) => {
-        console.log('Error al obtener el empleado: ', error);
-      }
-    );
 
-    if (this.areaSolTmp == 12) {
-      for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
-        let niv = this.nivelRuteotoAut[i];
-        if (niv.rutareaNivel == this.estadoTrkTmp) {
-          let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
-          let newestadoSt = '';
-
-          //extrae el tipo de proceso del nivel actual
-          this.nivRuteService.getNivelInfo(newEstado).subscribe(
-            (response) => {
-              newestadoSt = response[0].procesoRuteo;
-              //console.log("tipo de proceso de nivel: ", newestadoSt);
-            },
-            (error) => {
-              console.log('Error al obtener el nuevo estado de tracking: ', error);
+        //proceder con la devolucion unicamente si se ha encontrado el correo del empleado
+        if (this.areaSolTmp == 12) {
+          for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
+            let niv = this.nivelRuteotoAut[i];
+            if (niv.rutareaNivel == this.estadoTrkTmp) {
+              let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
+              let newestadoSt = '';
+    
+              //extrae el tipo de proceso del nivel actual
+              this.nivRuteService.getNivelInfo(newEstado).subscribe(
+                (response) => {
+                  newestadoSt = response[0].procesoRuteo;
+                  //console.log("tipo de proceso de nivel: ", newestadoSt);
+                },
+                (error) => {
+                  console.log('Error al obtener el nuevo estado de tracking: ', error);
+                }
+              );
+    
+              this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+                (response) => {
+                  //console.log('Estado de tracknig actualizado exitosamente');
+                  const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel anterior.`;
+                  this.callMensaje(msjExito, true)
+                  if (newEstado == 10) {
+                    //extraer el contenido del email correspondiente
+                    this.getMailContentSM(20, mailToNotify);
+    
+                  } else {
+                    //extraer el contenido del email correspondiente
+                    this.getMailContentSN(21, newEstado, newestadoSt);
+                  }
+    
+                  setTimeout(() => {
+                    this.showmsj = false;
+                    this.msjExito = '';
+                    this.clear();
+                    this.serviceGlobal.solView = 'crear';
+                    this.router.navigate(['allrequest']);
+                  }, 3000);
+                },
+                (error) => {
+                  console.log('Error al actualizar el estado: ', error);
+                  const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+                  this.callMensaje(msjError, false);
+                }
+              );
+    
+              //console.log("Nuevo estado: ", newEstado);
+              break;
             }
-          );
-
-          this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+    
+          }
+        } else {
+          //regresar la solicitud al nivel 10 y notificar a todos los niveles anteriores
+          this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10).subscribe(
             (response) => {
               //console.log('Estado de tracknig actualizado exitosamente');
-              const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel anterior.`;
+              const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel inicial.`;
               this.callMensaje(msjExito, true)
-              if (newEstado == 10) {
-                //extraer el contenido del email correspondiente
-                this.getMailContentSM(20, mailToNotify);
-
-              } else {
-                //extraer el contenido del email correspondiente
-                this.getMailContentSN(21, newEstado, newestadoSt);
-              }
-
+    
+              this.getMailContentSM(20, mailToNotify);
+    
+              //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
               setTimeout(() => {
-                this.showmsj = false;
-                this.msjExito = '';
+    
+                for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
+                  let niv = this.nivelRuteotoAut[i];
+                  if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
+                    this.getMailContentSN(22, niv.rutareaNivel, 'E');
+                  }
+                }
+              }, 300);
+    
+    
+              setTimeout(() => {
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
                 this.router.navigate(['allrequest']);
@@ -1709,47 +1775,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
               this.callMensaje(msjError, false);
             }
           );
-
-          //console.log("Nuevo estado: ", newEstado);
-          break;
         }
-
+      },
+      (error) => {
+        console.log('Error al obtener el empleado: ', error);
       }
-    } else {
-      //regresar la solicitud al nivel 10 y notificar a todos los niveles anteriores
-      this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10).subscribe(
-        (response) => {
-          //console.log('Estado de tracknig actualizado exitosamente');
-          const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel inicial.`;
-          this.callMensaje(msjExito, true)
+    );
 
-          this.getMailContentSM(20, mailToNotify);
-
-          //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
-          setTimeout(() => {
-
-            for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
-              let niv = this.nivelRuteotoAut[i];
-              if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
-                this.getMailContentSN(22, niv.rutareaNivel, 'E');
-              }
-            }
-          }, 300);
-
-
-          setTimeout(() => {
-            this.clear();
-            this.serviceGlobal.solView = 'crear';
-            this.router.navigate(['allrequest']);
-          }, 3000);
-        },
-        (error) => {
-          console.log('Error al actualizar el estado: ', error);
-          const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
-          this.callMensaje(msjError, false);
-        }
-      );
-    }
+    
 
 
   }
