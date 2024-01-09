@@ -1,5 +1,5 @@
 import { Component, OnInit,Input, ViewChild, OnDestroy, HostListener } from '@angular/core';
-
+ 
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
@@ -505,7 +505,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
   }
 
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
-  getLastSol(): Promise<number> {
+  /*getLastSol(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       this.solTrckService.getLastSolicitud(this.trTipoSolicitud).subscribe(
         (resultado) => {
@@ -527,17 +527,17 @@ export class SoliocComponent implements OnInit, OnDestroy {
         }
       );
     });
-  }
+  }*/
 
   guardarTrancking(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        this.trLastNoSol = await this.getLastSol();
-        this.noSolTmp = this.trLastNoSol;
+        //this.trLastNoSol = await this.getLastSol();
+        //this.noSolTmp = this.trLastNoSol;
 
         const dataTRK = {
           solTrTipoSol: this.trTipoSolicitud,
-          solTrNumSol: this.trLastNoSol,
+          solTrNumSol: 0,
           solTrNivel: this.trNivelEmision,
           solTrIdEmisor: this.cookieService.get('userIdNomina'),
         };
@@ -549,6 +549,10 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
             this.sharedNoSol = this.responseTRK.solTrNumSol;
             this.sharedTipoSol = this.responseTRK.solTrTipoSol;
+
+            //GUARDA EL VALOR DEL NUMERO DE LA SOLICITUD
+            this.noSolTmp = this.responseTRK.solTrNumSol;
+            this.trLastNoSol = this.responseTRK.solTrNumSol;
             
             console.log('Tracking asignado: ', this.responseTRK.solTrNumSol);
             resolve();
@@ -614,7 +618,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
           this.trLastNoSol,
           this.cookieService.get('userIdNomina'),
           this.cookieService.get('userName'),
-          this.trNivelEmision
+          this.trNivelEmision,
+          'Envío'
         );
         //console.log('Cuerpo agregado.');
       },
@@ -1881,7 +1886,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
                     this.noSolTmp, 
                     this.cookieService.get('userIdNomina'), 
                     this.cookieService.get('userName'), 
-                    newEstado
+                    0,
+                    'Finalizado'
                   );
 
 
@@ -1942,7 +1948,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
                 this.noSolTmp, 
                 this.cookieService.get('userIdNomina'), 
                 this.cookieService.get('userName'), 
-                newEstado
+                newEstado,
+                'Envío'
               );
 
               //LLAMA AL METODO DE ENVIAR CORREO Y LE ENVIA EL SIGUIENTE NIVEL DE RUTEO
@@ -2049,6 +2056,16 @@ export class SoliocComponent implements OnInit, OnDestroy {
 
       this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 9999).subscribe(
         (response) => {
+
+          this.solTimeService.saveSolTime(
+            this.trTipoSolicitud, 
+            this.noSolTmp, 
+            this.cookieService.get('userIdNomina'), 
+            this.cookieService.get('userName'), 
+            9999,
+            'Anulación'
+          );
+
           //console.log('Estado de tracknig actualizado exitosamente');
           exitotrk = true;
         },
@@ -2119,6 +2136,16 @@ export class SoliocComponent implements OnInit, OnDestroy {
               this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
                 (response) => {
                   //console.log('Estado de tracknig actualizado exitosamente');
+
+                  this.solTimeService.saveSolTime(
+                    this.trTipoSolicitud, 
+                    this.noSolTmp, 
+                    this.cookieService.get('userIdNomina'), 
+                    this.cookieService.get('userName'), 
+                    newEstado,
+                    'Devolución'
+                  );
+
                   const msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido devuelta al nivel anterior.`;
                   this.callMensaje(msjExito,true)
       
@@ -2154,6 +2181,16 @@ export class SoliocComponent implements OnInit, OnDestroy {
           //regresar la solicitud al nivel 10 y notificar a todos los niveles anteriores
           this.cabOCService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10).subscribe(
             (response) => {
+
+              this.solTimeService.saveSolTime(
+                this.trTipoSolicitud, 
+                this.noSolTmp, 
+                this.cookieService.get('userIdNomina'), 
+                this.cookieService.get('userName'), 
+                10,
+                'Devolución'
+              );
+
               //console.log('Estado de tracknig actualizado exitosamente');
               const msjExito = `La solicitud N° ${this.cabecera.cabSolOCNumerico} ha sido devuelta al nivel inicial.`;
               this.callMensaje(msjExito,true)

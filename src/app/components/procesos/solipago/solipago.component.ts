@@ -505,11 +505,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     const noSolString = noSol.toString();
     const paddedNoSol = noSolString.padStart(6, '0');
     this.solNumerico = `SP ${this.areaNmco} ${this.trTipoSolicitud}-${paddedNoSol}`;
+    console.log("solNumerico", this.solNumerico);
   }
 
 
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
-  getLastSol(): Promise<number> {
+  /*getLastSol(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       this.solTrckService.getLastSolicitud(this.trTipoSolicitud).subscribe(
         (resultado) => {
@@ -531,17 +532,17 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         }
       );
     });
-  }
+  }*/
   //
   guardarTrancking(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        this.trLastNoSol = await this.getLastSol();
-        this.noSolTmp = this.trLastNoSol;
+        //this.trLastNoSol = await this.getLastSol();
+        //this.noSolTmp = this.trLastNoSol;
 
         const dataTRK = {
           solTrTipoSol: this.trTipoSolicitud,
-          solTrNumSol: this.trLastNoSol,
+          solTrNumSol: 0,
           solTrNivel: this.trNivelEmision,
           solTrIdEmisor: this.cookieService.get('userIdNomina'),
         };
@@ -554,6 +555,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
             this.sharedNoSol = this.responseTRK.solTrNumSol;
             this.sharedTipoSol = this.responseTRK.solTrTipoSol;
+
+            //GUARDA EL VALOR DEL NUMERO DE LA SOLICITUD
+            this.noSolTmp = this.responseTRK.solTrNumSol;
+            this.trLastNoSol = this.responseTRK.solTrNumSol;
 
             console.log('Tracking asignado: ', this.responseTRK.solTrNumSol);
             resolve();
@@ -571,7 +576,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   //Guarda la solicitud con  estado emitido
   async generarSolicitud() {
     this.isSaved = true;//controla que la solicitud se haya guardado
-    await this.getSolName(this.trLastNoSol);
+    this.getSolName(this.trLastNoSol);
     this.numeroSolicitudEmail = this.solNumerico;
     this.tipoSolicitudEmail = 'Orden de Pago';
 
@@ -624,20 +629,31 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         this.callMensaje(msjExito, true);*/
         //this.AddDetSolPago();
         this.saveFacturas(this.solNumerico);
+        this.callMensaje('Solicitud de Pago Generada Exitosamente.', true);
         this.saveOCValues();
 
         this.solTimeService.saveSolTime(
-          this.trTipoSolicitud, 
-          this.trLastNoSol, 
-          this.cookieService.get('userIdNomina'), 
-          this.cookieService.get('userName'), 
-          this.trNivelEmision
+          this.trTipoSolicitud,
+          this.trLastNoSol,
+          this.cookieService.get('userIdNomina'),
+          this.cookieService.get('userName'),
+          this.trNivelEmision,
+          'Envío'
         );
 
-        setTimeout(() => {
-          this.serviceGlobal.tipoSolBsq = 3;
-          this.router.navigate(['allrequest']);
-        }, 3000)
+        //controlar que este mensaje solo se muestre si todas las facturas se guardaron exitosamente con todos sus detalles
+        if (this.correctSave) {
+          this.callMensaje(`Solicitud de Pago N°${this.solNumerico} editada exitosamente.`, true);
+          //this.saveOCValues();
+          setTimeout(() => {
+            this.serviceGlobal.tipoSolBsq = 3;
+            this.router.navigate(['allrequest']);
+          }, 3000)
+        } else {
+          console.log("Error al guardar la solicitud de pago");
+          console.log("Errores: ", this.errors);
+          this.callMensaje(`Error al generar la solicitud de pago N° ${this.solNumerico}.`, false);
+        }
       },
       (error) => {
         this.isSaved = false;
@@ -666,17 +682,21 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   //Guardar el ID DEL QUE RECIBE
   saveReceptor() {
     console.log("setDestino", this.setDestino);
-    for (let emp of this.empleados) {
-      if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
-        this.cab_recibe = emp.empleadoIdNomina
-        //console.log("Empleado ID:",this.trIdNomEmp);
+    if (this.changeview == 'editar') {
+      for (let emp of this.empleadoEdi) {
+        if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
+          this.cabecera.cabPagoReceptor = emp.empleadoIdNomina;
+        }
+      }
+    } else if (this.changeview == 'crear') {
+      for (let emp of this.empleados) {
+        if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
+          this.cab_recibe = emp.empleadoIdNomina
+          //console.log("Empleado ID:",this.trIdNomEmp);
+        }
       }
     }
-    for (let emp of this.empleadoEdi) {
-      if (emp.empleadoNombres + ' ' + emp.empleadoApellidos == this.receptor) {
-        this.cabecera.cabPagoReceptor = emp.empleadoIdNomina;
-      }
-    }
+
   }
 
   destinoIO: boolean = false;
@@ -693,6 +713,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.factura.detalles = [];
     this.detalleFactDefault = [];
 
+    if (this.changeview == 'crear') {
+      this.facturasList = [];
+    }
+
     if (this.valorinputOC == '') {
       this.callMensaje('Por favor ingrese el número de orden de compra.', false);
     } else {
@@ -707,8 +731,15 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         this.detPagoService.DetOrdenCompras(this.valorinputOC).subscribe({
           next: data => {
             //console.log("data", data);
+            //sumar todos los valores de la columna detcantidad
+            const totalCant = data.reduce((acc: any, cur: any) => acc + cur.detcantidad, 0);
+
             if (data[0].detEstadoOC != 1) {
               this.callMensaje('Error, la orden de compra ingresada no se encuentra abierta, por favor intente con una orden abierta.', false);
+            } else if (totalCant == 0) {
+              if (this.changeview == 'crear') {
+                this.callMensaje('Error, la orden de compra ingresada no tiene valores pendientes, por favor intente con una orden que tenga valores pendientes de pago.', false);
+              }
             } else {
 
               this.factura.detalles = data.map((det: any) => ({
@@ -874,7 +905,6 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       let detallesTMP: any[] = [];
 
       for (let det of this.solicitudEdit.detalleFacturas) {
-
         //formatear la fecha al formato
 
         const detalle: DetalleFactura = {
@@ -896,6 +926,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
       //agrega las facturas a la lista de facturasList mapeando las propiedades con los nombres del tipo Factura
       for (let fact of this.solicitudEdit.facturas) {
+
+        console.log("fact", fact);
 
         const factura: Factura = {
           noSol: fact.factSpNoSol, //guarda el numero de solicitud de pago
@@ -979,6 +1011,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
   //SE EJECUTA AL DARLE CLICK A UNA FACTURA DE LA LISTA
   selectFactura(factura: Factura) {
+
     // Crear una copia superficial del objeto factura y asignarla a this.facturaTMP
     //this.facturaTMP = Object.freeze(Object.assign({}, factura));
 
@@ -997,14 +1030,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.verifyTotal();
   }
 
-  metodo() {
+  /*metodo() {
     console.log("lista de facturas:", this.detalleFactDefault);
-  }
+  }*/
   cargarOCDefault(valorBusqueda: string) {
     this.detPagoService.DetOrdenCompras(valorBusqueda).subscribe(
       {
         next: data => {
-          console.log("data", data);
+          //console.log("data", data);
           //guarda los datos de la orden de compra sin modificaciones
           this.detalleFactDefault = data.map((det: any) => ({
             id: det.id,
@@ -1024,7 +1057,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
         }
       })
-    
+
   }
 
   async getInspector() {
@@ -1473,11 +1506,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                   this.callMensaje(msjExito, true);
 
                   this.solTimeService.saveSolTime(
-                    this.trTipoSolicitud, 
-                    this.noSolTmp, 
-                    this.cookieService.get('userIdNomina'), 
-                    this.cookieService.get('userName'), 
-                    0
+                    this.trTipoSolicitud,
+                    this.noSolTmp,
+                    this.cookieService.get('userIdNomina'),
+                    this.cookieService.get('userName'),
+                    0,
+                    'Finalizado'
                   );
 
                   setTimeout(() => {
@@ -1531,11 +1565,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
               console.log("Solicitud enviada");
 
               this.solTimeService.saveSolTime(
-                this.trTipoSolicitud, 
-                this.noSolTmp, 
-                this.cookieService.get('userIdNomina'), 
-                this.cookieService.get('userName'), 
-                newEstado
+                this.trTipoSolicitud,
+                this.noSolTmp,
+                this.cookieService.get('userIdNomina'),
+                this.cookieService.get('userName'),
+                newEstado,
+                'Envío'
               );
 
 
@@ -1641,6 +1676,16 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 9999).subscribe(
         (response) => {
           //console.log('Estado de tracknig actualizado exitosamente');
+
+          this.solTimeService.saveSolTime(
+            this.trTipoSolicitud,
+            this.noSolTmp,
+            this.cookieService.get('userIdNomina'),
+            this.cookieService.get('userName'),
+            9999,
+            'Anulación'
+          );
+
           exitotrk = true;
         },
         (error) => {
@@ -1695,7 +1740,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
             if (niv.rutareaNivel == this.estadoTrkTmp) {
               let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
               let newestadoSt = '';
-    
+
               //extrae el tipo de proceso del nivel actual
               this.nivRuteService.getNivelInfo(newEstado).subscribe(
                 (response) => {
@@ -1706,21 +1751,31 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                   console.log('Error al obtener el nuevo estado de tracking: ', error);
                 }
               );
-    
+
               this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
                 (response) => {
                   //console.log('Estado de tracknig actualizado exitosamente');
                   const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel anterior.`;
                   this.callMensaje(msjExito, true)
+
+                  this.solTimeService.saveSolTime(
+                    this.trTipoSolicitud,
+                    this.noSolTmp,
+                    this.cookieService.get('userIdNomina'),
+                    this.cookieService.get('userName'),
+                    newEstado,
+                    'Devolución'
+                  );
+
                   if (newEstado == 10) {
                     //extraer el contenido del email correspondiente
                     this.getMailContentSM(20, mailToNotify);
-    
+
                   } else {
                     //extraer el contenido del email correspondiente
                     this.getMailContentSN(21, newEstado, newestadoSt);
                   }
-    
+
                   setTimeout(() => {
                     this.showmsj = false;
                     this.msjExito = '';
@@ -1735,25 +1790,35 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                   this.callMensaje(msjError, false);
                 }
               );
-    
+
               //console.log("Nuevo estado: ", newEstado);
               break;
             }
-    
+
           }
         } else {
           //regresar la solicitud al nivel 10 y notificar a todos los niveles anteriores
           this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10).subscribe(
             (response) => {
               //console.log('Estado de tracknig actualizado exitosamente');
+
+              this.solTimeService.saveSolTime(
+                this.trTipoSolicitud,
+                this.noSolTmp,
+                this.cookieService.get('userIdNomina'),
+                this.cookieService.get('userName'),
+                10,
+                'Devolución'
+              );
+
               const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel inicial.`;
               this.callMensaje(msjExito, true)
-    
+
               this.getMailContentSM(20, mailToNotify);
-    
+
               //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
               setTimeout(() => {
-    
+
                 for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
                   let niv = this.nivelRuteotoAut[i];
                   if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
@@ -1761,8 +1826,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                   }
                 }
               }, 300);
-    
-    
+
+
               setTimeout(() => {
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
@@ -1782,7 +1847,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       }
     );
 
-    
+
 
 
   }
@@ -2034,6 +2099,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       this.checkTotal = false;
     }, 300);
     console.log('Lista de facturas: ', this.facturasList);
+    console.log('lista de orden de compra: ', this.detalleFactDefault);
     this.verifyTotal();
 
   }
@@ -2041,6 +2107,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   sumTotalFacturas() {
     let totalFacturas = 0;
     this.facturasList.forEach(factura => totalFacturas = totalFacturas + factura.valorTotal);
+
+
 
     if (this.changeview == 'crear') {
       this.cab_totalautorizado = totalFacturas;
@@ -2068,22 +2136,26 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   cancelarFactura() {
     this.detError = false;
     this.checkTotal = false;
+    this.showVerifyTotal = false;
 
     // Buscar el índice del elemento en la lista
-    const index = this.facturasList.findIndex(factura => factura === this.factura);
+    const index = this.facturasList.findIndex(factura => factura.numero === this.factura.numero);
 
     if (index !== -1) {
+
+      this.facturasList[index].numero = _.cloneDeep(this.factura.numero);
+      this.facturasList[index].fecha = _.cloneDeep(this.factura.fecha);
       // Sobrescribir el contenido del elemento en la lista con los valores de this.facturaTMP
       //this.facturasList[index] = Object.assign({}, this.facturaTMP);
       //this.facturasList[index] = _.cloneDeep(this.facturaTMP);
 
       //setear las propiedades de this.facturasList[index] con los valores de this.facturaTMP excepto el numero
-      this.facturasList[index].fecha = _.cloneDeep(this.facturaTMP.fecha);
+      /*this.facturasList[index].fecha = _.cloneDeep(this.facturaTMP.fecha);
       this.facturasList[index].proveedor = _.cloneDeep(this.facturaTMP.proveedor);
       this.facturasList[index].provRuc = _.cloneDeep(this.facturaTMP.provRuc);
       this.facturasList[index].ordCompra = _.cloneDeep(this.facturaTMP.ordCompra);
       this.facturasList[index].valorTotal = _.cloneDeep(this.facturaTMP.valorTotal);
-      this.facturasList[index].detalles = _.cloneDeep(this.detallesTmpforEdit);
+      this.facturasList[index].detalles = _.cloneDeep(this.detallesTmpforEdit);*/
 
 
     }
@@ -2099,22 +2171,31 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   facDlt!: Factura;
-  selectFacturaID(id: Factura) {
-    this.facDlt = id;
+  selectFacturaID(factura: Factura) {
+    this.facDlt = factura;
   }
 
   deleteFactura() {
     this.recoverOcValues(this.facDlt);
 
+
+    this.verifyTotal();
     //extraer el index de this.facIdDlt de la lista this.facturasList
     const index = this.facturasList.findIndex(factura => factura === this.facDlt);
     this.facturasList.splice(index, 1);
     this.sumTotalFacturas();
+
   }
 
   setProveedorFactura() {
+    this.showVerifyTotal = true;
     this.factura.proveedor = this.cabecera.cabPagoProveedor;
     this.factura.provRuc = this.cabecera.cabPagoRucProveedor;
+  }
+
+  activeVerifyBtn() {
+    this.showVerifyTotal = true;
+    console.log("detalles default de select factura", this.detalleFactDefault)
   }
 
   /////////////////////////////////////////////SELECCIONA EL TIPO DE DESCUENTO A APLICAR//////////////////////////////////////
@@ -2132,14 +2213,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }
   }
 
-  ////////////////////////////VERIFICA QUE LOS VALORES DE A FACTURA NO SOBREPASEN A LOS DE LA ORDEN DE COMPRA/////////////////////////////////
+  ////////////////////////VERIFICA QUE LOS VALORES DE A FACTURA NO SOBREPASEN A LOS DE LA ORDEN DE COMPRA////////////////////////
   detError: boolean = false;
   detExito: boolean = false;
   erroresDet: { mensaje: string }[] = [];
   checkTotal: boolean = false;
-  showVerifyTotal: boolean = true;
+  showVerifyTotal: boolean = false;
 
-  verifyTotal() {
+  verifyTotal() {//suma los totales de las facturas y define si se muestra o no el boton de comfirma y de agregar una nueva factura
 
     //console.log("verificando el total de la orden de compra")
     let sumaCantidades = 0;
@@ -2153,6 +2234,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       this.showNewFactBTN = false;
       //this.detError = true;
       //this.erroresDet.push({ mensaje: `Todos los items de la orden de compra ya han sido registrados, no existen valores pendientes de pago.` });
+    } else {
+      this.showNewFactBTN = true;
     }
   }
 
@@ -2214,6 +2297,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       for (let detalle of this.factura.detalles) {
         totalFactura = totalFactura + detalle.subTotal;
       }
+      this.factura.valorTotal = totalFactura;
 
       //evaluar si todos los checks de cantidad y subtotal son true
       for (let detalle of this.factura.detalles) {
@@ -2223,6 +2307,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           this.checkTotal = false;
           break;
         }
+      }
+
+      if (this.factura.numero == '') {
+        this.checkTotal = false;
       }
 
       if (this.factura.valorTotal == 0) {
@@ -2266,6 +2354,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   //envio de la lista de facturas
   saveFacturas(nombre: string) {
     let numOrdenPago = nombre;
+    let errorFactList: any[] = [];
 
     let tipoSol, noSol = 0;
 
@@ -2330,7 +2419,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                 (error) => {
                   console.log('Error al crear el detalle de la factura: ', error);
                   this.correctSave = false;
-                  this.erroresDet.push(error.error.message);
+                  this.errors.push(error.error.message);
                 }
               );
               iDetalle++;
@@ -2339,15 +2428,13 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           (error) => {
             console.log('Error al crear la factura: ', error);
             this.correctSave = false;
-            this.erroresDet.push(error.error.message);
+            this.errors.push(error.error.message);
           }
         );
         iFactura++;
       }
 
     }
-
-
   }
 
 
@@ -2414,7 +2501,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                 (error) => {
                   console.log('Error al editar el detalle de la factura: ', error);
                   this.correctSave = false;
-                  this.erroresDet.push(error.error.message);
+                  this.errors.push(error.error.message);
                 }
               );
               //iDetalle++;
@@ -2423,7 +2510,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           (error) => {
             console.log('Error al editar la factura: ', error);
             this.correctSave = false;
-            this.erroresDet.push(error.error.message);
+            this.errors.push(error.error.message);
           }
         );
         //iFactura++;
@@ -2445,12 +2532,15 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.recoverOcValues(this.factDltEdit);
 
     setTimeout(() => {
+      //guarda los cambios de la lista default en la base de datos
       this.saveOCValues();
     }, 200);
 
     //buscar el index del objeto factura en la lista de facturas
     const index = this.facturasList.findIndex(factura => factura === this.factDltEdit);
+    //elimina la factura de la lista de facturas
     this.facturasList.splice(index, 1);
+    //realiza la suma para obtener el valor total y setearlo en la cabecera de la orden de pago
     this.sumTotalFacturas();
 
     //cambiar estado de la factura a 0
@@ -2477,31 +2567,33 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       detalles: [],
       new: false
     };
-    this.showNewFactBTN = true;
+    //this.showNewFactBTN = true;
+    this.verifyTotal();
   }
 
 
   //actualizacion de los registros de la orden de compra consultada
   updateOCvalues() {
-    for (let factura of this.facturasList) {
-      //console.log("factura que se va descontar: ", factura);
-      for (let detalle of factura.detalles) {
-        for (let detalleDefault of this.detalleFactDefault) {
-          if ((factura.ordCompra === detalleDefault.ordenCompra) && (detalle.itemProd == detalleDefault.itemProd) && (detalle.descProd == detalleDefault.descProd) && detalleDefault.cantidad > 0) {
-            //console.log("detalle que se va a descontar: ", detalleDefault);
-            /*const difCantidad = detalleDefault.cantidad - detalle.cantidad;
-            const difSubtotal = detalleDefault.subTotal - detalle.subTotal;
-            
-            detalleDefault.cantidad = detalleDefault.cantidad - difCantidad;
-            detalleDefault.subTotal = detalleDefault.subTotal - difSubtotal;*/
+    console.log("ACTUALIZANDO VALORES DE LA ORDEN DE COMPRA")
+    //for (let factura of this.facturasList) {
+    //console.log("factura que se va descontar: ", factura);
+    for (let detalle of this.factura.detalles) {
+      for (let detalleDefault of this.detalleFactDefault) {
+        if ((this.factura.ordCompra === detalleDefault.ordenCompra) && (detalle.itemProd == detalleDefault.itemProd) && (detalle.descProd == detalleDefault.descProd) && detalleDefault.cantidad > 0) {
+          //console.log("detalle que se va a descontar: ", detalleDefault);
+          /*const difCantidad = detalleDefault.cantidad - detalle.cantidad;
+          const difSubtotal = detalleDefault.subTotal - detalle.subTotal;
+          
+          detalleDefault.cantidad = detalleDefault.cantidad - difCantidad;
+          detalleDefault.subTotal = detalleDefault.subTotal - difSubtotal;*/
 
-            //calcula el resto de la cantidad y el subtotal que quedan pendiente de pago
-            detalleDefault.cantidad = detalleDefault.cantidad - detalle.cantidad;
-            detalleDefault.subTotal = detalleDefault.subTotal - detalle.subTotal;
-          }
+          //calcula el resto de la cantidad y el subtotal que quedan pendiente de pago
+          detalleDefault.cantidad = detalleDefault.cantidad - detalle.cantidad;
+          detalleDefault.subTotal = detalleDefault.subTotal - detalle.subTotal;
         }
       }
     }
+    //}
   }
 
   recoverOcValues(factura: Factura) {
@@ -2514,6 +2606,9 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         }
       }
     }
+
+    //se asegura que los detalles de las facturas por defecto se guarden en el objeto this.factura.detalles
+    this.factura.detalles = _.cloneDeep(this.detalleFactDefault);
   }
 
   saveOCValues() {
@@ -2543,10 +2638,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateCabeceraFact(){
+  updateCabeceraFact() {
     //actualizar los valores del elemento de la lista facturasList que tenga el mismo numero de factura que this.factura
     const index = this.facturasList.findIndex(factura => factura === this.factura);
-    
+
     if (index !== -1) {
       // Sobrescribir el contenido del elemento en la lista con los valores de this.factura
       this.facturasList[index].numero = this.factura.numero;

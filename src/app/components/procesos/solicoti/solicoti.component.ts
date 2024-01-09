@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, OnDestroy, HostListener } from '@angular/core';
-//servicios de comunicacion
+//servicios de comunicacion 
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
@@ -485,7 +485,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }
 
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
-  getLastSol(): Promise<number> {
+  /*getLastSol(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       this.solTrckService.getLastSolicitud(this.trTipoSolicitud).subscribe(
         (resultado) => {
@@ -504,17 +504,17 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         }
       );
     });
-  }
+  }*/
 
   guardarTrancking(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        this.trLastNoSol = await this.getLastSol();
-        this.noSolTmp = this.trLastNoSol;
+        //this.trLastNoSol = await this.getLastSol();
+        //this.noSolTmp = this.trLastNoSol;
 
         const dataTRK = {
           solTrTipoSol: this.trTipoSolicitud,
-          solTrNumSol: this.trLastNoSol,
+          solTrNumSol: 0,
           solTrNivel: this.trNivelEmision,
           solTrIdEmisor: this.cookieService.get('userIdNomina'),
         };
@@ -527,6 +527,10 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
             this.sharedNoSol = this.responseTRK.solTrNumSol;
             this.sharedTipoSol = this.responseTRK.solTrTipoSol;
+
+            //GUARDA EL VALOR DEL NUMERO DE LA SOLICITUD
+            this.noSolTmp = this.responseTRK.solTrNumSol;
+            this.trLastNoSol = this.responseTRK.solTrNumSol;
 
             console.log('Tracking asignado: ', this.responseTRK.solTrNumSol);
             resolve();
@@ -591,7 +595,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           this.trLastNoSol,
           this.cookieService.get('userIdNomina'),
           this.cookieService.get('userName'),
-          this.trNivelEmision
+          this.trNivelEmision,
+          'Envío'
         );
       },
       error => {
@@ -1736,7 +1741,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
                     this.noSolTmp, 
                     this.cookieService.get('userIdNomina'), 
                     this.cookieService.get('userName'), 
-                    newEstado
+                    0,
+                    'Finalizado'
                   );
     
 
@@ -1793,7 +1799,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
                 this.noSolTmp, 
                 this.cookieService.get('userIdNomina'), 
                 this.cookieService.get('userName'), 
-                newEstado
+                newEstado,
+                'Envío'
               );
 
 
@@ -1897,6 +1904,16 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         (response) => {
           //console.log('Estado de tracknig actualizado exitosamente');
           exitotrk = true;
+
+          this.solTimeService.saveSolTime(
+            this.trTipoSolicitud, 
+            this.noSolTmp, 
+            this.cookieService.get('userIdNomina'), 
+            this.cookieService.get('userName'), 
+            9999,
+            'Anulación'
+          );
+
         },
         (error) => {
           console.log('Error al actualizar el estado: ', error);
@@ -1970,6 +1987,16 @@ export class SolicotiComponent implements OnInit, OnDestroy {
               this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
                 (response) => {
                   //console.log('Estado de tracknig actualizado exitosamente');
+
+                  this.solTimeService.saveSolTime(
+                    this.trTipoSolicitud, 
+                    this.noSolTmp, 
+                    this.cookieService.get('userIdNomina'), 
+                    this.cookieService.get('userName'), 
+                    newEstado,
+                    'Devolución'
+                  );
+
                   this.showmsj = true;
                   const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel anterior.`;
                   this.callMensaje(msjExito, true)
@@ -2008,6 +2035,17 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10).subscribe(
             (response) => {
               //console.log('Estado de tracknig actualizado exitosamente');
+
+              this.solTimeService.saveSolTime(
+                this.trTipoSolicitud, 
+                this.noSolTmp, 
+                this.cookieService.get('userIdNomina'), 
+                this.cookieService.get('userName'), 
+                10,
+                'Devolución'
+              );
+
+
               this.showmsj = true;
               const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel inicial.`;
               this.callMensaje(msjExito, true)

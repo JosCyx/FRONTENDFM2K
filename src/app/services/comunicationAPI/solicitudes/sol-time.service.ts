@@ -25,21 +25,22 @@ export class SolTimeService {
           this.APIUrl = this.globalService.getApiUrl();
           //console.log("Url impresa:", this.APIUrl);
           // Ahora puedes usar apiUrl de manera segura.
+          // Buscar el nombre del nivel de ruteo según el nivel traido como parámetro
+          this.nivelRuteo.getNivelruteo().subscribe(
+            (response) => {
+              //console.log("Niveles:", response);
+              this.nivelesRuteo = response;
+            },
+            (error) => {
+              console.log("Error al obtener el nombre del nivel de ruteo:", error);
+            }
+          );
+
         }
       }
     );
 
 
-    // Buscar el nombre del nivel de ruteo según el nivel traido como parámetro
-    this.nivelRuteo.getNivelruteo().subscribe(
-      (response) => {
-        //console.log("Niveles:", response);
-        this.nivelesRuteo = response;
-      },
-      (error) => {
-        console.log("Error al obtener el nombre del nivel de ruteo:", error);
-      }
-    );
 
   }
 
@@ -54,13 +55,13 @@ export class SolTimeService {
     });
   }
 
-  saveSolTime(tipoSol: number, noSol: number, id_emp: string, name_emp: string, nivel: number) {
+  saveSolTime(tipoSol: number, noSol: number, id_emp: string, name_emp: string, nivel: number, descRuteo: string) {
     let nivel_name = '';
 
     //buscar el nivel cuando coincida con el parametro nivel usando find()
     const nivelEncontrado = this.nivelesRuteo.find(n => n.nivel === nivel);
     nivel_name = nivelEncontrado.descRuteo;
-    
+
     // Obtener la fecha y la hora local en tu zona horaria
     const fechaLocal = new Date();
 
@@ -79,7 +80,8 @@ export class SolTimeService {
       solTmNivelRuteo: nivel,
       solTmNameRuteo: nivel_name,
       solTmFecha: fechaLocal,
-      solTmHora: horaFormateada
+      solTmHora: horaFormateada,
+      solTmRuteo: descRuteo
     };
 
     // Enviar los datos al servidor

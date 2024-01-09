@@ -41,7 +41,7 @@ export class TrackingService {
 
   generateTracking(data: any) {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.post(this.APIUrl + '/SolTrackings', data, { headers: headers });
+    return this.http.post(this.APIUrl + '/SolTrackings/GenerateTrk', data, { headers: headers });
   }
 
   getLastSolicitud(tipoSol: number): Observable<any> {
