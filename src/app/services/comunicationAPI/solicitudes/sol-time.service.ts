@@ -23,24 +23,21 @@ export class SolTimeService {
       (configLoaded) => {
         if (configLoaded) {
           this.APIUrl = this.globalService.getApiUrl();
+
+          this.nivelRuteo.getNivelruteo().subscribe(
+            (response) => {
+              //console.log("Niveles:", response);
+              this.nivelesRuteo = response;
+            },
+            (error) => {
+              console.log("Error al obtener el nombre del nivel de ruteo:", error);
+            }
+          );
           //console.log("Url impresa:", this.APIUrl);
           // Ahora puedes usar apiUrl de manera segura.
         }
       }
     );
-
-
-    // Buscar el nombre del nivel de ruteo según el nivel traido como parámetro
-    this.nivelRuteo.getNivelruteo().subscribe(
-      (response) => {
-        //console.log("Niveles:", response);
-        this.nivelesRuteo = response;
-      },
-      (error) => {
-        console.log("Error al obtener el nombre del nivel de ruteo:", error);
-      }
-    );
-
   }
 
   private getHeadersWithAuthToken(): HttpHeaders {
@@ -54,7 +51,7 @@ export class SolTimeService {
     });
   }
 
-  saveSolTime(tipoSol: number, noSol: number, id_emp: string, name_emp: string, nivel: number) {
+  saveSolTime(tipoSol: number, noSol: number, id_emp: string, name_emp: string, nivel: number, descRuteo: string) {
     let nivel_name = '';
 
     //buscar el nivel cuando coincida con el parametro nivel usando find()
@@ -79,7 +76,8 @@ export class SolTimeService {
       solTmNivelRuteo: nivel,
       solTmNameRuteo: nivel_name,
       solTmFecha: fechaLocal,
-      solTmHora: horaFormateada
+      solTmHora: horaFormateada,
+      solTmRuteo: descRuteo
     };
 
     // Enviar los datos al servidor

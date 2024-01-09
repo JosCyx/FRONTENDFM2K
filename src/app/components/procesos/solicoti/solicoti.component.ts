@@ -485,7 +485,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }
 
   //obtiene el valor de la ultima solicitud registrada y le suma 1 para asignar ese numero a la solicitud nueva
-  getLastSol(): Promise<number> {
+  /*getLastSol(): Promise<number> {
     return new Promise<number>((resolve, reject) => {
       this.solTrckService.getLastSolicitud(this.trTipoSolicitud).subscribe(
         (resultado) => {
@@ -504,17 +504,17 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         }
       );
     });
-  }
+  }*/
 
   guardarTrancking(): Promise<void> {
     return new Promise<void>(async (resolve, reject) => {
       try {
-        this.trLastNoSol = await this.getLastSol();
-        this.noSolTmp = this.trLastNoSol;
+        //this.trLastNoSol = await this.getLastSol();
+        //this.noSolTmp = this.trLastNoSol;
 
         const dataTRK = {
           solTrTipoSol: this.trTipoSolicitud,
-          solTrNumSol: this.trLastNoSol,
+          solTrNumSol: 0,
           solTrNivel: this.trNivelEmision,
           solTrIdEmisor: this.cookieService.get('userIdNomina'),
         };
@@ -527,6 +527,10 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
             this.sharedNoSol = this.responseTRK.solTrNumSol;
             this.sharedTipoSol = this.responseTRK.solTrTipoSol;
+
+            //GUARDA EL VALOR DEL NUMERO DE LA SOLICITUD
+            this.noSolTmp = this.responseTRK.solTrNumSol;
+            this.trLastNoSol = this.responseTRK.solTrNumSol;
 
             console.log('Tracking asignado: ', this.responseTRK.solTrNumSol);
             resolve();
@@ -591,7 +595,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           this.trLastNoSol, 
           this.cookieService.get('userIdNomina'), 
           this.cookieService.get('userName'), 
-          this.trNivelEmision
+          this.trNivelEmision,
+          'Envío'
         );
       },
       error => {
@@ -1736,7 +1741,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
                     this.noSolTmp, 
                     this.cookieService.get('userIdNomina'), 
                     this.cookieService.get('userName'), 
-                    0
+                    0,
+                    'Finalizado'
                   );
 
                   setTimeout(() => {
@@ -1792,7 +1798,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
                 this.noSolTmp, 
                 this.cookieService.get('userIdNomina'), 
                 this.cookieService.get('userName'), 
-                newEstado
+                newEstado,
+                'Envío'
               );
 
               //console.log("Solicitud enviada");
@@ -1893,6 +1900,16 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
       this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 9999).subscribe(
         (response) => {
+
+          this.solTimeService.saveSolTime(
+            this.trTipoSolicitud, 
+            this.noSolTmp, 
+            this.cookieService.get('userIdNomina'), 
+            this.cookieService.get('userName'), 
+            9999,
+            'Anulación'
+          );
+
           //console.log('Estado de tracknig actualizado exitosamente');
           exitotrk = true;
         },
@@ -1940,53 +1957,106 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         //console.log('Empleado: ', response);
         //guarda el email del empleado emisor de la solicitud
         mailToNotify = response[0].empleadoCorreo;
-      },
-      (error) => {
-        console.log('Error al obtener el empleado: ', error);
-      }
-    );
 
-    if (this.areaSolTmp == 12) {//si la solicitud es de area de operaciones sigue funcionando normal
-      //recorre la lista de niveles asignados a esa solicitud
-      for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
-        let niv = this.nivelRuteotoAut[i];
-        //si encuentra un nivel que coincida con el estado actual de la solicitud, actualiza el estado con el nivel anterior y envia el correo al que corresponda
-
-        if (niv.rutareaNivel == this.estadoTrkTmp) {
-          //extrae el nivel al que se va a retroceder la solicitud
-          let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
-          let newestadoSt = '';
-
-          //extrae el tipo de proceso del nivel al que se va a retroceder la solicitud
-          this.nivRuteService.getNivelInfo(newEstado).subscribe(
-            (response) => {
-              newestadoSt = response[0].procesoRuteo;
-              //console.log("tipo de proceso de nivel: ", newestadoSt);
-            },
-            (error) => {
-              console.log('Error al obtener el nuevo estado de tracking: ', error);
+        //devolver la solicitud solo cuando se haya recibido una respuesta de la peticion
+        if (this.areaSolTmp == 12) {//si la solicitud es de area de operaciones sigue funcionando normal
+          //recorre la lista de niveles asignados a esa solicitud
+          for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
+            let niv = this.nivelRuteotoAut[i];
+            //si encuentra un nivel que coincida con el estado actual de la solicitud, actualiza el estado con el nivel anterior y envia el correo al que corresponda
+    
+            if (niv.rutareaNivel == this.estadoTrkTmp) {
+              //extrae el nivel al que se va a retroceder la solicitud
+              let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
+              let newestadoSt = '';
+    
+              //extrae el tipo de proceso del nivel al que se va a retroceder la solicitud
+              this.nivRuteService.getNivelInfo(newEstado).subscribe(
+                (response) => {
+                  newestadoSt = response[0].procesoRuteo;
+                  //console.log("tipo de proceso de nivel: ", newestadoSt);
+                },
+                (error) => {
+                  console.log('Error al obtener el nuevo estado de tracking: ', error);
+                }
+              );
+    
+              //cambia el estado de la solicitud al nivel anterior
+              this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+                (response) => {
+                  this.solTimeService.saveSolTime(
+                    this.trTipoSolicitud, 
+                    this.noSolTmp, 
+                    this.cookieService.get('userIdNomina'), 
+                    this.cookieService.get('userName'), 
+                    newEstado,
+                    'Devolución'
+                  );
+                  //console.log('Estado de tracknig actualizado exitosamente');
+                  this.showmsj = true;
+                  const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel anterior.`;
+                  this.callMensaje(msjExito, true)
+    
+                  if (newEstado == 10) {
+                    //extraer el contenido del email correspondiente
+                    this.getMailContentSM(20, mailToNotify);
+    
+                  } else {
+    
+                    //extraer el contenido del email correspondiente
+                    this.getMailContentSN(21, newEstado, newestadoSt);
+                  }
+    
+    
+                  setTimeout(() => {
+                    this.clear();
+                    this.serviceGlobal.solView = 'crear';
+                    this.router.navigate(['allrequest']);
+                  }, 3000);
+                },
+                (error) => {
+                  console.log('Error al actualizar el estado: ', error);
+                  this.showmsjerror = true;
+                  const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
+                  this.callMensaje(msjError, false)
+                }
+              );
+              break;
             }
-          );
-
-          //cambia el estado de la solicitud al nivel anterior
-          this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+    
+          }
+        } else {//si no es del area de operaciones se regresa al nivel mas bajo y se notifica a todos los niveles saltados
+    
+          //regresar la solicitud al nivel 10 y notificar a todos los niveles anteriores
+          this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10).subscribe(
             (response) => {
               //console.log('Estado de tracknig actualizado exitosamente');
+              this.solTimeService.saveSolTime(
+                this.trTipoSolicitud, 
+                this.noSolTmp, 
+                this.cookieService.get('userIdNomina'), 
+                this.cookieService.get('userName'), 
+                10,
+                'Devolución'
+              );
+
               this.showmsj = true;
-              const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel anterior.`;
+              const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel inicial.`;
               this.callMensaje(msjExito, true)
-
-              if (newEstado == 10) {
-                //extraer el contenido del email correspondiente
-                this.getMailContentSM(20, mailToNotify);
-
-              } else {
-
-                //extraer el contenido del email correspondiente
-                this.getMailContentSN(21, newEstado, newestadoSt);
-              }
-
-
+    
+              this.getMailContentSM(20, mailToNotify);
+    
+              //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
+              setTimeout(() => {
+                for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
+                  let niv = this.nivelRuteotoAut[i];
+                  if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
+    
+                    this.getMailContentSN(22, niv.rutareaNivel, 'E');
+                  }
+                }
+              }, 300);
+    
               setTimeout(() => {
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
@@ -2000,49 +2070,16 @@ export class SolicotiComponent implements OnInit, OnDestroy {
               this.callMensaje(msjError, false)
             }
           );
-          break;
+    
         }
-
+    
+      },
+      (error) => {
+        console.log('Error al obtener el empleado: ', error);
       }
-    } else {//si no es del area de operaciones se regresa al nivel mas bajo y se notifica a todos los niveles saltados
+    );
 
-      //regresar la solicitud al nivel 10 y notificar a todos los niveles anteriores
-      this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10).subscribe(
-        (response) => {
-          //console.log('Estado de tracknig actualizado exitosamente');
-          this.showmsj = true;
-          const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel inicial.`;
-          this.callMensaje(msjExito, true)
-
-          this.getMailContentSM(20, mailToNotify);
-
-          //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
-          setTimeout(() => {
-            for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
-              let niv = this.nivelRuteotoAut[i];
-              if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
-
-                this.getMailContentSN(22, niv.rutareaNivel, 'E');
-              }
-            }
-          }, 300);
-
-          setTimeout(() => {
-            this.clear();
-            this.serviceGlobal.solView = 'crear';
-            this.router.navigate(['allrequest']);
-          }, 3000);
-        },
-        (error) => {
-          console.log('Error al actualizar el estado: ', error);
-          this.showmsjerror = true;
-          const msjError = "No se ha podido devolver la solicitud, intente nuevamente.";
-          this.callMensaje(msjError, false)
-        }
-      );
-
-    }
-
+    
   }
 
 
