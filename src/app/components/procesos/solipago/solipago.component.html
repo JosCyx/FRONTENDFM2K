@@ -1136,7 +1136,7 @@
                     </select>
                   </th>
                   <th scope="col">Subtotal</th>
-                  <th scope="col"></th>
+                  <th scope="col" *ngIf="showDltFactBTN"></th>
                 </tr>
               </thead>
               <tbody>
@@ -1145,6 +1145,7 @@
                   <td class="align-middle">{{ det.itemProd }}</td>
                   <td class="align-middle">{{ det.descProd }}</td>
                   <td class="align-middle" [ngClass]="{'invalid-det':det.checkC === false}"><input
+                      [disabled]="showDltFactBTN"
                       class="det-fact-input" type="number" [(ngModel)]="det.cantidad"
                       (input)="ValidarcantidadRe($event)" (input)="calculateSubtotalDet(det)" min="0"></td>
                   <td class="align-middle">$<input class="det-fact-input" type="number" [value]="det.valorUnitario"
@@ -1152,18 +1153,18 @@
                   <td class="align-middle">{{ $prefix }}
 
                     <input *ngIf="tipoDescuentoFact == 'x100'" class="det-fact-input" type="number"
-                      [(ngModel)]="det.descuento" (input)="ValidarcantidadRe($event)"
+                      [(ngModel)]="det.descuento" (input)="ValidarcantidadRe($event)" [disabled]="showDltFactBTN" 
                       (input)="calculateSubtotalDet(det)" min="0" max="100">
 
                     <input *ngIf="tipoDescuentoFact == 'cash'" class="det-fact-input" type="number"
-                      [(ngModel)]="det.descuento" (input)="validarNumero($event)" (input)="calculateSubtotalDet(det)"
-                      min="0">
+                      [(ngModel)]="det.descuento" (input)="validarNumero($event)" [disabled]="showDltFactBTN" 
+                      (input)="calculateSubtotalDet(det)" min="0">
 
                     {{ x100prefix }}
                   </td>
                   <td class="align-middle" [ngClass]="{'invalid-det':det.checkS === false}">$<input
-                      class="det-fact-input" type="number" [value]="det.subTotal" readonly></td>
-                  <td><a class="text-danger" (click)="deleteDetalleFactura(i)"><i class="bi bi-x-circle"></i></a></td>
+                    class="det-fact-input" type="number" [value]="det.subTotal" readonly></td>
+                  <td *ngIf="showDltFactBTN"><a class="text-danger" (click)="deleteDetalleFactura(i)"><i class="bi bi-x-circle"></i></a></td>
                 </tr>
                 <tr>
                   <td colspan="7" class="text-end">

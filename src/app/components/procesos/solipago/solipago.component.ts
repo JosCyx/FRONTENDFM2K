@@ -1009,9 +1009,10 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   valorTotalTMP: number = 0;
   detallesTmpforEdit: DetalleFactura[] = [];
 
+  showDltFactBTN: boolean = true;
   //SE EJECUTA AL DARLE CLICK A UNA FACTURA DE LA LISTA
   selectFactura(factura: Factura) {
-
+    this.showDltFactBTN = false;
     // Crear una copia superficial del objeto factura y asignarla a this.facturaTMP
     //this.facturaTMP = Object.freeze(Object.assign({}, factura));
 
@@ -2097,6 +2098,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       // Limpiar la cabecera del objeto factura
       this.clearFactura();
       this.checkTotal = false;
+      this.showVerifyTotal = false;
+
     }, 300);
     console.log('Lista de facturas: ', this.facturasList);
     console.log('lista de orden de compra: ', this.detalleFactDefault);
@@ -2188,12 +2191,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   }
 
   setProveedorFactura() {
+    this.showDltFactBTN = true;
     this.showVerifyTotal = true;
     this.factura.proveedor = this.cabecera.cabPagoProveedor;
     this.factura.provRuc = this.cabecera.cabPagoRucProveedor;
   }
 
   activeVerifyBtn() {
+    this.showVerifyTotal = true;
     this.showVerifyTotal = true;
     console.log("detalles default de select factura", this.detalleFactDefault)
   }
