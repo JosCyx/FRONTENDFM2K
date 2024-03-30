@@ -629,7 +629,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         this.callMensaje(msjExito, true);*/
         //this.AddDetSolPago();
         this.saveFacturas(this.solNumerico);
-        this.callMensaje('Solicitud de Pago Generada Exitosamente.', true);
+        
         this.saveOCValues();
 
         this.solTimeService.saveSolTime(
@@ -643,7 +643,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
         //controlar que este mensaje solo se muestre si todas las facturas se guardaron exitosamente con todos sus detalles
         if (this.correctSave) {
-          this.callMensaje(`Solicitud de Pago N°${this.solNumerico} editada exitosamente.`, true);
+          this.callMensaje(`Solicitud de Pago N°${this.solNumerico} generada exitosamente.`, true);
           //this.saveOCValues();
           setTimeout(() => {
             this.serviceGlobal.tipoSolBsq = 3;
@@ -1241,7 +1241,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       cabPagoMotivoDev: motivoDevolucion,
       cabPagoFrom: this.cabecera.cabPagoFrom,
       cabPagoIfDestino: ifDestino,
-      cabPagoType: 'new'
+      cabPagoType: this.cabecera.cabPagoType
     };
 
     this.cabPagoService
@@ -2195,9 +2195,12 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.showVerifyTotal = true;
     this.factura.proveedor = this.cabecera.cabPagoProveedor;
     this.factura.provRuc = this.cabecera.cabPagoRucProveedor;
+    this.factura.ordCompra = this.cabecera.cabPagoNoSolOC;
+    console.log("this.factura:", this.factura);
   }
 
   activeVerifyBtn() {
+    this.showDltFactBTN = true; 
     this.showVerifyTotal = true;
     this.showVerifyTotal = true;
     console.log("detalles default de select factura", this.detalleFactDefault)
@@ -2499,7 +2502,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
               //noDetalle: det.detFactNoDetalle, //guarda el numero de detalle de la factura
               this.facturasService.updateDetalleFactura(detalle.idFactura, detalle.noDetalle, detalleData).subscribe(
                 (response) => {
-                  console.log("Detalle de factura editada exitosamente");
+                  console.log("Detalle de factura editado exitosamente");
 
                   //this.callMensaje(`El detalle del producto "${detalle.descProd}" se guardó exitosamente.`, true);
                 },
@@ -2529,6 +2532,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   factDltEdit!: Factura;
   selectFacturaIDEdit(fact: Factura) {
     this.factDltEdit = fact;
+    console.log("factura a eliminar: ", this.factDltEdit);
   }
 
   //elimina la factura de la lista de facturas y cambia el estado de la factura a 0 para que no vuelva a aparecer
@@ -2549,7 +2553,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     this.sumTotalFacturas();
 
     //cambiar estado de la factura a 0
-    this.facturasService.changeEstadoFactura(this.factDltEdit.noSol, this.factDltEdit.noFactura, 0).subscribe(
+    this.facturasService.changeEstadoFactura(this.factDltEdit.noSol, this.factDltEdit.numero, 0).subscribe(
       (response) => {
         console.log("Estado de factura cambiado exitosamente");
         this.callMensaje(`La factura N° ${this.factDltEdit.numero} ha sido eliminada exitosamente.`, true);

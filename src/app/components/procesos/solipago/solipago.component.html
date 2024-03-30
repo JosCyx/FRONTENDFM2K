@@ -491,18 +491,20 @@
             </div>
           </div>
           <!--  -->
-          <!-- <div class="custom-row">
-            <div class="custom-input-group mb-1" style="width: 60%;">
-              <label class="custom-label">No factura:</label>
-              <input type="text" class="custom-input" placeholder="Ingrese el numero Factura"
-                [(ngModel)]="cabecera.cabPagoNumFactura" [appSecureDisable]="estadoSol" />
+          <ng-container *ngIf="cabecera.cabPagoType == 'legacy'">
+            <div class="custom-row">
+              <div class="custom-input-group mb-1" style="width: 60%;">
+                <label class="custom-label">No factura:</label>
+                <input type="text" class="custom-input" placeholder="Ingrese el numero Factura"
+                  [(ngModel)]="cabecera.cabPagoNumFactura" [appSecureDisable]="estadoSol" />
+              </div>
+              <div class="custom-input-group  mb-1" style="width: 40%;">
+                <label class="custom-label">Fecha de Factura:</label>
+                <input type="date" class="custom-input" [max]="FechaMaxEntrega(cabecera.cabPagoFechaFactura)"
+                  [(ngModel)]="cabecera.cabPagoFechaFactura" [appSecureDisable]="estadoSol" />
+              </div>
             </div>
-            <div class="custom-input-group  mb-1" style="width: 40%;">
-              <label class="custom-label">Fecha de Factura:</label>
-              <input type="date" class="custom-input" [max]="FechaMaxEntrega(cabecera.cabPagoFechaFactura)"
-                [(ngModel)]="cabecera.cabPagoFechaFactura" [appSecureDisable]="estadoSol" />
-            </div>
-          </div> -->
+          </ng-container>
           <div class="custom-row mb-1">
             <div class="custom-input-group ">
               <select name="" class="custom-input" style="background-color: #d6d6d6" [(ngModel)]="tipobusqueda"
@@ -604,7 +606,7 @@
                   <th scope="col">Proveedor</th>
                   <th scope="col">Ruc del proveedor</th>
                   <th scope="col">Monto total</th>
-                  <th scope="col"></th>
+                  <th scope="col" *ngIf="estadoSol == '10'"></th>
                 </tr>
               </thead>
               <tbody>
@@ -627,10 +629,10 @@
                   <td class="align-middle cel-prep" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
                     {{fact.valorTotal}}
                   </td>
-                  <td><a class="text-danger" data-toggle="modal" data-target="#eliminarFacturaEdicion"
+                  <td *ngIf="estadoSol == '10'"><a class="text-danger" data-toggle="modal" data-target="#eliminarFacturaEdicion"
                       (click)="selectFacturaIDEdit(fact)"><i class="bi bi-x-circle"></i></a></td>
                 </tr>
-                <tr>
+                <tr *ngIf="estadoSol == '10'">
                   <td class="align-middle text-end" colspan="7">
                     <button *ngIf="showNewFactBTN" class="btn btn-primary" data-toggle="modal" data-target="#detallesFactura" (click)="setProveedorFactura()">Agregar nueva factura</button>
                   </td>
@@ -968,7 +970,7 @@
         </h3>
       </div>
       <div class="modal-body">
-        <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente nivel.</p>
+        <p>Al enviar la solicitud no podrá volver a editarla y pasará al siguiente nivel.</p>
 
       </div>
       <div class="modal-footer">
@@ -1088,11 +1090,11 @@
             <div class="custom-input-group">
               <label class="custom-label">No. factura:</label>
               <input type="text" class="custom-input" placeholder="Ingrese el número de la factura"
-                [(ngModel)]="factura.numero" (keyup)="updateCabeceraFact()"/>
+                [(ngModel)]="factura.numero" (keyup)="updateCabeceraFact()" [readOnly]="estadoSol  != '10'"/>
             </div>
             <div class="custom-input-group">
               <label class="custom-label">Fecha de Factura:</label>
-              <input type="date" class="custom-input" [(ngModel)]="factura.fecha" />
+              <input type="date" class="custom-input" [(ngModel)]="factura.fecha" [readOnly]="estadoSol  != '10'" />
             </div>
           </div>
 
@@ -1117,7 +1119,7 @@
             <div class="custom-input-group">
               <label class="custom-label">Monto total:</label>
               <input type="number" class="custom-input" (input)="validarNumero($event)" min="1"
-                [(ngModel)]="factura.valorTotal">
+                [(ngModel)]="factura.valorTotal" readonly>
             </div>
           </div>
           <div class="factura-content">
@@ -1145,7 +1147,7 @@
                   <td class="align-middle">{{ det.itemProd }}</td>
                   <td class="align-middle">{{ det.descProd }}</td>
                   <td class="align-middle" [ngClass]="{'invalid-det':det.checkC === false}"><input
-                      [disabled]="showDltFactBTN"
+                      [readonly]="!showDltFactBTN"
                       class="det-fact-input" type="number" [(ngModel)]="det.cantidad"
                       (input)="ValidarcantidadRe($event)" (input)="calculateSubtotalDet(det)" min="0"></td>
                   <td class="align-middle">$<input class="det-fact-input" type="number" [value]="det.valorUnitario"
@@ -1153,11 +1155,11 @@
                   <td class="align-middle">{{ $prefix }}
 
                     <input *ngIf="tipoDescuentoFact == 'x100'" class="det-fact-input" type="number"
-                      [(ngModel)]="det.descuento" (input)="ValidarcantidadRe($event)" [disabled]="showDltFactBTN" 
+                      [(ngModel)]="det.descuento" (input)="ValidarcantidadRe($event)" [readonly]="!showDltFactBTN" 
                       (input)="calculateSubtotalDet(det)" min="0" max="100">
 
                     <input *ngIf="tipoDescuentoFact == 'cash'" class="det-fact-input" type="number"
-                      [(ngModel)]="det.descuento" (input)="validarNumero($event)" [disabled]="showDltFactBTN" 
+                      [(ngModel)]="det.descuento" (input)="validarNumero($event)" [readonly]="!showDltFactBTN" 
                       (input)="calculateSubtotalDet(det)" min="0">
 
                     {{ x100prefix }}

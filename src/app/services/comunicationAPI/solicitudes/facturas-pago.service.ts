@@ -59,7 +59,7 @@ export class FacturasPagoService {
     return this.http.put(this.APIUrl + `/FacturaSolPagoes/UpdateDetalleFactura?idFacDet=${idFacDet}&noDet=${noDet}`, data, { headers: headers });
   }
 
-  changeEstadoFactura(noSol: number | undefined, noFact: number | undefined, estado: number) {
+  changeEstadoFactura(noSol: number | undefined, noFact: string | undefined, estado: number) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/FacturaSolPagoes/ChangeEstadoFactura?noSol=${noSol}&noFact=${noFact}&estado=${estado}`, { headers: headers });
   }

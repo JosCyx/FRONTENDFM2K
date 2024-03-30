@@ -38,7 +38,7 @@
                 <a class="nav-link" [ngClass]="{'active': actionCreate === 'creacion'}"
                     (click)="selectCreateAction('creacion')">Creación</a>
             </li>
-            <li class="nav-item" *ngIf="showDoc">
+            <li class="nav-item" >
                 <a class="nav-link" [ngClass]="{'active': actionCreate === 'documentacion'}"
                     (click)="selectCreateAction('documentacion')">Documentación</a>
             </li>
@@ -246,6 +246,7 @@
                     <option value="Kilos">Kilos</option>
                     <option value="Gramos">Gramos</option>
                     <option value="Caneca">Caneca</option>
+                    <option value="Galon">Galón</option>
                   </select>
                 </td>
                 <td class="align-middle cel-prep">
@@ -280,7 +281,7 @@
       </div>
 
         <div class="foot-cabecera">
-          <div class="form-floating mb-3">
+          <!-- <div class="form-floating mb-3">
             <input
               type="text"
               class="form-control"
@@ -301,7 +302,19 @@
               placeholder="Materiales y procedimientos a seguir:"
             />
             <label for="floatingInput">Observaciones:</label>
-          </div>
+          </div> -->
+          <div class=" mb-3" >
+            <label for="floatingInput" style="color: rgba(0, 0, 0, 0.5);">Materiales y procedimientos a seguir:</label>
+            <textarea style="max-height: 300px;" class="form-control" id="floatingInput" rows="3"
+                [(ngModel)]="cab_proc"
+                [appSecureDisable]="estadoSol" placeholder=""></textarea>
+        </div>
+        <div class=" mb-3" >
+            <label for="floatingInput" style="color: rgba(0, 0, 0, 0.5);">Observaciones:</label>
+            <textarea style="max-height: 300px;" class="form-control" id="floatingInput" rows="3"
+                [(ngModel)]="cab_obsrv"
+                [appSecureDisable]="estadoSol" placeholder=""></textarea>
+        </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Adjunto cotizaciones:</label>
             <select class="form-select" [(ngModel)]="cab_adjCot"  (change)="setNoSolDocumentacion()">
@@ -325,7 +338,6 @@
               class="form-control"
               type="date"
               for="plazoentrega"
-              [max]="fechaMax" [min]="fechaMin" 
               [(ngModel)]="cab_plazo"
             />
             <label class="input-group-text">Fecha máxima de entrega*:</label>
@@ -333,7 +345,6 @@
               class="form-control"
               type="date"
               for="fechamaxima"
-              [max]="fechaMax" [min]="fechaMinPlazo"
               [(ngModel)]="cab_fechaMax"
             />
           </div>
@@ -678,7 +689,6 @@
                 <h2>Autorización de solicitud</h2>
                 <div class="text-center">
                     <div class="row buttons-ruteo">
-
                         <ng-container *appAuthorize="'55'">
                           <button *ngIf="setMotivo == 'NO' && estadoSol == lastNivel"
                               class="btn btn-success col m-2" data-toggle="modal"
@@ -691,6 +701,10 @@
                       </ng-container>
                         <button *appAuthorize="'58'" class="btn btn-warning col m-2"  data-toggle="modal" data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>
                         <button *appAuthorize="'61'" class="btn btn-danger col m-2" data-toggle="modal" data-target="#anularSolicitud" [appSecureDisable]="estadoSol">Anular</button>
+                    </div>
+                    <div class="sin-presp" *appAuthorize="'78'">
+                        <p>Falta de presupuesto</p>
+                        <mat-slide-toggle color="primary" [checked]="checkedToggle" (change)="changeToggleButton($event)"></mat-slide-toggle>
                     </div>
                 </div> 
             </div>
@@ -759,6 +773,7 @@
                     <option value="Kilos">Kilos</option>
                     <option value="Gramos">Gramos</option>
                     <option value="Caneca">Caneca</option>
+                    <option value="Galon">Galón</option>
                   </select>
                 </td>
                 <td class="align-middle">
@@ -818,6 +833,7 @@
                     <option value="Kilos">Kilos</option>
                     <option value="Gramos">Gramos</option>
                     <option value="Caneca">Caneca</option>
+                    <option value="Galon">Galón</option>
                   </select>
                 </td>
                 <td class="align-middle cel-prep">
@@ -848,29 +864,18 @@
         </div>
         <!-- * -->
         <div class="foot-cabecera">
-          <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              [appSecureDisable]="estadoSol"
-              [(ngModel)]="cabecera.cabSolOCProcedimiento"
-              
-            />
-            <label for="floatingInput"
-              >Materiales y procedimientos a seguir:</label
-            >
-          </div>
-          <div class="form-floating mb-3">
-            <input
-              type="text"
-              class="form-control"
-              id="floatingInput"
-              [(ngModel)]="cabecera.cabSolOCObervaciones"
-              [appSecureDisable]="estadoSol"
-            />
-            <label for="floatingInput">Observaciones:</label>
-          </div>
+          <div class=" mb-3" >
+            <label for="floatingInput" style="color: rgba(0, 0, 0, 0.5);">Materiales y procedimientos a seguir:</label>
+            <textarea style="max-height: 300px;" class="form-control" id="floatingInput" rows="5"
+                [(ngModel)]="cabecera.cabSolOCProcedimiento"
+                [appSecureDisable]="estadoSol" placeholder=""></textarea>
+        </div>
+        <div class=" mb-3" >
+            <label for="floatingInput" style="color: rgba(0, 0, 0, 0.5);">Observaciones:</label>
+            <textarea style="max-height: 300px;" class="form-control" id="floatingInput" rows="5"
+                [(ngModel)]="cabecera.cabSolOCObervaciones"
+                [appSecureDisable]="estadoSol" placeholder=""></textarea>
+        </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Adjunto cotizaciones:</label>
             <select class="form-control" [(ngModel)]="cabecera.cabSolOCAdjCot" [appSecureDisable]="estadoSol">
@@ -1552,7 +1557,7 @@
                 </h3>
             </div>
             <div class="modal-body">
-                <p>Al enviar la solicitud no podrá volver a editarla y pasará al sugiente nivel.</p>
+                <p>Al enviar la solicitud no podrá volver a editarla y pasará al siguiente nivel.</p>
                
             </div>
             <div class="modal-footer">

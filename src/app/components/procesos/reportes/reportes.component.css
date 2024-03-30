@@ -1,0 +1,61 @@
+.container {
+    width: 70%;
+    margin: 0 auto;
+    padding-top: 120px;
+    padding-bottom: 50px;
+}
+
+.form-tiposol {
+    width: 65%;
+    margin: 0 auto;
+    padding-top: 15px;
+}
+
+.custom-input-group {
+    display: flex;
+    align-items: center;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    width: 75%; 
+    margin: 0 auto;
+    padding-bottom: 10px;
+}
+
+.custom-label {
+    color: #000000;
+    margin: 0;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: #d6d6d6;
+    border-right: 1px solid #ced4da;
+    border-radius: 0.25rem 0 0 0.25rem;
+    flex-shrink: 0; 
+    white-space: nowrap; 
+    height: 39px;
+
+}
+
+.custom-input {
+    color: black;
+    flex-grow: 1;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    background-color: #fff;
+    border: solid 0.1px rgba(0, 0, 0, 0.541);
+    border-radius: 0 0.25rem 0.25rem 0;
+
+}
+
+input:active, input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.param-div{
+    width: 90%;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #acacac;
+}

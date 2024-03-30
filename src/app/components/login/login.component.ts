@@ -118,7 +118,7 @@ export class LoginComponent implements OnInit{
             console.log("Error 400:", error)
             this.loading = false;
             this.showmsjerror = true;
-            this.msjError = 'La contraseña no coincide.';
+            this.msjError = error.error;
 
             setTimeout(() => {
               this.showmsjerror = false;
@@ -150,6 +150,7 @@ export class LoginComponent implements OnInit{
     this.authService.getAuthorization(this.cookieService.get('userLogin')).subscribe(
       response => { 
         this.cookieService.set('userTransactions', response.toString());
+        console.log("Transacciones: ", this.cookieService.get('userTransactions'));
       },
       error => {
         console.log(error);

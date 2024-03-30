@@ -41,9 +41,10 @@ import { OCDocumentacionComponent } from './components/procesos/solioc/oc-docume
 import { SPDocumentacionComponent } from './components/procesos/solipago/sp-documentacion/sp-documentacion.component';
 import { AppAuthorizeTransactionDirective } from './directives/app-authorize-transaction.directive';
 import { AppDisableSecureDirective } from './directives/app-disable-secure.directive';
+import { MainNominaComponent } from './nomina/components/main/main-nomina/main-nomina.component';
+import { SendNominaRolComponent } from './nomina/components/procesos/send-nomina-rol/send-nomina-rol.component';
+import { MenuNominaComponent } from './components/templates/menu-nomina/menu-nomina.component';
 
-import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes-aprobadas/solicitudes-aprobadas.component';
-import { SolicitudesNoAprobadasComponent } from './components/procesos/solicitudes-no-aprobadas/solicitudes-no-aprobadas.component';
 import { SpDestinoComponent } from './components/procesos/solipago/sp-destino/sp-destino.component';
 import { RolesTransacComponent } from './components/seguridad/roles-transac/roles-transac.component';
 import { RolesUsersComponent } from './components/seguridad/roles-users/roles-users.component';
@@ -55,8 +56,18 @@ import { OcPdfComponent } from './components/procesos/solioc/oc-pdf/oc-pdf.compo
 import { SpPdfComponent } from './components/procesos/solipago/sp-pdf/sp-pdf.component';
 import { EmpleadoNivelComponent } from './components/seguridad/empleado-nivel/empleado-nivel.component';
 import { DialogComponentComponent } from './components/templates/dialog-component/dialog-component.component';
+import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes-aprobadas/solicitudes-aprobadas.component';
 import { DialogServiceService } from './services/dialog-service.service';
+import { ReportesComponent } from './components/procesos/reportes/reportes.component';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatInputModule } from '@angular/material/input';
 
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [
@@ -86,8 +97,6 @@ import { DialogServiceService } from './services/dialog-service.service';
     SPDocumentacionComponent,
     AppAuthorizeTransactionDirective,
     AppDisableSecureDirective,
-    SolicitudesAprobadasComponent,
-    SolicitudesNoAprobadasComponent,
     SpDestinoComponent,
     RolesTransacComponent,
     RolesUsersComponent,
@@ -99,6 +108,11 @@ import { DialogServiceService } from './services/dialog-service.service';
     SpPdfComponent,
     EmpleadoNivelComponent,
     DialogComponentComponent,
+    ReportesComponent,
+    SolicitudesAprobadasComponent,
+    MainNominaComponent,
+    SendNominaRolComponent,
+    MenuNominaComponent,
     
   ],
   imports: [
@@ -111,7 +125,15 @@ import { DialogServiceService } from './services/dialog-service.service';
     NgxPaginationModule,
     MatButtonModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSlideToggleModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule,
+    MatCardModule
   ],
   providers: [AuthService, MatDialog, DialogServiceService],
   bootstrap: [AppComponent]

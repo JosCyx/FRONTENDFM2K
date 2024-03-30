@@ -4,28 +4,29 @@ import { Observable } from 'rxjs';
 import { HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { GlobalService } from '../../global.service';
+
 @Injectable({
   providedIn: 'root'
 })
-export class ParamsConfigService {
-
-   APIUrl = this.globalService.APIUrl;
+export class NominaRolService {
+  APIUrl = this.globalService.APIUrl;
 
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
     private globalService: GlobalService
-  ) { 
+  ) {
     this.globalService.getConfigLoadedObservable().subscribe(
       (configLoaded) => {
         if (configLoaded) {
           this.APIUrl = this.globalService.getApiUrl();
-          //console.log("Url impresa:", this.APIUrl);
+          //console.log("Url nomina service:", this.APIUrl);
           // Ahora puedes usar apiUrl de manera segura.
         }
       }
     );
-  }
+   }
+
   private getHeadersWithAuthToken(): HttpHeaders {
     // Obtiene el token de la cookie
     const authToken = this.cookieService.get('authToken');
@@ -33,17 +34,25 @@ export class ParamsConfigService {
     // Define las cabeceras de la solicitud con el token
     return new HttpHeaders({
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${authToken}`,
+      'Authorization': `Bearer ${authToken}`
     });
   }
 
-  getParamsByIdentity(identify: string): Observable<any[]> {
+
+  getNominaRolList(fecha: any): Observable<any[]> {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get<any>(`${this.APIUrl}/ParamsConfs/GetPrambyIdentify?identify=${identify}`,{ headers: headers });
+    return this.http.get<any>(`${this.APIUrl}/Nomina/GetRolNominabyFecha?fecha=${fecha}` , { headers: headers });
   }
 
-  getParamsSearch(): Observable<any[]>{
+  sendRolNomina(fecha: any): Observable<any[]> {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get<any>(`${this.APIUrl}/ParamsConfs/GetParamsSearch`,{ headers: headers });
+    return this.http.post<any>(`${this.APIUrl}/Nomina/SendMailPdf?fechaRol=${fecha}` , { headers: headers });
   }
+
+  sendOnePdf(fecha: any, ruc: any): Observable<any[]> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post<any>(`${this.APIUrl}/Nomina/SendOnePdf?fechaRol=${fecha}&ruc=${ruc}` , { headers: headers });
+  }
+
 }
+

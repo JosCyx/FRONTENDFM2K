@@ -10,6 +10,7 @@ import { CabOrdCompraService } from 'src/app/services/comunicationAPI/solicitude
 import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
 import { GlobalService } from 'src/app/services/global.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
+import { SolTimeService } from 'src/app/services/comunicationAPI/solicitudes/sol-time.service';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
@@ -53,7 +54,8 @@ export class OcPdfComponent implements OnInit {
     private areaService: AreasService,
     private nivRuteService: NivelRuteoService,
     private prespService: PresupuestoService,
-    private sectService: SectoresService
+    private sectService: SectoresService,
+    private solTimeService: SolTimeService
   ) {}
 
   ngOnInit(): void {
@@ -100,8 +102,13 @@ export class OcPdfComponent implements OnInit {
     try {
       this.traerdatos();
       this.cabOCService.getOrdenComprabyId(this.solID).subscribe({
-        next: (resp: any) => {
+        next: async (resp: any) => {
           this.datosCabOC = resp;
+
+          if(this.datosCabOC.cabecera.cabSolOCEstadoTracking >= 50){
+            this.datosCabOC.cabecera.cabSolOCFecha = await this.getFechaCompras();
+          }
+  
           //console.log('este es mi daros ', this.datosCabOC);
           this.traerEmpleado();
           this.TraerArea();
@@ -559,6 +566,22 @@ export class OcPdfComponent implements OnInit {
   traerdatos() {
     this.convertImageToDataUrl(this.Imagen).then((dataurl) => {
       this.copiaImgen = dataurl;
+    });
+  }
+
+  async getFechaCompras(): Promise<Date> {
+  
+    return new Promise<Date>((resolve, reject) => {
+      this.solTimeService.getFechabyNivel(this.datosCabOC.cabecera.cabSolOCTipoSolicitud, this.datosCabOC.cabecera.cabSolOCNoSolicitud, 50).subscribe({
+        next: (res) => {
+          console.log('Respuesta:', res);
+          resolve(new Date(res)); // Resuelve la promesa con la fecha obtenida
+        },
+        error: (err) => {
+          console.error('Error:', err);
+          reject(err); // Rechaza la promesa en caso de error
+        },
+      });
     });
   }
 }

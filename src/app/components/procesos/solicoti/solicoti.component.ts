@@ -472,7 +472,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }
 
   getSolName(noSol: number) {
+    console.log("numero de solicitud:",noSol);
     const noSolString = noSol.toString();
+    console.log("numero de solicitud string:",noSolString);
     const paddedNoSol = noSolString.padStart(6, '0');
     this.solNumerico = `COT ${this.areaNmco} ${this.trTipoSolicitud}-${paddedNoSol}`;
   }
@@ -507,6 +509,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }*/
 
   guardarTrancking(): Promise<void> {
+    console.log("guardar tracking");
     return new Promise<void>(async (resolve, reject) => {
       try {
         //this.trLastNoSol = await this.getLastSol();
@@ -520,7 +523,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         };
 
 
-        //console.log("1. guardando tracking: ", dataTRK);
+        console.log("1. guardando tracking: ", dataTRK);
         this.solTrckService.generateTracking(dataTRK).subscribe(
           (response: any) => {
             this.responseTRK = response?.solTrTipoSol && response?.solTrNumSol ? response : { solTrTipoSol: 0, solTrNumSol: 0 };
@@ -536,11 +539,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
             resolve();
           },
           (error) => {
-            //console.log("Error al guardar el tracking: ", error);
+            console.log("Error http al guardar el tracking: ", error);
             reject(error);
           }
         );
       } catch (error) {
+        console.error('Error del try al guardar el tracking:', error);
         reject(error);
       }
     });
@@ -634,7 +638,6 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     try {
       //recorre las listas de items y detalles y los envia a la api
       this.saveDetItem();
-
       this.getSolName(this.trLastNoSol);
       this.showmsj = true;
       const msjExito = `Solicitud N° ${this.solNumerico} generada exitosamente.`;
@@ -2266,11 +2269,11 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     );
   }
   FechaMaxEntrega(fechas: string) {
-    let fecha = new Date(fechas);
+    /*let fecha = new Date(fechas);
     fecha.setMonth(fecha.getMonth() + 6)
     let Fechatrans = this.formatDateToYYYYMMDD(fecha)
     return Fechatrans
-    // return fechaMax;
+    // return fechaMax;*/
   }
   EliminarCotiza(TipoSolicitud: number, noSolTmp: number) {
     console.log("esto ya estan eliminado", TipoSolicitud, noSolTmp)

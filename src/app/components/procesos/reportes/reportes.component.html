@@ -1,0 +1,37 @@
+<app-menu></app-menu>
+<div class="container">
+    <h2 class="font-weight-bolt ruteo">Generar reporte de solicitudes</h2>
+
+    <!--  -->
+    <div class="formReport">
+        <form class="form-tiposol d-flex row mb-5">
+
+            <div style="display: flex; flex-direction: column; margin-bottom: 30px;">
+                <label class="form-label" for="tipoSol">Seleccione los parámetros para consultar</label>
+                <select class="form-select" name="tipoSol" (change)="selectParametro()" [(ngModel)]="selectedParam">
+                    <option disabled selected value="0">Seleccione una opción...</option>
+                    <ng-container *ngFor="let p of paramsListSearch">
+                        <option [value]="p.paramSearchValue">{{ p.paramSearchName }}</option>
+                    </ng-container>
+                </select>
+            </div>
+            <div class="param-div" >
+                <ng-container *ngFor="let parametro of paramsList">
+                    <div class="custom-input-group ">
+                        <label class="custom-label">{{ parametro.name}}:</label>
+                        <input type="text" class="custom-input" [(ngModel)]="parametro.value" />
+                    </div>
+                </ng-container>
+            </div>
+
+        </form>
+        <div class="mb-1 text-end">
+            <button class="pagination-btnl primary-button mr-2">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <button class=" pagination-btnr primary-button">
+                <i class="bi bi-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</div>

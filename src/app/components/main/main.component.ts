@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/services/authentication/auth.service';
 import { AppAuthorizeTransactionDirective } from 'src/app/directives/app-authorize-transaction.directive';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
+import { AplicacionesService } from 'src/app/services/comunicationAPI/seguridad/aplicaciones.service';
 
 @Component({
   selector: 'app-main',
@@ -14,6 +15,8 @@ import { DialogServiceService } from 'src/app/services/dialog-service.service';
 })
 export class MainComponent implements OnInit {
   userName: string = this.cookieService.get('userName');
+
+  appList: any[] = [];
 
   constructor(private globalService: GlobalService,
     private router: Router,
@@ -46,6 +49,14 @@ export class MainComponent implements OnInit {
 
   goAdmin(): void {
     this.router.navigate(['mainsec']);
+  }
+
+  goNomina(){
+    this.router.navigate(['mainnom']);
+  }
+
+  goComInt(){
+    
   }
 
   clearCookies() {

@@ -10,6 +10,7 @@ import { GlobalService } from 'src/app/services/global.service';
 import { format, parseISO } from 'date-fns';
 import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
+import { SolTimeService } from 'src/app/services/comunicationAPI/solicitudes/sol-time.service';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
 interface SolicitudData {
@@ -58,6 +59,7 @@ export class CotPdfComponent implements OnInit {
     private nivRuteService: NivelRuteoService,
     private prespService: PresupuestoService,
     private sectService: SectoresService,
+    private solTimeService: SolTimeService
   ) {}
   ngOnInit(): void {
     setTimeout(() => {
@@ -95,9 +97,14 @@ export class CotPdfComponent implements OnInit {
     clickpdf() {
       this.traerdatos();
       this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
-      next: (res) => {
+      next: async (res) => {
         this.datosCabcot = res;
-        //console.log("esto son mismos",this.datosCabcot)
+
+        if(this.datosCabcot.cabecera.cabSolCotEstadoTracking >= 50){
+          this.datosCabcot.cabecera.cabSolCotFecha = await this.getFechaCompras();
+        }
+
+        console.log("solicitud de cotizacion",this.datosCabcot)
           this.traerEmpleado();
           this.TraerArea();
           this.EstadoTracking();
@@ -395,6 +402,23 @@ export class CotPdfComponent implements OnInit {
 
     return `${year}-${month}-${day}`;
   }
+
+  async getFechaCompras(): Promise<Date> {
+  
+    return new Promise<Date>((resolve, reject) => {
+      this.solTimeService.getFechabyNivel(this.datosCabcot.cabecera.cabSolCotTipoSolicitud, this.datosCabcot.cabecera.cabSolCotNoSolicitud, 50).subscribe({
+        next: (res) => {
+          console.log('Respuesta:', res);
+          resolve(new Date(res)); // Resuelve la promesa con la fecha obtenida
+        },
+        error: (err) => {
+          console.error('Error:', err);
+          reject(err); // Rechaza la promesa en caso de error
+        },
+      });
+    });
+  }
+
   traerEmpleado() {
     for (let emp of this.empleadosEdit) {
       if (

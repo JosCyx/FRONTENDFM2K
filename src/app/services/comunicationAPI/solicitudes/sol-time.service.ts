@@ -102,4 +102,10 @@ export class SolTimeService {
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(this.APIUrl + '/SolicitudesTimes', data, { headers: headers });
   }
+
+  getFechabyNivel(tiposol: number, nosol: number, nivel: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + `/SolicitudesTimes/GetFechabyNivel?tipoSol=${tiposol}&noSol=${nosol}&nivel=${nivel}`, { headers: headers });
+    
+  }
 }

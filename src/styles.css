@@ -218,3 +218,8 @@ a:hover {
 .modal{
   z-index: 1500 !important;
 }
+
+/*modificar valor de variable --mdc-circular-progress-active-indicator-color*/
+.mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic {
+  stroke: white !important;
+}

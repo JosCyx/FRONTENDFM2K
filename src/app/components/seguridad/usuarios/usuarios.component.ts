@@ -67,6 +67,7 @@ export class UsuariosComponent {
       usNombre: this.newNombre,
       usIdNomina: this.newNomina,
       usEstado: this.newEstado,
+      usActivo: 1,
       usFechaInicio: this.formatDateToYYYYMMDD(this.newFechaInicio),
       usFechaCaduca: this.formatDateToYYYYMMDD(
         this.CalcularFechaFin(this.newFechaInicio)
@@ -292,6 +293,7 @@ export class UsuariosComponent {
 
   editUsuario() {
     if (this.newPass != '' && this.boolenanPass == true) {
+      const usActivo = this.newEstado == 'A' ? 1 : 0;
       const editData: any = {
         usId: this.newUserId,
         usEmpresa: 1,
@@ -300,6 +302,7 @@ export class UsuariosComponent {
         usNombre: this.newNombre,
         usIdNomina: this.newNomina,
         usEstado: this.newEstado,
+        usActivo: usActivo,
         usFechaInicio: this.formatDateToYYYYMMDD(new Date()),
         usFechaCaduca: this.formatDateToYYYYMMDD(
           this.CalcularFechaFin(new Date())

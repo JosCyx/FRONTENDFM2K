@@ -12,9 +12,10 @@ import { CabCotizacionService } from 'src/app/services/comunicationAPI/solicitud
 import { CabOrdCompraService } from 'src/app/services/comunicationAPI/solicitudes/cab-ord-compra.service';
 import { CabPagoService } from 'src/app/services/comunicationAPI/solicitudes/cab-pago.service';
 import { CookieService } from 'ngx-cookie-service';
-import { max, parse } from 'date-fns';
+import { max, parse, sub } from 'date-fns';
 import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes/niv-gerencia.service';
 import { SendEmailService } from 'src/app/services/comunicationAPI/solicitudes/send-email.service';
+import { SolTimeService } from 'src/app/services/comunicationAPI/solicitudes/sol-time.service';
 
 
 
@@ -74,7 +75,8 @@ export class AllrequestComponent implements OnInit {
     private cabPagoService: CabPagoService,
     private cookieService: CookieService,
     private emplNivService: NivGerenciaService,
-    private globalService: GlobalService) { }
+    private globalService: GlobalService,
+    private solTimeService: SolTimeService) { }
 
   ngOnInit(): void {
     setTimeout(() => {
@@ -192,7 +194,7 @@ export class AllrequestComponent implements OnInit {
     let listaRoles = this.cookieService.get('userRolNiveles').split(',').map(Number);
     var maxNivel = Math.max(...listaRoles);
 
-    if (maxNivel == 10) {
+    if (maxNivel >= 10 && maxNivel < 20) {
       this.metodoBusq = 1;
     } else if (maxNivel >= 20 && maxNivel <= 40) {
       this.metodoBusq = 2;
@@ -216,6 +218,51 @@ export class AllrequestComponent implements OnInit {
     this.allSol.sort((a, b) => b.cabPagoNoSolicitud - a.cabPagoNoSolicitud);
   }
 
+  setFechaCot(): void{
+    console.log("entro a setFechaCot");
+    for(let sol of this.allSol){
+      this.solTimeService.getFechabyNivel(sol.cabSolCotTipoSolicitud,sol.cabSolCotNoSolicitud,sol.cabSolCotEstadoTracking).subscribe(
+        response => {
+          sol.cabSolCotFecha = response;
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
+  }
+
+  setFechaOC(): void{
+    console.log("entro a setFechaOC");
+    for(let sol of this.allSol){
+      //console.log("SOLICITUD:", sol.cabSolOCNoSolicitud);
+      this.solTimeService.getFechabyNivel(sol.cabSolOCTipoSolicitud,sol.cabSolOCNoSolicitud,sol.cabSolOCEstadoTracking).subscribe(
+        response => {
+          sol.cabSolOCFecha = response;
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
+    
+  }
+
+  setFechaPago(): void{
+    console.log("entro a setFechaPago");
+    for(let sol of this.allSol){
+      this.solTimeService.getFechabyNivel(sol.cabPagoTipoSolicitud,sol.cabPagoNoSolicitud,sol.cabPagoEstadoTrack).subscribe(
+        response => {
+          sol.cabPagoFecha = response;
+        },
+        error => {
+          console.log(error);
+        }
+      )
+    }
+    
+  }
+
 
   //CONSULTA TODAS LAS SOLICITUDES DEPENDIENDO DEL METODO DE BUSQUEDA DEL USUARIO
   getAllCotizaciones(): void {
@@ -225,6 +272,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           // console.log("Exito: ", response);
           this.allSol = response.filter(item => item.cabSolCotValido == 1);
+          this.setFechaCot();
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
           this.allSoltmp = this.allSol;
@@ -239,6 +287,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response.filter(item => item.cabSolCotValido == 1);
+          this.setFechaCot();
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
           this.allSoltmp = this.allSol;
@@ -253,6 +302,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response.filter(item => item.cabSolCotValido == 1);
+          this.setFechaCot();
           this.reorderCotizaciones();
           this.saveEncargadoCotizacion();
           this.allSoltmp = this.allSol;
@@ -271,6 +321,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response.filter(item => item.cabSolOCValido == 1);
+          this.setFechaOC();
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
           this.allSoltmp = this.allSol;
@@ -285,6 +336,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response.filter(item => item.cabSolOCValido == 1);
+          this.setFechaOC();
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
           this.allSoltmp = this.allSol;
@@ -301,6 +353,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response.filter(item => item.cabSolOCValido == 1);
+          this.setFechaOC();
           this.reorderOrdenCompra();
           this.saveEncargadoOrdenCompra();
           this.allSoltmp = this.allSol;
@@ -320,6 +373,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response.filter(item => item.cabPagoValido == 1);
+          this.setFechaPago();
           this.reorderOrdenPago();
           this.saveEncargadoPago();
           this.allSoltmp = this.allSol;
@@ -334,6 +388,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response.filter(item => item.cabPagoValido == 1);
+          this.setFechaPago();
           this.reorderOrdenPago();
           this.saveEncargadoPago();
           this.allSoltmp = this.allSol;
@@ -349,6 +404,7 @@ export class AllrequestComponent implements OnInit {
         response => {
           //console.log("Exito: ", response);
           this.allSol = response.filter(item => item.cabPagoValido == 1);
+          this.setFechaPago();
           this.reorderOrdenPago();
           this.saveEncargadoPago();
           this.allSoltmp = this.allSol;
@@ -389,7 +445,12 @@ export class AllrequestComponent implements OnInit {
   async saveEncargadoCotizacion() {
     for (const sol of this.allSol) {
       try {
-        const encargado = await this.setEncargado(sol.cabSolCotSolicitante, sol.cabSolCotEstadoTracking, sol.cabSolCotIdDept);
+        let encargado: string | null= '';
+        if(sol.cabSolCotEstadoTracking == 51){
+          encargado = 'JENNYFER ZULETA'
+        } else {
+          encargado = await this.setEncargado(sol.cabSolCotSolicitante, sol.cabSolCotEstadoTracking, sol.cabSolCotIdDept);
+        }
         sol.encargado = encargado; // Agrega la nueva propiedad "encargado" al elemento de allSol
       } catch (error) {
         console.error("Error al obtener el encargado para la solicitud:", error);
@@ -402,7 +463,12 @@ export class AllrequestComponent implements OnInit {
   async saveEncargadoOrdenCompra() {
     for (const sol of this.allSol) {
       try {
-        const encargado = await this.setEncargado(sol.cabSolOCSolicitante, sol.cabSolOCEstadoTracking, sol.cabSolOCIdDept);
+        let encargado: string | null= '';
+        if(sol.cabSolOCEstadoTracking == 51){
+          encargado = 'JENNYFER ZULETA'
+        } else {
+          encargado = await this.setEncargado(sol.cabSolOCSolicitante, sol.cabSolOCEstadoTracking, sol.cabSolOCIdDept);
+        }
         sol.encargado = encargado; // Agrega la nueva propiedad "encargado" al elemento de allSol
       } catch (error) {
         console.error("Error al obtener el encargado para la solicitud:", error);
@@ -415,7 +481,12 @@ export class AllrequestComponent implements OnInit {
   async saveEncargadoPago() {
     for (const sol of this.allSol) {
       try {
-        const encargado = await this.setEncargado(sol.cabPagoSolicitante, sol.cabPagoEstadoTrack, sol.cabPagoIdDeptSolicitante);
+        let encargado: string | null= '';
+        if(sol.cabPagoEstadoTrack == 52){
+          encargado = 'JOSÉ ANDRÉS ALVAREZ'
+        } else {
+          encargado = await this.setEncargado(sol.cabPagoSolicitante, sol.cabPagoEstadoTrack, sol.cabPagoIdDeptSolicitante);
+        }
         sol.encargado = encargado; // Agrega la nueva propiedad "encargado" al elemento de allSol
       } catch (error) {
         console.error("Error al obtener el encargado para la solicitud:", error);
@@ -523,6 +594,9 @@ export class AllrequestComponent implements OnInit {
         this.allSol = this.allSol.filter(item => item.cabSolCotAsunto.toLowerCase().includes(this.bsqContenido));
       } else if (this.tipoBusqueda == 'num') {
         this.allSol = this.allSol.filter(item => item.cabSolCotNumerico.toLowerCase().includes(this.bsqContenido));
+      } else if (this.tipoBusqueda == 'trk'){
+        const nivel = this.BuscarNivel();
+        this.allSol = this.allSol.filter(item => item.cabSolCotEstadoTracking == nivel);
       }
     } else if (this.bsqTipoSol == 2) {
       this.allSol = this.allSoltmp;
@@ -539,6 +613,10 @@ export class AllrequestComponent implements OnInit {
         this.allSol = this.allSol.filter(item => item.cabSolOCAsunto.toLowerCase().includes(this.bsqContenido));
       } else if (this.tipoBusqueda == 'num') {
         this.allSol = this.allSol.filter(item => item.cabSolOCNumerico.toLowerCase().includes(this.bsqContenido));
+      } else if (this.tipoBusqueda == 'trk'){
+        console.log("buscar nivel");
+        const nivel = this.BuscarNivel();
+        this.allSol = this.allSol.filter(item => item.cabSolOCEstadoTracking == nivel);
       }
     } else if (this.bsqTipoSol == 3) {
       this.allSol = this.allSoltmp;
@@ -556,8 +634,21 @@ export class AllrequestComponent implements OnInit {
         this.allSol = this.allSol.filter(item => item.cabPagoAsunto.toLowerCase().includes(this.bsqContenido));
       } else if (this.tipoBusqueda == 'num') {
         this.allSol = this.allSol.filter(item => item.cabPagoNumerico.toLowerCase().includes(this.bsqContenido));
+      } else if (this.tipoBusqueda == 'trk'){
+        const nivel = this.BuscarNivel();
+        this.allSol = this.allSol.filter(item => item.cabPagoEstadoTrack == nivel);
       }
     }
+  }
+
+  BuscarNivel(){
+    const bsqContenido = this.bsqContenido.toUpperCase().trim();
+
+    //buscar el numero del nivel que su nombre coincida con bsqcontenido
+    //console.log("lista de niveles:", this.nivProceso, "busqueda:", bsqContenido)
+    const nivelCoincidente = this.nivProceso.filter(element => element.descRuteo.toUpperCase().includes(bsqContenido));
+    console.log("nivelCoincidente", nivelCoincidente);
+    return nivelCoincidente[0].nivel;
   }
 
   BuscarArea() {

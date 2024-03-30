@@ -1,0 +1,125 @@
+<app-menu-nomina></app-menu-nomina>
+<div class="container">
+  <h2 class="font-weight-bolt ruteo">ENVÍO DE ROLES</h2>
+
+  <div class="date-selector">
+    <div class="input-groupc mb-3">
+      <span class="input-group-textc" id="basic-addon1">Fecha:</span>
+      <input type="date" class="form-control date-inputc" [(ngModel)]="fechaConsulta">
+    </div>
+
+    <div>
+      <button class="custom-material-button" (click)="consultarNomina()" *appAuthorize="'76'">
+        <ng-container *ngIf="!loading">Consultar</ng-container>
+        <mat-spinner *ngIf="loading" [diameter]="25"></mat-spinner>
+      </button>
+    </div>
+  </div>
+
+  <div class="busqueda">
+    <div class="input-busqueda">
+
+      <div class="input-groupc mb-3">
+        <span class="input-group-textc" id="basic-addon1">Buscar:</span>
+        <input type="text" class="form-control date-inputc" placeholder="Escriba el nombre de empleado"
+          [(ngModel)]="nameBusqueda">
+      </div>
+    </div>
+    <div class="boton-busqueda">
+      <button class="custom-material-button btnc" (click)="resetSearch()"><i class="bi bi-arrow-clockwise"></i></button>
+      <button class="custom-material-button btnc" (click)="searchbyName()"><i class="bi bi-search"></i></button>
+    </div>
+  </div>
+
+  <div class="content-table mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef> Fecha </th>
+        <td mat-cell *matCellDef="let element"> {{element.fecha}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> Identificación </th>
+        <td mat-cell *matCellDef="let element"> {{element.ruc}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Empleado </th>
+        <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="send">
+        <th mat-header-cell *matHeaderCellDef> Enviado </th>
+        <td mat-cell *matCellDef="let element"> {{element.enviado}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="senddate">
+        <th mat-header-cell *matHeaderCellDef> Fecha de envío </th>
+        <td mat-cell *matCellDef="let element"> {{element.fechaEnvio}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="sendno">
+        <th mat-header-cell *matHeaderCellDef> N° envíos </th>
+        <td mat-cell *matCellDef="let element"> {{element.numEnvios}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="sendto">
+        <th mat-header-cell *matHeaderCellDef> Enviado a </th>
+        <td mat-cell *matCellDef="let element"> {{element.correoEnviado}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="resend">
+        <th mat-header-cell *matHeaderCellDef> Reenviar</th>
+        <td mat-cell *matCellDef="let element">
+          <button class="custom-material-button" (click)="sendOnePdf(element)" [disabled]="loadingo">
+            <ng-container *ngIf="!loadingo"><i class="bi bi-reply-fill"></i></ng-container>
+            <mat-spinner color="primary" *ngIf="element.spinner" [diameter]="25"></mat-spinner>
+          </button>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="sendOK">
+        <th mat-header-cell *matHeaderCellDef> Resultado </th>
+        <td mat-cell *matCellDef="let element"> {{element.resultadoEnvio}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr class="mat-row-custom" mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator #paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+      aria-label="Select page of periodic elements"></mat-paginator>
+
+  </div>
+  <div style="display: flex; justify-content: end; padding-top: 20px;" *appAuthorize="'77'">
+    <button class="custom-material-button" *ngIf="consulted" (click)="sendAllNomina()" [disabled]="loadingc">
+      <ng-container *ngIf="!loadingc">Enviar correos</ng-container>
+      <mat-spinner color="basic" *ngIf="loadingc" [diameter]="25"></mat-spinner>
+    </button>
+  </div>
+
+  <div class="content-table mat-elevation-z8" *ngIf="failMail.length != 0">
+    <h3 class="fail-label">Envíos fallidos</h3>
+    <table mat-table [dataSource]="failMail">
+
+      <ng-container matColumnDef="emp">
+        <th mat-header-cell *matHeaderCellDef> Empleado </th>
+        <td mat-cell *matCellDef="let element"> {{element.empleado}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Correo </th>
+        <td mat-cell *matCellDef="let element"> {{element.correo}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="message">
+        <th mat-header-cell *matHeaderCellDef> Mensaje </th>
+        <td mat-cell *matCellDef="let element"> {{element.errorMessage}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns2"></tr>
+      <tr class="mat-row-custom" mat-row *matRowDef="let row; columns: displayedColumns2;"></tr>
+    </table>
+
+  </div>
+</div>

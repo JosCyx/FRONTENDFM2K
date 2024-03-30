@@ -29,6 +29,7 @@ import { NivGerenciaService } from 'src/app/services/comunicationAPI/solicitudes
 import { SharedService } from 'src/app/services/shared.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { SolTimeService } from 'src/app/services/comunicationAPI/solicitudes/sol-time.service';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -50,7 +51,12 @@ interface SolicitudData {
   templateUrl: './solioc.component.html',
   styleUrls: ['./solioc.component.css'],
 })
+
+//AGREGAR PROPIEDAD "SIN PRESUPUESTO" A LA CABECERA DE LA SOLICITUD
 export class SoliocComponent implements OnInit, OnDestroy {
+  checkedToggle: boolean = false;
+  cabSolSinPresupuesto: number = 0;
+
   responseTRK: ResponseTrack = { solTrTipoSol: 0, solTrNumSol: 0 };
   empleado: string = '';
   inspector: string = '';
@@ -602,7 +608,8 @@ export class SoliocComponent implements OnInit, OnDestroy {
       cabSolOCAprobPresup: 'SI',
       cabSolOCMotivoDev: 'NOHAYMOTIVO',
       cabSolOCValorAprobacion: this.cab_valorAprobacion,
-      cabSolOCValido: 1
+      cabSolOCValido: 1,
+      cabSolOCSinPresupuesto: 0
     };
 
     //enviar datos de cabecera a la API
@@ -1018,9 +1025,32 @@ export class SoliocComponent implements OnInit, OnDestroy {
     }
   }
 
+  changeToggleButton(event: MatSlideToggleChange) {
+    this.checkedToggle = event.checked;
+
+    if (this.checkedToggle) {
+      this.cabSolSinPresupuesto = 1;
+    } else {
+      this.cabSolSinPresupuesto = 0;
+    }
+
+    this.cabOCService.updateSinPresupuesto(2, this.cabecera.cabSolOCNoSolicitud, this.cabSolSinPresupuesto).subscribe(
+      response => {
+        console.log('Sin presupuesto actualizado.');
+        this.callMensaje('Se ha modificado el indicador correctamente.',true);
+      },
+      error => {
+        console.log('Error al actualizar el estado de sin presupuesto: ', error);
+        this.callMensaje('Ha habido un error al actualizar el estado de sin presupuesto, por favor intente de nuevo.',false);
+      }
+    );
+
+    console.log('Toggle:', this.checkedToggle, this.cabSolSinPresupuesto);
+  }
+
+
   showEdicionItem: boolean = true;
   async saveData() {
-    
     //guardar los datos de la lista solicitud edit en los objetos cabecera, detalle e item
     this.cabecera = this.solicitudEdit.cabecera;
     this.sharedTipoSol=this.cabecera.cabSolOCTipoSolicitud;
@@ -1033,6 +1063,7 @@ export class SoliocComponent implements OnInit, OnDestroy {
     this.cabecera.cabSolOCAprobPresup = this.cabecera.cabSolOCAprobPresup.trim();
     this.numeroSolicitudEmail = this.cabecera.cabSolOCNumerico;
     this.tipoSolicitudEmail = 'Orden de Compra';
+    this.checkedToggle = this.cabecera.cabSolOCSinPresupuesto === 1 ? true : false;
     this.getNombreNivel(this.cabecera.cabSolOCEstadoTracking);
 
     this.checkAprobPrep(this.cabecera.cabSolOCEstadoTracking);
@@ -1311,9 +1342,10 @@ export class SoliocComponent implements OnInit, OnDestroy {
       cabSolOCAprobPresup: aprobPresp,
       cabSolOCMotivoDev: motivoDevolucion,
       cabSolOCValorAprobacion: this.cabecera.cabSolOCValorAprobacion,
-      cabSolOCValido: this.cabecera.cabSolOCValido
+      cabSolOCValido: this.cabecera.cabSolOCValido,
+      cabSolOCSinPresupuesto: this.cabecera.cabSolOCSinPresupuesto,
     };
-    //* Enviar datos para actualizar en tabla cab_sol_orden_compra
+    //Enviar datos para actualizar en tabla cab_sol_orden_compra
     //console.log('2. guardando solicitud...', dataCAB);
     this.cabOCService
       .updateOrdencompra(this.cabecera.cabSolOCID, dataCAB)

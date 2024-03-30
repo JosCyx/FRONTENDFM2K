@@ -1,5 +1,6 @@
 {
     "conventionalCommits.scopes": [
         "(Add variables Method and functions)"
-    ]
+    ],
+    "liveServer.settings.multiRootWorkspaceName": "FRONTENDFM2K (con facturas)"
 }

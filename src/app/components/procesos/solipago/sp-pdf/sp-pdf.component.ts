@@ -8,12 +8,15 @@ import { GlobalService } from 'src/app/services/global.service';
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
 import { NivelRuteoService } from 'src/app/services/comunicationAPI/seguridad/nivel-ruteo.service';
+import { SolTimeService } from 'src/app/services/comunicationAPI/solicitudes/sol-time.service';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
 interface SP {
   cabecera: any;
   detalles: any;
+  facturas: any;
+  detalleFacturas: any;
 }
 @Component({
   selector: 'app-sp-pdf',
@@ -35,24 +38,28 @@ export class SpPdfComponent implements OnInit {
   NivelRuta: any[] = [];
   combinarObJ: any = [];
 
-  Imagen:string='assets/img/icon.png';
-  copiaImgen:string='';
+  Imagen: string = 'assets/img/icon.png';
+  copiaImgen: string = '';
+
+  showFactInfo: boolean = false;
+  facturasInfo: any = [];
 
   constructor(
     private serviceGlobal: GlobalService,
     private cabPagoService: CabPagoService,
     private empService: EmpleadosService,
     private areaService: AreasService,
-    private nivRuteService: NivelRuteoService
-  ) {}
+    private nivRuteService: NivelRuteoService,
+    private solTimeService: SolTimeService
+  ) { }
 
   ngOnInit(): void {
     setTimeout(() => {
-      
+
       this.empService.getEmpleadosList().subscribe((data) => {
         this.empleadoedit = data;
       });
-  
+
       this.areaService.getAreaList().subscribe((data) => {
         this.area = data;
       });
@@ -69,17 +76,33 @@ export class SpPdfComponent implements OnInit {
     try {
       this.traerdatos();
       this.cabPagoService.getSolPagobyId(this.solID).subscribe({
-        next: (response) => {
+        next: async (response) => {
           this.datosSP = response;
-          //console.log("Cambios esto son",this.datosSP);
+
+          if(this.datosSP.cabecera.cabPagoEstadoTrack >= 50){
+            this.datosSP.cabecera.cabPagoFechaEmision = await this.getFechaCompras();
+          }
+
+          console.log("mostrar info factura: ", this.showFactInfo)
+          console.log("solicitud:", this.datosSP);
           this.traerEmpleado();
           this.traerRecibe();
           this.TraerArea();
           this.EstadoTracking();
-          this.retornarTabla();
+          if (this.datosSP.cabecera.cabPagoType == 'legacy') {
+            console.log("Solicitud antigua")
+            //carga los detalles de la solicitud de pago y muestra la info de la factura especifica
+            this.retornarTabla();
+            this.setFacturasInfo();
+          } else if (this.datosSP.cabecera.cabPagoType == 'new') {
+            console.log("Solicitud nueva")
+            //formatea las facturas si la solicitud es nueva
+            this.formatearFacturasPdf();
+            this.formatearDetalleFacturasPdf();
+          }
           this.Aprobado();
           //console.log('esta es mi respuesta', this.datosSP);
-          
+
           const PDFSP: any = {
             content: [
               {
@@ -126,21 +149,7 @@ export class SpPdfComponent implements OnInit {
                       { text: this.areas, colSpan: 2 },
                       '',
                     ],
-                    [
-                      { text: 'NO DE FACTURA ', style: 'tableHeader' },
-                      {
-                        text: this.datosSP.cabecera.cabPagoNumFactura,
-                        
-                      },
-                      { text: 'FECHA DE FACTURA', style: 'tableHeader'  },
-                      
-                      {
-                        text: (this.datosSP.cabecera.cabPagoFechaFactura === null ? 'Sin fecha' :  format(
-                          parseISO(this.datosSP.cabecera.cabPagoFechaFactura),'yyyy-MM-dd')),
-                        colSpan: 2,
-                      },
-                      '',
-                    ],
+                    ...this.facturasInfo,
                     [
                       { text: 'PROVEEDOR', style: 'tableHeader' },
                       { text: this.datosSP.cabecera.cabPagoProveedor },
@@ -160,7 +169,7 @@ export class SpPdfComponent implements OnInit {
                     ],
                     [
                       { text: 'APROBADO POR ', style: 'tableHeader' },
-                      { text: this.datosSP.cabecera.cabPagoApprovedBy},
+                      { text: this.datosSP.cabecera.cabPagoApprovedBy },
                       { text: 'SOLICITUD ASOCIADA ', style: 'tableHeader' },
                       { text: this.datosSP.cabecera.cabPagoNoSolOC, colSpan: 2 },
                       ''
@@ -172,16 +181,8 @@ export class SpPdfComponent implements OnInit {
                 margin: [0, 5, 0, 0],
                 fontSize: 10,
                 table: {
-                  widths: [30, 120, 120, 70, 60, 56],
+                  widths: this.widths,
                   body: [
-                    [
-                      { text: 'N°', style: 'tableHeader' },
-                      { text: 'ITEM', style: 'tableHeader' },
-                      { text: 'CANTIDAD CONTRATADA', style: 'tableHeader' },
-                      { text: 'CANTIDAD RECIBIDA', style: 'tableHeader' },
-                      { text: 'VALOR UNITARO', style: 'tableHeader' },
-                      { text: 'SUBTOTAL', style: 'tableHeader' },
-                    ],
                     ...this.combinarObJ,
                     [
                       '',
@@ -189,7 +190,7 @@ export class SpPdfComponent implements OnInit {
                       '',
                       '',
                       { text: 'TOTAL' },
-                      { text: this.datosSP.cabecera.cabpagototal },
+                      { text: this.datosSP.cabecera.cabPagoValorTotalAut },
                     ],
                     [
                       {
@@ -262,8 +263,8 @@ export class SpPdfComponent implements OnInit {
                       },
                       '',
                       {
-                        text: (this.datosSP.cabecera.cabPagoFechaInspeccion === null ? 'Sin fecha' :  format(
-                          parseISO(this.datosSP.cabecera.cabPagoFechaInspeccion),'yyyy-MM-dd')),
+                        text: (this.datosSP.cabecera.cabPagoFechaInspeccion === null ? 'Sin fecha' : format(
+                          parseISO(this.datosSP.cabecera.cabPagoFechaInspeccion), 'yyyy-MM-dd')),
                       },
                     ],
                     [
@@ -299,6 +300,19 @@ export class SpPdfComponent implements OnInit {
                       '',
                     ],
                   ],
+                },
+              },
+              ////////////////DETALLES DE FACTURAS/////////////////////
+              this.cabeceraDetallesFact,
+              {
+                fontSize: 10,
+                table: {
+                  body: [
+                    this.cabeceraDetalles
+                    ,
+                    ...this.detallesFact
+                  ],
+
                 },
               },
             ],
@@ -411,7 +425,10 @@ export class SpPdfComponent implements OnInit {
       }
     }
   }
+
+  widths: any = [];
   retornarTabla() {
+    this.widths = [30, 120, 120, 70, 60, 56];
     const item = this.datosSP.detalles.sort(
       (a: any, b: any) => a.detPagoIdDetalle - b.detPagoIdDetalle
     );
@@ -425,10 +442,21 @@ export class SpPdfComponent implements OnInit {
         detPagoSubtotal: item.detPagoSubtotal,
       };
     });
+
+    const cab = [
+      { text: 'N°', style: 'tableHeader' },
+      { text: 'ITEM', style: 'tableHeader' },
+      { text: 'CANTIDAD CONTRATADA', style: 'tableHeader' },
+      { text: 'CANTIDAD RECIBIDA', style: 'tableHeader' },
+      { text: 'VALOR UNITARO', style: 'tableHeader' },
+      { text: 'SUBTOTAL', style: 'tableHeader' },
+    ];
+    this.combinarObJ.push(cab);
+
     let detPagoIdDetalle = 1;
     for (let index = 0; index < datosDetalles.length; index++) {
       const {
-        
+
         detPagoItemDesc,
         detPagoCantContratada,
         detPagoCantRecibida,
@@ -446,6 +474,128 @@ export class SpPdfComponent implements OnInit {
       this.combinarObJ.push(datos);
     }
   }
+
+
+  ////////////////////////////////////////////////////FORMATEAR FACTURAS//////////////////////////////////////////
+  formatearFacturasPdf() {
+
+    this.widths = [75, 75, 80, 80, 90, 56];
+
+    const factura = this.datosSP.facturas;
+    //eliminar "T00:00:00" de las fechas
+
+
+    let facturasList = factura.map((item: any) => {
+      return {
+        factSpId: item.factSpId,
+        factSpNumOrdenCompra: item.factSpNumOrdenCompra,
+        factSpNumFactura: item.factSpNumFactura,
+        factSpFechaFactura: item.factSpFechaFactura.substring(0, 10),
+        factSpRucProvFactura: item.factSpRucProvFactura,
+        factSpProvFactura: item.factSpProvFactura,
+        factSpMontoFactura: item.factSpMontoFactura
+      };
+    });
+
+    const cab = [
+      { text: 'OC', style: 'tableHeader' },
+      { text: 'N° FACTURA', style: 'tableHeader' },
+      { text: 'FECHA', style: 'tableHeader' },
+      { text: 'RUC', style: 'tableHeader' },
+      { text: 'PROVEEDOR', style: 'tableHeader' },
+      { text: 'MONTO', style: 'tableHeader' },
+    ];
+    //guarda el objeto de la cabecera en el array
+    this.combinarObJ.push(cab);
+
+    for (let index = 0; index < facturasList.length; index++) {
+      const {
+        factSpId,
+        factSpNumOrdenCompra,
+        factSpNumFactura,
+        factSpFechaFactura,
+        factSpRucProvFactura,
+        factSpProvFactura,
+        factSpMontoFactura
+      } = facturasList[index];
+      const datos = [
+        { text: factSpNumOrdenCompra },
+        { text: factSpNumFactura },
+        { text: factSpFechaFactura },
+        { text: factSpRucProvFactura },
+        { text: factSpProvFactura },
+        { text: factSpMontoFactura },
+      ];
+
+      //guarda las listas de facturas en el array
+      this.combinarObJ.push(datos);
+
+      //por cada factura guardada va a buscar los detalles de la factura y guardarlos en el array
+      const detalleFactura = this.datosSP.detalleFacturas;
+
+      let detalleFacturaList = detalleFactura.map((item: any) => {
+        return {
+          detFactIdFactura: item.detFactIdFactura,
+          detFactIdProducto: item.detFactIdProducto,
+          detFactDescpProducto: item.detFactDescpProducto,
+          detFactCantProducto: item.detFactCantProducto,
+          detFactValorUnit: item.detFactValorUnit,
+          detFactDescuento: item.detFactDescuento,
+          detFactTotal: item.detFactTotal
+        };
+      });
+
+      for (let index = 0; index < detalleFacturaList.length; index++) {
+
+        const {
+          detFactIdProducto,
+          detFactDescpProducto,
+          detFactCantProducto,
+          detFactValorUnit,
+          detFactDescuento,
+          detFactTotal
+        } = detalleFacturaList[index];
+
+        if (detalleFacturaList[index].detFactIdFactura == factSpId) {
+          const datos = [
+            { text: factSpNumFactura },
+            { text: detFactDescpProducto },
+            { text: detFactCantProducto },
+            { text: detFactValorUnit },
+            { text: detFactDescuento },
+            { text: detFactTotal },
+          ];
+          this.detallesFact.push(datos);
+        }
+
+      }
+    }
+  }
+
+  detallesFact: any = [];
+  cabeceraDetalles: any = []
+  cabeceraDetallesFact: any = {};
+
+  formatearDetalleFacturasPdf() {
+    this.cabeceraDetalles = [
+      { text: 'FACTURA', bold: true },
+      { text: 'DESCRIPCION', bold: true },
+      { text: 'CANTIDAD', bold: true },
+      { text: 'PRECIO UNITARIO', bold: true },
+      { text: 'DESCUENTO', bold: true },
+      { text: 'SUBTOTAL', bold: true }
+    ]
+
+    this.cabeceraDetallesFact = {
+      margin: [0, 10, 0, 0],
+      text: 'Detalles de facturas',
+      bold: true,
+      alignment: 'center',
+      pageBreak: 'before',
+      widths: [30, 120, 120, 70, 60, 56],
+    }
+  }
+
   // this.datosSP.cabecera.cabPagoCancelacionOrden
   CancelarOrden(orden: string): string {
     switch (orden) {
@@ -457,8 +607,8 @@ export class SpPdfComponent implements OnInit {
         return ''; // Manejo por defecto si el valor no es A, F o C
     }
   }
-  Aprobado(){
-    if (this.datosSP.cabecera.cabPagoApprovedBy === 'XXXXXX' ) {
+  Aprobado() {
+    if (this.datosSP.cabecera.cabPagoApprovedBy === 'XXXXXX') {
       //console.log('entro', this.datosSP.cabecera.cabPagoApprovedBy);
       this.datosSP.cabecera.cabPagoApprovedBy = 'NIVEL NO ALCANZADO';
     } else {
@@ -474,7 +624,7 @@ export class SpPdfComponent implements OnInit {
     }
   }
   clear() {
-    this.datosSP = { cabecera: {}, detalles: [] };
+    this.datosSP = { cabecera: {}, detalles: [], facturas: [], detalleFacturas: [] };
     this.combinarObJ = [];
   }
   async convertImageToDataUrl(imagePath: string): Promise<string> {
@@ -501,4 +651,31 @@ export class SpPdfComponent implements OnInit {
   }
 
 
+  //setea la informacion de las facturas en la tabla
+  setFacturasInfo(){
+    this.facturasInfo = [[
+      { text: 'NO DE FACTURA ', style: 'tableHeader' },
+      { text: this.datosSP.cabecera.cabPagoNumFactura },
+      { text: 'FECHA DE FACTURA', style: 'tableHeader', visible: this.showFactInfo },
+      { text: (this.datosSP.cabecera.cabPagoFechaFactura === null ? 'Sin fecha' : format(parseISO(this.datosSP.cabecera.cabPagoFechaFactura), 'yyyy-MM-dd')),
+        colSpan: 2 },
+      '',
+    ]]
+  }
+
+  async getFechaCompras(): Promise<Date> {
+  
+    return new Promise<Date>((resolve, reject) => {
+      this.solTimeService.getFechabyNivel(this.datosSP.cabecera.cabPagoTipoSolicitud, this.datosSP.cabecera.cabPagoNoSolicitud, 50).subscribe({
+        next: (res) => {
+          console.log('Respuesta:', res);
+          resolve(new Date(res)); // Resuelve la promesa con la fecha obtenida
+        },
+        error: (err) => {
+          console.error('Error:', err);
+          reject(err); // Rechaza la promesa en caso de error
+        },
+      });
+    });
+  }
 }

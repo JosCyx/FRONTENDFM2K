@@ -33,15 +33,18 @@
             <option value="area">Area</option>
             <option value="asunto">Asunto</option>
             <option value="num">Código</option>
+            <option value="trk">Nivel de tracking</option>
           </select>
           <input *ngIf="tipoBusqueda == 'emp'" type="text" list="sugerenciasemp" class="custom-form-control"
-            placeholder="Buscar por empleado" [(ngModel)]="bsqContenido" />
+            placeholder="Buscar por empleado" [(ngModel)]="bsqContenido" name="empleado"/>
           <input *ngIf="tipoBusqueda == 'area'" type="text" list="sugerenciasarea" class="custom-form-control"
-            placeholder="Buscar por area" [(ngModel)]="bsqContenido" />
+            placeholder="Buscar por area" [(ngModel)]="bsqContenido" name="area"/>
           <input *ngIf="tipoBusqueda == 'asunto'" type="text" class="custom-form-control" placeholder="Buscar por asunto"
-            [(ngModel)]="bsqContenido" />
+            [(ngModel)]="bsqContenido" name="asunto"/>
           <input *ngIf="tipoBusqueda == 'num'" type="text" class="custom-form-control" placeholder="Buscar por numero"
-            [(ngModel)]="bsqContenido" />
+            [(ngModel)]="bsqContenido" name="numero"/>
+            <input *ngIf="tipoBusqueda == 'trk'" type="text" class="custom-form-control" placeholder="Buscar por nivel"
+            [(ngModel)]="bsqContenido" name="traking"/>
           <button style="border-radius: 0px;" class="custom-btn success-button-outline" type="button" (click)="filtrarSolicitudes()">Buscar</button>
           <button style="border-radius: 0 5px 5px 0; padding: 10px;" class="custom-btn success-button" (click)="clearBusqueda()">
             <i class="bi bi-arrow-clockwise"></i>
@@ -73,51 +76,6 @@
         </button>
       </div>
     </div>
-    
-
-
-    <!-- <div class="align-items-center input-group mb-3 justify-content-between">
-    
-      <div>
-        <div class="input-group">
-          <label class="input-group-text">Filtrar por:</label>
-          <select class="form-select" name="busqueda" [(ngModel)]="tipoBusqueda">
-            <option value="emp">Empleado</option>
-            <option value="area">Area</option>
-            <option value="asunto">Asunto</option>
-            <option value="num">Código</option>
-          </select>
-          <input *ngIf="tipoBusqueda == 'emp'" type="text" list="sugerenciasemp" class="form-control"
-            placeholder="Buscar por empleado" [(ngModel)]="bsqContenido" />
-          <input *ngIf="tipoBusqueda == 'area'" type="text" list="sugerenciasarea" class="form-control"
-            placeholder="Buscar por area" [(ngModel)]="bsqContenido" />
-          <input *ngIf="tipoBusqueda == 'asunto'" type="text" class="form-control" placeholder="Buscar por asunto"
-            [(ngModel)]="bsqContenido" />
-          <input *ngIf="tipoBusqueda == 'num'" type="text" class="form-control" placeholder="Buscar por numero"
-            [(ngModel)]="bsqContenido" />
-          <button class="btn btn-outline-success" type="button" (click)="filtrarSolicitudes()">Buscar</button>
-          <button  class="btn btn-success" (click)="clearBusqueda()"><i class="bi bi-arrow-clockwise"></i></button>
-        </div>
-      </div>
-      <datalist id="sugerenciasemp">
-        <ng-container *ngFor="let emp of empleados">
-          <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
-        </ng-container>
-      </datalist>
-      <datalist id="sugerenciasarea">
-        <ng-container *ngFor="let area of areas">
-          <option [value]="area.areaDecp"></option>
-        </ng-container>
-      </datalist>
-      <div>
-        <button class="btn btn-primary mr-1" (click)="prevPage()">
-          <i class="bi bi-arrow-left"></i>
-        </button>
-        <button class="btn btn-primary" (click)="nextPage()">
-          <i class="bi bi-arrow-right"></i>
-        </button>
-      </div>
-    </div> -->
 
 
 
@@ -209,7 +167,8 @@
               </td>
               <ng-container *ngFor="let trck of trckList$ | async">
                 <td class="align-middle" *ngIf="trck.nivel === sol.cabSolOCEstadoTracking">
-                  {{ trck.descRuteo }}
+                  {{ trck.descRuteo }}<span *ngIf="sol.cabSolOCSinPresupuesto == 1">
+                    <br><strong>Sin presupuesto</strong></span>                
                 </td>
               </ng-container>
               <td class="align-middle">{{sol.encargado}}</td>

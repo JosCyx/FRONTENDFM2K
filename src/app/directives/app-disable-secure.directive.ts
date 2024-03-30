@@ -27,7 +27,7 @@ export class AppDisableSecureDirective implements OnInit {
         //habilita el input al que esté asignado esta directiva
         this.renderer.removeAttribute(this.element.nativeElement, 'disabled');
       }
-    }, 400);
+    }, 200);
 
   }
 

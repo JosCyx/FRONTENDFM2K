@@ -51,7 +51,7 @@
             id="aplicacion"
             [(ngModel)]="NivelRuteo"
           >
-            <option selected value="0">Sin Nivel Asignado</option>
+            <option selected [value]="0">Sin Nivel Asignado</option>
             <option *ngFor="let app of NivelesRuteo" [value]="app.nivel">
               {{ app.descRuteo }}
             </option>
@@ -172,7 +172,7 @@
             name="idAplicacion"
             [(ngModel)]="NivelRuteo"
           >
-            <option selected disabled value="0">Sin Nivel Asignado</option>
+            <option selected  [value]="0">Sin Nivel Asignado</option>
             <option *ngFor="let app of NivelesRuteo" [value]="app.nivel">
               {{ app.descRuteo }}
             </option>

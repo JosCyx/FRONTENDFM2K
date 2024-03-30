@@ -92,6 +92,11 @@ export class CabOrdCompraService {
     return this.http.put(this.APIUrl + `/CabSolOrdenCompras/UpdateEstado?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`,null, { headers: headers });
   }
 
+  updateSinPresupuesto(tipoSol: number, noSol: number, check: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(this.APIUrl + `/CabSolOrdenCompras/UpdateSinPresupuesto?tipoSol=${tipoSol}&noSol=${noSol}&check=${check}`, { headers: headers });
+  }
+
   updateAprobadoCotizacion(tipoSol: number, noSol: number, id: string) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolOrdenCompras/UpdateAprobado?tipoSol=${tipoSol}&noSol=${noSol}&id=${id}`,null, { headers: headers });
