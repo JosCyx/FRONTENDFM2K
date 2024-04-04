@@ -1,7 +1,4 @@
 
-.contenido-main{
-    padding-top: 120px;
-}
 
 header{
     position: fixed !important;
@@ -10,7 +7,6 @@ header{
     top: 0;
     left: 0;
 }
-
 
 
 /* Add margin to the sub-menu items */

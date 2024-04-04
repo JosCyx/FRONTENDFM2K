@@ -56,7 +56,7 @@ export class MainComponent implements OnInit {
   }
 
   goComInt(){
-    
+    this.router.navigate(['maincomint']);
   }
 
   clearCookies() {
@@ -71,7 +71,7 @@ export class MainComponent implements OnInit {
   }
 
   getUserManual() {
-    this.documentService.getUserManual().subscribe(
+    this.documentService.getSolManual().subscribe(
       (data) => {
         const file = new Blob([data], { type: 'application/pdf' });
         const urlfile = URL.createObjectURL(file);

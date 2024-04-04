@@ -9,7 +9,7 @@ import { GlobalService } from '../../global.service';
   providedIn: 'root'
 })
 export class CabCotizacionService {
-   APIUrl = this.globalService.APIUrl;
+  APIUrl = this.globalService.APIUrl;
 
   constructor(
     private http: HttpClient,

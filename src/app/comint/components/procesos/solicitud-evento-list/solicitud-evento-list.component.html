@@ -1,0 +1,43 @@
+<app-menu-comint></app-menu-comint>
+<div class="contenido-main">
+    <h2 class="font-weight-bolt ruteo">Solicitud de evento</h2>
+
+    <h3 class="font-weight-bold" style="padding-top: 20pt">
+        Solicitudes registradas
+    </h3>
+
+    <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="asunto">
+                <th mat-header-cell *matHeaderCellDef> Asunto </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ element.solEvAsuntoEvento }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="tipo">
+                <th mat-header-cell *matHeaderCellDef> Tipo de Actividad </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ getTipoActividad(element.solEvIdTipoAct) }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="lugar">
+                <th mat-header-cell *matHeaderCellDef> Lugar </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ element.solEvLugarEvento }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fechainicio">
+                <th mat-header-cell *matHeaderCellDef> Fecha de inicio </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ getFecha(element.solEvFechaInicio) }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fechafin">
+                <th mat-header-cell *matHeaderCellDef> Fecha de fin </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ getFecha(element.solEvFechaFin) }} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr class="row-user" mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectSolEvent(row)"></tr>
+        </table>
+        <mat-paginator #paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            aria-label="Select page of periodic elements"></mat-paginator>
+    </div>
+</div>

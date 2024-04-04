@@ -24,6 +24,11 @@ import { ReportesComponent } from './components/procesos/reportes/reportes.compo
 import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes-aprobadas/solicitudes-aprobadas.component';
 import { MainNominaComponent } from './nomina/components/main/main-nomina/main-nomina.component';
 import { SendNominaRolComponent } from './nomina/components/procesos/send-nomina-rol/send-nomina-rol.component';
+import { MainComintComponent } from './comint/components/templates/main-comint/main-comint.component';
+import { SolicitudEventoComponent } from './comint/components/procesos/solicitud-evento/solicitud-evento.component';
+import { SolicitudEventoListComponent } from './comint/components/procesos/solicitud-evento-list/solicitud-evento-list.component';
+import { AlertaEventoComponent } from './comint/components/procesos/alerta-evento/alerta-evento.component';
+import { AlertaEventoListComponent } from './comint/components/procesos/alerta-evento-list/alerta-evento-list.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -48,8 +53,15 @@ const routes: Routes = [
   {path: 'empnivel', component: EmpleadoNivelComponent, data: { breadcrumb: 'Empleado-Nivel' }, canActivate: [AuthGuard] },
   {path: 'solAprob', component: SolicitudesAprobadasComponent, canActivate: [AuthGuard]},
   {path: 'reportes', component: ReportesComponent, canActivate: [AuthGuard] },
+
   {path: 'mainnom', component: MainNominaComponent, canActivate: [AuthGuard]},
   {path: 'sendrol', component: SendNominaRolComponent, canActivate: [AuthGuard]},
+
+  {path: 'maincomint', component: MainComintComponent, canActivate: [AuthGuard]},
+  {path: 'solev', component: SolicitudEventoComponent, canActivate: [AuthGuard]},
+  {path: 'solevlist', component: SolicitudEventoListComponent, canActivate: [AuthGuard]},
+  {path: 'alertev', component: AlertaEventoComponent, canActivate: [AuthGuard]},
+  {path: 'alertevlist', component: AlertaEventoListComponent, canActivate: [AuthGuard]},
 ];
 
 @NgModule({

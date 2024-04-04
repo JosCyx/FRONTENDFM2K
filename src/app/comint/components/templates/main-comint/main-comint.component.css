@@ -1,0 +1,13 @@
+.container {
+    display: grid;
+    place-items: center; 
+    padding-top: 120px;
+  }
+  
+  .background {
+    max-width: 100%; 
+    height: auto; 
+    max-height: calc(100vh - 140px); 
+    opacity: 0.5;
+  }
+  

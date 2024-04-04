@@ -5,11 +5,11 @@ import { CookieService } from 'ngx-cookie-service';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css'],
+  selector: 'app-menu-comint',
+  templateUrl: './menu-comint.component.html',
+  styleUrls: ['./menu-comint.component.css']
 })
-export class MenuComponent {
+export class MenuComintComponent {
   userName: string = this.cookieService.get('userName');
   isLogin: boolean = false;
   showSB: boolean = false;
@@ -48,35 +48,26 @@ export class MenuComponent {
     //console.log('Token vacio', this.cookieService.get('authToken'))
   }
 
-  routToCot() {
+  routToSolEv() {
     this.globalService.solView = 'crear';
-    this.router.navigate(['allrequest']);
+    this.router.navigate(['solevlist']);
 
     setTimeout(() => {
-      this.router.navigate(['solicoti']);
+      this.router.navigate(['solev']);
     }, 1);
   }
 
-  routToOC() {
+  routToAltEv() {
     this.globalService.solView = 'crear';
-    this.router.navigate(['allrequest']);
+    this.router.navigate(['alertevlist']);
 
     setTimeout(() => {
-      this.router.navigate(['solioc']);
-    }, 1);
-  }
-
-  routToPago() {
-    this.globalService.solView = 'crear';
-    this.router.navigate(['allrequest']);
-
-    setTimeout(() => {
-      this.router.navigate(['solipago']);
+      this.router.navigate(['alertev']);
     }, 1);
   }
 
   getUserManual() {
-    this.documentService.getSolManual().subscribe(
+    this.documentService.getComintManual().subscribe(
       (data) => {
         const file = new Blob([data], { type: 'application/pdf' });
         const urlfile = URL.createObjectURL(file);

@@ -66,8 +66,18 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 import { MatCardModule } from '@angular/material/card';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { SolicitudEventoComponent } from './comint/components/procesos/solicitud-evento/solicitud-evento.component';
+import { SolicitudEventoListComponent } from './comint/components/procesos/solicitud-evento-list/solicitud-evento-list.component';
+import { AlertaEventoComponent } from './comint/components/procesos/alerta-evento/alerta-evento.component';
+import { AlertaEventoListComponent } from './comint/components/procesos/alerta-evento-list/alerta-evento-list.component';
+import { MainComintComponent } from './comint/components/templates/main-comint/main-comint.component';
+import { MenuComintComponent } from './comint/components/templates/menu-comint/menu-comint.component';
+
 
 @NgModule({
   declarations: [
@@ -113,6 +123,12 @@ import { MatCardModule } from '@angular/material/card';
     MainNominaComponent,
     SendNominaRolComponent,
     MenuNominaComponent,
+    SolicitudEventoComponent,
+    SolicitudEventoListComponent,
+    AlertaEventoComponent,
+    AlertaEventoListComponent,
+    MainComintComponent,
+    MenuComintComponent,
     
   ],
   imports: [
@@ -133,7 +149,10 @@ import { MatCardModule } from '@angular/material/card';
     MatDatepickerModule,
     MatNativeDateModule,
     MatInputModule,
-    MatCardModule
+    MatCardModule,
+    MatToolbarModule,
+    MatFormFieldModule,
+    MatSelectModule
   ],
   providers: [AuthService, MatDialog, DialogServiceService],
   bootstrap: [AppComponent]

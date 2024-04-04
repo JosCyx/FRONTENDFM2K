@@ -5,7 +5,7 @@ import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { MatTableDataSource } from '@angular/material/table';
 import * as _ from 'lodash';
 
-
+ 
 @Component({
   selector: 'app-send-nomina-rol',
   templateUrl: './send-nomina-rol.component.html',

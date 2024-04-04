@@ -1,0 +1,199 @@
+<app-menu-comint></app-menu-comint>
+<div class="contenido-main">
+    <h2 class="font-weight-bolt ruteo">Solicitud de evento</h2>
+
+    <h3 class="font-weight-bold" style="padding-top: 20pt">
+        Registrar nueva solicitud de evento
+    </h3>
+    <div class="solev-form">
+        <div class="row-form">
+            <mat-form-field appearance="outline">
+                <mat-label>Solicitante</mat-label>
+                <input matInput readonly [value]="nameSolicitante">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+                <mat-label>Departamento</mat-label>
+                <input matInput readonly [value]="departamento">
+            </mat-form-field>
+        </div>
+        <div class="row-form">
+            <mat-form-field appearance="outline">
+                <mat-label>Tipo de Actividad</mat-label>
+                <mat-select [(ngModel)]="solEvent.solEvIdTipoAct">
+                    <ng-container *ngFor="let type of actTypeList">
+                        <mat-option [value]="type.typeActId">{{ type.typeActDescripcion }}</mat-option>
+                    </ng-container>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="row-complete-form">
+            <mat-form-field appearance="outline">
+                <mat-label>Asunto</mat-label>
+                <input matInput maxlength="150" [(ngModel)]="solEvent.solEvAsuntoEvento">
+            </mat-form-field>
+        </div>
+        <div class="row-complete-form">
+            <mat-form-field appearance="outline">
+                <mat-label>Detalles del evento</mat-label>
+                <textarea matInput rows="10" maxlength="500" [(ngModel)]="solEvent.solEvDetalleEvento"></textarea>
+            </mat-form-field>
+        </div>
+        <div class="row-complete-form">
+            <mat-form-field appearance="outline">
+                <mat-label>Lugar</mat-label>
+                <textarea matInput maxlength="200" [(ngModel)]="solEvent.solEvLugarEvento"></textarea>
+            </mat-form-field>
+        </div>
+        <div class="row-form">
+                <mat-form-field appearance="outline">
+                    <mat-label>Fecha de inicio</mat-label>
+                    <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechainicio">
+                    <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerInicio></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Hora de inicio</mat-label>
+                    <mat-select [(ngModel)]="solEvent.solEvHoraInicio">
+                        <mat-option value="00:00">00:00</mat-option>
+                        <mat-option value="00:30">00:30</mat-option>
+                        <mat-option value="01:00">01:00</mat-option>
+                        <mat-option value="01:30">01:30</mat-option>
+                        <mat-option value="02:00">02:00</mat-option>
+                        <mat-option value="02:30">02:30</mat-option>
+                        <mat-option value="03:00">03:00</mat-option>
+                        <mat-option value="03:30">03:30</mat-option>
+                        <mat-option value="04:00">04:00</mat-option>
+                        <mat-option value="04:30">04:30</mat-option>
+                        <mat-option value="05:00">05:00</mat-option>
+                        <mat-option value="05:30">05:30</mat-option>
+                        <mat-option value="06:00">06:00</mat-option>
+                        <mat-option value="06:30">06:30</mat-option>
+                        <mat-option value="07:00">07:00</mat-option>
+                        <mat-option value="07:30">07:30</mat-option>
+                        <mat-option value="08:00">08:00</mat-option>
+                        <mat-option value="08:30">08:30</mat-option>
+                        <mat-option value="09:00">09:00</mat-option>
+                        <mat-option value="09:30">09:30</mat-option>
+                        <mat-option value="10:00">10:00</mat-option>
+                        <mat-option value="10:30">10:30</mat-option>
+                        <mat-option value="11:00">11:00</mat-option>
+                        <mat-option value="11:30">11:30</mat-option>
+                        <mat-option value="12:00">12:00</mat-option>
+                        <mat-option value="12:30">12:30</mat-option>
+                        <mat-option value="13:00">13:00</mat-option>
+                        <mat-option value="13:30">13:30</mat-option>
+                        <mat-option value="14:00">14:00</mat-option>
+                        <mat-option value="14:30">14:30</mat-option>
+                        <mat-option value="15:00">15:00</mat-option>
+                        <mat-option value="15:30">15:30</mat-option>
+                        <mat-option value="16:00">16:00</mat-option>
+                        <mat-option value="16:30">16:30</mat-option>
+                        <mat-option value="17:00">17:00</mat-option>
+                        <mat-option value="17:30">17:30</mat-option>
+                        <mat-option value="18:00">18:00</mat-option>
+                        <mat-option value="18:30">18:30</mat-option>
+                        <mat-option value="19:00">19:00</mat-option>
+                        <mat-option value="19:30">19:30</mat-option>
+                        <mat-option value="20:00">20:00</mat-option>
+                        <mat-option value="20:30">20:30</mat-option>
+                        <mat-option value="21:00">21:00</mat-option>
+                        <mat-option value="21:30">21:30</mat-option>
+                        <mat-option value="22:00">22:00</mat-option>
+                        <mat-option value="22:30">22:30</mat-option>
+                        <mat-option value="23:00">23:00</mat-option>
+                        <mat-option value="23:30">23:30</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Fecha de fin</mat-label>
+                    <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechafin">
+                    <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
+                    <mat-datepicker #pickerFin></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Hora de fin</mat-label>
+                    <mat-select [(ngModel)]="solEvent.solEvHoraFin">
+                        <mat-option value="00:00">00:00</mat-option>
+                        <mat-option value="00:30">00:30</mat-option>
+                        <mat-option value="01:00">01:00</mat-option>
+                        <mat-option value="01:30">01:30</mat-option>
+                        <mat-option value="02:00">02:00</mat-option>
+                        <mat-option value="02:30">02:30</mat-option>
+                        <mat-option value="03:00">03:00</mat-option>
+                        <mat-option value="03:30">03:30</mat-option>
+                        <mat-option value="04:00">04:00</mat-option>
+                        <mat-option value="04:30">04:30</mat-option>
+                        <mat-option value="05:00">05:00</mat-option>
+                        <mat-option value="05:30">05:30</mat-option>
+                        <mat-option value="06:00">06:00</mat-option>
+                        <mat-option value="06:30">06:30</mat-option>
+                        <mat-option value="07:00">07:00</mat-option>
+                        <mat-option value="07:30">07:30</mat-option>
+                        <mat-option value="08:00">08:00</mat-option>
+                        <mat-option value="08:30">08:30</mat-option>
+                        <mat-option value="09:00">09:00</mat-option>
+                        <mat-option value="09:30">09:30</mat-option>
+                        <mat-option value="10:00">10:00</mat-option>
+                        <mat-option value="10:30">10:30</mat-option>
+                        <mat-option value="11:00">11:00</mat-option>
+                        <mat-option value="11:30">11:30</mat-option>
+                        <mat-option value="12:00">12:00</mat-option>
+                        <mat-option value="12:30">12:30</mat-option>
+                        <mat-option value="13:00">13:00</mat-option>
+                        <mat-option value="13:30">13:30</mat-option>
+                        <mat-option value="14:00">14:00</mat-option>
+                        <mat-option value="14:30">14:30</mat-option>
+                        <mat-option value="15:00">15:00</mat-option>
+                        <mat-option value="15:30">15:30</mat-option>
+                        <mat-option value="16:00">16:00</mat-option>
+                        <mat-option value="16:30">16:30</mat-option>
+                        <mat-option value="17:00">17:00</mat-option>
+                        <mat-option value="17:30">17:30</mat-option>
+                        <mat-option value="18:00">18:00</mat-option>
+                        <mat-option value="18:30">18:30</mat-option>
+                        <mat-option value="19:00">19:00</mat-option>
+                        <mat-option value="19:30">19:30</mat-option>
+                        <mat-option value="20:00">20:00</mat-option>
+                        <mat-option value="20:30">20:30</mat-option>
+                        <mat-option value="21:00">21:00</mat-option>
+                        <mat-option value="21:30">21:30</mat-option>
+                        <mat-option value="22:00">22:00</mat-option>
+                        <mat-option value="22:30">22:30</mat-option>
+                        <mat-option value="23:00">23:00</mat-option>
+                        <mat-option value="23:30">23:30</mat-option>
+                    </mat-select>
+                </mat-form-field>
+        </div>
+
+    </div>
+    <div class="div-buttons">
+        <button mat-flat-button color="warn" (click)="clearSolicitud()">Cancelar</button>
+        <button mat-flat-button color="primary" data-toggle="modal" data-target="#saveSol">Enviar</button>
+        <button mat-flat-button color="accent" data-toggle="modal" data-target="#saveSol">Generar anuncio</button>
+    </div>
+</div>
+
+<div class="modal fade" #exampleModal id="saveSol" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea enviar esta solicitud?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al enviar esta solicitud llegará directamente al departamento de Talento Humano.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="sendSolEvent()">
+                    Confirmar
+                </button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+

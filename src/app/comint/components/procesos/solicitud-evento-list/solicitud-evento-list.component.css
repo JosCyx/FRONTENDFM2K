@@ -1,0 +1,12 @@
+.contenido-main{
+    width: 70%;
+    margin: 0 auto;
+}
+
+th, td{
+    text-align: center !important;
+}
+
+.mat-cell-custom{
+    cursor: pointer;
+}

@@ -1,0 +1,27 @@
+.contenido-main{
+    width: 70%;
+    margin: 0 auto;
+}
+
+.solev-form{
+    display: flex;
+    flex-direction: column;
+}
+
+.row-form{
+    display: flex;
+    flex-direction: row ;
+    gap: 5px;
+}
+
+mat-form-field{
+    width: 100% !important;
+}
+
+.div-buttons{
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    justify-content: end;
+    margin-top: 20px;
+}
