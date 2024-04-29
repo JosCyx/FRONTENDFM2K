@@ -68,7 +68,11 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatListModule} from '@angular/material/list';
+import {MatDividerModule} from '@angular/material/divider';
 
+//COMUNICACION INTERNA//
 import { MatCardModule } from '@angular/material/card';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { SolicitudEventoComponent } from './comint/components/procesos/solicitud-evento/solicitud-evento.component';
@@ -129,7 +133,6 @@ import { MenuComintComponent } from './comint/components/templates/menu-comint/m
     AlertaEventoListComponent,
     MainComintComponent,
     MenuComintComponent,
-    
   ],
   imports: [
     BrowserModule,
@@ -152,7 +155,10 @@ import { MenuComintComponent } from './comint/components/templates/menu-comint/m
     MatCardModule,
     MatToolbarModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTabsModule,
+    MatListModule,
+    MatDividerModule
   ],
   providers: [AuthService, MatDialog, DialogServiceService],
   bootstrap: [AppComponent]

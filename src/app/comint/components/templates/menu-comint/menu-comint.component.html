@@ -18,18 +18,18 @@
 
   <div class="sidebar" >
     <ul class="nav flex-column">
-      <li class="nav-item dropdown" *appAuthorize="'42'">
-        <button mat-stroked-button>Procesos</button>
-        <div class="menu" >
-          <a class="item"  mat-button routerLink="/solev" *appAuthorize="'21'">Registro de evento</a>
-          <a class="item"  mat-button routerLink="/alertev" *appAuthorize="'21'">Programar alertas</a>
-        </div>
-      </li>
       <li class="nav-item dropdown" *appAuthorize="'43'">
         <button mat-stroked-button>Consultas</button>
         <div class="menu"  >
           <a class="item" mat-button routerLink="/solevlist" *appAuthorize="'25'">Historial de eventos</a>
           <a class="item" mat-button routerLink="/alertevlist" *appAuthorize="'28'">Historial de anuncios</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown" *appAuthorize="'42'">
+        <button mat-stroked-button>Procesos</button>
+        <div class="menu" >
+          <a class="item"  mat-button (click)="routToSolEv()" *appAuthorize="'21'">Registro de evento</a>
+          <a class="item"  mat-button (click)="routToAltEv()" *appAuthorize="'21'">Programar alertas</a>
         </div>
       </li>
       

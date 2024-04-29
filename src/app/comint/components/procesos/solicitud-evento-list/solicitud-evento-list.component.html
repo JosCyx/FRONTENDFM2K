@@ -9,6 +9,11 @@
     <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
+            <ng-container matColumnDef="emp">
+                <th mat-header-cell *matHeaderCellDef> Empleado </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ getEmpleadoName(element.solEvIdSolicitante) }} </td>
+            </ng-container>
+
             <ng-container matColumnDef="asunto">
                 <th mat-header-cell *matHeaderCellDef> Asunto </th>
                 <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ element.solEvAsuntoEvento }} </td>
@@ -25,12 +30,12 @@
             </ng-container>
 
             <ng-container matColumnDef="fechainicio">
-                <th mat-header-cell *matHeaderCellDef> Fecha de inicio </th>
+                <th mat-header-cell *matHeaderCellDef> Inicio </th>
                 <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ getFecha(element.solEvFechaInicio) }} </td>
             </ng-container>
 
             <ng-container matColumnDef="fechafin">
-                <th mat-header-cell *matHeaderCellDef> Fecha de fin </th>
+                <th mat-header-cell *matHeaderCellDef> Fin </th>
                 <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ getFecha(element.solEvFechaFin) }} </td>
             </ng-container>
 

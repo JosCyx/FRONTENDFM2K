@@ -53,6 +53,7 @@ export class CotDocumentacionComponent implements OnInit {
 
     try {
       const file = event.target.files[0];
+      console.log("Archiov: ", file);
 
       if(!this.isFileTypeAllowed(file)){
         const msjError = 'Tipo de archivo no permitido. Por favor, seleccione un archivo válido.';

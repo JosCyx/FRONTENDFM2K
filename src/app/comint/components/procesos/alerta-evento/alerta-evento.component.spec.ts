@@ -18,4 +18,6 @@ describe('AlertaEventoComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  
 });

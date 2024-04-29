@@ -2,21 +2,30 @@
 <div class="contenido-main">
     <h2 class="font-weight-bolt ruteo">Solicitud de evento</h2>
 
-    <h3 class="font-weight-bold" style="padding-top: 20pt">
-        Registrar nueva solicitud de evento
-    </h3>
+    <ng-container *ngIf="!globalComintService.editMode; else editModeTitle">
+        <h3 class="font-weight-bold" style="padding-top: 20pt">
+            Registrar nueva solicitud de evento
+        </h3>
+    </ng-container>
+    <ng-template #editModeTitle>
+        <h3 class="font-weight-bold" style="padding-top: 20pt">
+            Visualizar solicitud de evento
+        </h3>
+    </ng-template>
     <div class="solev-form">
         <div class="row-form">
             <mat-form-field appearance="outline">
                 <mat-label>Solicitante</mat-label>
-                <input matInput readonly [value]="nameSolicitante">
+                <input matInput readonly [value]="nameSolicitante" *ngIf="!globalComintService.editMode">
+                <input matInput readonly [value]="solEvent.empleadoName" *ngIf="globalComintService.editMode">
             </mat-form-field>
             <mat-form-field appearance="outline">
                 <mat-label>Departamento</mat-label>
-                <input matInput readonly [value]="departamento">
+                <input matInput readonly [value]="departamento" *ngIf="!globalComintService.editMode">
+                <input matInput readonly [value]="getDepartamentName(solEvent.solEvDepSolicitante)" *ngIf="globalComintService.editMode">
             </mat-form-field>
         </div>
-        <div class="row-form">
+        <div class="row-form" *ngIf="!globalComintService.editMode">
             <mat-form-field appearance="outline">
                 <mat-label>Tipo de Actividad</mat-label>
                 <mat-select [(ngModel)]="solEvent.solEvIdTipoAct">
@@ -26,34 +35,44 @@
                 </mat-select>
             </mat-form-field>
         </div>
+        <div *ngIf="globalComintService.editMode">
+            <mat-form-field appearance="outline">
+                <mat-label>Tipo de Actividad</mat-label>
+                <input matInput readonly [value]="getActividadName(solEvent.solEvIdTipoAct)" readonly>
+            </mat-form-field>
+        </div>
         <div class="row-complete-form">
             <mat-form-field appearance="outline">
                 <mat-label>Asunto</mat-label>
-                <input matInput maxlength="150" [(ngModel)]="solEvent.solEvAsuntoEvento">
+                <input matInput maxlength="150" [(ngModel)]="solEvent.solEvAsuntoEvento" [readonly]="globalComintService.editMode">
             </mat-form-field>
         </div>
         <div class="row-complete-form">
             <mat-form-field appearance="outline">
                 <mat-label>Detalles del evento</mat-label>
-                <textarea matInput rows="10" maxlength="500" [(ngModel)]="solEvent.solEvDetalleEvento"></textarea>
+                <textarea matInput rows="10" maxlength="500" [(ngModel)]="solEvent.solEvDetalleEvento" [readonly]="globalComintService.editMode"></textarea>
             </mat-form-field>
         </div>
         <div class="row-complete-form">
             <mat-form-field appearance="outline">
                 <mat-label>Lugar</mat-label>
-                <textarea matInput maxlength="200" [(ngModel)]="solEvent.solEvLugarEvento"></textarea>
+                <textarea matInput maxlength="200" [(ngModel)]="solEvent.solEvLugarEvento" [readonly]="globalComintService.editMode"></textarea>
             </mat-form-field>
         </div>
         <div class="row-form">
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" *ngIf="!globalComintService.editMode">
                     <mat-label>Fecha de inicio</mat-label>
                     <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechainicio">
                     <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
                     <mat-datepicker #pickerInicio></mat-datepicker>
                 </mat-form-field>
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" *ngIf="globalComintService.editMode">
+                    <mat-label>Fecha de inicio</mat-label>
+                    <input matInput maxlength="150" [(ngModel)]="fechaInicioStr" readonly>
+                </mat-form-field>
+                <mat-form-field appearance="outline" *ngIf="!globalComintService.editMode">
                     <mat-label>Hora de inicio</mat-label>
-                    <mat-select [(ngModel)]="solEvent.solEvHoraInicio">
+                    <mat-select [(ngModel)]="solEvent.solEvHoraInicio" >
                         <mat-option value="00:00">00:00</mat-option>
                         <mat-option value="00:30">00:30</mat-option>
                         <mat-option value="01:00">01:00</mat-option>
@@ -104,13 +123,22 @@
                         <mat-option value="23:30">23:30</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" *ngIf="globalComintService.editMode">
+                    <mat-label>Hora de inicio</mat-label>
+                    <input matInput maxlength="150" [(ngModel)]="solEvent.solEvHoraInicio" readonly>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" *ngIf="!globalComintService.editMode">
                     <mat-label>Fecha de fin</mat-label>
                     <input matInput [matDatepicker]="pickerFin" [(ngModel)]="fechafin">
                     <mat-datepicker-toggle matIconSuffix [for]="pickerFin"></mat-datepicker-toggle>
                     <mat-datepicker #pickerFin></mat-datepicker>
                 </mat-form-field>
-                <mat-form-field appearance="outline">
+                <mat-form-field appearance="outline" *ngIf="globalComintService.editMode">
+                    <mat-label>Fecha de fin</mat-label>
+                    <input matInput maxlength="150" [(ngModel)]="fechaFinStr" readonly>
+                </mat-form-field>
+                <mat-form-field appearance="outline" *ngIf="!globalComintService.editMode">
                     <mat-label>Hora de fin</mat-label>
                     <mat-select [(ngModel)]="solEvent.solEvHoraFin">
                         <mat-option value="00:00">00:00</mat-option>
@@ -163,15 +191,20 @@
                         <mat-option value="23:30">23:30</mat-option>
                     </mat-select>
                 </mat-form-field>
+                <mat-form-field appearance="outline" *ngIf="globalComintService.editMode">
+                    <mat-label>Hora de fin</mat-label>
+                    <input matInput maxlength="150" [(ngModel)]="solEvent.solEvHoraFin" readonly>
+                </mat-form-field>
         </div>
 
     </div>
     <div class="div-buttons">
-        <button mat-flat-button color="warn" (click)="clearSolicitud()">Cancelar</button>
-        <button mat-flat-button color="primary" data-toggle="modal" data-target="#saveSol">Enviar</button>
-        <button mat-flat-button color="accent" data-toggle="modal" data-target="#saveSol">Generar anuncio</button>
+        <button mat-flat-button color="warn" (click)="clearAndRedirect()">Salir</button>
+        <button mat-flat-button color="primary" data-toggle="modal" data-target="#saveSol" *ngIf="!globalComintService.editMode">Enviar</button>
+        <button mat-flat-button color="primary" data-toggle="modal" data-target="#generateAd" *ngIf="globalComintService.editMode">Generar anuncio</button>
     </div>
 </div>
+
 
 <div class="modal fade" #exampleModal id="saveSol" data-backdrop="static" tabindex="-1" role="dialog"
     aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -179,18 +212,42 @@
         <div class="modal-content">
             <div class="modal-header justify-content-center">
                 <h3 class="font-weight-bold" id="exampleModalLabel">
-                    ¿Está seguro que desea enviar esta solicitud?
+                    ¿Está seguro que desea enviar esta solicitud de evento?
                 </h3>
             </div>
             <div class="modal-body">
                 <p>Al enviar esta solicitud llegará directamente al departamento de Talento Humano.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="sendSolEvent()">
+                <button type="button" mat-raised-button color="warn" data-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" mat-raised-button color="primary" data-dismiss="modal" (click)="sendSolEvent()">
                     Confirmar
                 </button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" #exampleModal id="generateAd" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea generar una alerta de esta solicitud?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Esta acción le redirigirá a la página de creacion de alertas.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" mat-raised-button color="warn" data-dismiss="modal">
                     Cancelar
+                </button>
+                <button type="button" mat-raised-button color="primary" data-dismiss="modal" (click)="generateAd()">
+                    Confirmar
                 </button>
             </div>
         </div>

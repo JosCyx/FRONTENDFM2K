@@ -8,6 +8,8 @@ import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/emp
 import { AuxComintService } from 'src/app/services/comunicationAPI/comint/aux-comint.service';
 import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
 import { DepartamentosService } from 'src/app/services/comunicationAPI/seguridad/departamentos.service';
+import { GlobalComintService } from 'src/app/services/global-comint.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-solicitud-evento-list',
@@ -20,7 +22,7 @@ export class SolicitudEventoListComponent {
   dataSource: any = [];
   solEventList: SolicitudEvento[] = [];
 
-  displayedColumns: string[] = ['asunto', 'tipo', 'lugar', 'fechainicio', 'fechafin'];
+  displayedColumns: string[] = ['emp','asunto', 'tipo', 'lugar', 'fechainicio', 'fechafin'];
 
   empleadosList: any[] = [];
   tipoActList: any[] = [];
@@ -33,7 +35,9 @@ export class SolicitudEventoListComponent {
     private empService: EmpleadosService,
     private auxService: AuxComintService,
     private areaService: AreasService,
-    private depService: DepartamentosService
+    private depService: DepartamentosService,
+    private globalComintService: GlobalComintService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -91,7 +95,7 @@ export class SolicitudEventoListComponent {
 
       this.solEventService.getSolEvent().subscribe(
         (res: SolicitudEvento[]) => {
-          this.solEventList = _.cloneDeep(res);;
+          this.solEventList = _.cloneDeep(res);
           this.dataSource = new MatTableDataSource<any>(res);
           this.dataSource.paginator = this.paginator;
         },
@@ -112,11 +116,23 @@ export class SolicitudEventoListComponent {
     return tipo ? tipo.typeActDescripcion : 'Actividad desconocida';
   }
 
+  getEmpleadoName(idEmp: string): string {
+    const emp = this.empleadosList.find(emp => emp.empleadoIdNomina === idEmp);
+    return emp ? emp.empleadoNombres + ' ' + emp.empleadoApellidos : 'Empleado desconocido';
+  }
+
   getFecha(fecha: string): string {
     return fecha.split('T')[0];
   }
 
   selectSolEvent(row: any){
-    console.log("Solicitud seleccionada:", row);
+    this.globalComintService.editMode = true;
+    this.globalComintService.solEvent = row;
+    this.globalComintService.solEvent.empleadoName = this.getEmpleadoName(row.solEvIdSolicitante);
+    //console.log("Solicitud seleccionada:", this.globalComintService.solEvent);
+
+    this.router.navigate(['solev']);
+    
   }
+
 }

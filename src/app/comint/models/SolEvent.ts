@@ -14,6 +14,7 @@ export class SolicitudEvento {
     public solEvLugarEvento: string;
     public solEvEstadoEvento: number;
     public solEvEstado: number;
+    public empleadoName?: string;
 
     constructor(
         solEvIdSolicitante: string,

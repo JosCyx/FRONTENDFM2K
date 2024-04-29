@@ -6,11 +6,15 @@
 .solev-form{
     display: flex;
     flex-direction: column;
+    /*background-color: #bec5ee60;*/
+    background-color: #c7cfff52;
+    padding: 20px;
+    border-radius: 20px;
 }
 
 .row-form{
     display: flex;
-    flex-direction: row ;
+    flex-direction: row;
     gap: 5px;
 }
 

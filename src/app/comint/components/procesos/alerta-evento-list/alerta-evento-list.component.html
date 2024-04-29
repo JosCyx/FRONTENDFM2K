@@ -5,7 +5,50 @@
     <h3 class="font-weight-bold" style="padding-top: 20pt">
         Alertas registradas
     </h3>
-    <p>alerta-evento-list works!</p>
+    <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="tipo">
+                <th mat-header-cell *matHeaderCellDef> Tipo </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ element.altEvTipoAlerta }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="asunto">
+                <th mat-header-cell *matHeaderCellDef> Asunto </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ element.altEvTituloAlerta }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fecha">
+                <th mat-header-cell *matHeaderCellDef> Fecha </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ element.altEvFechaEvento }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="hora">
+                <th mat-header-cell *matHeaderCellDef> Hora </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ element.altEvHoraEvento }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="lugar">
+                <th mat-header-cell *matHeaderCellDef> Lugar </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element">{{ element.altEvLugar }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="estado">
+                <th mat-header-cell *matHeaderCellDef> Estado </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ element.altEvEstadoEvento }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="enviado">
+                <th mat-header-cell *matHeaderCellDef> Envíos </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> 1 de 3 </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr class="row-user" mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectAlertEvent(row)"></tr>
+        </table>
+        <mat-paginator #paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            aria-label="Select page of periodic elements"></mat-paginator>
+    </div>
 
 </div>
 
