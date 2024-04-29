@@ -1,0 +1,56 @@
+<app-menu-bitacora></app-menu-bitacora>
+<div class="permiso-registrado">
+  
+
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+      <!-- Position Column -->
+      <ng-container matColumnDef="position">
+        <th mat-header-cell *matHeaderCellDef>No.</th>
+        <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+      </ng-container>
+
+      <!-- NOMBRE DEL PROVEEDOR -->
+      <ng-container matColumnDef="NProveedor">
+        <th mat-header-cell *matHeaderCellDef>Nombre del proveedor</th>
+        <td mat-cell *matCellDef="let element">{{ element.NProveedor }}</td>
+      </ng-container>
+
+      <!-- Nombre de la actividad -->
+      <ng-container matColumnDef="NActividad">
+        <th mat-header-cell *matHeaderCellDef>Nombre de actividad</th>
+        <td mat-cell *matCellDef="let element">{{ element.NActividad }}</td>
+      </ng-container>
+
+      <!-- Responsable interno -->
+      <ng-container matColumnDef="RespInter">
+        <th mat-header-cell *matHeaderCellDef>Responsable interno</th>
+        <td mat-cell *matCellDef="let element">{{ element.RespInter }}</td>
+      </ng-container>
+
+      <!-- FECHA -->
+      <ng-container matColumnDef="Fecha">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let element">{{ element.Fecha }}</td>
+      </ng-container>
+
+      <!--HORA-->
+      <ng-container matColumnDef="Hora">
+        <th mat-header-cell *matHeaderCellDef>Hora</th>
+        <td mat-cell *matCellDef="let element">{{ element.Hora }}</td>
+      </ng-container>
+
+      <!-- FECHA -->
+      <ng-container matColumnDef="Riesgo">
+        <th mat-header-cell *matHeaderCellDef>Riesgo</th>
+        <td mat-cell *matCellDef="let element">{{ element.Riesgo }}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+</div>

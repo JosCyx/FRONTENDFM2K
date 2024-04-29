@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 //Dependencias  Angular PDF View
 //Material UI Angular
@@ -9,8 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 //-------
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
-
-
+//I keep the new line
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -24,7 +23,7 @@ import { UsuariosComponent } from './components/seguridad/usuarios/usuarios.comp
 import { RolesComponent } from './components/seguridad/roles/roles.component';
 import { LoginComponent } from './components/login/login.component';
 import { MainComponent } from './components/main/main.component';
-import { FormsModule,ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SolicotiComponent } from './components/procesos/solicoti/solicoti.component';
 import { SoliocComponent } from './components/procesos/solioc/solioc.component';
 import { SolipagoComponent } from './components/procesos/solipago/solipago.component';
@@ -67,7 +66,25 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 
-import { MatCardModule } from '@angular/material/card';
+//BITACORA
+
+import { MainBitacoraComponent } from './bitacora/components/main-bitacora/main-bitacora.component';
+import { MenuBitacoraComponent } from './components/templates/menu-bitacora/menu-bitacora.component';
+import { PermisoRegistradoComponent } from './bitacora/components/procesos/permiso-registrado/permiso-registrado.component';
+import { CalendarioComponent } from './bitacora/components/procesos/calendario/calendario.component';
+import { IngresoPermisoComponent } from './bitacora/components/procesos/ingreso-permiso/ingreso-permiso.component';
+
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { PermisosVariosComponent } from './bitacora/components/procesos/permisos-varios/permisos-varios.component';
+
+
+//I keep the new line
 
 @NgModule({
   declarations: [
@@ -113,7 +130,13 @@ import { MatCardModule } from '@angular/material/card';
     MainNominaComponent,
     SendNominaRolComponent,
     MenuNominaComponent,
-    
+    MainBitacoraComponent,
+    MenuBitacoraComponent,
+    PermisoRegistradoComponent,
+    CalendarioComponent,
+    IngresoPermisoComponent,
+    PermisosVariosComponent,
+
   ],
   imports: [
     BrowserModule,
@@ -133,10 +156,23 @@ import { MatCardModule } from '@angular/material/card';
     MatDatepickerModule,
     MatNativeDateModule,
     MatInputModule,
-    MatCardModule
+    MatSelectModule,
+    MatRadioModule,
+    MatGridListModule,
+    MatCheckboxModule,
+    MatButtonToggleModule,
+    MatDividerModule,
+    MatExpansionModule,
+    
+    
+    
   ],
   providers: [AuthService, MatDialog, DialogServiceService],
   bootstrap: [AppComponent]
+  
 })
-export class AppModule { }
+
+export class AppModule {
+  
+}
 

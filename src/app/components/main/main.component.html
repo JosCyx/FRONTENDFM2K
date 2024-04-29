@@ -21,13 +21,7 @@
 
 <div class="container contenido-main">
   <div class="row justify-content-center">
-
-    <mat-card>
-      <mat-card-content>Simple card</mat-card-content>
-    </mat-card>
-    
-
-
+    <!-- MODIFICAR PARA GENERAR LAS CARDS DE MANERA DINAMICA -->
     <div class="card m-5 text-center" style="width: 18rem;" *appAuthorize="'45'">
       <img src="assets/img/shield.png" class="card-img-top" alt=".">
       <div class="card-body">
@@ -47,26 +41,24 @@
     <div class="card m-5 text-center" style="width: 18rem;" *appAuthorize="'73'">
       <img src="assets/img/nomina.jpg" class="card-img-top" alt="...">
       <div class="card-body">
-        <h4 class="card-title font-weight-bold text-center">NÓMINA</h4>
+        <h4 class="card-title font-weight-bold text-center">NOMINA</h4>
         <button mat-raised-button (click)="goNomina()" class="primary-button col-md-4 text-light">Ir</button>
-      </div>
+      </div> 
     </div>
 
     <div class="card m-5 text-center" style="width: 18rem;" *appAuthorize="'73'">
-      <img src="assets/img/comint.png" class="card-img-top" alt="...">
+      <img src="assets/img/bitacora.png" class="card-img-top" alt="...">
       <div class="card-body">
-        <h4 class="card-title font-weight-bold text-center">COMUNICACIÓN INTERNA</h4>
-        <button mat-raised-button (click)="goComInt()" class="primary-button col-md-4 text-light">Ir</button>
-      </div>
-    </div>
-
+        <h4 class="card-title font-weight-bold text-center">BITACORA</h4>
+        <button mat-raised-button (click)="goBitacora()" class="primary-button col-md-4 text-light">Ir</button>
+      </div> 
+    </div>    
     <div class="card m-5 text-center" style="width: 18rem;" *appAuthorize="'73'">
-      <img src="assets/img/nomina.jpg" class="card-img-top" alt="...">
+      <img src="assets/img/bitacora.png" class="card-img-top" alt="...">
       <div class="card-body">
-        <h4 class="card-title font-weight-bold text-center">BITÁCORA</h4>
-        <button mat-raised-button (click)="goComInt()" class="primary-button col-md-4 text-light">Ir</button>
-      </div>
-    </div>
+        <h4 class="card-title font-weight-bold text-center">BITACORA</h4>
+        <button mat-raised-button (click)="goBitacora()" class="primary-button col-md-4 text-light">Ir</button>
+      </div> 
 
   </div>
 </div>

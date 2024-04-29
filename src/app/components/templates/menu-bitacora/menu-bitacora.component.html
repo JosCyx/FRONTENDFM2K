@@ -31,8 +31,17 @@
     <li class="nav-item dropdown" *appAuthorize="'74'">
       <button mat-stroked-button>Procesos</button>
       <div class="menu">
-        <a *appAuthorize="'75'" class="item" mat-button routerLink="/sendrol"
-          >Envío de roles</a
+        <a *appAuthorize="'75'" class="item" mat-button routerLink="/ingresopermiso"
+          >Permisos S.I.</a
+        >
+        <a *appAuthorize="'75'" class="item" mat-button routerLink="/permisosvarios"
+          >Permisos Varios </a
+        >
+        <a *appAuthorize="'75'" class="item" mat-button routerLink="/permisoregistrado"
+          >Permisos Registrados</a
+        >
+        <a *appAuthorize="'75'" class="item" mat-button routerLink="/calendario"
+          >Calendario</a
         >
       </div>
     </li>

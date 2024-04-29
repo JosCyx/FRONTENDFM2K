@@ -24,6 +24,11 @@ import { ReportesComponent } from './components/procesos/reportes/reportes.compo
 import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes-aprobadas/solicitudes-aprobadas.component';
 import { MainNominaComponent } from './nomina/components/main/main-nomina/main-nomina.component';
 import { SendNominaRolComponent } from './nomina/components/procesos/send-nomina-rol/send-nomina-rol.component';
+import { MainBitacoraComponent } from './bitacora/components/main-bitacora/main-bitacora.component';
+import { IngresoPermisoComponent } from './bitacora/components/procesos/ingreso-permiso/ingreso-permiso.component';
+import { PermisoRegistradoComponent } from './bitacora/components/procesos/permiso-registrado/permiso-registrado.component';
+import { CalendarioComponent } from './bitacora/components/procesos/calendario/calendario.component';
+import { PermisosVariosComponent } from './bitacora/components/procesos/permisos-varios/permisos-varios.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -50,6 +55,11 @@ const routes: Routes = [
   {path: 'reportes', component: ReportesComponent, canActivate: [AuthGuard] },
   {path: 'mainnom', component: MainNominaComponent, canActivate: [AuthGuard]},
   {path: 'sendrol', component: SendNominaRolComponent, canActivate: [AuthGuard]},
+  {path: 'mainbit', component: MainBitacoraComponent, canActivate: [AuthGuard]},
+  {path: 'ingresopermiso', component: IngresoPermisoComponent, canActivate:[AuthGuard]},
+  {path: 'permisoregistrado', component: PermisoRegistradoComponent, canActivate:[AuthGuard]},
+  {path: 'calendario', component: CalendarioComponent, canActivate:[AuthGuard]},
+  {path: 'permisosvarios', component: PermisosVariosComponent, canActivate:[AuthGuard]}
 ];
 
 @NgModule({

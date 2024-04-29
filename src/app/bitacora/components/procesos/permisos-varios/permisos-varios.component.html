@@ -1,0 +1,126 @@
+<app-menu-bitacora></app-menu-bitacora>
+<div class="permisos-varios">
+  <div class="formulario-principal">
+    <div class="formulariodiv">
+      <mat-form-field>
+        <mat-label>Responsable interno</mat-label>
+        <input matInput readonly="readonly" [value]="nombreempleado" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Departamento: </mat-label>
+        <input matInput readonly="readonly" value="" />
+      </mat-form-field>
+    </div>
+    <div>
+      <div>
+        <h3>Datos de la actividad</h3>
+      </div>
+      <div class="formulariodiv">
+        <mat-form-field>
+          <mat-label>Fecha: </mat-label>
+          <input
+            matInput
+            [matDatepicker]="fechaini"
+            [min]="fecha"
+            [(ngModel)]="permisosVarios.PVFecha"
+          />
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="fechaini"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #fechaini></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Hora</mat-label>
+
+          <mat-select>
+            <ng-container *ngFor="let time of timeList">
+              <mat-option [value]="time">{{ time }}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="formulariodiv">
+        <mat-form-field>
+          <mat-label>Sector:</mat-label>
+          <mat-select [(ngModel)]="permisosVarios.PVSector">
+            <mat-option>None</mat-option>
+            <mat-option value="option1">Option 1</mat-option>
+            <mat-option value="option2">Option 2</mat-option>
+            <mat-option value="option3">Option 3</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Tipo de Actividad:</mat-label>
+          <mat-select [(ngModel)]="permisosVarios.PVTipoActv">
+            <mat-option>None</mat-option>
+            <mat-option value="option1">Option 1</mat-option>
+            <mat-option value="option2">Option 2</mat-option>
+            <mat-option value="option3">Option 3</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>Referencia de lugar</mat-label>
+        <textarea matInput [(ngModel)]="permisosVarios.PVARefLug" placeholder="...."></textarea>
+      </mat-form-field>
+
+      <div class="formulariodiv">
+        <mat-form-field>
+          <mat-label>asunto:</mat-label>
+          <input matInput [(ngModel)]="permisosVarios.PVAsunto" />
+        </mat-form-field>
+
+        <mat-form-field style="width: 30% !important">
+          <mat-label>Numero de personas en la actividad:</mat-label>
+          <input
+            min="1"
+            max="30"
+            type="number"
+            matInput
+            [(ngModel)]="this.permisosVarios.PVCantPersMax"
+            (ngModelChange)="nummax()"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+    <div>
+      <div>
+        <h3>DATOS DEL RESPONSABLE DE LA ACTIVIDAD</h3>
+      </div>
+      <mat-form-field>
+        <mat-label>Empresa/persona:</mat-label>
+        <input matInput [(ngModel)]="permisosVarios.PVEmpresa" />
+      </mat-form-field>
+      <div class="formulariodiv">
+        <mat-form-field>
+          <mat-label>Numero de celular:</mat-label>
+          <input matInput [(ngModel)]="permisosVarios.PVTelefono" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Correo de contacto:</mat-label>
+          <input matInput [(ngModel)]="permisosVarios.PVCorreo" />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>cedula/ruc:</mat-label>
+          <input matInput [(ngModel)]="permisosVarios.PVCedula" />
+        </mat-form-field>
+      </div>
+
+      <div class="formulario">
+        <mat-radio-group [(ngModel)]="permisosVarios.PVRespRec">
+          <mat-label>Responsable recurrente</mat-label>
+          <mat-radio-button [value]="true">Si</mat-radio-button>
+          <mat-radio-button [value]="false">No</mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+    <div class="boton">
+      <button mat-flat-button color="warn" (click)="limpiar()" >Cancelar</button>
+      <button mat-flat-button color="primary">enviar</button>
+    </div>
+  </div>
+</div>

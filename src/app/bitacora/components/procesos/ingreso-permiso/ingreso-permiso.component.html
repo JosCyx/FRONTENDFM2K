@@ -1,0 +1,301 @@
+<app-menu-bitacora></app-menu-bitacora>
+<div class="ingreso-permiso">
+  <h2 class="font-weight-bolt ruteo">Ingreso de Permisos</h2>
+  <h3>Elija el tipo de formulario</h3>
+  <mat-button-toggle-group [(ngModel)]="isnaturalperson">
+    <mat-button-toggle [value]="false" (click)="limpiar()"
+      >Proveedor</mat-button-toggle
+    >
+    <mat-button-toggle [value]="true" (click)="limpiar()"
+      >Persona Natural</mat-button-toggle
+    >
+  </mat-button-toggle-group>
+  <div class="formulario-principal">
+    <div class="formulariodiv">
+      <mat-form-field>
+        <mat-label>Responsable de la actividad (personal FM2K)</mat-label>
+        <input matInput readonly="readonly" [value]="nombreempleado" />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Departamento:</mat-label>
+        <input matInput readonly="readonly" [value]="nombredepartamento" />
+      </mat-form-field>
+    </div>
+    <div class="formulario">
+      <mat-form-field>
+        <mat-label>Nombre de la actividad</mat-label>
+        <input matInput [(ngModel)]="permisoSI.PSINomActv" />
+      </mat-form-field>
+    </div>
+    <div class="formulariodiv">
+      <div class="fecha">
+        <mat-form-field>
+          <mat-label>Fecha de inicio de la actividad</mat-label>
+          <input
+            matInput
+            [matDatepicker]="fechaini"
+            [min]="fechainicio"
+            [(ngModel)]="permisoSI.PSIFinicio"
+          />
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="fechaini"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #fechaini></mat-datepicker>
+        </mat-form-field>
+      </div>
+      <div class="fecha">
+        <mat-form-field>
+          <mat-label>Fecha de culminacion estimada</mat-label>
+          <input
+            matInput
+            [matDatepicker]="fechafin"
+            [min]="fechainicio"
+            [(ngModel)]="permisoSI.PSIFfinal"
+          />
+
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="fechafin"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #fechafin></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="formulario">
+      <mat-radio-group [(ngModel)]="permisoSI.PSIProvRec">
+        <mat-label>Proveedor recurrente</mat-label>
+        <mat-radio-button [value]="true">Si</mat-radio-button>
+        <mat-radio-button [value]="false">No</mat-radio-button>
+      </mat-radio-group>
+    </div>
+    <div>
+      <mat-form-field class="example-full-width">
+        <mat-label>Descripcion de la actividad:</mat-label>
+        <textarea
+          matInput
+          placeholder="Ingrese una breve descripcion..."
+          [(ngModel)]="permisoSI.PSIDescripcion"
+        ></textarea>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field class="example-full-width">
+        <mat-label>Ubicacion y sector:</mat-label>
+        <textarea matInput [(ngModel)]="permisoSI.PSIUbicacion"></textarea>
+      </mat-form-field>
+    </div>
+    <mat-divider></mat-divider>
+    <div>
+      <ng-container *ngIf="!isnaturalperson">
+        <label>Datos del contratista/proveedor</label>
+        <div class="formulariodiv">
+          <mat-form-field>
+            <mat-label>
+              Proveedor acabo de la actividad/nombre de la CIA:</mat-label
+            >
+            <input matInput [(ngModel)]="permisoSI.PSINomProv" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Nombre del responsable por parte de la CIA:</mat-label>
+            <input matInput [(ngModel)]="permisoSI.PSINomResp" />
+          </mat-form-field>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="isnaturalperson">
+        <label>Datos - Persona natural</label>
+        <div class="formulariodiv">
+          <mat-form-field>
+            <mat-label>Persona Natural a cargo de la actividad:</mat-label>
+            <input matInput [(ngModel)]="permisoSI.PSIPersNat" />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Ruc de Persona Natural</mat-label>
+            <input matInput [(ngModel)]="permisoSI.PSIRuc" />
+          </mat-form-field>
+        </div>
+      </ng-container>
+      <div class="formulariodiv">
+        <mat-form-field>
+          <mat-label>Correo electronico:</mat-label>
+          <input matInput [(ngModel)]="permisoSI.PSICorreo" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Telefono:</mat-label>
+          <input matInput [(ngModel)]="permisoSI.PSITelefono" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label
+            >Cantidad de personas que realizaran esta actividad:</mat-label
+          >
+          <input
+            min="1"
+            max="30"
+            type="number"
+            matInput
+            [(ngModel)]="this.permisoSI.PSICantPersMax"
+            (ngModelChange)="nummax()"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+    <div>
+      <label
+        >Liniamentos de seguridad (seleccione los elementos que requiera)</label
+      >
+    </div>
+    <mat-accordion>
+      <mat-expansion-panel
+        (opened)="panelOpenState = true"
+        (closed)="panelOpenState = false"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title> Trabajos de minimo riesgo: </mat-panel-title>
+          <mat-panel-description>
+            Requiere inspección en sitio basica por parte del jefe tecnico de
+            operaciones FM2K
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <section class="example-section" [formGroup]="trabajos">
+          <p>
+            <mat-checkbox formControlName="tcomunes"
+              ><b>Trabajos comunes</b><br />Actividades comunes de limpieza
+              general y mantenimiento, sesiones de fotos, instalaciones
+              publicitarias, etc. uso de epps segun el caso(casco, guantes y
+              botas).
+            </mat-checkbox>
+          </p>
+          <p>
+            <mat-checkbox formControlName="metalmecanicas"
+              ><b>Metalmecanicas</b><br />Todo trabajo que conlleve la
+              fabricacion, reparacion ensamble y transformacion de metales. uso
+              obligatorio de guantes, botas, cascos y lentes.
+            </mat-checkbox>
+          </p>
+          <p>
+            <mat-checkbox formControlName="fumigacion"
+              ><b>Fumigacion</b><br />toda actividad que que utilice gases, o
+              vapores de agroquimico, o cialquier otro producto quimico para
+              control de plagas o desinfeccion. uso obligatorio de careta para
+              soldar delantal y guantes de cuero y botas de seguridad.
+            </mat-checkbox>
+          </p>
+          <p>
+            <mat-checkbox formControlName="soldadura"
+              ><b>Soldadura</b><br />Todo trabajo que requiera soldar y cortar
+              piezas con arco electrico. Uso obligatorio de careta para soldar
+              delantal y guante de cuero y botas de seguridad.
+            </mat-checkbox>
+          </p>
+          <p>
+            <mat-checkbox formControlName="carpinteriapintura"
+              ><b>Carpinteria y pintura</b><br />Toda actividad que comprende la
+              elaboración, montaje e instalacion de elementos de maderas. Uso
+              obligatorio de guantes de cuero, botas, gafas y proteccion
+              respiratoria(Aplica tambien para trabajos de pinturas).
+            </mat-checkbox>
+          </p>
+        </section>
+      </mat-expansion-panel>
+      <mat-expansion-panel
+        (opened)="panelOpenState = true"
+        (closed)="panelOpenState = false"
+      >
+        <mat-expansion-panel-header>
+          <mat-panel-title> Trabajos de alto riesgo: </mat-panel-title>
+          <mat-panel-description>
+            Requiere inspeccion general en sitio por parte de seguridad
+            industrial de FM2K
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <section class="example-section" [formGroup]="trabajos">
+          <p>
+            <mat-checkbox formControlName="taltura"
+              ><b>Trabajos en altura(Mayor a 2 metros).</b><br />Todo trabajo
+              que implique una altura mayor a 2 metros. uso obñigatorio de
+              casco, arnés, línea de vida, escaleras telescópicas o andamio en
+              caso de ser necesario.
+            </mat-checkbox>
+          </p>
+          <p>
+            <mat-checkbox formControlName="ttension"
+              ><b>Trabajos de alta tension.</b><br />Todo trabajo en el que el
+              operador entra en contacto con elementos de alta tension. Uso
+              obligatorio de equipos de protección personal dieléctricos(Botas y
+              guantes).
+            </mat-checkbox>
+          </p>
+          <p>
+            <mat-checkbox formControlName="econfinados"
+              ><b>Espacios confinados.</b><br />Todo trabajo que se realice en
+              aberturas de entradas. Espacios con entradas y salidas limitadas.
+              Garantixar que el espacio cuente con ventilación, Uso obligatorio
+              de ropa de trabajo, casco y guantes.
+            </mat-checkbox>
+          </p>
+          <p>
+            <mat-checkbox formControlName="telecomunicaciones"
+              ><b>telecomunicaciones</b><br />Toda actividad de instalaciones
+              que funcionen con tecnologias de telecomunicaciones. Uso
+              obligatorio de casco, cinturón de posicionamiento, botas de
+              seguridad, guantes o arnés em caso de ser necesario.
+            </mat-checkbox>
+          </p>
+        </section>
+      </mat-expansion-panel>
+      <div><p></p></div>
+    </mat-accordion>
+    <div>
+      <div class="form-col upload-button" *ngIf="!isactaCompromiso">
+        <button type="button" mat-raised-button (click)="fileInput.click()">
+          <mat-icon>add_photo_alternate</mat-icon>Seleccionar archivo
+        </button>
+
+        <input
+          hidden
+          (change)="onFileSelected($event)"
+          #fileInput
+          type="file"
+          accept=".pdf"
+          id="file"
+        />
+      </div>
+
+      <div
+        *ngIf="isactaCompromiso"
+        class="actacontainer"
+        style="padding-top: 25px"
+      >
+        <mat-form-field class="example-full-width">
+          <input
+            matInput
+            placeholder=""
+            value="{{ actaCompromiso.nombre }}"
+            readonly="readonly"
+          />
+        </mat-form-field>
+        <div>
+          <button mat-fab color="warn" (click)="deleteImage()">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+
+        <!-- <button mat-fab color="warn" (click)="deleteImage()">
+          <mat-icon>close</mat-icon>
+        </button> -->
+      </div>
+    </div>
+    <div class="boton">
+      <button mat-flat-button color="warn" (click)="limpiar()">Cancelar</button>
+      <button mat-flat-button color="primary" 
+      >enviar</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+.ingreso-permiso{
+  width: 70%;
+  margin: 0 auto;
+  padding-top: 120px;
+  padding-bottom: 100px;
+}
+
+.formulario-principal{
+  
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: rgb(193, 193, 195);
+  border: rgb(183, 188, 188) 5px solid;
+  border-radius: 20px;
+}
+
+.formulario{
+    display: flex 50%;
+    flex-direction: column;
+    text-align: justify;
+}
+
+.formulariodiv{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+mat-form-field{
+  width: 100% !important;
+}
+
+.fecha{
+  width: 50%;
+}
+
+.boton{
+  display: flex ;
+  flex-direction: row;
+  gap: 10px;
+  padding-top: 10px;
+  justify-content: right;
+}
+.actacontainer{
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
