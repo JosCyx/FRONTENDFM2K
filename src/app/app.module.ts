@@ -68,6 +68,16 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 
 import { MatCardModule } from '@angular/material/card';
+import { VisualizarInventarioComponent } from './inventario/components/procesos/visualizar-inventario/visualizar-inventario.component';
+import { DetalleComponent } from './inventario/components/procesos/detalle-producto/detalle-producto.component';
+import { HistorialMovimientosComponent } from './inventario/components/procesos/historial-movimientos/historial-movimientos.component';
+import { MenuInventarioComponent } from './components/templates/menu-inventario/menu-inventario.component';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectModule} from '@angular/material/select';
+import {MatListModule} from '@angular/material/list';
+//INVENTARIO
+
+
 
 @NgModule({
   declarations: [
@@ -113,6 +123,12 @@ import { MatCardModule } from '@angular/material/card';
     MainNominaComponent,
     SendNominaRolComponent,
     MenuNominaComponent,
+    DetalleComponent,
+    HistorialMovimientosComponent,
+    MenuInventarioComponent,
+    VisualizarInventarioComponent,
+    
+    
     
   ],
   imports: [
@@ -133,10 +149,21 @@ import { MatCardModule } from '@angular/material/card';
     MatDatepickerModule,
     MatNativeDateModule,
     MatInputModule,
-    MatCardModule
+    MatCardModule,
+    MatFormFieldModule,
+    MatSelectModule  ,
+    MatListModule,
+    BrowserModule,
+    FormsModule // Agrega FormsModule al array de imports
+    
+    
   ],
   providers: [AuthService, MatDialog, DialogServiceService],
   bootstrap: [AppComponent]
+
+
+  
+
 })
 export class AppModule { }
 

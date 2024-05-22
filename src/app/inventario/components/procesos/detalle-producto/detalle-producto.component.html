@@ -1,0 +1,135 @@
+<app-menu-inventario></app-menu-inventario>
+<div class="tabla">
+  <div class="principal">
+    <div class="contenedor">
+      <div class="columna-izquierda">
+        <mat-form-field>
+          <mat-label>Código</mat-label>
+          <input matInput readonly>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Producto</mat-label>
+          <input matInput readonly>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Unidad</mat-label>
+          <input matInput readonly>
+        </mat-form-field>
+      </div>
+      <div class="columna-derecha">
+        <mat-form-field>
+          <mat-label>Cantidad en stock</mat-label>
+          <input matInput readonly>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Categoria</mat-label>
+          <input matInput readonly>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Observaciones</mat-label>
+          <input matInput readonly>
+        </mat-form-field>
+      </div>
+
+
+
+
+    </div>
+    <div class="modal-footer">
+      <button mat-flat-button color="primary" data-toggle="modal" data-target="#addProd">Registro de movimiento</button>
+      
+
+    </div>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+<!-- Modal Ingreso y egreso -->
+
+
+<div class="modal fade" id="addProd" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold">
+          Ingreso y Egreso de productos
+        </h3>
+      </div>
+      <div class="modal-body">
+
+        <div class="input-horizontal">
+          <mat-form-field>
+            <mat-label>Producto: </mat-label>
+            <input matInput>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Proveedor </mat-label>
+            <input matInput>
+          </mat-form-field>
+        </div>
+
+        <div class="input-horizontal">
+          <div>
+            <select [(ngModel)]="tipoMovimiento" class="form-select disenio-selects">
+              <option selected disabled value="0">Tipo de movimiento</option>
+              <option value="1">Ingreso</option>
+              <option value="2">Egreso</option>
+              <option value="3">Devolucion</option>
+            </select>
+
+            <div class="input-horizontal">
+              <mat-form-field>
+                <mat-label>Cantidad </mat-label>
+                <input matInput>
+              </mat-form-field>
+              <input type="date" class="form-control disenio-selects">
+            </div>
+          </div>
+
+          <div class="ancho">
+
+            <mat-form-field>
+              <mat-label>Observaciones</mat-label>
+              <textarea matInput style="height: 110px;"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+
+
+
+        <mat-form-field *ngIf="tipoMovimiento == 1">
+          <mat-label>Precio unitario </mat-label>
+          <input matInput>
+        </mat-form-field>
+
+        <div class="input-horizontal">
+          <mat-form-field *ngIf="tipoMovimiento == 2">
+            <mat-label>Traspaso a Sector </mat-label>
+            <input matInput>
+          </mat-form-field>
+
+
+
+
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button mat-flat-button color="primary" data-toggle="modal" data-target="#egresoProdu">Confirmar</button>
+        <button mat-flat-button color="warn" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>

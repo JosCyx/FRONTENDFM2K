@@ -1,0 +1,79 @@
+.tabla{
+  width: 70%;
+  margin: 0 auto;
+  padding-top: 120px;
+  padding-bottom: 75px;
+}
+.campos{
+  width: 100%;
+  
+}
+
+.formulariodiv{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.boton{
+  height: 60px;
+}
+
+mat-form-field {
+  width: 100% !important;
+ 
+}
+
+.disenio-selects{
+  width: 100%;
+  height: 60px;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  background: #f0f0f0;  
+  gap: 10px;
+  text-align: justify;
+  padding: 10px;
+  color: rgb(124, 121, 121);
+  font-size: medium;
+  margin-bottom: 13px;
+}
+
+
+.contenedor {
+  display: flex;
+}
+
+.columna-izquierda {
+  flex: 1; /* La columna ocupa todo el espacio disponible */
+  margin-right: 20px; /* Espacio entre columnas */
+}
+
+.columna-derecha {
+  flex: 1; /* La columna ocupa todo el espacio disponible */
+  display: flex;
+  flex-direction: column;
+}
+.cont-modals{
+  display: flex;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+
+.mat-input-element{
+  width: 100% !important;
+}
+.texto{
+padding-top: 12px;
+}
+/* seleccionar imagen*/
+.btnimg{
+  display: flex;
+  justify-content: center;
+  padding-left: 20px;
+  
+
+}

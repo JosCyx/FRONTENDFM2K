@@ -1,0 +1,223 @@
+<app-menu-inventario></app-menu-inventario>
+<div class="tabla">
+  <h1 style="text-align: center;"><b>SISTEMA DE INVENTARIOS</b></h1>
+
+  <div class="formulariodiv">
+    <div style="width: 90%;">
+
+      <mat-form-field>
+        <mat-label>Sector</mat-label>
+        <mat-select>
+          <mat-option value="one">First option</mat-option>
+          <mat-option value="two">Second option</mat-option>
+          <mat-option value="3">option3</mat-option>
+          <mat-option value="4"> option4</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="formulariodiv">
+        <mat-form-field>
+          <mat-label>Filtrar</mat-label>
+          <input matInput>
+        </mat-form-field>
+        <section>
+          <div class="boton">
+            <button mat-flat-button color="primary">Filtrar</button>
+          </div>
+        </section>
+      </div>
+
+    </div>
+
+    <div style="width: 10%;">
+
+
+      <button mat-fab color="primary" data-toggle="modal" data-target="#addProduct"><mat-icon>add</mat-icon></button>
+    </div>
+
+  </div>
+  <div>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource">
+
+        <!-- CODIGO -->
+        <ng-container matColumnDef="position">
+          <th mat-header-cell *matHeaderCellDef> Código </th>
+          <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+        </ng-container>
+
+        <!-- PRODUCTO -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Producto </th>
+          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        </ng-container>
+
+        <!-- UNIDAD -->
+        <ng-container matColumnDef="weight">
+          <th mat-header-cell *matHeaderCellDef> Unidad </th>
+          <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+        </ng-container>
+
+        <!-- CANTIDAD EN STOCK -->
+        <ng-container matColumnDef="symbol">
+          <th mat-header-cell *matHeaderCellDef> Cantidad en stock </th>
+          <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
+        </ng-container>
+        <!-- CATEGORIA -->
+        <ng-container matColumnDef="categoria">
+          <th mat-header-cell *matHeaderCellDef> Categoria </th>
+          <td mat-cell *matCellDef="let element"> {{element.categoria}} </td>
+        </ng-container>
+
+        <!-- OBSERVACIONES -->
+        <ng-container matColumnDef="observaciones">
+          <th mat-header-cell *matHeaderCellDef> Observaciones </th>
+          <td mat-cell *matCellDef="let element"> {{element.observaciones}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectProd()"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+      </mat-paginator>
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- MODAL PRINCIPAL -->
+
+<div class="modal fade" id="addProduct" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          Ingreso de productos
+        </h3>
+      </div>
+      <div class="modal-body">
+        <div class="cont-modals">
+          <mat-form-field>
+
+            <input matInput placeholder="Ingrese el nombre del producto" list="Productos" id="Producto" name="Producto"
+              [(ngModel)]="productoSeleccionado" />
+            <datalist id="Productos">
+              <option value="Chrome"></option>
+              <option value="Firefox"></option>
+              <option value="Opera"></option>
+              <option value="Safari"></option>
+              <option value="Microsoft Edge"></option>
+            </datalist>
+          </mat-form-field>
+          <button mat-fab color="primary" (click)="seleccionarProducto()"><mat-icon>add</mat-icon></button>
+
+        </div>
+        <div>
+          <mat-list role="list">
+            <ng-container *ngFor="let prod of productos">
+              <mat-list-item role="listitem" class="disenio-selects">
+                <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                  <div class="texto">{{ prod }}</div>
+                  <button mat-icon-button color="warn"
+                    (click)="eliminar(productoSeleccionado)"><mat-icon>close</mat-icon></button>
+                </div>
+              </mat-list-item>
+            </ng-container>
+          </mat-list>
+        </div>
+
+        <div class="modal-footer">
+          <div class="columna-izquierda">
+            <h3>Si no encontro su producto <a data-toggle="modal" href="#agregarProducto"> <br>Agregelo aquí</a></h3>
+          </div>
+          <button mat-flat-button color="primary">Guardar</button>
+          <button mat-flat-button color="warn" (click)="eliminar(productoSeleccionado)"
+            data-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal agregar datos -->
+
+<div class="modal fade" id="agregarProducto" data-backdrop="true" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          Ingreso de productos
+        </h3>
+      </div>
+      <div class="modal-body">
+        <div class="contenedor">
+          <div class="columna-izquierda">
+            <mat-form-field>
+              <mat-label>Producto: </mat-label>
+              <input matInput [(ngModel)]="addProd.APProducto">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+              <mat-label>Observaciones</mat-label>
+              <textarea matInput [(ngModel)]="addProd.APObservaciones" style="height: 100px;"></textarea>
+            </mat-form-field>
+          </div>
+
+          <div class="columna-derecha">
+            <mat-form-field>
+              <mat-label>Codigo: </mat-label>
+              <input matInput [(ngModel)]="addProd.APCodigo">
+            </mat-form-field>
+            <select class="form-select" class="disenio-selects" [(ngModel)]="addProd.APUnidad">
+              <option selected disabled value="0">Unidad</option>
+              <option value="1">One</option>
+              <option value="2">Two</option>
+              <option value="3">Three</option>
+            </select>
+
+            <select class="form-select" class="disenio-selects" [(ngModel)]="addProd.APCategoria">
+              <option selected disabled value="0">Categoria</option>
+              <option value="1">Mayor</option>
+              <option value="2">Menor</option>
+
+            </select>
+          </div>
+          <div class="btnimg">
+            <div class="form-col upload-button">
+              <button type="button" mat-raised-button (click)="fileInput.click()">
+                <mat-icon>add_photo_alternate</mat-icon>Seleccionar imagen
+              </button>
+
+              <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept=".jpg, .png, .jpeg, .webp"
+                id="file" />
+
+
+
+              <div *ngIf="imageSrc">
+                <img [src]="imageSrc" alt="Selected Image" style="max-width: 50%; height: 70%;" />
+
+                <button mat-icon-button color="warn" (click)="removeImage()"><mat-icon>delete</mat-icon></button>
+              </div>
+            </div>
+            <!-- <button mat-fab color="warn" (click)="deleteImage()">
+                    <mat-icon>close</mat-icon>
+                  </button> -->
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button mat-flat-button color="primary" data-toggle="modal">Confirmar</button>
+        <button mat-flat-button color="warn" (click)="limpiar()" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+

@@ -25,6 +25,10 @@ import { SolicitudesAprobadasComponent } from './components/procesos/solicitudes
 import { MainNominaComponent } from './nomina/components/main/main-nomina/main-nomina.component';
 import { SendNominaRolComponent } from './nomina/components/procesos/send-nomina-rol/send-nomina-rol.component';
 
+//inventario
+import { VisualizarInventarioComponent } from './inventario/components/procesos/visualizar-inventario/visualizar-inventario.component';
+import { DetalleComponent } from './inventario/components/procesos/detalle-producto/detalle-producto.component';
+
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
   {path:'login', component: LoginComponent},
@@ -50,6 +54,13 @@ const routes: Routes = [
   {path: 'reportes', component: ReportesComponent, canActivate: [AuthGuard] },
   {path: 'mainnom', component: MainNominaComponent, canActivate: [AuthGuard]},
   {path: 'sendrol', component: SendNominaRolComponent, canActivate: [AuthGuard]},
+
+
+  //inventario
+  {path: 'visualizarInventario', component: VisualizarInventarioComponent, canActivate: [AuthGuard]},
+  {path: 'detalleProducto', component: DetalleComponent, canActivate: [AuthGuard]}
+
+
 ];
 
 @NgModule({

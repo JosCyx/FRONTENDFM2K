@@ -58,6 +58,9 @@ export class MainComponent implements OnInit {
   goComInt(){
     
   }
+  goInventario(){
+    this.router.navigate(['visualizarInventario']);
+  }
 
   clearCookies() {
     const cookies = this.cookieService.getAll();

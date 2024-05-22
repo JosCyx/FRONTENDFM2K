@@ -1,0 +1,31 @@
+<header>
+  <nav class="navbar navbar-expand-lg  justify-content-between">
+    <div class="header-container d-flex">
+
+      <a routerLink="/main"><img src="assets/img/logo.png" alt="logo" class="logo"></a>
+    </div>
+
+    <div>
+      
+      <button mat-raised-button color="warn" class=" ml-2 text-end" (click)="logOut()">Cerrar sesión <i
+          class="bi bi-person-circle"></i></button>
+    </div>
+  </nav>
+  
+  <p class="text-end" style="font-style: italic; color: white; margin-bottom: 0px !important;">Bienvenido: {{userName}}</p>
+</header>
+<!-- <div class="sidebar" >
+  <ul class="nav flex-column"> 
+    <li class="nav-item dropdown" *appAuthorize="'74'">
+      <button mat-stroked-button>
+        Procesos
+      </button>
+      <div class="menu" >
+        <a *appAuthorize="'75'" class="item" mat-button routerLink="/sendrol" >Envío de roles</a>
+      </div>
+    </li>
+  </ul>
+  <div class="regresar">
+    <button class="back-button" mat-raised-button onclick="history.back()"><i class="bi bi-arrow-left h4"></i></button> 
+  </div>
+</div>  -->
