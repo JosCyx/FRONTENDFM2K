@@ -1,4 +1,21 @@
-<header>
+<mat-toolbar class="toolbar-custom">
+  <div class="header-container">
+    <!-- <button  class="btn btn-primary mr-3"   (click)="toggleSidebar()"><i class="bi bi-list h5"></i></button> -->
+    <a routerLink="/main"><img src="assets/img/logo.png" alt="logo" class="logo" width="200"></a>
+  </div>
+  <span class="example-spacer"></span>
+  <div>
+    <!-- <button mat-raised-button class="mr-5" (mouseover)="showString()" (click)="getUserManual()"><i
+        class="bi bi-filetype-pdf h5 text-danger"></i>{{manualString}}</button> -->
+
+    <button mat-raised-button color="warn" class=" ml-2 text-end" (click)="logOut()">Cerrar sesión <i
+        class="bi bi-person-circle"></i></button>
+  </div>
+
+</mat-toolbar>
+<p class="username-header">Bienvenido: {{userName}}</p>
+
+<!-- <header>
   <nav class="navbar navbar-expand-lg  justify-content-between">
     <div class="header-container d-flex">
 
@@ -13,7 +30,7 @@
   </nav>
   
   <p class="text-end" style="font-style: italic; color: white; margin-bottom: 0px !important;">Bienvenido: {{userName}}</p>
-</header>
+</header> -->
 <!-- <div class="sidebar" >
   <ul class="nav flex-column"> 
     <li class="nav-item dropdown" *appAuthorize="'74'">
