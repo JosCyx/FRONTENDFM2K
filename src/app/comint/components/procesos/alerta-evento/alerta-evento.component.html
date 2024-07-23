@@ -1,0 +1,378 @@
+<app-menu-comint></app-menu-comint>
+<div class="contenido-main">
+
+    <h2 class="font-weight-bolt ruteo">Alerta de evento</h2>
+
+    <ng-container *ngIf="!globalComintService.editMode; else editModeOn">
+        <h3 class="font-weight-bold" style="padding-top: 20pt">
+            Registrar una nueva alerta
+        </h3>
+    </ng-container>
+    <ng-template #editModeOn>
+        <h3 class="font-weight-bold" style="padding-top: 20pt">
+            Editar alerta
+        </h3>
+    </ng-template>
+
+    <mat-tab-group animationDuration="0ms">
+        <mat-tab label="Información">
+            <div *ngTemplateOutlet="informacion"></div>
+        </mat-tab>
+        <ng-container *appAuthorize="'94'">
+            <mat-tab label="Programación">
+                <div *ngTemplateOutlet="programar"></div>
+            </mat-tab>
+        </ng-container>
+    </mat-tab-group>
+
+    <ng-template #informacion>
+        <div class="solev-form">
+            <div class="row-complete-form">
+                <ng-container *appAuthorize="'94'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Asunto</mat-label>
+                        <input matInput maxlength="150" [(ngModel)]="alertEvento.altEvTituloAlerta">
+                    </mat-form-field>
+                </ng-container>
+                <ng-container *appAuthorize="'93'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Asunto</mat-label>
+                        <input matInput maxlength="150" [value]="alertEvento.altEvTituloAlerta" readonly>
+                    </mat-form-field>
+                </ng-container>
+            </div>
+            <div class="row-form">
+                <!-- rol para editar alertas enviadas -->
+                <ng-container *appAuthorize="'94'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Tipo de Alerta</mat-label>
+                        <mat-select [(ngModel)]="alertEvento.altEvTipoAlerta">
+                            <ng-container *ngFor="let type of evTypeList">
+                                <mat-option [value]="type.typeAltId">{{ type.typeAltDescripcion }}</mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                </ng-container>
+
+                <!-- rol para visualizar alertas enviadas -->
+                <ng-container *appAuthorize="'93'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Tipo de Alerta</mat-label>
+                        <input matInput readonly [value]="getTipoEvento(alertEvento.altEvTipoAlerta)">
+                    </mat-form-field>
+                </ng-container>
+
+            </div>
+
+            <div class="row-complete-form">
+                <ng-container *appAuthorize="'94'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Lugar</mat-label>
+                        <textarea matInput maxlength="200" [(ngModel)]="alertEvento.altEvLugar"></textarea>
+                    </mat-form-field>
+                </ng-container>
+                <ng-container *appAuthorize="'93'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Lugar</mat-label>
+                        <textarea matInput maxlength="200" [value]="alertEvento.altEvLugar" readonly=""></textarea>
+                    </mat-form-field>
+                </ng-container>
+            </div>
+            <div class="row-form">
+                <ng-container *appAuthorize="'94'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Fecha del evento</mat-label>
+                        <input matInput [matDatepicker]="pickerInicio" [(ngModel)]="fechainicio">
+                        <mat-datepicker-toggle matIconSuffix [for]="pickerInicio"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerInicio></mat-datepicker>
+                    </mat-form-field>
+                </ng-container>
+                <ng-container *appAuthorize="'93'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Fecha del evento</mat-label>
+                        <input matInput maxlength="150" readonly [value]="fechaInicioStr">
+                    </mat-form-field>
+                </ng-container>
+
+                <ng-container *appAuthorize="'94'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Hora del evento </mat-label>
+                        <mat-select [(ngModel)]="alertEvento.altEvHoraEvento">
+                            <mat-option value="00:00">00:00</mat-option>
+                            <mat-option value="00:30">00:30</mat-option>
+                            <mat-option value="01:00">01:00</mat-option>
+                            <mat-option value="01:30">01:30</mat-option>
+                            <mat-option value="02:00">02:00</mat-option>
+                            <mat-option value="02:30">02:30</mat-option>
+                            <mat-option value="03:00">03:00</mat-option>
+                            <mat-option value="03:30">03:30</mat-option>
+                            <mat-option value="04:00">04:00</mat-option>
+                            <mat-option value="04:30">04:30</mat-option>
+                            <mat-option value="05:00">05:00</mat-option>
+                            <mat-option value="05:30">05:30</mat-option>
+                            <mat-option value="06:00">06:00</mat-option>
+                            <mat-option value="06:30">06:30</mat-option>
+                            <mat-option value="07:00">07:00</mat-option>
+                            <mat-option value="07:30">07:30</mat-option>
+                            <mat-option value="08:00">08:00</mat-option>
+                            <mat-option value="08:30">08:30</mat-option>
+                            <mat-option value="09:00">09:00</mat-option>
+                            <mat-option value="09:30">09:30</mat-option>
+                            <mat-option value="10:00">10:00</mat-option>
+                            <mat-option value="10:30">10:30</mat-option>
+                            <mat-option value="11:00">11:00</mat-option>
+                            <mat-option value="11:30">11:30</mat-option>
+                            <mat-option value="12:00">12:00</mat-option>
+                            <mat-option value="12:30">12:30</mat-option>
+                            <mat-option value="13:00">13:00</mat-option>
+                            <mat-option value="13:30">13:30</mat-option>
+                            <mat-option value="14:00">14:00</mat-option>
+                            <mat-option value="14:30">14:30</mat-option>
+                            <mat-option value="15:00">15:00</mat-option>
+                            <mat-option value="15:30">15:30</mat-option>
+                            <mat-option value="16:00">16:00</mat-option>
+                            <mat-option value="16:30">16:30</mat-option>
+                            <mat-option value="17:00">17:00</mat-option>
+                            <mat-option value="17:30">17:30</mat-option>
+                            <mat-option value="18:00">18:00</mat-option>
+                            <mat-option value="18:30">18:30</mat-option>
+                            <mat-option value="19:00">19:00</mat-option>
+                            <mat-option value="19:30">19:30</mat-option>
+                            <mat-option value="20:00">20:00</mat-option>
+                            <mat-option value="20:30">20:30</mat-option>
+                            <mat-option value="21:00">21:00</mat-option>
+                            <mat-option value="21:30">21:30</mat-option>
+                            <mat-option value="22:00">22:00</mat-option>
+                            <mat-option value="22:30">22:30</mat-option>
+                            <mat-option value="23:00">23:00</mat-option>
+                            <mat-option value="23:30">23:30</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </ng-container>
+                <ng-container *appAuthorize="'93'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Hora del evento</mat-label>
+                        <input matInput maxlength="150" readonly [value]="alertEvento.altEvHoraEvento">
+                    </mat-form-field>
+                </ng-container>
+            </div>
+
+            <div class="form-col upload-button" *ngIf="!isImageAlert">
+                <button type="button" mat-raised-button
+                    (click)="fileInput.click()"><mat-icon>add_photo_alternate</mat-icon>Seleccionar archivo</button>
+                <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept=".png, .jpg, .jpeg"
+                    id="file">
+            </div>
+
+            <div *ngIf="isImageAlert" class="img-container" style="padding-top: 25px;">
+                <ng-container *appAuthorize="'94'">
+                    <button mat-fab color="warn" (click)="deleteImage()"
+                        class="delete-button"><mat-icon>close</mat-icon></button>
+                </ng-container>
+                <img class="alert-img" [src]="imageAlert.url">
+            </div>
+
+        </div>
+    </ng-template>
+
+    <ng-template #programar>
+        <div class="solev-form">
+            <div class="div-content">
+                <div class="add-fecha" *ngIf="alertEvento.altEvEstadoEvento <= 2">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Fecha</mat-label>
+                        <input matInput [matDatepicker]="pickerFecha" [(ngModel)]="dateEvent.fecha">
+                        <mat-datepicker-toggle matIconSuffix [for]="pickerFecha"></mat-datepicker-toggle>
+                        <mat-datepicker #pickerFecha></mat-datepicker>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Hora</mat-label>
+                        <mat-select [(ngModel)]="dateEvent.hora">
+                            <ng-container *ngFor="let time of timeList">
+                                <mat-option [value]="time">{{time}}</mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                    <button mat-fab color="primary" (click)="addDateEvent()"><mat-icon>add</mat-icon></button>
+                </div>
+                <div>
+                    <mat-list role="list">
+                        <mat-list-item role="listitem" *ngIf="dateEventList.length == 0">
+                            <div style="text-align: center;" *ngIf="!globalComintService.editMode">
+                                No se ha programado ninguna fecha para enviar la alerta
+                            </div>
+                            <div style="text-align: center;" *ngIf="globalComintService.editMode">
+                                No hay ninguna fecha pendente de envío
+                            </div>
+                        </mat-list-item>
+                        <ng-container *ngFor="let date of dateEventList; let i = index">
+                            <mat-list-item role="listitem">
+                                <div class="program-item">
+                                    <div>
+                                        {{ date.fecha }}
+                                    </div>
+                                    <div>
+                                        {{ date.hora }}
+                                    </div>
+                                    <div>
+                                        <ng-container
+                                            *ngIf="date.envio == 0; else enviadotmp"><!--solo se muestra el boton de eliminar cuando no se ha enviado la alerta-->
+
+                                            <button mat-fab color="warn" style="width: 20px; height: 20px;"
+                                                (click)="deleteDateEvent(i)"
+                                                [disabled]="alertEvento.altEvEstadoEvento >= 3">
+                                                <mat-icon
+                                                    style="font-size: 12pt; display:flex;justify-content: center; align-items: center;">close</mat-icon>
+                                            </button>
+                                        </ng-container>
+                                        <ng-template #enviadotmp>
+                                            <mat-icon>done</mat-icon>
+                                        </ng-template>
+                                    </div>
+                                </div>
+                            </mat-list-item>
+                            <mat-divider></mat-divider>
+                        </ng-container>
+                    </mat-list>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <div class="div-buttons">
+        <button mat-raised-button color="warn" (click)="clearAndRedirect()">Salir</button>
+        <ng-container *ngIf="alertEvento.altEvEstadoEvento <= 2">
+            <ng-container *ngIf="globalComintService.editMode">
+                <button mat-raised-button color="accent" data-toggle="modal" data-target="#cancelAlert">Cancelar
+                    alerta</button>
+                <button mat-raised-button color="primary" data-toggle="modal"
+                    data-target="#updateAlert">Actualizar</button>
+            </ng-container>
+            <ng-container *ngIf="!globalComintService.editMode">
+                <ng-container *appAuthorize="'95'">
+                    <button mat-raised-button color="primary" data-toggle="modal" data-target="#sendAlert"
+                        [disabled]="dateEventList.length != 0 || alertEvento.altEvTituloAlerta == '' || alertEvento.altEvTipoAlerta == null || alertEvento.altEvLugar == '' || !isImageAlert">Enviar</button>
+                </ng-container>
+                <ng-container *appAuthorize="'96'">
+                    <button mat-raised-button color="accent" data-toggle="modal" data-target="#programAlert"
+                        [disabled]="dateEventList.length == 0 || alertEvento.altEvTituloAlerta == '' || alertEvento.altEvTipoAlerta == null || alertEvento.altEvLugar == '' || !isImageAlert">Programar</button>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+    </div>
+
+
+
+</div>
+
+<div class="modal fade" #exampleModal id="sendAlert" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea enviar esta alerta?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al enviar esta alerta se mostrará <strong>una sola vez</strong> en los próximos 10 minutos.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" mat-raised-button color="warn" data-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" mat-raised-button color="primary" data-dismiss="modal"
+                    (click)="saveOneAlertProgram()">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" #exampleModal id="programAlert" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea programar esta alerta?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Las fechas y horas seleccionadas son las siguientes:</p>
+                <mat-list role="listDates">
+                    <ng-container>
+                        <mat-list-item role="listitem" *ngFor="let date of dateEventList">
+                            <div style="display: flex; font-size: 10pt !important; justify-content: center;">
+                                {{ date.fecha }}
+                                {{ date.hora }}
+                            </div>
+                        </mat-list-item>
+                    </ng-container>
+                </mat-list>
+            </div>
+            <div class="modal-footer">
+                <button type="button" mat-raised-button color="warn" data-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" mat-raised-button color="primary" data-dismiss="modal" (click)="saveAlert()">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" #exampleModal id="cancelAlert" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea cancelar el envío de esta alerta?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al cancelar esta alerta ya no se enviará en ninguna de las fechas asignadas. Si sólo desea cancelar
+                    el envío en una fecha específica, debe eliminar esa fecha desde la pestaña de
+                    <strong>Programación</strong>.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" mat-raised-button color="warn" data-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" mat-raised-button color="primary" data-dismiss="modal" (click)="cancelAlert()">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" #exampleModal id="updateAlert" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center">
+                <h3 class="font-weight-bold" id="exampleModalLabel">
+                    ¿Está seguro que desea actualizar la alerta modificada?
+                </h3>
+            </div>
+            <div class="modal-body">
+                <p>Al actualizar esta alerta se modificará la información de la alerta y las fechas de programación en caso
+                    de que las haya modificado.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" mat-raised-button color="warn" data-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="button" mat-raised-button color="primary" data-dismiss="modal" (click)="updateAlert()">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

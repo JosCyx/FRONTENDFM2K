@@ -1,0 +1,111 @@
+.contenido-main {
+    width: 80%;
+    margin: 0 auto;
+}
+
+th,
+td {
+    text-align: center !important;
+}
+
+.mat-cell-custom {
+    cursor: pointer;
+}
+
+/*filtros*/
+.filter-head {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    padding: 0 10px 0 10px;
+}
+
+.filter-btn {
+    font-size: 10pt;
+    width: 30px !important;
+    height: 30px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 2px;
+}
+
+::ng-deep .mat-menu-item {
+    font-size: 10pt !important;
+}
+
+
+
+.filter-input {
+    width: 100%;
+}
+
+.input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-container input {
+    width: 100%;
+    padding-right: 10px;
+    /* espacio para el botón */
+    box-sizing: border-box;
+}
+
+.input-container .clear-button {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    outline: none;
+}
+
+/* For Chrome, Safari, Edge, and Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/*centrar contenido de las columnas*/
+.mat-column-tipo,
+.mat-column-asunto,
+.mat-column-fecha,
+.mat-column-hora,
+.mat-column-lugar,
+.mat-column-estado,
+.mat-column-enviado {
+    text-align: center;
+}
+
+.mat-column-tipo,
+.mat-column-asunto,
+.mat-column-fecha,
+.mat-column-hora,
+.mat-column-lugar,
+.mat-column-estado {
+    border-right: .1px solid rgba(0, 0, 0, 0.15);
+}
+
+/*ajustar ancho de las columnas*/
+.mat-column-asunto{
+    width: 30%;
+}
+
+.mat-column-tipo,
+.mat-column-lugar{
+    width: 20%;
+}
+
+.mat-column-fecha,
+.mat-column-hora,
+.mat-column-enviado {
+    width: 10%;
+}

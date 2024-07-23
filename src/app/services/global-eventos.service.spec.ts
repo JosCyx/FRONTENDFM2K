@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TPMovimientoService } from './tpmovimiento.service';
+import { GlobalEventosService } from './global-eventos.service';
 
-describe('TPMovimientoService', () => {
-  let service: TPMovimientoService;
+describe('GlobalEventosService', () => {
+  let service: GlobalEventosService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(TPMovimientoService);
+    service = TestBed.inject(GlobalEventosService);
   });
 
   it('should be created', () => {

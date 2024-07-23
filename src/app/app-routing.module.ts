@@ -29,6 +29,15 @@ import { SendNominaRolComponent } from './nomina/components/procesos/send-nomina
 import { VisualizarInventarioComponent } from './inventario/components/procesos/visualizar-inventario/visualizar-inventario.component';
 import { DetalleComponent } from './inventario/components/procesos/detalle-producto/detalle-producto.component';
 
+//COMUNICACION INTERNA
+import { MainComintComponent } from './comint/components/templates/main-comint/main-comint.component';
+import { SolicitudEventoComponent } from './comint/components/procesos/solicitud-evento/solicitud-evento.component';
+import { SolicitudEventoListComponent } from './comint/components/procesos/solicitud-evento-list/solicitud-evento-list.component';
+import { AlertaEventoComponent } from './comint/components/procesos/alerta-evento/alerta-evento.component';
+import { AlertaEventoListComponent } from './comint/components/procesos/alerta-evento-list/alerta-evento-list.component';
+import { MainEventoComponent } from './eventos/components/main-evento/main-evento.component';
+import { FormularioEventoComponent } from './eventos/components/formulario-evento/formulario-evento.component';
+
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
   {path:'login', component: LoginComponent},
@@ -58,8 +67,19 @@ const routes: Routes = [
 
   //inventario
   {path: 'visualizarInventario', component: VisualizarInventarioComponent, canActivate: [AuthGuard]},
-  {path: 'detalleProducto', component: DetalleComponent, canActivate: [AuthGuard]}
+  {path: 'detalleProducto', component: DetalleComponent, canActivate: [AuthGuard]},
 
+
+  //COMUNICACION INTERNA
+  {path: 'maincomint', component: MainComintComponent, canActivate: [AuthGuard]},
+  {path: 'solev', component: SolicitudEventoComponent, canActivate: [AuthGuard]},
+  {path: 'solevlist', component: SolicitudEventoListComponent, canActivate: [AuthGuard]},
+  {path: 'alertev', component: AlertaEventoComponent, canActivate: [AuthGuard]},
+  {path: 'alertevlist', component: AlertaEventoListComponent, canActivate: [AuthGuard]},
+
+   //EVENTOS
+   { path: 'mainevento', component: MainEventoComponent, canActivate: [AuthGuard] },
+   { path: 'formulario-evento', component: FormularioEventoComponent, canActivate: [AuthGuard] },
 
 ];
 

@@ -1,21 +1,33 @@
 <app-menu-inventario></app-menu-inventario>
 <div class="tabla">
-  <h1 style="text-align: center;"><b>SISTEMA DE INVENTARIOS DE OPERACIONES</b></h1>
+  <h1 style="text-align: center;"><b>SISTEMA DE INVENTARIO</b></h1>
 
   <div class="formulariodiv">
-    <div style="width: 90%;">
+    <div style="width: 100%;">
 
-      <mat-form-field>
-        <mat-label>Sector</mat-label>
-        <mat-select>
-          <mat-option value="one">First option</mat-option>
-          <mat-option value="two">Second option</mat-option>
-          <mat-option value="3">option3</mat-option>
-          <mat-option value="4"> option4</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div style="display: flex; flex-direction: row; gap: 10px;">
 
-      <div class="formulariodiv">
+        <mat-form-field>
+          <mat-label>Seleccione el área</mat-label>
+          <mat-select [(ngModel)]="globalInvService.areaSelected" (ngModelChange)="consultarGrupos()">
+
+            <ng-container *ngFor="let area of areasList">
+              <mat-option [value]="area.codigo">{{ area.nombre }}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Seleccione el sector</mat-label>
+          <mat-select [(ngModel)]="globalInvService.sectorSelected" (ngModelChange)="consultarProductos()">
+            <ng-container *ngFor="let sector of sectoresList">
+              <mat-option [value]="sector.codigo">{{ sector.nombre }}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- <div class="formulariodiv">
         <mat-form-field>
           <mat-label>Filtrar</mat-label>
           <input matInput>
@@ -25,105 +37,210 @@
             <button mat-flat-button color="primary">Filtrar</button>
           </div>
         </section>
-      </div>
+      </div> -->
 
     </div>
 
-    <div style="width: 10%;">
 
-
-      <button mat-fab color="primary" data-toggle="modal" data-target="#addProduct"><mat-icon>add</mat-icon></button>
-    </div>
 
   </div>
+
   <div>
     <div class="mat-elevation-z8">
       <table mat-table [dataSource]="dataSource">
 
         <!-- CODIGO -->
-        <ng-container matColumnDef="position">
-          <th mat-header-cell *matHeaderCellDef> Código </th>
-          <td mat-cell *matCellDef="let element"> {{element.position}} </td>
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="filter-head">
+              Código
+              <div style="display: flex; flex-direction: row;">
+                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(1)"><i
+                    class="bi bi-funnel-fill"></i></button>
+                <button class="filter-btn" mat-icon-button color="basic" [matMenuTriggerFor]="menuCodigo"><i class="bi bi-sort-down"></i></button>
+                <mat-menu #menuCodigo="matMenu" >
+                  <button mat-menu-item style="font-size: 10pt !important;" (click)="sortByCodigo(1)"><i class="bi bi-sort-numeric-down"></i> Ascendente</button>
+                  <button mat-menu-item style="font-size: 10pt !important;" (click)="sortByCodigo(2)"><i class="bi bi-sort-numeric-down-alt"></i> Descendente</button>
+                </mat-menu>
+              </div>
+            </div>
+            <div class="input-container" *ngIf="filterType == 1">
+              <input type="text" (input)="applyStrFilter($event)">
+              <button matRipple class="clear-button" (click)="clearFilter()">✕</button>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.codigo}} </td>
         </ng-container>
 
         <!-- PRODUCTO -->
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef> Producto </th>
-          <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+        <ng-container matColumnDef="producto">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="filter-head">
+              Producto
+              <div style="display: flex; flex-direction: row;">
+                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(2)"><i
+                    class="bi bi-funnel-fill"></i></button>
+                <button class="filter-btn" mat-icon-button color="basic" [matMenuTriggerFor]="menuNombre"><i class="bi bi-sort-down"></i></button>
+                <mat-menu #menuNombre="matMenu" >
+                  <button mat-menu-item style="font-size: 10pt !important;" (click)="sortByNombre(1)"><i class="bi bi-sort-alpha-down"></i> Ascendente</button>
+                  <button mat-menu-item style="font-size: 10pt !important;" (click)="sortByNombre(2)"><i class="bi bi-sort-alpha-down-alt"></i> Descendente</button>
+                </mat-menu>
+              </div>
+            </div>
+            <div class="input-container" *ngIf="filterType == 2">
+              <input type="text" (input)="applyStrFilter($event)">
+              <button matRipple class="clear-button" (click)="clearFilter()">✕</button>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.producto}} </td>
         </ng-container>
 
         <!-- UNIDAD -->
-        <ng-container matColumnDef="weight">
-          <th mat-header-cell *matHeaderCellDef> Unidad </th>
-          <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
+        <ng-container matColumnDef="unidad">
+          <th mat-header-cell *matHeaderCellDef>
+
+            <div class="filter-head">
+              Unidad
+              <div style="display: flex; flex-direction: row;">
+                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(3)"><i
+                    class="bi bi-funnel-fill"></i></button>
+                <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+              </div>
+            </div>
+            <div class="input-container" *ngIf="filterType == 3">
+              <button matRipple class="clear-button" (click)="clearFilter()">✕</button>
+              <select (change)="applyListFilter($event)">
+                <ng-container *ngFor="let u of unidadesList">
+                  <option [value]="u.codigo">{{u.nombre}}</option>
+                </ng-container>
+              </select>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.unidad}} </td>
         </ng-container>
 
         <!-- CANTIDAD EN STOCK -->
-        <ng-container matColumnDef="symbol">
-          <th mat-header-cell *matHeaderCellDef> Cantidad en stock </th>
-          <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
+        <ng-container matColumnDef="cantidad">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="filter-head">
+              Stock
+              <div style="display: flex; flex-direction: row;">
+                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(4)"><i
+                    class="bi bi-funnel-fill"></i></button>
+                <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+              </div>
+            </div>
+            <div class="input-container" *ngIf="filterType == 4">
+              <input type="number" (input)="applyStrFilter($event)">
+              <button matRipple class="clear-button" (click)="clearFilter()">✕</button>
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.cantidad}} </td>
         </ng-container>
+
+        <ng-container matColumnDef="last_price">
+          <th mat-header-cell *matHeaderCellDef> Último precio </th>
+          <td mat-cell *matCellDef="let element"> {{element.last_price}} </td>
+        </ng-container>
+
         <!-- CATEGORIA -->
         <ng-container matColumnDef="categoria">
-          <th mat-header-cell *matHeaderCellDef> Categoria </th>
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="filter-head">
+              Categoría
+              <div style="display: flex; flex-direction: row;">
+                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(5)"><i
+                    class="bi bi-funnel-fill"></i></button>
+                <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+              </div>
+            </div>
+            <div class="input-container" *ngIf="filterType == 5">
+              <!-- <input type="text">-->
+              <button matRipple class="clear-button" (click)="clearFilter()">✕</button>
+              <select (change)="applyListFilter($event)">
+                <ng-container *ngFor="let c of categoriasList">
+                  <option [value]="c.codigo">{{c.nombre}}</option>
+                </ng-container>
+              </select>
+            </div>
+          </th>
           <td mat-cell *matCellDef="let element"> {{element.categoria}} </td>
         </ng-container>
 
         <!-- OBSERVACIONES -->
-        <ng-container matColumnDef="observaciones">
+        <ng-container matColumnDef="observ">
           <th mat-header-cell *matHeaderCellDef> Observaciones </th>
-          <td mat-cell *matCellDef="let element"> {{element.observaciones}} </td>
+          <td mat-cell *matCellDef="let element"> {{element.observ}} </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectProd()"></tr>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="center-content"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"  (click)="selectProduct(row)"
+          class="pointer-cursor"></tr>
       </table>
+
 
       <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
       </mat-paginator>
 
     </div>
   </div>
+  <div class="mt-4" style="display: flex; justify-content: flex-end; gap: 10px;" *ngIf="showAsignButton">
+    <ng-container *appAuthorize="'83'">
+      <button mat-stroked-button color="primary" [matMenuTriggerFor]="menuExport">Exportar</button>
+    </ng-container>
+    <mat-menu #menuExport="matMenu">
+      <!-- <ng-container *appAuthorize="'84'">
+        <button mat-menu-item (click)="exportPDF()" disabled><i class="bi bi-filetype-pdf" style="color: red;"></i> Exportar a PDF</button>
+      </ng-container> -->
+      <ng-container *appAuthorize="'83'">
+        <button mat-menu-item (click)="exportToExcel()" ><i class="bi bi-filetype-xlsx" style="color: green;"></i> Exportar a Excel</button>
+      </ng-container>
+    </mat-menu>
+    <ng-container *appAuthorize="'80'">
+      <button (click)="callAsignProduct()" mat-raised-button color="primary">Asignar nuevo producto</button>
+    </ng-container>
+  </div>
 </div>
 
 
 
-<!-- MODAL PRINCIPAL -->
+<!-- SELECCIONAR LOS PRODUCTOS PARA ASIGNAR -->
 
-<div class="modal fade" id="addProduct" data-backdrop="static" tabindex="-1" role="dialog"
+<!-- <div class="modal fade" id="addProduct" data-backdrop="static" tabindex="-1" role="dialog"
   aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header justify-content-center">
         <h3 class="font-weight-bold" id="exampleModalLabel">
-          Ingreso de productos
+          ASIGNAR PRODUCTOS A SU SECTOR
         </h3>
       </div>
+
       <div class="modal-body">
         <div class="cont-modals">
           <mat-form-field>
-
-            <input matInput placeholder="Ingrese el nombre del producto" list="Productos" id="Producto" name="Producto"
-              [(ngModel)]="productoSeleccionado" />
-            <datalist id="Productos">
-              <option value="Chrome"></option>
-              <option value="Firefox"></option>
-              <option value="Opera"></option>
-              <option value="Safari"></option>
-              <option value="Microsoft Edge"></option>
+            <input matInput placeholder="Ingrese el nombre del producto" list="productDataList" id="Producto"
+              name="Producto" [(ngModel)]="productoSeleccionado" />
+            <datalist id="productDataList">
+              <ng-container *ngFor="let prod of productosList">
+                <option [value]="prod.nombre">{{ prod.codigo }}</option>
+              </ng-container>
             </datalist>
           </mat-form-field>
-          <button mat-fab color="primary" (click)="seleccionarProducto()"><mat-icon>add</mat-icon></button>
+          <button mat-fab color="primary" (click)="addProdcut()"><mat-icon>done</mat-icon></button>
 
+          <div class="alert alert-warning" role="alert" *ngIf="errorAsign">
+            {{ errorMessage }}
+          </div>
         </div>
-        <div>
+
+        <div style="padding-left: 20px; padding-right: 20px;">
           <mat-list role="list">
-            <ng-container *ngFor="let prod of productos">
+            <ng-container *ngFor="let prod of productsToAsign">
               <mat-list-item role="listitem" class="disenio-selects">
                 <div style="display: flex; flex-direction: row; justify-content: space-between;">
                   <div class="texto">{{ prod }}</div>
-                  <button mat-icon-button color="warn"
-                    (click)="eliminar(productoSeleccionado)"><mat-icon>close</mat-icon></button>
+                  <button mat-icon-button color="warn" (click)="eliminar(prod)"><mat-icon>close</mat-icon></button>
                 </div>
               </mat-list-item>
             </ng-container>
@@ -132,62 +249,68 @@
 
         <div class="modal-footer">
           <div class="columna-izquierda">
-            <h3>Si no encontro su producto <a data-toggle="modal" href="#agregarProducto"> <br>Agregelo aquí</a></h3>
+            <h3>Si no encontró su producto <a data-toggle="modal" href="#agregarProducto"
+                style="text-decoration: underline;">Agréguelo aquí.</a></h3>
           </div>
-          <button mat-flat-button color="primary">Guardar</button>
-          <button mat-flat-button color="warn" (click)="eliminar(productoSeleccionado)"
-            data-dismiss="modal">Cancelar</button>
+          <button mat-flat-button color="primary" (click)="asignProducts()" data-dismiss="modal">Confirmar</button>
+          <button mat-flat-button color="warn" (click)="cancelarAsignacion()" data-dismiss="modal">Cancelar</button>
         </div>
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
-<!-- Modal agregar datos -->
+<!-- REGISTRAR NUEVO PRODUCTO -->
 
-<div class="modal fade" id="agregarProducto" data-backdrop="true" tabindex="-1" role="dialog"
+<!-- <div class="modal fade" id="agregarProducto" data-backdrop="true" tabindex="-1" role="dialog"
   aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header justify-content-center">
         <h3 class="font-weight-bold" id="exampleModalLabel">
-          Ingreso de productos
+          REGISTRAR UN NUEVO PRODUCTO
         </h3>
       </div>
       <div class="modal-body">
         <div class="contenedor">
-          <div class="columna-izquierda">
+          <div class="prodNombre">
             <mat-form-field>
               <mat-label>Producto: </mat-label>
-              <input matInput [(ngModel)]="addProd.APProducto">
-            </mat-form-field>
-
-            <mat-form-field class="example-full-width">
-              <mat-label>Observaciones</mat-label>
-              <textarea matInput [(ngModel)]="addProd.APObservaciones" style="height: 100px;"></textarea>
+              <input matInput [(ngModel)]="producto.nombre">
             </mat-form-field>
           </div>
+          
+          <div class="prodBody">
 
-          <div class="columna-derecha">
-            <mat-form-field>
-              <mat-label>Codigo: </mat-label>
-              <input matInput [(ngModel)]="addProd.APCodigo">
-            </mat-form-field>
-            <select class="form-select" class="disenio-selects" [(ngModel)]="addProd.APUnidad">
-              <option selected disabled value="0">Unidad</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
-            </select>
-
-            <select class="form-select" class="disenio-selects" [(ngModel)]="addProd.APCategoria">
-              <option selected disabled value="0">Categoria</option>
-              <option value="1">Mayor</option>
-              <option value="2">Menor</option>
-
-            </select>
+            <div class="prodLeft">
+              <select class="form-select" [(ngModel)]="producto.unidad">
+                <ng-container *ngFor="let u of unidadesList">
+                  <option [value]="u.codigo">{{ u.nombre }}</option>
+                </ng-container>
+              </select>
+              <mat-form-field>
+                <mat-label>Favorite food</mat-label>
+                <mat-select>
+                  <ng-container *ngFor="let u of unidadesList">
+                    <mat-option [value]="u.codigo">{{ u.nombre }}</mat-option>
+                  </ng-container>
+                </mat-select>
+              </mat-form-field>
+  
+              <select class="form-select" class="disenio-selects" [(ngModel)]="producto.categoria">
+                <ng-container *ngFor="let c of categoriasList">
+                  <option [value]="c.codigo">{{ c.nombre }}</option>
+                </ng-container>
+              </select>
+            </div>
+            <div class="prodRight">
+              <mat-form-field class="example-full-width">
+                <mat-label>Observaciones</mat-label>
+                <textarea matInput [(ngModel)]="producto.observ" style="height: 100px;"></textarea>
+              </mat-form-field>
+            </div>
           </div>
-          <div class="btnimg">
+          <div class="prodImg">
             <div class="form-col upload-button">
               <button type="button" mat-raised-button (click)="fileInput.click()">
                 <mat-icon>add_photo_alternate</mat-icon>Seleccionar imagen
@@ -204,10 +327,10 @@
                 <button mat-icon-button color="warn" (click)="removeImage()"><mat-icon>delete</mat-icon></button>
               </div>
             </div>
-            <!-- <button mat-fab color="warn" (click)="deleteImage()">
+             <button mat-fab color="warn" (click)="deleteImage()">
                     <mat-icon>close</mat-icon>
-                  </button> -->
-          </div>
+                  </button>
+          </div> 
 
         </div>
       </div>
@@ -217,7 +340,4 @@
       </div>
     </div>
   </div>
-</div>
-
-
-
+</div> -->

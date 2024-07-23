@@ -1,0 +1,286 @@
+.project-form {
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #cfd6fd52;
+  color: black;
+}
+
+.form-container {
+  padding-top: 120px;
+  width: 70%;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.mat-tab-group {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.form-row,
+.form-group {
+  padding: 0px 5px 0px 5px;
+}
+
+.label-column {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.dual-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.left-container,
+.right-container {
+  flex: 1;
+}
+
+.project-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.project-table th,
+.project-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  background-color: whitesmoke;
+  color: black;
+  font-weight: bold;
+  text-align: center;
+}
+
+.project-table th {
+  background-color: #c7cfff52;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px; /* Ajusta esto al tamaño del formulario */
+  margin-left: auto;
+  padding-bottom: 20px; /* Esto asegura que los botones estén alineados a la derecha del formulario */
+}
+
+.delete-button,
+.cancel-button,
+.save-button,
+.submit-button {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+.delete-button {
+  background-color: #d9534f;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #f0ad4e;
+  color: white;
+}
+
+.save-button {
+  background-color: #5bc0de;
+  color: white;
+}
+
+.submit-button {
+  background-color: #5cb85c;
+  color: white;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.form-title-center {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.form-section-title {
+  font-weight: bold;
+  padding-top: 20px;
+}
+
+.project-form h2.form-section-title {
+  text-align: center;
+  font-weight: bold;
+}
+
+.center-text {
+  text-align: center;
+}
+
+mat-form-field {
+  width: 100% !important;
+}
+
+mat-label {
+  text-align: left;
+  display: block;
+}
+
+/* Asegura que el textarea ocupe el 100% del contenedor */
+table.project-table textarea {
+  width: 100%;
+  height: 100%;
+  resize: none; /* Evita el redimensionamiento */
+  box-sizing: border-box;
+  border: none; /* Remueve el borde por defecto */
+  padding: 10px;
+}
+
+/* Aplica estilos para el estado hover y focus */
+table.project-table textarea:hover,
+table.project-table textarea:focus,
+table.project-table textarea:active {
+  border: none; /* Remueve el borde */
+  outline: none; /* Remueve el contorno */
+}
+
+/* Agrega cualquier estilo adicional que desees para el textarea */
+table.project-table textarea {
+  font-size: 14px;
+  line-height: 1.5;
+  background-color: #f9f9f9; /* Opcional: Color de fondo */
+  border-radius: 4px; /* Opcional: Bordes redondeados */
+}
+
+::ng-deep .mat-tab-label {
+  background-color: #f0f0f0; /* Ajusta el color de fondo de las etiquetas */
+  color: #333; /* Ajusta el color del texto de las etiquetas */
+  padding: 12px; /* Ajusta el relleno de las etiquetas */
+  border-radius: 5px 5px 0 0; /* Ajusta las esquinas redondeadas */
+}
+
+::ng-deep .mat-tab-label-active {
+  background-color: #007bff; /* Ajusta el color de fondo de la etiqueta activa */
+  color: #fff; /* Ajusta el color del texto de la etiqueta activa */
+}
+
+::ng-deep .mat-tab-body {
+  padding: 12px; /* Ajusta el relleno del contenido de las pestañas */
+  background-color: #fff; /* Ajusta el color de fondo del contenido de las pestañas */
+  border: 1px solid #ddd; /* Ajusta el borde del contenido de las pestañas */
+  border-radius: 0 0 5px 5px; /* Ajusta las esquinas redondeadas */
+  color: black;
+}
+
+::ng-deep .mat-tab-body-content {
+  padding: 20px;
+  background-color: #c7cfff52;
+  border-radius: 5px;
+  color: black;
+}
+
+.project-form .mat-tab-body-content {
+  background-color: #c7cfff52; /* Ajusta el color de fondo del contenido de las pestañas */
+  color: black;
+}
+
+.project-form {/* Ajusta el ancho máximo del formulario */
+  margin: 0 auto; /* Centra el formulario horizontalmente */
+}
+
+.form-buttons {/* Ajusta esto al tamaño del formulario */
+  margin: 0 auto;
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end; /* Alinea los botones a la derecha */
+  gap: 10px;
+}
+
+.example-full-width {
+  width: 100%;
+}
+
+mat-tab-group {
+  margin: 0 auto;
+}
+
+mat-tab-group .mat-tab-label {
+  width: 50%;
+}
+
+table{
+  border-radius: 10px;
+}
+
+textarea{
+  max-height: 150px;
+}
+
+
+/*FICHA ETO*/
+mat-panel-description{
+  justify-content: flex-end;
+
+}
+
+.element-eto{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+mat-acordion{
+  max-width: 100% !important;
+
+}
+
+mat-expansion-panel{
+  background-color: #cfd6fd52;
+}
+
+.textarea-container {
+  flex: 1;
+  padding: 5px;
+}
+
+.textarea-eto {
+  width: 100%;
+  height: 100px; 
+  box-sizing: border-box;
+  resize: none; 
+  border: .1px solid #a3a3a3;
+  border-radius: 5px;
+}
+
+.textarea-eto:disabled {
+  background-color: #f9f9f9;
+}
+
+.delete-doc-button{
+  background-color: #d9534f;
+  color: white;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+}
+
+.textarea-eto:focus {
+  border-radius: 5px;
+  border: .1px solid #a3a3a3;
+  outline: none;
+}
+
+mat-list-option{
+  font-size: 10pt !important;
+}

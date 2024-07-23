@@ -81,6 +81,11 @@ export class UploadFileService {
     return this.http.get(`${this.APIUrl}/Documento/GetSolicitudesManual`, {responseType:'blob'});
   }
 
+  getInvManual(){
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get(`${this.APIUrl}/Documento/GetInvManual`, {responseType:'blob'});
+  }
+
   getComintManual(){
     const headers = this.getHeadersWithAuthToken();
     return this.http.get(`${this.APIUrl}/Documento/GetComintManual`, {responseType:'blob'});

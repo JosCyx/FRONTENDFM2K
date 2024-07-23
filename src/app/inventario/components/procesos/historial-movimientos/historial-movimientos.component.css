@@ -1,0 +1,15 @@
+.mat-column-ingreso, 
+.mat-column-egreso, 
+.mat-column-devolucion, 
+.mat-column-pr_unit, 
+.mat-column-pr_total, 
+.mat-column-proveedor,
+.mat-column-observaciones,
+.mat-column-destino,
+.mat-column-kardex{
+  text-align: center;
+}
+
+.label-rb{
+  padding-top: 8px !important;
+}

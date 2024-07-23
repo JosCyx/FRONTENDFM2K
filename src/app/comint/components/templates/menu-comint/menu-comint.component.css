@@ -1,0 +1,72 @@
+
+
+
+header{
+    position: fixed !important;
+    width: 100%;
+    flex-direction: column;
+    top: 0;
+    left: 0;
+}
+
+
+
+/* Add margin to the sub-menu items */
+.sub-menu {
+    margin-left: 10px;
+}
+
+/* Add a bit of indentation to the sub-menu items */
+.sub-menu a {
+    padding-left: 10px;
+}
+
+
+
+/* Estilo base del sidebar */
+.sidebar {
+    position: fixed !important;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.2), rgba(255, 255, 255, 0));
+    top: 65px;
+    height: 100vh;
+    width: 200px;
+    padding-top: 40px;
+    padding-left: 20px;
+}
+
+
+
+
+#configuracionDropdown {
+    text-align: left;
+}
+
+
+.nav-item {
+    margin-bottom: 30px;
+    text-align: left;
+}
+.nav-item.dropdown {
+    width: 130px;
+}
+
+.nav-item.dropdown:hover .menu {
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.menu{
+    color: black;
+    display: none;
+    background-color: rgb(226, 226, 226);
+    width: 200px;
+    border-radius: 0 10px 10px 10px;
+}
+
+.regresar{
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+}
+

@@ -26,8 +26,8 @@
   </div>
   <span class="example-spacer"></span>
   <div>
-    <button mat-raised-button class="mr-5" (mouseover)="showString()" (click)="getUserManual()"><i
-        class="bi bi-filetype-pdf h5 text-danger"></i>{{manualString}}</button>
+    <!-- <button mat-raised-button class="mr-5" (mouseover)="showString()" (click)="getUserManual()"><i
+        class="bi bi-filetype-pdf h5 text-danger"></i>{{manualString}}</button> -->
 
     <button mat-raised-button color="warn" class=" ml-2 text-end" (click)="logOut()">Cerrar sesión <i
         class="bi bi-person-circle"></i></button>
@@ -50,7 +50,7 @@
     <div class="card m-5 text-center" style="width: 18rem;" *appAuthorize="'46'">
       <img src="assets/img/request.png" class="card-img-top" alt="...">
       <div class="card-body">
-        <h4 class="card-title font-weight-bold text-center">SOLICITUDES</h4>
+        <h4 class="card-title font-weight-bold text-center">COMPRAS</h4>
         <button mat-raised-button (click)="goRequests()" class="primary-button col-md-4 text-light">Ir</button>
       </div>
     </div>
@@ -71,7 +71,7 @@
       </div>
     </div> -->
 
-    <div class="card m-5 text-center" style="width: 18rem;" *appAuthorize="'73'">
+    <div class="card m-5 text-center" style="width: 18rem;" *appAuthorize="'79'">
       <img src="assets/img/inventario.png" class="card-img-top" alt="...">
       <div class="card-body">
         <h4 class="card-title font-weight-bold text-center">INVENTARIO</h4>
@@ -79,5 +79,20 @@
       </div>
     </div>
 
+    <div class="card m-5 text-center" style="width: 18rem;" *appAuthorize="'87'">
+      <img src="assets/img/comint.png" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h4 class="card-title font-weight-bold text-center">COMUNICACION INTERNA</h4>
+        <button mat-raised-button (click)="goComInt()" class="primary-button col-md-4 text-light">Ir</button>
+      </div>
+    </div>
+    <div class="card m-5 text-center" style="width: 18rem;" *appAuthorize="'87'">
+      <img src="assets/img/eventos.jpg" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h4 class="card-title font-weight-bold text-center">EVENTOS</h4>
+        <button mat-raised-button (click)="goEventos()" class="primary-button col-md-4 text-light">Ir</button>
+      </div>
+    </div>
   </div>
+
 </div>

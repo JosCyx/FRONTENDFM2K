@@ -2207,7 +2207,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }
 
   //CORREGIR LAS LLAMADAS A LOS METODOS PARA ENVIAR MAILS
-  //obtiene el contenido deo correo y llama al metodo sendnotify
+  //obtiene el contenido del correo y llama al metodo sendnotify
   getMailContentSN(idMail: number, nivel: number, typeProceso: string) {
     this.sendMailService.getMailContent(idMail).subscribe(
       response => {
@@ -2221,7 +2221,6 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       }
     );
   }
-
 
   //obtiene el contenido del correo y llama al metodo sendmail
   getMailContentSM(idMail: number, mailToNotify: string) {
@@ -2238,6 +2237,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       }
     );
   }
+
   setMotivoDev() {
     if (this.cabecera.cabSolCotAprobPresup == 'SI') {
       this.setMotivo = 'NO';

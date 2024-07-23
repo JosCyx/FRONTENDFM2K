@@ -1,0 +1,223 @@
+<app-menu-evento></app-menu-evento>
+<div class="form-container">
+
+  <h2 class="font-weight-bolt ruteo">Ficha de Evento</h2>
+
+  <h3 class="font-weight-bold" style="padding-top: 20pt">
+    Registrar una nueva ficha
+  </h3>
+
+  <mat-tab-group animationDuration="0ms">
+    <mat-tab label="Ficha del proyecto">
+      <div *ngTemplateOutlet="ficha_proyecto"></div>
+    </mat-tab>
+    <mat-tab label="Ficha E.T.O.">
+      <div *ngTemplateOutlet="ficha_eto"></div>
+    </mat-tab>
+  </mat-tab-group>
+
+
+
+
+  <ng-template #ficha_proyecto>
+    <div class="project-form">
+      <div class="form-row">
+        <mat-form-field class="example-full-width">
+          <mat-label>FECHA DE EMISIÓN</mat-label>
+          <input matInput [value]="GlobalEventosService.formatDateToSpanish(fecha)" readonly>
+        </mat-form-field>
+      </div>
+      <div class="form-row">
+        <mat-form-field class="example-full-width">
+          <mat-label>NOMBRE DEL PROYECTO</mat-label>
+          <input matInput placeholder="Escribe el nombre del proyecto" [(ngModel)]="evento.nombreProyecto">
+        </mat-form-field>
+      </div>
+
+
+      <div class="form-row">
+        <mat-form-field class="example-full-width">
+          <mat-label>USUARIO SOLICITANTE</mat-label>
+          <input type="text" for="solicitante" placeholder="Ingrese el nombre del solicitante"
+            (input)="updateEmpleadosListFiltered($event)" matInput [matAutocomplete]="auto"
+            [(ngModel)]="nombreEmpleado">
+          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+            <ng-container *ngFor="let emp of empleadosListFiltered">
+              <mat-option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos">{{emp.empleadoNombres + " " +
+                emp.empleadoApellidos}}</mat-option>
+            </ng-container>
+
+          </mat-autocomplete>
+        </mat-form-field>
+
+      </div>
+      <div class="dual-container">
+        <mat-form-field>
+          <mat-label>SECTOR</mat-label>
+          <mat-select [(ngModel)]="evento.sector">
+            <ng-container *ngFor="let sect of sectoresList">
+              <mat-option [value]="sect.sectId">{{sect.sectNombre}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>ÁREA QUE ADMINISTRA</mat-label>
+          <mat-select [(ngModel)]="evento.area">
+            <ng-container *ngFor="let area of areasList">
+              <mat-option [value]="area.areaIdNomina">{{area.areaDecp}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+      <div class="form-row">
+        <!-- <mat-form-field class="example-full-width">
+          <mat-label>REFERENCIA</mat-label>
+          <input matInput placeholder="Escribe la referencia" id="referencia" name="referencia">
+        </mat-form-field> -->
+        <mat-form-field class="example-full-width">
+          <mat-label>REFERENCIA</mat-label>
+          <textarea matInput placeholder="Ingrese la referencia del lugar" rows="3"
+            [(ngModel)]="evento.referencia"></textarea>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>OBJETIVO DEL PROYECTO</mat-label>
+        <textarea matInput placeholder="Ingrese el objetivo del proyecto" rows="4"
+          [(ngModel)]="evento.objetivo"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>ALCANCE DEL PROYECTO</mat-label>
+        <textarea matInput placeholder="Ingrese el alcance del proyecto" rows="4"
+          [(ngModel)]="evento.alcance"></textarea>
+      </mat-form-field>
+
+      <table class="project-table">
+        <tr>
+          <th>Riesgos</th>
+          <th>Mitigación</th>
+        </tr>
+        <ng-container *ngFor="let item of riesgosList; let i = index; trackBy: trackByIndex">
+          <tr>
+            <td>
+              <textarea [(ngModel)]="riesgosList[i].rsg" name="riesgo{{i}}" rows="4"></textarea>
+            </td>
+            <td>
+              <textarea [(ngModel)]="riesgosList[i].mit" name="mitigacion{{i}}" rows="4"></textarea>
+            </td>
+          </tr>
+        </ng-container>
+        <tr>
+          <td>
+            <textarea [(ngModel)]="riesgoObj.rsg" name="riesgo" (keydown.enter)="onEnter($event)" rows="4"></textarea>
+          </td>
+          <td>
+            <textarea [(ngModel)]="riesgoObj.mit" name="mitigacion" (keydown.enter)="onEnter($event)"
+              rows="4"></textarea>
+          </td>
+        </tr>
+      </table>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>DETALLE DEL PRODUCTO FINAL</mat-label>
+        <textarea matInput placeholder="Ingrese el detalle de producto final" rows="4"
+          [(ngModel)]="evento.detalle"></textarea>
+      </mat-form-field>
+
+      <div class="form-row">
+        <mat-form-field class="example-full-width">
+          <mat-label>FECHA DE IMPLEMENTACIÓN</mat-label>
+          <input matInput [matDatepicker]="fechaImplementacionPicker" [(ngModel)]="evento.fechaImplementacion">
+          <mat-datepicker-toggle matIconSuffix [for]="fechaImplementacionPicker"></mat-datepicker-toggle>
+          <mat-datepicker #fechaImplementacionPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+    </div>
+  </ng-template>
+
+  <ng-template #ficha_eto>
+    <!-- Contenido de la ficha ETO si es necesario -->
+    <mat-accordion>
+      <ng-container *ngFor="let sub of subsistemasList">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{sub.subsNombre}}
+            </mat-panel-title>
+            <mat-panel-description>
+              100%
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <!-- BLOQUE DE REQUERIMIENTOS AGREGADOS -->
+          <div class="added-eto">
+            <mat-selection-list #shoes>
+              <mat-list-option *ngFor="let req of requerimientosList">
+                <div>
+                  <input type="text" [value]="req.req">
+                </div>
+              </mat-list-option>
+            </mat-selection-list>
+          </div>
+
+          <!-- BLOQUE DE REGISTRO DEL NUEVO REQUERIMIENTO -->
+          <div class="textarea-container">
+            <textarea class="textarea-eto" placeholder="Ingrese su requerimiento" [(ngModel)]="requerimiento.req"></textarea>
+          </div>
+          <div class="textarea-container">
+            <textarea class="textarea-eto" placeholder="Ingrese una observación" [(ngModel)]="requerimiento.obger"></textarea>
+          </div>
+          <!-- <div class="element-eto">
+            
+            <div class="textarea-container">
+              <textarea class="textarea-eto" placeholder="Ingrese una observación" [(ngModel)]="requerimiento.obop"></textarea>
+            </div>
+          </div> -->
+
+          <!-- BLOQUE DE DOCUMENTACION -->
+          <mat-accordion>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  Documentación
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <button style="margin-bottom: 5px;" mat-flat-button color="primary"><mat-icon>add</mat-icon> Subir
+                documento</button>
+              <!-- aqui debe ir un for para iterar toda la documentacion -->
+
+              <div class="documentacion-eto">
+                <mat-card>
+                  <mat-card-content>
+                    <div
+                      style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                      <!-- aqui debe ir un label para el nombre del documento y un boton de eliminar -->
+                      <div for="documento" style="padding-top: 10px;">NOMBRE DEL DOCUMENTO</div>
+                      <button class="delete-doc-button"><i class="bi bi-trash2-fill"></i></button>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+
+          <mat-action-row>
+            <button mat-button color="warn" (click)="clearReq()">Cancelar</button>
+            <button mat-button color="primary" (click)="addRequerimiento()">Agregar</button>
+          </mat-action-row>
+        </mat-expansion-panel>
+      </ng-container>
+    </mat-accordion>
+  </ng-template>
+
+  <div class="form-buttons">
+    <button mat-stroked-button type="button" class="delete-button">Eliminar</button>
+    <button mat-stroked-button type="button" class="cancel-button">Cancelar</button>
+    <button mat-stroked-button type="button" class="save-button">Guardar</button>
+    <button mat-stroked-button type="submit" class="submit-button" (click)="saveFicha()">Enviar</button>
+  </div>
+
+</div>

@@ -1,0 +1,121 @@
+<app-menu-comint></app-menu-comint>
+<div class="contenido-main">
+    <h2 class="font-weight-bolt ruteo">Solicitud de evento</h2>
+
+    <h3 class="font-weight-bold" style="padding-top: 20pt">
+        Solicitudes registradas
+    </h3>
+
+    <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="emp">
+                <th mat-header-cell *matHeaderCellDef> Empleado </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ getEmpleadoName(element.solEvIdSolicitante) }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="asunto">
+                <th mat-header-cell *matHeaderCellDef> 
+                    <div class="filter-head">
+                        Asunto
+                        <div style="display: flex; flex-direction: row;">
+                            <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(1)"><i
+                                    class="bi bi-funnel-fill"></i></button>
+                            <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+                            <button class="filter-btn" mat-icon-button color="basic" [matMenuTriggerFor]="menuNombre"><i
+                                    class="bi bi-sort-down"></i></button>
+                            <mat-menu #menuNombre="matMenu">
+                                <button mat-menu-item style="font-size: 10pt !important;" (click)="sortByAsunto(1)"><i
+                                        class="bi bi-sort-alpha-down"></i> Ascendente</button>
+                                <button mat-menu-item style="font-size: 10pt !important;" (click)="sortByAsunto(2)"><i
+                                        class="bi bi-sort-alpha-down-alt"></i> Descendente</button>
+                            </mat-menu>
+                        </div>
+                    </div>
+                    <div class="input-container" *ngIf="handleFilter && filterType == 1">
+                        <input type="text" (input)="applyStrFilter($event)">
+                        <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+                    </div>    
+                </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ element.solEvAsuntoEvento }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="tipo">
+                <th mat-header-cell *matHeaderCellDef> 
+                    <div class="filter-head">
+                        Tipo de actividad
+                        <div style="display: flex; flex-direction: row;">
+                            <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(2)"><i
+                                    class="bi bi-funnel-fill"></i></button>
+                            <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+                        </div>
+                    </div>
+                    <div class="input-container" *ngIf="handleFilter  && filterType == 2">
+                        <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+                        <select (change)="applyListFilter($event)">
+                            <ng-container *ngFor="let u of tipoActList">
+                                <option [value]="u.typeActId">{{u.typeActDescripcion}}</option>
+                            </ng-container>
+                        </select>
+                    </div>    
+                </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ getTipoActividad(element.solEvIdTipoAct) }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="lugar">
+                <th mat-header-cell *matHeaderCellDef> 
+                    <div class="filter-head">
+                        Lugar
+                        <div style="display: flex; flex-direction: row;">
+                            <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(3)"><i
+                                    class="bi bi-funnel-fill"></i></button>
+                            <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+                        </div>
+                    </div>
+                    <div class="input-container" *ngIf="handleFilter && filterType == 3">
+                        <input type="text" (input)="applyStrFilter($event)">
+                        <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+                    </div>    
+                </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ element.solEvLugarEvento }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fechainicio">
+                <th mat-header-cell *matHeaderCellDef> Inicio </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ getFecha(element.solEvFechaInicio) }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="fechafin">
+                <th mat-header-cell *matHeaderCellDef> Fin </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ getFecha(element.solEvFechaFin) }} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="estadoenvio">
+                <th mat-header-cell *matHeaderCellDef> 
+                    <div class="filter-head">
+                        Estado
+                        <div style="display: flex; flex-direction: row;">
+                            <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(4)"><i
+                                    class="bi bi-funnel-fill"></i></button>
+                            <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+                        </div>
+                    </div>
+                    <div class="input-container" *ngIf="handleFilter  && filterType == 4">
+                        <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+                        <select (change)="applyListFilter($event)">
+                            <ng-container *ngFor="let u of estadoAlertList">
+                                <option [value]="u.estEvId">{{u.estEvDescripcion}}</option>
+                            </ng-container>
+                        </select>
+                    </div>    
+                </th>
+                <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ getEstadoAlertaName(element.solEvEstadoEnvio) }} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr class="row-user" mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectSolEvent(row)"></tr>
+        </table>
+        <mat-paginator #paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons
+            aria-label="Select page of periodic elements"></mat-paginator>
+    </div>
+</div>

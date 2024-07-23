@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { GlobalService } from 'src/app/services/global.service';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
 
 @Component({
   selector: 'app-menu-inventario',
@@ -16,7 +17,8 @@ export class MenuInventarioComponent {
   constructor(
     private globalService: GlobalService,
     private router: Router,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private documentService: UploadFileService
   ) {}
 
   isSidebarVisible = false;
@@ -42,6 +44,28 @@ export class MenuInventarioComponent {
     this.cookieService.delete('userArea');
     this.router.navigate(['login']);
     //console.log('Token vacio', this.cookieService.get('authToken'))
+  }
+
+  getUserManual() {
+    this.documentService.getInvManual().subscribe(
+      (data) => {
+        const file = new Blob([data], { type: 'application/pdf' });
+        const urlfile = URL.createObjectURL(file);
+        window.open(urlfile, '_blank');
+      },
+      (error) => {
+        console.log('error', error);
+      }
+    );
+  }
+
+  manualString: string = '';
+  showString(){
+    this.manualString = 'Manual de Usuario'
+
+    setTimeout(() => {
+      this.manualString = ''
+    }, 2000);
   }
 
 }

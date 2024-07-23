@@ -1,0 +1,90 @@
+.contenido-main{
+    width: 70%;
+    margin: 0 auto;
+}
+
+.solev-form{
+    display: flex;
+    flex-direction: column;
+
+    background-color: #c7cfff52;
+    padding: 40px 20px 20px 20px;
+    border-radius: 20px;
+}
+
+mat-form-field{
+    width: 100% !important;
+}
+
+
+textarea{
+    max-height: 300px;
+}
+
+.img-container {
+    position: relative; /* Posición relativa */
+    display: flex;
+    justify-content: center;
+  }
+  
+  .img-container img {
+    border-radius: 20px;
+  }
+  
+  .alert-img {
+    width: 500px;
+    margin: 0 auto;
+  }
+  
+  .delete-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    max-width: 50px;
+    margin: 0 auto;
+  }
+
+.div-buttons{
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    justify-content: end;
+    margin-top: 20px;
+}
+
+.div-content{
+    width: 90%;
+    margin: 0 auto;
+}
+
+.add-button{
+    border-radius: 20px !important;
+}
+
+.program-item{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 70%;
+    margin: 0 auto;
+    gap: 10px;
+}
+
+.add-fecha{
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 auto;
+    gap: 10px;
+}
+
+
+.row-form{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}

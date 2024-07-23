@@ -1,0 +1,24 @@
+.principal {
+    padding: 20px;
+}
+
+.div-buttons {
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+mat-form-field {
+    width: 100% !important;
+}
+
+.custom-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.max-textarea {
+    max-height: 200px !important;
+}

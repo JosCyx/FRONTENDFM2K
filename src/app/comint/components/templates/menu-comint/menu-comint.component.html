@@ -1,0 +1,42 @@
+<mat-toolbar class="toolbar-custom">
+    <div class="header-container">
+      <!-- <button  class="btn btn-primary mr-3"   (click)="toggleSidebar()"><i class="bi bi-list h5"></i></button> -->
+      <a routerLink="/main"><img src="assets/img/logo.png" alt="logo" class="logo" width="200"></a>
+    </div>
+    <span class="example-spacer"></span>
+    <div>
+      <button mat-raised-button class="mr-5" (mouseover)="showString()" (click)="getUserManual()"><i
+          class="bi bi-filetype-pdf h5 text-danger"></i>{{manualString}}</button>
+  
+      <button mat-raised-button color="warn" class=" ml-2 text-end" (click)="logOut()">Cerrar sesión <i
+          class="bi bi-person-circle"></i></button>
+    </div>
+  
+  </mat-toolbar>
+  <p class="username-header">Bienvenido: {{userName}}</p>
+
+
+  <div class="sidebar" >
+    <ul class="nav flex-column">
+      <li class="nav-item dropdown">
+        <button mat-stroked-button>Consultas</button>
+        <div class="menu"  >
+          <a class="item" mat-button routerLink="/solevlist" *appAuthorize="'88'">Historial de eventos</a>
+          <a class="item" mat-button routerLink="/alertevlist" *appAuthorize="'89'">Historial de anuncios</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown" >
+        <button mat-stroked-button>Procesos</button>
+        <div class="menu" >
+          <a class="item"  mat-button (click)="routToSolEv()" *appAuthorize="'90'">Registro de evento</a>
+          <a class="item"  mat-button (click)="routToAltEv()" *appAuthorize="'91'">Programar alertas</a>
+        </div>
+      </li>
+      
+    </ul>
+    <div class="regresar">
+      <button class="back-button" mat-raised-button onclick="history.back()"><i class="bi bi-arrow-left h4"></i></button> 
+    </div>
+  </div>
+
+

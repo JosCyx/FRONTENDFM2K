@@ -76,8 +76,28 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
 import {MatListModule} from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { RegistrarProductoComponent } from './inventario/dialogs/registrar-producto/registrar-producto.component';
+import { AsignarProductoComponent } from './inventario/dialogs/asignar-producto/asignar-producto.component';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { RegistrarMovimientoComponent } from './inventario/dialogs/registrar-movimiento/registrar-movimiento.component';
+import {MatSortModule} from '@angular/material/sort';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatRadioModule} from '@angular/material/radio';
 //INVENTARIO
 
+//COMUNICACION INTERNA//
+
+import { SolicitudEventoComponent } from './comint/components/procesos/solicitud-evento/solicitud-evento.component';
+import { SolicitudEventoListComponent } from './comint/components/procesos/solicitud-evento-list/solicitud-evento-list.component';
+import { AlertaEventoComponent } from './comint/components/procesos/alerta-evento/alerta-evento.component';
+import { AlertaEventoListComponent } from './comint/components/procesos/alerta-evento-list/alerta-evento-list.component';
+import { MainComintComponent } from './comint/components/templates/main-comint/main-comint.component';
+import { MenuComintComponent } from './comint/components/templates/menu-comint/menu-comint.component';
+import {MatTabsModule} from '@angular/material/tabs';
+import { MainEventoComponent } from './eventos/components/main-evento/main-evento.component';
+import { FormularioEventoComponent } from './eventos/components/formulario-evento/formulario-evento.component';
+import { MenuEventoComponent } from './eventos/components/templates/menu-evento/menu-evento.component';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 
 @NgModule({
@@ -128,7 +148,18 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     HistorialMovimientosComponent,
     MenuInventarioComponent,
     VisualizarInventarioComponent,
-    
+    RegistrarProductoComponent,
+    AsignarProductoComponent,
+    RegistrarMovimientoComponent,
+    SolicitudEventoComponent,
+    SolicitudEventoListComponent,
+    AlertaEventoComponent,
+    AlertaEventoListComponent,
+    MainComintComponent,
+    MenuComintComponent,
+    MainEventoComponent,
+    FormularioEventoComponent,
+    MenuEventoComponent,
     
     
   ],
@@ -156,6 +187,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatListModule,
     BrowserModule,
     MatToolbarModule,
+    MatAutocompleteModule,
+    MatSortModule,
+    MatMenuModule,
+    MatRadioModule,
+    MatTabsModule,
+    MatExpansionModule,
     FormsModule // Agrega FormsModule al array de imports
     
     

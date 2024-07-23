@@ -48,14 +48,10 @@ mat-form-field{
   height: 100%;
 }
 .principal{
-  
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  background-color: rgb(193, 193, 195);
-  border: rgb(183, 188, 188) 5px solid;
-  border-radius: 20px;
+  width: 80%;
+  margin: 0 auto;
+  padding-top: 100px;
+  padding-bottom: 30px;
 }
 .input-horizontal{
   display: flex;
@@ -69,3 +65,20 @@ mat-form-field{
   background-color: rgb(219, 219, 219);
   
  }
+
+.mat-column-codigo, 
+.mat-column-nombre, 
+.mat-column-unidad, 
+.mat-column-cantidad, 
+.mat-column-last_price,
+.mat-column-categoria, 
+.mat-column-observaciones{
+  text-align: center;
+}
+
+.div-buttons {
+  padding-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}

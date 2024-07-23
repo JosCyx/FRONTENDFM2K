@@ -7,6 +7,8 @@ import { AppAuthorizeTransactionDirective } from 'src/app/directives/app-authori
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { AplicacionesService } from 'src/app/services/comunicationAPI/seguridad/aplicaciones.service';
+import { GlobalInventarioService } from 'src/app/services/global-inventario.service';
+import { GeneralControllerService } from 'src/app/services/comunicationAPI/inventario/general-controller.service';
 
 @Component({
   selector: 'app-main',
@@ -23,7 +25,10 @@ export class MainComponent implements OnInit {
     private cookieService: CookieService,
     private authService: AuthService,
     private documentService: UploadFileService,
-    private dialogService: DialogServiceService) { }
+    private dialogService: DialogServiceService,
+    private globalInventarioService: GlobalInventarioService,
+    private generalInvController: GeneralControllerService
+  ) { }
 
     
   ngOnInit(): void {
@@ -56,10 +61,16 @@ export class MainComponent implements OnInit {
   }
 
   goComInt(){
-    
+    this.router.navigate(['maincomint']);
   }
   goInventario(){
     this.router.navigate(['visualizarInventario']);
+    //consultar el grupo autorizado del usuario
+    
+  }
+
+  goEventos(){
+    this.router.navigate(['mainevento']);
   }
 
   clearCookies() {

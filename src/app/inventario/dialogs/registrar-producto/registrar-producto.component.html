@@ -1,0 +1,75 @@
+<div class="principal">
+
+  <div class="justify-content-center text-center m-2">
+    <h3 class="font-weight-bold">
+      REGISTRAR UN NUEVO PRODUCTO
+    </h3>
+  </div>
+
+  <div class="contenedor">
+    <mat-form-field>
+      <mat-label>*Nombre</mat-label>
+      <input matInput [(ngModel)]="producto.nombre">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Descripción</mat-label>
+      <textarea matInput [(ngModel)]="producto.descripcion" rows="4" class="max-textarea"></textarea>
+    </mat-form-field>
+
+    <div class="custom-row">
+
+      <mat-form-field>
+        <mat-label>*Unidad</mat-label>
+        <mat-select [(ngModel)]="producto.unidad">
+          <ng-container *ngFor="let u of unidadesList">
+            <mat-option [value]="u.codigo">{{ u.nombre }}</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+      
+      <mat-form-field>
+        <mat-label>*Categoría</mat-label>
+        <mat-select [(ngModel)]="producto.categoria">
+          <ng-container *ngFor="let c of categoriasList">
+            <mat-option [value]="c.codigo">{{ c.nombre }}</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+
+    <mat-form-field >
+      <mat-label>Observaciones</mat-label>
+      <textarea matInput [(ngModel)]="producto.observ" rows="4" class="max-textarea"></textarea>
+    </mat-form-field>
+
+  </div>
+  <!-- <div class="prodImg">
+    <div class="form-col upload-button">
+            <button type="button" mat-raised-button (click)="fileInput.click()">
+              <mat-icon>add_photo_alternate</mat-icon>Seleccionar imagen
+            </button>
+            
+            <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept=".jpg, .png, .jpeg, .webp"
+            id="file" />
+            
+            
+            
+            <div *ngIf="imageSrc">
+              <img [src]="imageSrc" alt="Selected Image" style="max-width: 50%; height: 70%;" />
+              
+              <button mat-icon-button color="warn" (click)="removeImage()"><mat-icon>delete</mat-icon></button>
+            </div>
+          </div>
+          <button mat-fab color="warn" (click)="deleteImage()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>  -->
+
+</div>
+
+<div class="div-buttons">
+  <button mat-flat-button color="primary" (click)="registrarProducto()">Confirmar</button>
+  <button mat-flat-button color="warn" (click)="limpiarProducto()">Cancelar</button>
+</div>

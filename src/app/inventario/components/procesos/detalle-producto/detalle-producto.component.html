@@ -1,63 +1,94 @@
 <app-menu-inventario></app-menu-inventario>
-<div class="tabla">
-  <div class="principal">
-    <div class="contenedor">
-      <div class="columna-izquierda">
-        <mat-form-field>
-          <mat-label>Código</mat-label>
-          <input matInput readonly>
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>Producto</mat-label>
-          <input matInput readonly>
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>Unidad</mat-label>
-          <input matInput readonly>
-        </mat-form-field>
-      </div>
-      <div class="columna-derecha">
-        <mat-form-field>
-          <mat-label>Cantidad en stock</mat-label>
-          <input matInput readonly>
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>Categoria</mat-label>
-          <input matInput readonly>
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>Observaciones</mat-label>
-          <input matInput readonly>
-        </mat-form-field>
-      </div>
 
 
+<div class="principal">
+  <h3 style="text-align: center;"><b>Detalles del producto</b></h3>
 
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
 
-    </div>
-    <div class="modal-footer">
-      <button mat-flat-button color="primary" data-toggle="modal" data-target="#addProd">Registro de movimiento</button>
-      
+      <!-- CODIGO -->
+      <ng-container matColumnDef="CODIGO">
+        <th mat-header-cell *matHeaderCellDef> Código </th>
+        <td mat-cell *matCellDef="let element"> {{element.codigo}} </td>
+      </ng-container>
 
-    </div>
+      <!-- PRODUCTO -->
+      <ng-container matColumnDef="PRODUCTO">
+        <th mat-header-cell *matHeaderCellDef> Producto </th>
+        <td mat-cell *matCellDef="let element"> {{element.producto}} </td>
+      </ng-container>
+
+      <!-- UNIDAD -->
+      <ng-container matColumnDef="UNIDAD">
+        <th mat-header-cell *matHeaderCellDef> Unidad </th>
+        <td mat-cell *matCellDef="let element"> {{element.unidad}} </td>
+      </ng-container>
+
+      <!-- CANTIDAD EN STOCK -->
+      <ng-container matColumnDef="CANTIDAD">
+        <th mat-header-cell *matHeaderCellDef> Stock </th>
+        <td mat-cell *matCellDef="let element"> {{element.cantidad}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="LAST_PRICE">
+        <th mat-header-cell *matHeaderCellDef> Último precio </th>
+        <td mat-cell *matCellDef="let element"> {{element.last_price}} </td>
+      </ng-container>
+
+      <!-- CATEGORIA -->
+      <ng-container matColumnDef="CATEGORIA">
+        <th mat-header-cell *matHeaderCellDef> Categoria </th>
+        <td mat-cell *matCellDef="let element"> {{element.categoria}} </td>
+      </ng-container>
+
+      <!-- OBSERVACIONES -->
+      <ng-container matColumnDef="OBSERVACIONES">
+        <th mat-header-cell *matHeaderCellDef> Observaciones </th>
+        <td mat-cell *matCellDef="let element"> {{element.observ}} </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="center-content"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer-cursor"></tr>
+    </table>
 
   </div>
+
+  <div style="display: flex; justify-content: flex-end; padding-top: 10px;">
+    <button mat-stroked-button color="warn" (click)="deleteProduct()">Eliminar asignación de producto</button>
+  </div>
+
+  <h3 class="mt-4" style="text-align: center;"><b>Historial de movimientos</b></h3>
+  <app-historial-movimientos></app-historial-movimientos>
+
+  <div class="div-buttons">
+    <button mat-stroked-button color="warn" routerLink="/visualizarInventario">Atrás</button>
+    <div style="display: flex; flex-direction: row; gap: 10px;">
+
+      <ng-container *appAuthorize="'83'">
+        <button mat-stroked-button color="primary" [matMenuTriggerFor]="menuExport">Exportar</button>
+      </ng-container>
+      <mat-menu #menuExport="matMenu">
+        <!-- <ng-container *appAuthorize="'84'">
+          <button mat-menu-item (click)="exportPDF()" disabled><i class="bi bi-filetype-pdf" style="color: red;"></i> Exportar a PDF</button>
+        </ng-container> -->
+        <ng-container *appAuthorize="'83'">
+          <button mat-menu-item (click)="exportToExcel()"><i class="bi bi-filetype-xlsx" style="color: green;"></i>
+            Exportar a Excel</button>
+        </ng-container>
+      </mat-menu>
+      <ng-container *appAuthorize="'82'">
+        <button mat-flat-button color="primary" (click)="registrarMov()">Registrar un movimiento</button>
+      </ng-container>
+    </div>
+  </div>
+
 </div>
-
-
-
-
-
-
 
 <!-- Modal Ingreso y egreso -->
 
 
-<div class="modal fade" id="addProd" data-backdrop="static" tabindex="-1" role="dialog"
+<!-- <div class="modal fade" id="addProd" data-backdrop="static" tabindex="-1" role="dialog"
   aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
@@ -132,4 +163,4 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->

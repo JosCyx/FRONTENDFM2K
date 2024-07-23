@@ -1,0 +1,109 @@
+.tabla {
+  width: 70%;
+  margin: 0 auto;
+  padding-top: 120px;
+  padding-bottom: 75px;
+}
+
+.campos {
+  width: 100%;
+
+}
+
+.formulariodiv {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.boton {
+  height: 60px;
+}
+
+mat-form-field {
+  width: 100% !important;
+
+}
+
+.disenio-selects {
+  width: 100%;
+  height: 60px;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  background: #f0f0f0;
+  text-align: justify;
+  padding: 10px;
+  color: rgb(124, 121, 121);
+  font-size: medium;
+  margin-bottom: 13px;
+}
+
+
+.contenedor {
+  display: flex;
+  flex-direction: column;
+}
+
+.prodBody {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.prodLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 50%;
+}
+
+.prodRight {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 50%;
+}
+
+.cont-modals {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+.mat-input-element {
+  width: 100% !important;
+}
+
+.texto {
+  padding-top: 12px;
+}
+
+/* seleccionar imagen*/
+.btnimg {
+  display: flex;
+  justify-content: center;
+  padding-left: 20px;
+
+
+}
+
+
+.abtn {
+  color: rgb(74, 74, 255) !important;
+}
+
+.abtn:hover {
+  cursor: pointer;
+}
+
+.div-buttons {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+}

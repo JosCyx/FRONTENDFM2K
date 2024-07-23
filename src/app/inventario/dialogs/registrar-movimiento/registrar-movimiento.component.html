@@ -1,0 +1,125 @@
+<div class="principal">
+
+    <div class="justify-content-center text-center m-2">
+        <h3 class="font-weight-bold">
+            REGISTRAR UN MOVIMIENTO
+        </h3>
+    </div>
+
+    <div class="contenedor">
+        <div class="custom-row">
+
+            <mat-form-field>
+                <mat-label>Código</mat-label>
+                <input matInput [(ngModel)]="globalInvService.productoToView.codigo" readonly>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Producto</mat-label>
+                <input matInput [(ngModel)]="globalInvService.productoToView.producto" readonly>
+            </mat-form-field>
+        </div>
+
+        <div class="custom-row">
+            <div class="custom-row">
+                <mat-form-field>
+                    <mat-label>Fecha</mat-label>
+                    <input matInput [(ngModel)]="fecha" readonly>
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>*Cantidad</mat-label>
+                    <input type="number" matInput [(ngModel)]="movimiento.cantidad" min="1">
+                </mat-form-field>
+            </div>
+            <mat-form-field>
+                <mat-label>Tipo de movimiento</mat-label>
+                <mat-select [(ngModel)]="movimiento.tipo_mov" (ngModelChange)="changeTipoMov()">
+                    <ng-container *ngFor="let t of tipoMovimientoList">
+                        <mat-option [value]="t.codigo">{{ t.nombre }}</mat-option>
+                    </ng-container>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <div class="custom-row" *ngIf="movimiento.tipo_mov == 1">
+            <mat-form-field>
+                <mat-label>*Precio unitario</mat-label>
+                <input type="number" matInput [(ngModel)]="movimiento.precio_unit" min="1">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>*Proveedor</mat-label>
+                <input matInput [(ngModel)]="movimiento.proveedor">
+            </mat-form-field>
+        </div>
+        
+        <div class="custom-row" *ngIf="movimiento.tipo_mov == 2">
+            <!-- produccion: 2; desarrollo: 3 -->
+            <ng-container *ngIf="destinatariosData.idDestinatario == 2">
+                <mat-form-field>
+                    <mat-label>*Empleado de destino</mat-label>
+                    <input type="text" placeholder="Ingrese el empleado de destino"
+                    [(ngModel)]="movimiento.emp_destino"
+                    (keydown)="filterList($event)"
+                    matInput [matAutocomplete]="auto">
+                    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                        <ng-container *ngFor="let s of destinatariosListFiltered">
+                            <mat-option [value]="s.nombre">{{s.nombre}}</mat-option>
+                        </ng-container>
+                    </mat-autocomplete>
+                </mat-form-field>
+            </ng-container>
+
+            <!-- produccion: 1; desarrollo: 4 -->
+            <ng-container *ngIf="destinatariosData.idDestinatario == 1">
+                <mat-form-field>
+                    <mat-label>*Sector de destino</mat-label>
+                    <mat-select [(ngModel)]="movimiento.tras_sector">
+                        <ng-container *ngFor="let s of destinatariosList">
+                            <mat-option [value]="s.codigo">{{ s.nombre }}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+            </ng-container>
+        </div>
+
+        <mat-form-field>
+            <mat-label>Sol. asoc o Kardex</mat-label>
+            <input type="text" matInput [(ngModel)]="movimiento.sol_asoc">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Observaciones</mat-label>
+            <textarea matInput [(ngModel)]="movimiento.observ" rows="4" class="max-textarea"></textarea>
+        </mat-form-field>
+
+    </div>
+    <!-- <div class="prodImg">
+      <div class="form-col upload-button">
+              <button type="button" mat-raised-button (click)="fileInput.click()">
+                <mat-icon>add_photo_alternate</mat-icon>Seleccionar imagen
+              </button>
+              
+              <input hidden (change)="onFileSelected($event)" #fileInput type="file" accept=".jpg, .png, .jpeg, .webp"
+              id="file" />
+              
+              
+              
+              <div *ngIf="imageSrc">
+                <img [src]="imageSrc" alt="Selected Image" style="max-width: 50%; height: 70%;" />
+                
+                <button mat-icon-button color="warn" (click)="removeImage()"><mat-icon>delete</mat-icon></button>
+              </div>
+            </div>
+            <button mat-fab color="warn" (click)="deleteImage()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>  -->
+
+</div>
+<div class="ml-4">
+    * Campos obligatorios
+</div>
+<div class="div-buttons">
+    <button mat-flat-button color="primary" (click)="registrarMovimiento()">Confirmar</button>
+    <button mat-flat-button color="warn" (click)="cancelarMov()">Cancelar</button>
+</div>
