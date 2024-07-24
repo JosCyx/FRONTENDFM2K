@@ -106,6 +106,7 @@
             </td>
             <td>
               <textarea [(ngModel)]="riesgosList[i].mit" name="mitigacion{{i}}" rows="4"></textarea>
+              <button class="delete-riesgo" (click)="deleteRiesgo(i)"><i class="bi bi-x-lg"></i></button>
             </td>
           </tr>
         </ng-container>
@@ -127,12 +128,22 @@
       </mat-form-field>
 
       <div class="form-row">
-        <mat-form-field class="example-full-width">
-          <mat-label>FECHA DE IMPLEMENTACIÓN</mat-label>
-          <input matInput [matDatepicker]="fechaImplementacionPicker" [(ngModel)]="evento.fechaImplementacion">
-          <mat-datepicker-toggle matIconSuffix [for]="fechaImplementacionPicker"></mat-datepicker-toggle>
-          <mat-datepicker #fechaImplementacionPicker></mat-datepicker>
-        </mat-form-field>
+        <div style="display: flex; flex-direction: row; gap: 10px; width: 100%;">
+          <mat-form-field>
+            <mat-label>FECHA DE IMPLEMENTACIÓN</mat-label>
+            <input matInput [matDatepicker]="fechaImplementacionPicker" [(ngModel)]="evento.fechaImplementacion">
+            <mat-datepicker-toggle matIconSuffix [for]="fechaImplementacionPicker"></mat-datepicker-toggle>
+            <mat-datepicker #fechaImplementacionPicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>HORA</mat-label>
+            <mat-select [(ngModel)]="evento.estado">
+              <ng-container *ngFor="let hora of timeList">
+                <mat-option [value]="hora">{{hora}}</mat-option>
+              </ng-container>
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
 
     </div>
@@ -153,22 +164,28 @@
           </mat-expansion-panel-header>
 
           <!-- BLOQUE DE REQUERIMIENTOS AGREGADOS -->
-          <div class="added-eto">
-            <mat-selection-list #shoes>
-              <mat-list-option *ngFor="let req of requerimientosList">
-                <div>
-                  <input type="text" [value]="req.req">
+          <mat-list role="list" class="added-eto">
+            <!-- recorre la lista de susbsistemas y los lista -->
+            <ng-container *ngFor="let req of requerimientosList; let i = index">
+              <!-- muestar unicamente los requerimientos que coincidan con el subsistema seleccioando -->
+              <ng-container *ngIf="req.idSubs == sub.subsId">
+                <div style="display: flex; flex-direction: row; width: 100%;">
+                  <input type="text" class="input-eto" [(ngModel)]="req.req">
+                  <button class="delete-input-eto" (click)="deleteReqEto(i)"><mat-icon>close</mat-icon></button>
                 </div>
-              </mat-list-option>
-            </mat-selection-list>
-          </div>
+              </ng-container>
+            </ng-container>
+          </mat-list>
+
 
           <!-- BLOQUE DE REGISTRO DEL NUEVO REQUERIMIENTO -->
           <div class="textarea-container">
-            <textarea class="textarea-eto" placeholder="Ingrese su requerimiento" [(ngModel)]="requerimiento.req"></textarea>
+            <textarea class="textarea-eto" placeholder="Ingrese su requerimiento"
+              [(ngModel)]="requerimiento.req"></textarea>
           </div>
           <div class="textarea-container">
-            <textarea class="textarea-eto" placeholder="Ingrese una observación" [(ngModel)]="requerimiento.obger"></textarea>
+            <textarea class="textarea-eto" placeholder="Ingrese una observación"
+              [(ngModel)]="requerimiento.obger"></textarea>
           </div>
           <!-- <div class="element-eto">
             
@@ -206,7 +223,7 @@
 
           <mat-action-row>
             <button mat-button color="warn" (click)="clearReq()">Cancelar</button>
-            <button mat-button color="primary" (click)="addRequerimiento()">Agregar</button>
+            <button mat-button color="primary" (click)="addRequerimiento(sub.subsId)">Agregar</button>
           </mat-action-row>
         </mat-expansion-panel>
       </ng-container>

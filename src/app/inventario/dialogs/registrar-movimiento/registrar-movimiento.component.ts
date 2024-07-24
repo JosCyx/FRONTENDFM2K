@@ -116,7 +116,7 @@ export class RegistrarMovimientoComponent {
       movObservaciones: this.movimiento.observ,
       movSolAsoc: this.movimiento.sol_asoc,
       movEmpleadoDestino: this.searchDestinatarioId(this.movimiento.emp_destino).toString().padStart(6, '0')
-    }
+    };
 
     //console.log("movimiento nuevo:", data);
 
@@ -157,7 +157,7 @@ export class RegistrarMovimientoComponent {
 
   searchDestinatarioId(nombre: string): number{
     const empleado = this.destinatariosList.find(emp => emp.nombre == nombre);
-    return empleado.codigo;
+    return empleado ? empleado.codigo : '000000';
   }
 
   console(){
