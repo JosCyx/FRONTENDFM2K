@@ -170,7 +170,7 @@
               <!-- muestar unicamente los requerimientos que coincidan con el subsistema seleccioando -->
               <ng-container *ngIf="req.idSubs == sub.subsId">
                 <div style="display: flex; flex-direction: row; width: 100%;">
-                  <input type="text" class="input-eto" [(ngModel)]="req.req">
+                  <textarea autoResize class="input-eto" [(ngModel)]="req.req"></textarea>
                   <button class="delete-input-eto" (click)="deleteReqEto(i)"><mat-icon>close</mat-icon></button>
                 </div>
               </ng-container>

@@ -99,6 +99,7 @@ import { FormularioEventoComponent } from './eventos/components/formulario-event
 import { MenuEventoComponent } from './eventos/components/templates/menu-evento/menu-evento.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
+import { AutoResizeDirective } from './directives/auto-resize.directive';
 
 
 
@@ -162,6 +163,7 @@ import {NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModu
     MainEventoComponent,
     FormularioEventoComponent,
     MenuEventoComponent,
+    AutoResizeDirective,
     
     
   ],
