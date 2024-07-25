@@ -100,6 +100,7 @@ import { MenuEventoComponent } from './eventos/components/templates/menu-evento/
 import {MatExpansionModule} from '@angular/material/expansion';
 import {NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 import { AutoResizeDirective } from './directives/auto-resize.directive';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 
 
@@ -200,6 +201,7 @@ import { AutoResizeDirective } from './directives/auto-resize.directive';
     NgxMatDatetimePickerModule,
     NgxMatNativeDateModule, 
     NgxMatTimepickerModule,
+    MatCheckboxModule,
     FormsModule // Agrega FormsModule al array de imports
     
     

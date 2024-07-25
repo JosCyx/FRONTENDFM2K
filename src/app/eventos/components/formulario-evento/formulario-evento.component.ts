@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { GlobalEventosService } from 'src/app/services/global-eventos.service';
 import * as _ from 'lodash';
@@ -6,6 +6,7 @@ import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.s
 import { GeneralControllerService } from 'src/app/services/comunicationAPI/inventario/general-controller.service';
 import { da } from 'date-fns/locale';
 import { AuxEventosService } from 'src/app/services/comunicationAPI/eventos/aux-eventos.service';
+import { DialogServiceService } from 'src/app/services/dialog-service.service';
 
 @Component({
   selector: 'app-formulario-evento',
@@ -78,7 +79,8 @@ export class FormularioEventoComponent {
     private empService: EmpleadosService,
     private areaService: AreasService,
     private invGeneralService: GeneralControllerService,
-    private auxEventosService: AuxEventosService
+    private auxEventosService: AuxEventosService,
+    private dialogService: DialogServiceService
   ) { 
   }
 
@@ -101,6 +103,10 @@ export class FormularioEventoComponent {
         this.subsistemasList = _.cloneDeep(data);
       });
     }, 300);
+  }
+
+  callMessage(message: string, type: boolean){
+    this.dialogService.openAlertDialog(message, type);
   }
 
   filterEmpleados(filterValue: string) {
@@ -180,14 +186,55 @@ export class FormularioEventoComponent {
     this.riesgosList.splice(index, 1);
   }
 
+  imageAlert!: { file: File, url: string };
+  @ViewChild('fileInput') fileInput: any;
+
+  onFileSelected(event: any): void {
+    const selectedFile = event.target.files[0];
+
+    if (selectedFile) {
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'docx', 'pdf', 'xlsx', 'doc'];
+        const maxSize = 1000 * 1024; 
+
+        if (!validTypes.includes(selectedFile.type)) {
+            this.callMessage('El formato del archivo no esta permitido.', false);
+            return;
+        }
+
+        if (selectedFile.size > maxSize) {
+            this.callMessage('El tamanio de archivo no debe exceder 1 MB.', false);
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = (e: any) => {
+            this.imageAlert = { file: selectedFile, url: e.target.result };
+            this.fileInput.nativeElement.value = '';
+        };
+        reader.readAsDataURL(selectedFile);
+    }
+}
+
   //FICHA ETO
-  requerimientosList: any[] = [];
-  requerimiento: {idSubs: number, req: string, obger: string, obop: string} = {idSubs: 0, req: '', obger: '', obop: ''};
+  requerimientosList: {idSubs: number, req: string, observ: string, fecha: Date, estado: number}[] = [];
+  requerimiento: {idSubs: number, req: string, observ: string, fecha: Date} = {idSubs: 0, req: '', observ: '', fecha: new Date()};
 
   addRequerimiento(subsId: number){
-    console.log("subsistema seleccionado:",subsId);
-    this.requerimiento.idSubs = subsId;
-    this.requerimientosList.push({...this.requerimiento});
+    if(this.requerimiento.req == '' || this.requerimiento.req == ' '){
+      this.callMessage('El campo requerimiento es obligatorio', false);
+      return;
+    }
+
+    const req = {
+      idSubs: subsId,
+      req: this.requerimiento.req.trim(),
+      observ: this.requerimiento.observ.trim(),
+      fecha: this.requerimiento.fecha,
+      estado: 1
+    }
+
+    this.requerimientosList.push(req);
     this.clearReq();
   }
 
@@ -196,6 +243,15 @@ export class FormularioEventoComponent {
   }
 
   clearReq(){
-    this.requerimiento = {idSubs: 0, req: '', obger: '', obop: ''};
+    this.requerimiento = {idSubs: 0, req: '', observ: '', fecha: new Date()};
+  }
+
+  findDateByEstadoReq(idSubs: number, idEstado: number): Date  | undefined{
+    const reqDate = this.requerimientosList.find(req => req.idSubs == idSubs && req.estado == idEstado);
+    return reqDate ? reqDate.fecha : undefined;
+  }
+
+  openDoc(){
+    console.log('open doc');
   }
 }

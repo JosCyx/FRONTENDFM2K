@@ -9,7 +9,9 @@ export class AutoResizeDirective {
   constructor(private element: ElementRef, private renderer: Renderer2) { }
 
   ngOnInit(): void {
-    this.adjustHeight();
+    setTimeout(() => {
+      this.adjustHeight();
+    }, 10);
   }
 
   @HostListener('input')
