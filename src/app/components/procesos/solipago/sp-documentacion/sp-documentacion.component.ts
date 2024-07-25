@@ -129,44 +129,44 @@ export class SPDocumentacionComponent implements OnInit {
           if (nombre == 'pdf') {
             const file = new Blob([blob], { type: 'application/pdf' });
             const urlfile = URL.createObjectURL(file);
-            const img = 'assets/img/272699_pdf_icon.png';
+            const img = 'assets/img/pdf.webp';
             //console.log('URL del documento: ', urlfile);
             resolve({ url: urlfile, icono: img });
           } else if (nombre == 'PDF') {
             const file = new Blob([blob], { type: 'application/pdf' });
             const urlfile = URL.createObjectURL(file);
-            const img = 'assets/img/272699_pdf_icon.png';
+            const img = 'assets/img/pdf.webp';
             //console.log('URL del documento: ', urlfile);
             resolve({ url: urlfile, icono: img });
           } else if (nombre == 'png') {
             const file = new Blob([blob], { type: 'image/png' });
             const urlfile = URL.createObjectURL(file);
-            const img = 'assets/img/image.png';
+            const img = 'assets/img/image.webp';
             resolve({ url: urlfile, icono: img });
           } else if (nombre == 'jpg') {
             const file = new Blob([blob], { type: 'image/jpg' });
             const urlfile = URL.createObjectURL(file);
-            const img = 'assets/img/image.png';
+            const img = 'assets/img/image.webp';
             resolve({ url: urlfile, icono: img });
           } else if (nombre == 'jpeg') {
             const file = new Blob([blob], { type: 'image/jpeg' });
             const urlfile = URL.createObjectURL(file);
-            const img = 'assets/img/image.png';
+            const img = 'assets/img/image.webp';
             resolve({ url: urlfile, icono: img });
           } else if (nombre == 'xlsx') {
             const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             const urlfile = URL.createObjectURL(file);
-            const img = 'assets/img/excel.png.png';
+            const img = 'assets/img/excel.webp';
             resolve({ url: urlfile, icono: img });
           } else if (nombre == 'docx') {
             const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
             const urlfile = URL.createObjectURL(file);
-            const img = 'assets/img/docx.png';
+            const img = 'assets/img/docx.webp';
             resolve({ url: urlfile, icono: img });
           } else if (nombre == 'doc') {
             const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
             const urlfile = URL.createObjectURL(file);
-            const img = 'assets/img/doc.png';
+            const img = 'assets/img/doc.webp';
             resolve({ url: urlfile, icono: img });
           }
         },

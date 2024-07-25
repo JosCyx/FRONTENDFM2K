@@ -72,3 +72,13 @@ header{
     left: 25px;
 }
 
+.card-main{
+    width: 15%;
+    margin: 0 auto;
+    height: fit-content;
+}
+
+.card-main:hover{
+    cursor: pointer;
+    background-color: rgba(0, 99, 204, 0.199)
+}
