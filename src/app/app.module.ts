@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -98,6 +98,9 @@ import { MainEventoComponent } from './eventos/components/main-evento/main-event
 import { FormularioEventoComponent } from './eventos/components/formulario-evento/formulario-evento.component';
 import { MenuEventoComponent } from './eventos/components/templates/menu-evento/menu-evento.component';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { AutoResizeDirective } from './directives/auto-resize.directive';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+
 import { HistorialEventoComponent } from './eventos/components/historial-evento/historial-evento.component';
 
 
@@ -161,6 +164,7 @@ import { HistorialEventoComponent } from './eventos/components/historial-evento/
     MainEventoComponent,
     FormularioEventoComponent,
     MenuEventoComponent,
+    AutoResizeDirective,
     HistorialEventoComponent,
     
     
@@ -195,11 +199,13 @@ import { HistorialEventoComponent } from './eventos/components/historial-evento/
     MatRadioModule,
     MatTabsModule,
     MatExpansionModule,
+    MatCheckboxModule,
     FormsModule // Agrega FormsModule al array de imports
     
     
   ],
   providers: [AuthService, MatDialog, DialogServiceService],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 
 

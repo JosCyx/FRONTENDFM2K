@@ -16,7 +16,6 @@ export class FichaEventoService {
     private http: HttpClient,
     private cookieService: CookieService,
     private globalService: GlobalService
-    
   ) { 
     this.globalService.getConfigLoadedObservable().subscribe(
       (configLoaded) => {
@@ -40,6 +39,13 @@ export class FichaEventoService {
     });
   }
 
+  postFichaEvento(data: any): Observable<any> {
+    return this.http.post(`${this.APIUrl}/EvFichaEvento`, data, { headers: this.getHeadersWithAuthToken() });
+  }
+
+  postRiesgoFichaEvento(data: any): Observable<any> {
+    return this.http.post(`${this.APIUrl}/EvRiesgosPr`, data, { headers: this.getHeadersWithAuthToken() });
+  }
 
   getFichaEventoList(): Observable<any> {
     return this.http.get(`${this.APIUrl}/EvFichaEvento`, { headers: this.getHeadersWithAuthToken() });
