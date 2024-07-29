@@ -1,0 +1,141 @@
+.principal{
+  width: 85%;
+  margin: 0 auto;
+  padding-top: 100px;
+  padding-bottom: 30px;
+  margin-right: 60px;
+}
+
+
+
+th,
+td {
+  text-align: center !important;
+}
+
+.mat-cell-custom {
+  cursor: pointer;
+}
+
+/*filtros*/
+.filter-head {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px 0 10px;
+}
+
+.filter-btn {
+  font-size: 10pt;
+  width: 30px !important;
+  height: 30px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 2px;
+}
+
+::ng-deep .mat-menu-item {
+  font-size: 10pt !important;
+}
+
+
+
+.filter-input {
+  width: 100%;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-container input {
+  width: 100%;
+  padding-right: 10px;
+  /* espacio para el botón */
+  box-sizing: border-box;
+}
+
+.input-container .clear-button{
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  outline: none;
+}
+
+/* For Chrome, Safari, Edge, and Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+ /* centrar contenido de las columnas */
+ .mat-column-USUARIO_SOLICITANTE,
+ .mat-column-AREA_ADMINISTRA,
+ .mat-column-NOMBRE_EVENTO,
+ .mat-column-SECTOR,
+ .mat-column-FECHA_INICIO,
+ .mat-column-AVANCE_REQ_INICIAL,
+ .mat-column-AVANCE_REQ_NUEVO,
+ .mat-column-ESTADO {
+  text-align: center;
+} 
+
+.mat-column-USUARIO_SOLICITANTE,
+.mat-column-AREA_ADMINISTRA,
+.mat-column-NOMBRE_EVENTO,
+.mat-column-SECTOR,
+.mat-column-FECHA_INICIO,
+.mat-column-AVANCE_REQ_INICIAL,
+.mat-column-AVANCE_REQ_NUEVO,
+.mat-column-ESTADO {
+  border-right: .1px solid rgba(0, 0, 0, 0.15);
+}
+
+/*ajustar ancho de las columnas*/
+
+
+/* 
+.mat-column-USUARIO_SOLICITANTE,
+.mat-column-AREA_ADMINISTRA,
+.mat-column-NOMBRE_EVENTO,
+.mat-column-SECTOR{
+  width: 15%;
+}
+
+.mat-column-FECHA_IMPLEMENTACION,
+.mat-column-AVANCE_REQ_INICIAL,
+.mat-column-AVANCE_REQ_NUEVO,
+.mat-column-ESTADO {
+  width: 10%;
+} */
+
+.mat-column-NOMBRE_EVENTO{
+  width: 30%;
+} 
+
+.mat-column-USUARIO_SOLICITANTE{
+  width: 20%;
+}
+
+
+.mat-column-AREA_ADMINISTRA,
+.mat-column-SECTOR,
+.mat-column-FECHA_INICIO,
+.mat-column-AVANCE_REQ_INICIAL,
+.mat-column-AVANCE_REQ_NUEVO {
+  width: 15%;
+}  
+
+
+

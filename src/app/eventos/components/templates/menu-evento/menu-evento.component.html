@@ -12,6 +12,18 @@
 <div class="sidebar">
   <ul class="nav flex-column"> 
     <!-- Ejemplo de un elemento de menú con autorización -->
+
+    <li class="nav-item dropdown" *appAuthorize="'74'">
+      <button mat-stroked-button>
+        Consultas <!-- Cambia el texto según tu necesidad -->
+      </button>
+      <div class="menu">
+        <!-- Ejemplo de un ítem de menú con autorización -->
+        <a *appAuthorize="'75'" class="item" mat-button routerLink="/historial-evento">Historial de eventos</a>
+        <!-- Puedes añadir más elementos de menú aquí según tus requisitos -->
+      </div>
+    </li>
+
     <li class="nav-item dropdown" *appAuthorize="'74'">
       <button mat-stroked-button>
         Eventos <!-- Cambia el texto según tu necesidad -->

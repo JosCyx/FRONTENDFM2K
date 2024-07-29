@@ -9,7 +9,6 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { DepartamentosService } from 'src/app/services/comunicationAPI/seguridad/departamentos.service';
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
-import { SignalRService } from 'src/app/services/comunicationAPI/comint/signal-r.service';
 
 @Component({
   selector: 'app-solicitud-evento',
@@ -53,7 +52,6 @@ export class SolicitudEventoComponent {
     public globalComintService: GlobalComintService,
     private empleadoService: EmpleadosService,
     private router: Router,
-    private signalRServicee: SignalRService
   ) { }
 
   ngOnInit(): void {

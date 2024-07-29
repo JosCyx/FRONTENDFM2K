@@ -98,6 +98,7 @@ import { MainEventoComponent } from './eventos/components/main-evento/main-event
 import { FormularioEventoComponent } from './eventos/components/formulario-evento/formulario-evento.component';
 import { MenuEventoComponent } from './eventos/components/templates/menu-evento/menu-evento.component';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { HistorialEventoComponent } from './eventos/components/historial-evento/historial-evento.component';
 
 
 @NgModule({
@@ -160,6 +161,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
     MainEventoComponent,
     FormularioEventoComponent,
     MenuEventoComponent,
+    HistorialEventoComponent,
     
     
   ],

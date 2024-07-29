@@ -4,7 +4,6 @@ import { forkJoin } from 'rxjs';
 import { AlertEvent } from 'src/app/comint/models/AlertEvent';
 import { AlertEventService } from 'src/app/services/comunicationAPI/comint/alert-event.service';
 import { AuxComintService } from 'src/app/services/comunicationAPI/comint/aux-comint.service';
-import { SignalRService } from 'src/app/services/comunicationAPI/comint/signal-r.service';
 import { SolEventService } from 'src/app/services/comunicationAPI/comint/sol-event.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { GlobalComintService } from 'src/app/services/global-comint.service';
@@ -49,8 +48,6 @@ export class AlertaEventoComponent {
     private dialogService: DialogServiceService,
     private solEvService: SolEventService,
     private router: Router,
-    private signalRServicee: SignalRService
-
   ) { }
 
   ngOnInit(): void {

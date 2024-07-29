@@ -8,7 +8,6 @@ import { GlobalComintService } from 'src/app/services/global-comint.service';
 import { Router } from '@angular/router';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { AuxComintService } from 'src/app/services/comunicationAPI/comint/aux-comint.service';
-import { SignalRService } from 'src/app/services/comunicationAPI/comint/signal-r.service';
 import { HighContrastMode } from '@angular/cdk/a11y';
 
 @Component({
@@ -44,7 +43,6 @@ export class AlertaEventoListComponent {
     private router: Router,
     private dialogService: DialogServiceService,
     private auxService: AuxComintService,
-    private signalRServicee: SignalRService
 
   ) {
 

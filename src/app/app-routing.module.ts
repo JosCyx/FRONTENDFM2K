@@ -37,6 +37,7 @@ import { AlertaEventoComponent } from './comint/components/procesos/alerta-event
 import { AlertaEventoListComponent } from './comint/components/procesos/alerta-evento-list/alerta-evento-list.component';
 import { MainEventoComponent } from './eventos/components/main-evento/main-evento.component';
 import { FormularioEventoComponent } from './eventos/components/formulario-evento/formulario-evento.component';
+import { HistorialEventoComponent } from './eventos/components/historial-evento/historial-evento.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'login', pathMatch: 'full'},
@@ -80,6 +81,7 @@ const routes: Routes = [
    //EVENTOS
    { path: 'mainevento', component: MainEventoComponent, canActivate: [AuthGuard] },
    { path: 'formulario-evento', component: FormularioEventoComponent, canActivate: [AuthGuard] },
+   { path: 'historial-evento', component: HistorialEventoComponent, canActivate: [AuthGuard] },
 
 ];
 

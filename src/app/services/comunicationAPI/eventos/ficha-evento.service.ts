@@ -8,7 +8,7 @@ import { GlobalService } from '../../global.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuxEventosService {
+export class FichaEventoService {
 
   APIUrl = this.globalService.APIUrl;
 
@@ -16,6 +16,7 @@ export class AuxEventosService {
     private http: HttpClient,
     private cookieService: CookieService,
     private globalService: GlobalService
+    
   ) { 
     this.globalService.getConfigLoadedObservable().subscribe(
       (configLoaded) => {
@@ -39,11 +40,25 @@ export class AuxEventosService {
     });
   }
 
-  getSubsistemasList(): Observable<any> {
-    return this.http.get(`${this.APIUrl}/EvAux/GetEvSubsistema`, { headers: this.getHeadersWithAuthToken() });
+
+  getFichaEventoList(): Observable<any> {
+    return this.http.get(`${this.APIUrl}/EvFichaEvento`, { headers: this.getHeadersWithAuthToken() });
   }
 
-  getEstadoFichaList(): Observable<any> {
-    return this.http.get(`${this.APIUrl}/EvAux/GetEvEstadoProyecto`, { headers: this.getHeadersWithAuthToken() });
+
+  getFechaInicioList(): Observable<any> {
+    return this.http.get(`${this.APIUrl}/EvFichaEvento/fEvFechaInicio`, { headers: this.getHeadersWithAuthToken() });
   }
+
+  getFechaFinList(): Observable<any> {
+    return this.http.get(`${this.APIUrl}/EvFichaEvento/fEvFechaFin`, { headers: this.getHeadersWithAuthToken() });
+  }
+
+  // getAreaList(): Observable<any> {
+  //   return this.http.get(`${this.APIUrl}/Areas`, { headers: this.getHeadersWithAuthToken() });
+  // }
+
+  // getSectorList(): Observable<any> {
+  //   return this.http.get(`${this.APIUrl}/GetSectoresList`, { headers: this.getHeadersWithAuthToken() });
+  // }
 }
