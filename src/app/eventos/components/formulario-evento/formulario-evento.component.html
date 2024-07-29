@@ -112,10 +112,10 @@
         </ng-container>
         <tr>
           <td>
-            <textarea [(ngModel)]="riesgoObj.rsg" name="riesgo" (keydown.enter)="onEnter($event)" rows="4"></textarea>
+            <textarea [(ngModel)]="riesgoObj.rsg" name="riesgo" (keyup)="listenKey($event)" (keydown.enter)="onEnter($event)" rows="4"></textarea>
           </td>
           <td>
-            <textarea [(ngModel)]="riesgoObj.mit" name="mitigacion" (keydown.enter)="onEnter($event)"
+            <textarea [(ngModel)]="riesgoObj.mit" name="mitigacion" (keyup)="listenKey($event)" (keydown.enter)="onEnter($event)"
               rows="4"></textarea>
           </td>
         </tr>
@@ -130,18 +130,55 @@
       <div class="form-row">
         <div style="display: flex; flex-direction: row; gap: 10px; width: 100%;">
           <mat-form-field>
-            <mat-label>FECHA DE IMPLEMENTACIÓN</mat-label>
-            <input matInput [matDatepicker]="fechaImplementacionPicker" [(ngModel)]="evento.fechaImplementacion">
-            <mat-datepicker-toggle matIconSuffix [for]="fechaImplementacionPicker"></mat-datepicker-toggle>
-            <mat-datepicker #fechaImplementacionPicker></mat-datepicker>
+            <mat-label>FECHA DE INICIO</mat-label>
+            <input matInput [matDatepicker]="fechaInicioPicker" [(ngModel)]="evento.fechaInicio">
+            <mat-datepicker-toggle matIconSuffix [for]="fechaInicioPicker"></mat-datepicker-toggle>
+            <mat-datepicker #fechaInicioPicker></mat-datepicker>
           </mat-form-field>
           <mat-form-field>
-            <mat-label>HORA</mat-label>
-            <mat-select [(ngModel)]="evento.estado">
+            <mat-label>HORA DE INICIO</mat-label>
+            <input type="text" for="solicitante" placeholder="Ingrese el nombre del solicitante"
+              (input)="updateHorasListFiltered($event, 1)" matInput [matAutocomplete]="autoHoraInicio"
+              [(ngModel)]="evento.horaInicio">
+            <mat-autocomplete autoActiveFirstOption #autoHoraInicio="matAutocomplete">
+              <ng-container *ngFor="let time of timeListFiltered1">
+                <mat-option [value]="time">{{time}}</mat-option>
+              </ng-container>
+
+            </mat-autocomplete>
+            <!-- <mat-select [(ngModel)]="evento.fecha">
               <ng-container *ngFor="let hora of timeList">
                 <mat-option [value]="hora">{{hora}}</mat-option>
               </ng-container>
-            </mat-select>
+            </mat-select> -->
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div style="display: flex; flex-direction: row; gap: 10px; width: 100%;">
+          <mat-form-field>
+            <mat-label>FECHA DE FIN</mat-label>
+            <input matInput [matDatepicker]="fechaFinPicker" [(ngModel)]="evento.fechaFin">
+            <mat-datepicker-toggle matIconSuffix [for]="fechaFinPicker"></mat-datepicker-toggle>
+            <mat-datepicker #fechaFinPicker></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>HORA DE FIN</mat-label>
+            <input type="text" for="solicitante" placeholder="Ingrese el nombre del solicitante"
+              (input)="updateHorasListFiltered($event, 2)" matInput [matAutocomplete]="autoHoraFin"
+              [(ngModel)]="evento.horaFin">
+            <mat-autocomplete autoActiveFirstOption #autoHoraFin="matAutocomplete">
+              <ng-container *ngFor="let time of timeListFiltered2">
+                <mat-option [value]="time">{{time}}</mat-option>
+              </ng-container>
+
+            </mat-autocomplete>
+            <!-- <mat-select [(ngModel)]="evento.fecha">
+              <ng-container *ngFor="let hora of timeList">
+                <mat-option [value]="hora">{{hora}}</mat-option>
+              </ng-container>
+            </mat-select> -->
           </mat-form-field>
         </div>
       </div>
@@ -262,26 +299,32 @@
               </mat-expansion-panel-header>
               <button type="button" mat-raised-button color="primary" style="margin-bottom: 5px;"
                 (click)="fileInput.click()"><i class="bi bi-upload"></i></button>
-              <input hidden (change)="onFileSelected($event)" #fileInput type="file"
+              <input hidden (change)="onFileSelected($event, sub.subsId)" #fileInput type="file"
                 accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xlsx" id="file">
 
 
               <!-- aqui debe ir un for para iterar toda la documentacion -->
 
               <div class="documentacion-eto">
-                <mat-card>
-                  <mat-card-content>
-                    <div
-                      style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
-                      <!-- aqui debe ir un label para el nombre del documento y un boton de eliminar -->
-                      <div for="documento" class="card-documento" (click)="openDoc()">
-                        <h4 style="font-weight: bold; margin-bottom: 5px;">Nombre del documento</h4>
-                        <h5 style="margin-bottom: 0px;">Usuario que lo subió</h5>
-                      </div>
-                      <button class="delete-input-eto"><mat-icon>close</mat-icon></button>
-                    </div>
-                  </mat-card-content>
-                </mat-card>
+                <ng-container *ngFor="let doc of documentList; let i = index">
+                  <ng-container *ngIf="doc.idSubs == sub.subsId">
+                    <mat-card>
+                      <mat-card-content>
+                        <div
+                          style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                          <!-- Mostrar el nombre del documento y un botón de eliminar -->
+                          <div class="card-documento" (click)="openDoc(doc)">
+                            <h4 style="font-weight: bold; margin-bottom: 5px;">{{ doc.name }}</h4>
+                            <h5 style="margin-bottom: 0px;">{{ doc.uploadedBy }}</h5>
+                          </div>
+                          <button class="delete-input-eto" (click)="deleteDocument(i)">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </div>
+                      </mat-card-content>
+                    </mat-card>
+                  </ng-container>
+                </ng-container>
               </div>
             </mat-expansion-panel>
           </mat-accordion>

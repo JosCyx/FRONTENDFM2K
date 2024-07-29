@@ -377,3 +377,9 @@ mat-list-option {
   width: 20px;
   height: 20px;
 }
+
+.documentacion-eto{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}

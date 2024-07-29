@@ -7,6 +7,24 @@ import { GeneralControllerService } from 'src/app/services/comunicationAPI/inven
 import { da } from 'date-fns/locale';
 import { AuxEventosService } from 'src/app/services/comunicationAPI/eventos/aux-eventos.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
+import { CookieService } from 'ngx-cookie-service';
+import { FichaEventoService } from 'src/app/services/comunicationAPI/eventos/ficha-evento.service';
+
+interface Evento {
+  fechaEmision: Date,
+  nombreProyecto: string,
+  usuarioSolicitante: string,
+  sector: number,
+  area: number,
+  referencia: string,
+  objetivo: string,
+  alcance: string,
+  detalle: string,
+  fechaInicio: Date,
+  horaInicio: string,
+  fechaFin: Date,
+  horaFin: string
+}
 
 @Component({
   selector: 'app-formulario-evento',
@@ -14,8 +32,8 @@ import { DialogServiceService } from 'src/app/services/dialog-service.service';
   styleUrls: ['./formulario-evento.component.css']
 })
 export class FormularioEventoComponent {
-  
-  selectedForm: string = 'proyecto';
+  @ViewChild('fileInput') fileInput: any;
+
   riesgosList: { rsg: string, mit: string }[] = [];
 
   riesgoObj: { rsg: string, mit: string } = { rsg: '', mit: '' };
@@ -32,7 +50,9 @@ export class FormularioEventoComponent {
 
   selectedDate: Date = new Date();
 
-  evento: any = {
+  isRiskWriting: boolean = false;
+
+  evento: Evento = {
     fechaEmision: new Date(),
     nombreProyecto: '',
     usuarioSolicitante: '',
@@ -42,7 +62,10 @@ export class FormularioEventoComponent {
     objetivo: '',
     alcance: '',
     detalle: '',
-    fechaImplementacion: new Date()
+    fechaInicio: new Date(),
+    horaInicio: '',
+    fechaFin: new Date(),
+    horaFin: ''
   };
 
   timeList: string[] = [
@@ -72,16 +95,21 @@ export class FormularioEventoComponent {
     '23:00', '23:10', '23:20', '23:30', '23:40', '23:50'
   ];
 
+  timeListFiltered1: string[] = _.cloneDeep(this.timeList);
+  timeListFiltered2: string[] = _.cloneDeep(this.timeList);
+
   subsistemasList: any[] = [];
-  
+
   constructor(
     public GlobalEventosService: GlobalEventosService,
     private empService: EmpleadosService,
     private areaService: AreasService,
     private invGeneralService: GeneralControllerService,
     private auxEventosService: AuxEventosService,
-    private dialogService: DialogServiceService
-  ) { 
+    private dialogService: DialogServiceService,
+    private cookieService: CookieService,
+    private fichaEvService: FichaEventoService
+  ) {
   }
 
   ngOnInit(): void {
@@ -105,7 +133,7 @@ export class FormularioEventoComponent {
     }, 300);
   }
 
-  callMessage(message: string, type: boolean){
+  callMessage(message: string, type: boolean) {
     this.dialogService.openAlertDialog(message, type);
   }
 
@@ -119,6 +147,15 @@ export class FormularioEventoComponent {
     this.filterEmpleados(event.target.value);
   }
 
+  updateHorasListFiltered(event: any, idList: number) {
+    if (idList == 1) {
+      this.timeListFiltered1 = this.timeList.filter(time => time.includes(event.target.value));
+    } else {
+      this.timeListFiltered2 = this.timeList.filter(time => time.includes(event.target.value));
+    }
+
+  }
+
   addRiesgo() {
     if (this.riesgoObj.rsg && this.riesgoObj.mit) {
       this.riesgosList.push({ ...this.riesgoObj });
@@ -126,7 +163,7 @@ export class FormularioEventoComponent {
     }
   }
 
-  getIdEmpleado(nombre: string): string{
+  getIdEmpleado(nombre: string): string {
     const empleado = this.empleadosList.find(emp => ((emp.empleadoNombres + ' ' + emp.empleadoApellidos).trim() == nombre.trim()));
     return empleado ? empleado.empleadoIdNomina : '000000';
   }
@@ -137,14 +174,29 @@ export class FormularioEventoComponent {
     if (keyboardEvent.key === 'Enter') {
       keyboardEvent.preventDefault();
       this.addRiesgo();
+      this.isRiskWriting = false;
     }
+  }
+
+  //escucha las pulsaciones de teclado en el textarea de riesgos, si hay texto activa la bandera isRiskWriting
+  listenKey(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    console.log(value);
+    value ? this.isRiskWriting = true : this.isRiskWriting = false;
   }
 
   trackByIndex(index: number, item: any): any {
     return index;
   }
 
-  saveFicha() {
+  async saveFicha() {
+    if (this.isRiskWriting) {
+      this.callMessage(`Debe terminar de escribir el riesgo antes de guardar, presione 'Enter' para agregar el riesgo o elimine su contenido.`, false);
+      return;
+    }
+
+    await this.setFormatTime();
+
     const ficha = {
       fEvFechaEmision: this.evento.fechaEmision,
       fEvSolicitante: this.getIdEmpleado(this.nombreEmpleado),
@@ -155,73 +207,84 @@ export class FormularioEventoComponent {
       fEvObjetivoProyecto: this.evento.objetivo,
       fEvAlcanceProyecto: this.evento.alcance,
       fEvDetalleProdFinal: this.evento.detalle,
-      fEvFechaImplementacion: this.evento.fechaImplementacion,
+      fEvFechaInicio: this.evento.fechaInicio,
+      fEvFechaFin: this.evento.fechaFin,
       fEvEstadoProyecto: 1,
       fEvPorcentajeTotal: 0,
+      fEvPorcentajeNuevos: 0,
       fEvEstadoActivo: 1,
     };
     // Lógica para enviar el formulario
-    console.log("a", ficha);
+    //console.log("a", ficha);
 
     //envio a la api
+    /*this.fichaEvService.postFichaEvento(ficha).subscribe(
+      (data) => {
+        console.log(data);
+
+        //guardar los riesgos de la ficha de evento
+        this.saveRiesgos(data.fEvId);
+      },
+      error => {
+        console.log("Error:", error);
+        this.callMessage(`Error al guardar la ficha de evento\n${error.message}`, false);
+      }
+    );*/
   }
 
-  saveRiesgos() {
+  async setFormatTime() {
+    //crea un datetime con la fecha y hora de inicio
+    const fechaInicio = new Date(this.evento.fechaInicio);
+    const horaInicio = this.evento.horaInicio.split(':');
+    fechaInicio.setHours(parseInt(horaInicio[0]));
+    fechaInicio.setMinutes(parseInt(horaInicio[1]));
+    this.evento.fechaInicio = fechaInicio;
+
+    //crea un datetime con la fecha y hora de fin
+    const fechaFin = new Date(this.evento.fechaFin);
+    const horaFin = this.evento.horaFin.split(':');
+    fechaFin.setHours(parseInt(horaFin[0]));
+    fechaFin.setMinutes(parseInt(horaFin[1]));
+    this.evento.fechaFin = fechaFin;
+  }
+
+  saveRiesgos(idFicha: number) {
     this.riesgosList.forEach(item => {
       const riesgo = {
-        rgPrIdFichaEv: 1,
+        rgPrIdFichaEv: idFicha,
         rgPrDescripcion: item.rsg,
         rgPrMitigacion: item.mit,
         rgPrEstadoActivo: 1
       };
-      
+
       // Lógica para enviar los riesgos
       console.log("b", riesgo);
 
       //envia a la api
+      this.fichaEvService.postRiesgoFichaEvento(riesgo).subscribe(
+        (data) => {
+          //console.log("Riesgo guardado:",data);
+
+        },
+        error => {
+          console.log("Error:", error);
+          this.callMessage(`Error al guardar los riesgos de la ficha de evento\n${error.message}`, false);
+        });
     });
   }
 
-  deleteRiesgo(index: number){
+  deleteRiesgo(index: number) {
     this.riesgosList.splice(index, 1);
   }
 
-  imageAlert!: { file: File, url: string };
-  @ViewChild('fileInput') fileInput: any;
-
-  onFileSelected(event: any): void {
-    const selectedFile = event.target.files[0];
-
-    if (selectedFile) {
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'docx', 'pdf', 'xlsx', 'doc'];
-        const maxSize = 1000 * 1024; 
-
-        if (!validTypes.includes(selectedFile.type)) {
-            this.callMessage('El formato del archivo no esta permitido.', false);
-            return;
-        }
-
-        if (selectedFile.size > maxSize) {
-            this.callMessage('El tamanio de archivo no debe exceder 1 MB.', false);
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = (e: any) => {
-            this.imageAlert = { file: selectedFile, url: e.target.result };
-            this.fileInput.nativeElement.value = '';
-        };
-        reader.readAsDataURL(selectedFile);
-    }
-}
-
   //FICHA ETO
-  requerimientosList: {idSubs: number, req: string, observ: string, fecha: Date, estado: number}[] = [];
-  requerimiento: {idSubs: number, req: string, observ: string, fecha: Date} = {idSubs: 0, req: '', observ: '', fecha: new Date()};
+  requerimientosList: { idSubs: number, req: string, observ: string, fecha: Date, estado: number }[] = [];
+  requerimiento: { idSubs: number, req: string, observ: string, fecha: Date } = { idSubs: 0, req: '', observ: '', fecha: new Date() };
 
-  addRequerimiento(subsId: number){
-    if(this.requerimiento.req == '' || this.requerimiento.req == ' '){
+  documentList: { idSubs: number; name: string, file: File, uploadedBy: string }[] = [];
+
+  addRequerimiento(subsId: number) {
+    if (this.requerimiento.req == '' || this.requerimiento.req == ' ') {
       this.callMessage('El campo requerimiento es obligatorio', false);
       return;
     }
@@ -238,20 +301,57 @@ export class FormularioEventoComponent {
     this.clearReq();
   }
 
-  deleteReqEto(index: number){
+  deleteReqEto(index: number) {
     this.requerimientosList.splice(index, 1);
   }
 
-  clearReq(){
-    this.requerimiento = {idSubs: 0, req: '', observ: '', fecha: new Date()};
+  clearReq() {
+    this.requerimiento = { idSubs: 0, req: '', observ: '', fecha: new Date() };
   }
 
-  findDateByEstadoReq(idSubs: number, idEstado: number): Date  | undefined{
+  findDateByEstadoReq(idSubs: number, idEstado: number): Date | undefined {
     const reqDate = this.requerimientosList.find(req => req.idSubs == idSubs && req.estado == idEstado);
     return reqDate ? reqDate.fecha : undefined;
   }
 
-  openDoc(){
-    console.log('open doc');
+  onFileSelected(event: any, idSubs: number): void {
+    const selectedFile = event.target.files[0];
+
+    if (selectedFile) {
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/msword'];
+      const maxSize = 1000 * 1024;
+
+      if (!validTypes.includes(selectedFile.type)) {
+        this.callMessage('El formato del archivo no está permitido.', false);
+        return;
+      }
+
+      if (selectedFile.size > maxSize) {
+        this.callMessage('El tamaño del archivo no debe exceder 1 MB.', false);
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = (e: any) => {
+        this.documentList.push({ idSubs: idSubs, name: selectedFile.name, file: selectedFile, uploadedBy: this.cookieService.get('userName') });
+        this.fileInput.nativeElement.value = '';
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  }
+
+  // Método para eliminar un documento de la lista
+  deleteDocument(index: number): void {
+    this.documentList.splice(index, 1);
+  }
+
+  openDoc(doc: any) {
+    console.log('id subsistema:', doc.idSubs);
+    console.log('open doc:', doc.name);
+    console.log('subido por:', doc.uploadedBy);
   }
 }
