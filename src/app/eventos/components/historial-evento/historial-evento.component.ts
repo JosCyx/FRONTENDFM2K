@@ -10,6 +10,10 @@ import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.s
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 import { GeneralControllerService } from 'src/app/services/comunicationAPI/inventario/general-controller.service';
 import { AuxEventosService } from 'src/app/services/comunicationAPI/eventos/aux-eventos.service';
+import { DialogServiceService } from 'src/app/services/dialog-service.service';
+import { GlobalComintService } from 'src/app/services/global-comint.service';
+//import { FormularioEvento } from 'src/app/models/formulario-evento';
+import { GlobalEventosService } from 'src/app/services/global-eventos.service';
 
 @Component({
   selector: 'app-historial-evento',
@@ -18,15 +22,20 @@ import { AuxEventosService } from 'src/app/services/comunicationAPI/eventos/aux-
 })
 export class HistorialEventoComponent {
 
-  displayedColumns: string[] = ['USUARIO_SOLICITANTE', 'AREA_ADMINISTRA', 'NOMBRE_EVENTO', 'SECTOR', 'FECHA_INICIO', 'FECHA_INICIO', 'AVANCE_REQ_INICIAL', 'AVANCE_REQ_NUEVO', 'ESTADO'];
+  displayedColumns: string[] = ['USUARIO_SOLICITANTE', 'AREA_ADMINISTRA', 'NOMBRE_EVENTO', 'SECTOR', 'FECHA_INICIO', 'FECHA_FIN', 'AVANCE_REQ_INICIAL', 'AVANCE_REQ_NUEVO', 'ESTADO'];
+  // displayedColumnsView: string[] = ['USUARIO_SOLICITANTE', 'AREA_ADMINISTRA', 'NOMBRE_EVENTO', 'SECTOR', 'FECHA_INICIO', 'FECHA_FIN', 'AVANCE_REQ_INICIAL', 'AVANCE_REQ_NUEVO', 'ESTADO'];
+
   //dataSource = new MatTableDataSource<any>();
 
   constructor(
     private FichaEventoService: FichaEventoService,
+    private dialogService: DialogServiceService,
+    private router: Router,
     private empService: EmpleadosService,
     private areaService: AreasService,
     private invGeneralService: GeneralControllerService,
-    private AuxEventosService: AuxEventosService
+    private AuxEventosService: AuxEventosService,
+    private globalEventosService: GlobalEventosService
   ) {
 
   }
@@ -37,7 +46,6 @@ export class HistorialEventoComponent {
   SolicitanteList: any[] = [];
   AreaList: any[] = [];
   SectorList: any[] = [];
-  FechaList: any[] = [];
   EstadoList: any[] = [];
   estadoAlertList: any[] = [];
   numEnviosList: any[] = [];
@@ -89,24 +97,6 @@ export class HistorialEventoComponent {
         }
       );
 
-      this.FichaEventoService.getFechaInicioList().subscribe(
-        (res: any) => {
-          this.FechaList = _.cloneDeep(res);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-
-      this.FichaEventoService.getFechaInicioList().subscribe(
-        (res: any) => {
-          this.FechaList = _.cloneDeep(res);
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
-      
       this.AuxEventosService.getEstadoFichaList().subscribe(
         (res: any) => {
           this.EstadoList = _.cloneDeep(res);
@@ -121,7 +111,7 @@ export class HistorialEventoComponent {
 
       this.FichaEventoService.getFichaEventoList().subscribe(
         (res: any) => {
-          console.log("Alertas obtenidas: ", res);
+          console.log("Fichas obtenidas: ", res);
           //this.alertEventList = _.cloneDeep(res);
           this.originalData = _.cloneDeep(res);
 
@@ -134,12 +124,32 @@ export class HistorialEventoComponent {
         }
       );
     }, 300);
+
+    
   }
 
+  callMensaje(mensaje: string, type: boolean) {
+    this.dialogService.openAlertDialog(mensaje, type);
+  }
 
-
-
-
+  selectFichaEvent(row: any) {
+    console.log("Ficha seleccionada: ", row.fEvId);
+    //hacer la peticion de la alerta seleccionada
+    this.FichaEventoService.getFichaEventoById(row.fEvId).subscribe(
+      (res: any) => {
+        this.globalEventosService.editMode = true;
+        console.log("Ficha seleccionada: ", res);
+        this.globalEventosService.FormEv = _.cloneDeep(res.ficha);
+        this.globalEventosService.riesgos = _.cloneDeep(res.riesgos);
+        this.globalEventosService.req = _.cloneDeep(res.req);
+        this.router.navigate(['formulario-evento']);
+      },
+      (error) => {
+        console.error(error);
+        this.callMensaje("Error al seleccionar la ficha.", false);
+      }
+    );
+  }
 
 
   //establece el tipo de filtro seleccionado
@@ -217,17 +227,18 @@ export class HistorialEventoComponent {
       );
     } else if (this.filterType === 4) {
       this.dataSource.data = this.originalData.filter(item =>
-        item.fEvFechaInicio == this.filterDateContent
+        item.fEvFechaInicio.includes(this.filterDateContent)
       );
+
       this.dataSourceView.data = this.originalDataView.filter(item =>
-        item.fEvFechaInicio == this.filterDateContent
+        item.fEvFechaInicio.includes(this.filterDateContent)
       );
     } else if (this.filterType === 5) {
       this.dataSource.data = this.originalData.filter(item =>
-        item.fEvFechaFin == this.filterDateContent
+        item.fEvFechaFin.includes(this.filterDateContent)
       );
       this.dataSourceView.data = this.originalDataView.filter(item =>
-        item.fEvFechaFin == this.filterDateContent
+        item.fEvFechaFin.includes(this.filterDateContent)
       );
     } else if (this.filterType === 6) {
       this.dataSource.data = this.originalData.filter(item =>
@@ -262,8 +273,7 @@ export class HistorialEventoComponent {
   applyDateFilter(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     if (inputElement) {
-      this.filterDateContent = new Date(inputElement.value).toLocaleString();
-      console.log("Fecha seleccionada: ", this.filterDateContent);
+      this.filterDateContent = inputElement.value;
       this.applyFilter();
     }
   }
