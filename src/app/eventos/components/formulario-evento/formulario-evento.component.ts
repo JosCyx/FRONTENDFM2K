@@ -131,6 +131,13 @@ export class FormularioEventoComponent {
         this.subsistemasList = _.cloneDeep(data);
       });
     }, 300);
+
+    if(this.GlobalEventosService.editMode){
+      console.log("Modo edición");
+      this.evento = this.GlobalEventosService.FormEv;
+      this.riesgosList = this.GlobalEventosService.riesgos;
+      this.requerimientosList = this.GlobalEventosService.req;
+    }
   }
 
   callMessage(message: string, type: boolean) {
@@ -218,7 +225,7 @@ export class FormularioEventoComponent {
     //console.log("a", ficha);
 
     //envio a la api
-    /*this.fichaEvService.postFichaEvento(ficha).subscribe(
+    this.fichaEvService.postFichaEvento(ficha).subscribe(
       (data) => {
         console.log(data);
 
@@ -229,7 +236,7 @@ export class FormularioEventoComponent {
         console.log("Error:", error);
         this.callMessage(`Error al guardar la ficha de evento\n${error.message}`, false);
       }
-    );*/
+    );
   }
 
   async setFormatTime() {

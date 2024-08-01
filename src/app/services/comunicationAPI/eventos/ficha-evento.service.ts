@@ -52,13 +52,11 @@ export class FichaEventoService {
   }
 
 
-  getFechaInicioList(): Observable<any> {
-    return this.http.get(`${this.APIUrl}/EvFichaEvento/fEvFechaInicio`, { headers: this.getHeadersWithAuthToken() });
+  getFichaEventoById(id: number): Observable<any> {
+    return this.http.get(`${this.APIUrl}/EvFichaEvento/${id}`, { headers: this.getHeadersWithAuthToken() });
   }
 
-  getFechaFinList(): Observable<any> {
-    return this.http.get(`${this.APIUrl}/EvFichaEvento/fEvFechaFin`, { headers: this.getHeadersWithAuthToken() });
-  }
+
 
   // getAreaList(): Observable<any> {
   //   return this.http.get(`${this.APIUrl}/Areas`, { headers: this.getHeadersWithAuthToken() });

@@ -83,6 +83,7 @@ input[type="number"]::-webkit-inner-spin-button {
  .mat-column-NOMBRE_EVENTO,
  .mat-column-SECTOR,
  .mat-column-FECHA_INICIO,
+ .mat-column-FECHA_FIN,
  .mat-column-AVANCE_REQ_INICIAL,
  .mat-column-AVANCE_REQ_NUEVO,
  .mat-column-ESTADO {
@@ -94,6 +95,7 @@ input[type="number"]::-webkit-inner-spin-button {
 .mat-column-NOMBRE_EVENTO,
 .mat-column-SECTOR,
 .mat-column-FECHA_INICIO,
+.mat-column-FECHA_FIN,
 .mat-column-AVANCE_REQ_INICIAL,
 .mat-column-AVANCE_REQ_NUEVO,
 .mat-column-ESTADO {

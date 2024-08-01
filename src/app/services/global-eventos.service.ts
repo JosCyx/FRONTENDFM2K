@@ -1,11 +1,41 @@
 import { Injectable } from '@angular/core';
+import { FichaEventoService } from './comunicationAPI/eventos/ficha-evento.service';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class GlobalEventosService {
 
-  constructor() { }
+  editMode: boolean = false;
+
+  FormEv: any = {
+
+    fEvId: 0,
+    fEvFechaEmision: "",
+    fEvSolicitante: "",
+    fEvArea: 0,
+    fEvSector: 0,
+    fEvNombreProyecto: "",
+    fEvReferencia: "",
+    fEvObjetivoProyecto: "",
+    fEvAlcanceProyecto: "",
+    fEvDetalleProdFinal: "",
+    fEvFechaInicio: "",
+    fEvFechaFin: "",
+    fEvEstadoProyecto: 0,
+    fEvPorcentajeTotal: 0,
+    fEvPorcentajeNuevos: 0,
+    fEvEstadoActivo: 0
+   }
+
+   riesgos: any[] = [];   
+   req: any[] = [];
+
+  constructor(
+
+  
+  ) { }
 
   formatDateToSpanish(date: Date): string {
     const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
@@ -32,4 +62,6 @@ export class GlobalEventosService {
 
     return `${year}-${month}-${day}`;
   }
+
+
 }
