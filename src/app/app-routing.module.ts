@@ -38,51 +38,52 @@ import { AlertaEventoListComponent } from './comint/components/procesos/alerta-e
 import { MainEventoComponent } from './eventos/components/main-evento/main-evento.component';
 import { FormularioEventoComponent } from './eventos/components/formulario-evento/formulario-evento.component';
 import { HistorialEventoComponent } from './eventos/components/historial-evento/historial-evento.component';
+import { CalendarioEventoComponent } from './eventos/components/calendario-evento/calendario-evento.component';
 
 const routes: Routes = [
-  {path: '', redirectTo: 'login', pathMatch: 'full'},
-  {path:'login', component: LoginComponent},
-  {path:'main', component: MainComponent , data: { breadcrumb: 'Home' }, canActivate: [AuthGuard]},
-  {path:'documentos', component: DocumentosComponent, data: { breadcrumb: 'Documentos' }, canActivate: [AuthGuard] },
-  {path: 'apps', component: AplicacionesComponent, data: { breadcrumb: 'Aplicaciones' }, canActivate: [AuthGuard] },
-  {path: 'functions', component: FuncionesComponent, data: { breadcrumb: 'Funciones' }, canActivate: [AuthGuard] },
-  {path: 'transact', component: TransaccionesComponent, data: { breadcrumb: 'Transacciones' }, canActivate: [AuthGuard] },
-  {path: 'users', component: UsuariosComponent, data: { breadcrumb: 'Usuarios' }, canActivate: [AuthGuard] },
-  {path: 'rol', component: RolesComponent, data: { breadcrumb: 'Roles' }, canActivate: [AuthGuard] },
-  {path: 'ruteo', component: RuteoComponent, data: { breadcrumb: 'Ruteo' }, canActivate: [AuthGuard] },
-  {path: 'solicoti', component: SolicotiComponent, data: { breadcrumb: 'Cotizacion' }, canActivate: [AuthGuard] },
-  {path: 'solioc', component: SoliocComponent, data: { breadcrumb: 'Orden de compra' }, canActivate: [AuthGuard] },
-  {path: 'solipago', component: SolipagoComponent, data: { breadcrumb: 'Pago' }, canActivate: [AuthGuard] },
-  {path: 'mainconfig', component: MainConfiguracionComponent, data: { breadcrumb: 'Solicitudes' }, canActivate: [AuthGuard] },
-  {path: 'mainsec', component: MainSeguridadComponent, data: { breadcrumb: 'Seguridad' }, canActivate: [AuthGuard] },
-  {path: 'empleados', component: EmpleadosComponent, data: { breadcrumb: 'Empleados' }, canActivate: [AuthGuard] },
-  {path: 'allrequest', component: AllrequestComponent, data: { breadcrumb: 'Todas las solicitudes' }, canActivate: [AuthGuard] },
-  {path: 'rolTransc', component: RolesTransacComponent, data: { breadcrumb: 'Roles-Transacciones' }, canActivate: [AuthGuard] },
-  {path: 'rolUser', component: RolesUsersComponent, data: { breadcrumb: 'Roles-Usuarios' }, canActivate: [AuthGuard] },
-  {path: 'empnivel', component: EmpleadoNivelComponent, data: { breadcrumb: 'Empleado-Nivel' }, canActivate: [AuthGuard] },
-  {path: 'solAprob', component: SolicitudesAprobadasComponent, canActivate: [AuthGuard]},
-  {path: 'reportes', component: ReportesComponent, canActivate: [AuthGuard] },
-  {path: 'mainnom', component: MainNominaComponent, canActivate: [AuthGuard]},
-  {path: 'sendrol', component: SendNominaRolComponent, canActivate: [AuthGuard]},
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'main', component: MainComponent, data: { breadcrumb: 'Home' }, canActivate: [AuthGuard] },
+  { path: 'documentos', component: DocumentosComponent, data: { breadcrumb: 'Documentos' }, canActivate: [AuthGuard] },
+  { path: 'apps', component: AplicacionesComponent, data: { breadcrumb: 'Aplicaciones' }, canActivate: [AuthGuard] },
+  { path: 'functions', component: FuncionesComponent, data: { breadcrumb: 'Funciones' }, canActivate: [AuthGuard] },
+  { path: 'transact', component: TransaccionesComponent, data: { breadcrumb: 'Transacciones' }, canActivate: [AuthGuard] },
+  { path: 'users', component: UsuariosComponent, data: { breadcrumb: 'Usuarios' }, canActivate: [AuthGuard] },
+  { path: 'rol', component: RolesComponent, data: { breadcrumb: 'Roles' }, canActivate: [AuthGuard] },
+  { path: 'ruteo', component: RuteoComponent, data: { breadcrumb: 'Ruteo' }, canActivate: [AuthGuard] },
+  { path: 'solicoti', component: SolicotiComponent, data: { breadcrumb: 'Cotizacion' }, canActivate: [AuthGuard] },
+  { path: 'solioc', component: SoliocComponent, data: { breadcrumb: 'Orden de compra' }, canActivate: [AuthGuard] },
+  { path: 'solipago', component: SolipagoComponent, data: { breadcrumb: 'Pago' }, canActivate: [AuthGuard] },
+  { path: 'mainconfig', component: MainConfiguracionComponent, data: { breadcrumb: 'Solicitudes' }, canActivate: [AuthGuard] },
+  { path: 'mainsec', component: MainSeguridadComponent, data: { breadcrumb: 'Seguridad' }, canActivate: [AuthGuard] },
+  { path: 'empleados', component: EmpleadosComponent, data: { breadcrumb: 'Empleados' }, canActivate: [AuthGuard] },
+  { path: 'allrequest', component: AllrequestComponent, data: { breadcrumb: 'Todas las solicitudes' }, canActivate: [AuthGuard] },
+  { path: 'rolTransc', component: RolesTransacComponent, data: { breadcrumb: 'Roles-Transacciones' }, canActivate: [AuthGuard] },
+  { path: 'rolUser', component: RolesUsersComponent, data: { breadcrumb: 'Roles-Usuarios' }, canActivate: [AuthGuard] },
+  { path: 'empnivel', component: EmpleadoNivelComponent, data: { breadcrumb: 'Empleado-Nivel' }, canActivate: [AuthGuard] },
+  { path: 'solAprob', component: SolicitudesAprobadasComponent, canActivate: [AuthGuard] },
+  { path: 'reportes', component: ReportesComponent, canActivate: [AuthGuard] },
+  { path: 'mainnom', component: MainNominaComponent, canActivate: [AuthGuard] },
+  { path: 'sendrol', component: SendNominaRolComponent, canActivate: [AuthGuard] },
 
 
   //inventario
-  {path: 'visualizarInventario', component: VisualizarInventarioComponent, canActivate: [AuthGuard]},
-  {path: 'detalleProducto', component: DetalleComponent, canActivate: [AuthGuard]},
+  { path: 'visualizarInventario', component: VisualizarInventarioComponent, canActivate: [AuthGuard] },
+  { path: 'detalleProducto', component: DetalleComponent, canActivate: [AuthGuard] },
 
 
   //COMUNICACION INTERNA
-  {path: 'maincomint', component: MainComintComponent, canActivate: [AuthGuard]},
-  {path: 'solev', component: SolicitudEventoComponent, canActivate: [AuthGuard]},
-  {path: 'solevlist', component: SolicitudEventoListComponent, canActivate: [AuthGuard]},
-  {path: 'alertev', component: AlertaEventoComponent, canActivate: [AuthGuard]},
-  {path: 'alertevlist', component: AlertaEventoListComponent, canActivate: [AuthGuard]},
+  { path: 'maincomint', component: MainComintComponent, canActivate: [AuthGuard] },
+  { path: 'solev', component: SolicitudEventoComponent, canActivate: [AuthGuard] },
+  { path: 'solevlist', component: SolicitudEventoListComponent, canActivate: [AuthGuard] },
+  { path: 'alertev', component: AlertaEventoComponent, canActivate: [AuthGuard] },
+  { path: 'alertevlist', component: AlertaEventoListComponent, canActivate: [AuthGuard] },
 
-   //EVENTOS
-   { path: 'mainevento', component: MainEventoComponent, canActivate: [AuthGuard] },
-   { path: 'formulario-evento', component: FormularioEventoComponent, canActivate: [AuthGuard] },
-   { path: 'historial-evento', component: HistorialEventoComponent, canActivate: [AuthGuard] },
-
+  //EVENTOS
+  { path: 'mainevento', component: MainEventoComponent, canActivate: [AuthGuard] },
+  { path: 'formulario-evento', component: FormularioEventoComponent, canActivate: [AuthGuard] },
+  { path: 'historial-evento', component: HistorialEventoComponent, canActivate: [AuthGuard] },
+  { path: 'calendario-evento', component: CalendarioEventoComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

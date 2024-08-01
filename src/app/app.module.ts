@@ -102,6 +102,7 @@ import { AutoResizeDirective } from './directives/auto-resize.directive';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 
 import { HistorialEventoComponent } from './eventos/components/historial-evento/historial-evento.component';
+import { CalendarioEventoComponent } from './eventos/components/calendario-evento/calendario-evento.component';
 
 
 @NgModule({
@@ -166,6 +167,7 @@ import { HistorialEventoComponent } from './eventos/components/historial-evento/
     MenuEventoComponent,
     AutoResizeDirective,
     HistorialEventoComponent,
+    CalendarioEventoComponent,
     
     
   ],

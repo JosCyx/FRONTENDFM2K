@@ -84,10 +84,10 @@ header {
 }
 
 .card-title {
-    overflow-wrap: break-word;
-    word-wrap: break-word;
-    word-break: break-word;
-    white-space: normal;
+    white-space: normal !important;
+    word-wrap: normal !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 
 .card-body {
