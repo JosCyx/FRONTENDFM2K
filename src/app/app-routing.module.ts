@@ -42,6 +42,10 @@ import { CalendarioEventoComponent } from './eventos/components/calendario-event
 import { SalesReportComponent } from './components/procesos/sales-report/sales-report.component';
 import { DimensionConfComponent } from './components/configuracion/dimension-conf/dimension-conf.component';
 import { DimensionesHelpPageComponent } from './components/templates/dimensiones-help-page/dimensiones-help-page.component';
+import { MainEventoGestComponent } from './evento_gestion/main-evento-gest/main-evento-gest.component';
+import { FormularioEventoGestComponent } from './evento_gestion/formulario-evento-gest/formulario-evento-gest.component';
+import { CalendarioEventoGestComponent } from './evento_gestion/calendario-evento-gest/calendario-evento-gest.component';
+import { ListadoEventosComponent } from './evento_gestion/listado-eventos/listado-eventos.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -90,6 +94,12 @@ const routes: Routes = [
   { path: 'formulario-evento', component: FormularioEventoComponent, canActivate: [AuthGuard] },
   { path: 'historial-evento', component: HistorialEventoComponent, canActivate: [AuthGuard] },
   { path: 'calendario-evento', component: CalendarioEventoComponent, canActivate: [AuthGuard] },
+
+  //GESTION EVENTOS
+  { path: 'maineventogest', component: MainEventoGestComponent, canActivate: [AuthGuard] },
+  { path: 'addEventoGest', component: FormularioEventoGestComponent, canActivate: [AuthGuard] },
+  { path: 'calendario-evento-gest', component: CalendarioEventoGestComponent, canActivate: [AuthGuard] },
+  { path: 'lista-ev-gest', component: ListadoEventosComponent, canActivate: [AuthGuard] }
   
 ];
 
