@@ -112,6 +112,12 @@ import { SalesReportComponent } from './components/procesos/sales-report/sales-r
 import {MatTooltipModule} from '@angular/material/tooltip';
 import { DimensionConfComponent } from './components/configuracion/dimension-conf/dimension-conf.component';
 import { DimensionesHelpPageComponent } from './components/templates/dimensiones-help-page/dimensiones-help-page.component';
+import { MainEventoGestComponent } from './evento_gestion/main-evento-gest/main-evento-gest.component';
+import { EventoGestionComponent } from './evento_gestion/evento-gestion/evento-gestion.component';
+import { MenuEventoGestComponent } from './evento_gestion/menu-evento-gest/menu-evento-gest.component';
+import { FormularioEventoGestComponent } from './evento_gestion/formulario-evento-gest/formulario-evento-gest.component';
+import { CalendarioEventoGestComponent } from './evento_gestion/calendario-evento-gest/calendario-evento-gest.component';
+import { ListadoEventosComponent } from './evento_gestion/listado-eventos/listado-eventos.component';
 
 @NgModule({
   declarations: [
@@ -182,7 +188,13 @@ import { DimensionesHelpPageComponent } from './components/templates/dimensiones
     AddDimensionesComponent,
     SalesReportComponent,
     DimensionConfComponent,
-    DimensionesHelpPageComponent
+    DimensionesHelpPageComponent,
+    MainEventoGestComponent,
+    EventoGestionComponent,
+    MenuEventoGestComponent,
+    FormularioEventoGestComponent,
+    CalendarioEventoGestComponent,
+    ListadoEventosComponent
     
     
   ],

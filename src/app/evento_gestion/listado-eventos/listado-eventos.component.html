@@ -1,0 +1,98 @@
+<app-menu-evento-gest> </app-menu-evento-gest>
+<div class="main-container">
+  <h2 class="font-weight-bolt ruteo">Listado de eventos</h2>
+
+  <!-- <h3 class="font-weight-bold" style="padding-top: 20pt">
+    Registrar un nuevo evento
+  </h3> -->
+  <div style="padding: 20px 0px 50px 0px">
+
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="dataSourceEv" class="mat-elevation-z8">
+
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef> 
+          <div class="filter-head">
+            Nombre
+            <div style="display: flex; flex-direction: row;">
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(1)"><i class="bi bi-funnel-fill"></i></button>
+            </div>
+          </div>  
+          <div class="input-container" *ngIf="handleFilter && filterType == 1">
+            <input type="text" #filterInput (input)="applyStrFilter($event)">
+          </div>
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.nombre}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lugar">
+          <th mat-header-cell *matHeaderCellDef> 
+            <div class="filter-head">
+              Lugar
+              <div style="display: flex; flex-direction: row;">
+                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(2)"><i class="bi bi-funnel-fill"></i></button>
+              </div>
+            </div>  
+            <div class="input-container" *ngIf="handleFilter && filterType == 2">
+              <input type="text" #filterInput (input)="applyStrFilter($event)">
+            </div>  
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.lugar}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="cliente">
+          <th mat-header-cell *matHeaderCellDef> 
+            <div class="filter-head">
+              Cliente
+              <div style="display: flex; flex-direction: row;">
+                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(3)"><i class="bi bi-funnel-fill"></i></button>
+              </div>
+            </div>  
+            <div class="input-container" *ngIf="handleFilter && filterType == 3">
+              <input type="text" #filterInput (input)="applyStrFilter($event)">
+            </div>  
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.cliente}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tp_contrato">
+          <th mat-header-cell *matHeaderCellDef> 
+            <div class="filter-head">
+              Tipo de contrato
+              <div style="display: flex; flex-direction: row;">
+                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(4)"><i class="bi bi-funnel-fill"></i></button>
+              </div>
+            </div>  
+            <div class="input-container" *ngIf="handleFilter && filterType == 4">
+              <input type="text" #filterInput (input)="applyStrFilter($event)">
+            </div>  
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.tp_contrato}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef> 
+            <div class="filter-head">
+              Estado
+              <div style="display: flex; flex-direction: row;">
+                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(5)"><i class="bi bi-funnel-fill"></i></button>
+              </div>
+            </div>  
+            <div class="input-container" *ngIf="handleFilter && filterType == 5">
+              <input type="text" #filterInput (input)="applyStrFilter($event)">
+            </div>
+          </th>
+          <td mat-cell *matCellDef="let element"> {{element.estado}} </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="row-custom-hover" (click)="selectRow(row)"></tr>
+      </table>
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons>
+      </mat-paginator>
+
+    </div>
+
+  </div>
+
+</div>

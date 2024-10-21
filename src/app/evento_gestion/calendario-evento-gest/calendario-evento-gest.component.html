@@ -1,0 +1,28 @@
+<app-menu-evento-gest> </app-menu-evento-gest>
+
+<div class="calendar-container">
+
+  <div class="project-form">
+    <div class="header">
+      <button (click)="prevMonth()"><</button>
+      <h2>{{ months[selectedMonth] }} {{ selectedYear }}</h2>
+      <button (click)="nextMonth()">></button>
+    </div>
+
+    <div class="calendar">
+      <div class="day" *ngFor="let day of weekDays">{{ day }}</div>
+
+      <div
+        class="date"
+        *ngFor="let day of getDaysInMonth(selectedMonth, selectedYear); let i = index"
+        [ngClass]="{ 'has-event': hasEvent(day) }"
+        (click)="selectDay(day)"
+      >
+        <div>{{ day.getDate() }}</div>
+        <div *ngIf="getEvent(day)">
+          <span>{{ getEvent(day)?.nombreEvento }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

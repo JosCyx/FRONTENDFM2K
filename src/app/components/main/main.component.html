@@ -28,7 +28,6 @@
   <div>
     <!-- <button mat-raised-button class="mr-5" (mouseover)="showString()" (click)="getUserManual()"><i
         class="bi bi-filetype-pdf h5 text-danger"></i>{{manualString}}</button> -->
-
     <button mat-raised-button color="warn" class=" ml-2 text-end" (click)="logOut()">Cerrar sesión <i
         class="bi bi-person-circle"></i></button>
   </div>
@@ -86,12 +85,22 @@
         <!-- <button mat-raised-button (click)="goComInt()" class="primary-button col-md-4 text-light">Ir</button> -->
       </div>
     </div>
+
     <!-- <div class="card m-5 text-center card-main" (click)="goEventos()" *appAuthorize="'87'">
       <img src="assets/img/proyectos.webp" class="card-app-img" alt="...">
       <div class="card-body">
         <h4 class="card-title font-weight-bold text-center">PROYECTOS</h4>
       </div>
     </div> -->
+
+    <div class="card m-5 text-center card-main" (click)="goGestEventos()" *appAuthorize="'87'">
+      <img src="assets/img/gest_evento.webp" class="card-app-img" alt="...">
+      <div class="card-body">
+        <h4 class="card-title font-weight-bold text-center">GESTIÓN EVENTOS</h4>
+        <!-- <button mat-raised-button (click)="goEventos()" class="primary-button col-md-4 text-light">Ir</button> -->
+      </div>
+    </div>
+
   </div>
 
 </div>

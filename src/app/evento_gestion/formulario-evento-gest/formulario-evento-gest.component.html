@@ -1,0 +1,266 @@
+<app-menu-evento-gest> </app-menu-evento-gest>
+<div class="form-container">
+
+  <h2 class="font-weight-bolt ruteo">Gestión de Evento</h2>
+
+  <h3 class="font-weight-bold" style="padding-top: 20pt">
+    Registrar un nuevo evento
+  </h3>
+
+  <mat-tab-group animationDuration="0ms">
+    <mat-tab label="Información">
+      <div *ngTemplateOutlet="ficha_evento"></div>
+    </mat-tab>
+    <mat-tab label="Fechas del Evento">
+      <div *ngTemplateOutlet="ficha_fecha"></div>
+    </mat-tab>
+  </mat-tab-group>
+
+
+
+  <!-- plantilla de registro del evento -->
+  <ng-template #ficha_evento>
+    <div class="project-form">
+
+      <mat-form-field class="example-full-width">
+        <mat-label>NOMBRE DEL EVENTO</mat-label>
+        <input matInput placeholder="Escribe el nombre del evento" [(ngModel)]="gestEvento.nombreEvento">
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>USUARIO SOLICITANTE</mat-label>
+        <input type="text" for="solicitante" placeholder="Ingrese el nombre del solicitante"
+          (input)="updateEmpleadosListFiltered($event)" matInput [matAutocomplete]="auto" [(ngModel)]="nombreEmpleado">
+        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+          <ng-container *ngFor="let emp of empleadosListFiltered">
+            <mat-option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos">{{emp.empleadoNombres + " " +
+              emp.empleadoApellidos}}</mat-option>
+          </ng-container>
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>CLIENTE</mat-label>
+        <input type="text" for="cliente" placeholder="Ingrese el nombre del cliente"
+          (input)="updateClientesListFiltered($event)" matInput [matAutocomplete]="cli" [(ngModel)]="nombreCliente">
+        <mat-autocomplete autoActiveFirstOption #cli="matAutocomplete">
+          <ng-container *ngFor="let cli of clienteListFiltered">
+            <mat-option [value]="cli.cliNombre">{{cli.cliNombre}}</mat-option>
+          </ng-container>
+        </mat-autocomplete>
+      </mat-form-field>
+      <div class="agg-cliente">
+        <h3><a class="client-link" (click)="abrirVentanaAgregarCliente()">Agregar nuevo cliente</a></h3>
+      </div>
+
+      <!-- plantilla de registro de cliente -->
+      <ng-template #dialogTemplate>
+        <h2 mat-dialog-title>Agregar nuevo cliente</h2>
+
+        <mat-dialog-content>
+          <form #clienteForm="ngForm">
+            <!-- Campo Nombre (obligatorio) -->
+            <mat-form-field class="example-full-width">
+              <mat-label>Nombre</mat-label>
+              <input matInput [(ngModel)]="cliente.clienteNombre" name="nombre" placeholder="Nombre del cliente">
+            
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+              <mat-label>Cédula/RUC/Pasaporte</mat-label>
+              <input matInput [(ngModel)]="cliente.cedula" name="cedula" placeholder="Cédula/RUC/Pasaporte">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+              <mat-label>Dirección</mat-label>
+              <input matInput [(ngModel)]="cliente.direccion" name="direccion" placeholder="Dirección">
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+              <mat-label>Teléfono</mat-label>
+              <input matInput [(ngModel)]="cliente.telefono" name="telefono" placeholder="Teléfono">
+            </mat-form-field>
+
+            <!-- Campo Correo (obligatorio) -->
+            <mat-form-field class="example-full-width">
+              <mat-label>Correo electrónico</mat-label>
+              <input matInput [(ngModel)]="cliente.correo" name="correo" placeholder="Correo electrónico">
+              
+            </mat-form-field>
+          </form>
+        </mat-dialog-content>
+
+        <mat-dialog-actions class="button-container">
+          <button mat-button color="warn" (click)="cerrarDialog()">Cancelar</button>
+          <button mat-button color="primary" [disabled]="cliente.clienteNombre == '' || cliente.correo == ''" (click)="saveCliente()">Guardar</button>
+        </mat-dialog-actions>
+      </ng-template>
+
+
+      <mat-form-field class="example-full-width">
+        <mat-label>TIPO DE CONTRATO</mat-label>
+        <mat-select [(ngModel)]="gestEvento.tipoContrato">
+          <ng-container *ngFor="let cont of tipoContratoList">
+            <mat-option [value]="cont.contrId">{{cont.contrNombre}}</mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+
+
+
+      <mat-form-field class="example-full-width">
+        <mat-label>ESPACIO</mat-label>
+        <input type="text" for="localidad" placeholder="Ingrese el espacio"
+          (input)="updateLocalidadListFiltered($event)" matInput [matAutocomplete]="loc" [(ngModel)]="nombreLocalidad">
+        <mat-autocomplete autoActiveFirstOption #loc="matAutocomplete">
+          <ng-container *ngFor="let loc of localidadListFiltered">
+            <mat-option [value]="loc.locNombre">{{loc.locNombre}}</mat-option>
+          </ng-container>
+        </mat-autocomplete>
+      </mat-form-field>
+
+
+      <div style="display: flex; flex-direction:  row; gap: 10px;">
+        <mat-form-field>
+          <mat-label>TIPO DE PAGO</mat-label>
+          <mat-select [(ngModel)]="gestEvento.tipoPago">
+            <ng-container *ngFor="let pag of tipoPagoList">
+              <mat-option [value]="pag.pagId">{{pag.pagNombre}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="gestEvento.tipoPago == 2">
+          <mat-label>Abono</mat-label>
+          <input matInput type="number"
+          [(ngModel)]="gestEvento.pagoAbono">
+          
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Total</mat-label>
+          <input matInput type="number"
+          [(ngModel)]="gestEvento.pagoTotal">
+        </mat-form-field>
+      </div>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>DESCRIPCIÓN DEL EVENTO</mat-label>
+        <textarea matInput placeholder="Ingrese el detalle de producto final" rows="4"
+          [(ngModel)]="gestEvento.descripcion"></textarea>
+      </mat-form-field>
+
+    </div>
+  </ng-template>
+
+
+
+  <!-- plantilla de registro de fechas del evento -->
+  <ng-template #ficha_fecha>
+    <div class="project-form">
+
+      <mat-form-field>
+        <mat-label>ETAPAS</mat-label>
+        <mat-select [(ngModel)]="FechasObj.tipo" (selectionChange)="onTipoChange($event.value)">
+          <mat-option *ngFor="let tipo of tipoFechaList" [value]="tipo.tipofeId" [disabled]="disableDateType(tipo.tipofeId)">{{tipo.tipofeNombre}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      
+
+      <div class="dual-container">
+
+        <!-- Selección de Fecha Inicio -->
+        <mat-form-field>
+          <mat-label>FECHA INICIO</mat-label>
+          <input matInput [matDatepicker]="fechaInicioPicker" [(ngModel)]="FechasObj.fechaInicio" (ngModelChange)="onTipoChange(FechasObj.tipo)" [min]="minDate"
+            [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaInicioDisabled">
+          <mat-datepicker-toggle matIconSuffix [for]="fechaInicioPicker"></mat-datepicker-toggle>
+          <mat-datepicker #fechaInicioPicker></mat-datepicker>
+        </mat-form-field>
+      
+        <mat-form-field>
+          <mat-label>HORA DE INICIO</mat-label>
+          <input type="text" for="solicitante" (input)="updateHorasListFiltered($event, 1)" matInput
+            [(ngModel)]="FechasObj.horaInicio" (ngModelChange)="setFormatTime()" [matAutocomplete]="autoHoraInicio1"
+            [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaInicioDisabled">
+          <mat-autocomplete autoActiveFirstOption #autoHoraInicio1="matAutocomplete">
+            <ng-container *ngFor="let time of timeListFiltered1">
+              <mat-option [value]="time">{{time}}</mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+      
+        <!-- Selección de Fecha Fin -->
+        <mat-form-field>
+          <mat-label>FECHA FIN</mat-label>
+          <input matInput [matDatepicker]="fechaFinPicker" [(ngModel)]="FechasObj.fechaFin" (ngModelChange)="onTipoChange(FechasObj.tipo)"
+            [min]="FechasObj.fechaInicio || minDate"
+            [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaFinDisabled">
+          <mat-datepicker-toggle matIconSuffix [for]="fechaFinPicker"></mat-datepicker-toggle>
+          <mat-datepicker #fechaFinPicker></mat-datepicker>
+        </mat-form-field>
+      
+        <mat-form-field>
+          <mat-label>HORA DE FIN</mat-label>
+          <input type="text" for="solicitante" (input)="updateHorasListFiltered($event, 1)" matInput
+            [(ngModel)]="FechasObj.horafin" (ngModelChange)="setFormatTime()" [matAutocomplete]="autoHoraInicio2"
+            [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaFinDisabled">
+          <mat-autocomplete autoActiveFirstOption #autoHoraInicio2="matAutocomplete">
+            <ng-container *ngFor="let time of timeListFiltered2">
+              <mat-option [value]="time">{{time}}</mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+      
+        <!-- Botón para agregar o actualizar el registro -->
+        <button mat-icon-button color="primary" (click)="agregarRegistro()" [disabled]="!registroValido()">
+          <mat-icon>{{ editIndex !== null ? 'save' : 'add_circle' }}</mat-icon>
+        </button>
+      
+      </div>
+      
+
+      <!-- Tabla para mostrar los registros agregados -->
+      <table mat-table [dataSource]="fechasList" class="mat-elevation-z8" style="width: 100%;">
+        <ng-container matColumnDef="tipo">
+          <th mat-header-cell *matHeaderCellDef>Tipo</th>
+          <td mat-cell *matCellDef="let registro">{{ getTipoFecha(registro.tipo) }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fechaInicio">
+          <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
+          <td mat-cell *matCellDef="let registro">{{ registro.fechaInicio | date:'dd/MM/yyyy HH:mm' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="fechaFin">
+          <th mat-header-cell *matHeaderCellDef>Fecha Fin</th>
+          <td mat-cell *matCellDef="let registro">{{ registro.fechaFin | date:'dd/MM/yyyy HH:mm' }}</td>
+        </ng-container>
+
+        <!-- Nueva columna para el botón de editar -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let registro; let i = index">
+            <button mat-icon-button color="primary" (click)="eliminarRegistro(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+  </ng-template>
+
+
+  <div class="form-buttons">
+    <button mat-stroked-button color="warn" type="button" class="delete-button" >Eliminar</button>
+    <button mat-raised-button color="warn" type="button" class="cancel-button" (click)="cancelEvento()">Cancelar</button>
+    <button mat-raised-button color="primary" type="button" class="save-button" (click)="triggerSaveEvento()">Guardar</button>
+
+  </div>
+
+</div>

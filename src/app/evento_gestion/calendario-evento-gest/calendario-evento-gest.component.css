@@ -1,0 +1,111 @@
+
+.calendar-container {
+  width: 70%;
+  margin: 0 auto;
+  padding-top: 120px;
+  /* background-color: #cfd6fd52; Fondo similar al código proporcionado */
+  /* border: 1px solid #ccc; Borde del calendario */
+  border-radius: 10px; /* Bordes redondeados */
+  padding-bottom: 30px;
+}
+
+.project-form {
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #cfd6fd52;
+  color: black;
+}
+
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  color: #333;
+}
+
+.header h2 {
+  font-weight: bold;
+  color: #3f51b5;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.day {
+  text-align: center;
+  font-weight: bold;
+  color: black;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.date {
+  text-align:end;
+  padding: 10px;
+  padding-top: 80px;
+  background-color: whitesmoke;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  border: 1px solid #ccc;
+}
+
+.date:hover {
+  background-color: #c7cfff52; /* Color de fondo al hacer hover */
+  cursor: pointer;
+}
+
+.has-event {
+  background-color: #ffc107; /* Resaltar días con eventos */
+  color: black;
+}
+
+.has-event:hover {
+  background-color: #e0a800; /* Cambio de color cuando se hace hover sobre un evento */
+}
+
+.selected-day {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #0056b3;
+}
+
+.event-info {
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+  background-color: #f5f5f5;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.event-info:hover {
+  background-color: #e0e0e0;
+}

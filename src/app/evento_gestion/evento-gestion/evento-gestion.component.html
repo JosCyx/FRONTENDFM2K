@@ -1,0 +1,79 @@
+<app-evento-gestion></app-evento-gestion>
+<div class="form-container">
+  <h2 class="font-weight-bolt ruteo">Gestión de Eventos</h2>
+
+  <h3 class="font-weight-bold" style="padding-top: 20pt">
+    Registrar un nuevo evento
+  </h3>
+
+  <mat-tab-group animationDuration="0ms">
+    <mat-tab label="Datos del evento">
+      <div *ngTemplateOutlet="datos_evento"></div>
+    </mat-tab>
+    <mat-tab label="Detalles adicionales">
+      <div *ngTemplateOutlet="detalles_adicionales"></div>
+    </mat-tab>
+  </mat-tab-group>
+
+  <ng-template #datos_evento>
+    <div class="event-form">
+      <div class="form-row">
+        <mat-form-field class="example-full-width">
+          <mat-label>FECHA DEL EVENTO</mat-label>
+          <!-- <input matInput [value]="GlobalEventosService.formatDateToSpanish(fecha)" readonly> -->
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field class="example-full-width">
+          <mat-label>NOMBRE DEL EVENTO</mat-label>
+          <!-- <input matInput placeholder="Escribe el nombre del evento" [(ngModel)]="evento.nombre"> -->
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field class="example-full-width">
+          <mat-label>ORGANIZADOR</mat-label>
+          <!-- <input type="text" placeholder="Ingrese el nombre del organizador" matInput [(ngModel)]="evento.organizador"> -->
+        </mat-form-field>
+      </div>
+
+      <div class="dual-container">
+        <mat-form-field>
+          <mat-label>CATEGORÍA</mat-label>
+          <!-- <mat-select [(ngModel)]="evento.categoria">
+            <ng-container *ngFor="let categoria of categoriasList">
+              <mat-option [value]="categoria.id">{{categoria.nombre}}</mat-option>
+            </ng-container>
+          </mat-select> -->
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>LUGAR</mat-label>
+          <!-- <mat-select [(ngModel)]="evento.lugar">
+            <ng-container *ngFor="let lugar of lugaresList">
+              <mat-option [value]="lugar.id">{{lugar.nombre}}</mat-option>
+            </ng-container>
+          </mat-select> -->
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field class="example-full-width">
+          <mat-label>DESCRIPCIÓN</mat-label>
+          <!-- <textarea matInput placeholder="Ingrese la descripción del evento" rows="4" [(ngModel)]="evento.descripcion"></textarea> -->
+        </mat-form-field>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #detalles_adicionales>
+    <!-- Puedes añadir más campos aquí según la estructura de tu formulario -->
+    <div class="additional-info">
+      <mat-form-field class="example-full-width">
+        <mat-label>NOTAS ADICIONALES</mat-label>
+        <!-- <textarea matInput placeholder="Ingrese cualquier información adicional" rows="4" [(ngModel)]="evento.notas"></textarea> -->
+      </mat-form-field>
+    </div>
+  </ng-template>
+</div>

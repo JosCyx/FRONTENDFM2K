@@ -65,6 +65,10 @@ export class MainComponent implements OnInit {
     this.router.navigate(['mainevento']);
   }
 
+  goGestEventos(){
+    this.router.navigate(['maineventogest']);
+  }
+
   clearCookies() {
     const cookies = this.cookieService.getAll();
 

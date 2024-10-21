@@ -1,0 +1,59 @@
+.main-container {
+  padding-top: 120px;
+  width: 80%;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.row-custom-hover:hover{
+  background-color: #dfeeff !important;
+  cursor: pointer;
+}
+
+.filter-head{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px 0 10px;
+}
+
+.filter-btn{
+  font-size: 10pt;
+  width: 30px !important;
+  height: 30px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 2px;
+}
+
+::ng-deep .mat-menu-item{
+  font-size: 10pt !important;
+}
+
+.filter-input{
+  width: 100%;
+}
+
+.input-container{
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-container input{
+  width: 100%;
+  padding-right: 10px;
+  box-sizing: border-box;
+}
+
+.mat-column-nombre,
+.mat-column-lugar,
+.mat-column-cliente,
+.mat-column-tp_contrato,
+.mat-column-estado{
+  text-align: center;
+}
