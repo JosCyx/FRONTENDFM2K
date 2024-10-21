@@ -2,13 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { GlobalService } from 'src/app/services/global.service';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { AuthService } from 'src/app/services/authentication/auth.service';
-import { AppAuthorizeTransactionDirective } from 'src/app/directives/app-authorize-transaction.directive';
 import { UploadFileService } from 'src/app/services/comunicationAPI/solicitudes/upload-file.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
-import { AplicacionesService } from 'src/app/services/comunicationAPI/seguridad/aplicaciones.service';
-import { GlobalInventarioService } from 'src/app/services/global-inventario.service';
-import { GeneralControllerService } from 'src/app/services/comunicationAPI/inventario/general-controller.service';
 
 @Component({
   selector: 'app-main',
@@ -23,16 +18,13 @@ export class MainComponent implements OnInit {
   constructor(private globalService: GlobalService,
     private router: Router,
     private cookieService: CookieService,
-    private authService: AuthService,
     private documentService: UploadFileService,
-    private dialogService: DialogServiceService,
-    private globalInventarioService: GlobalInventarioService,
-    private generalInvController: GeneralControllerService
+    private dialogService: DialogServiceService
   ) { }
 
     
   ngOnInit(): void {
-
+    this.globalService.currentPage = 0;
   }
 
   callMensaje(mensaje: string, type: boolean){

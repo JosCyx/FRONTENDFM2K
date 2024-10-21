@@ -103,7 +103,15 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 
 import { HistorialEventoComponent } from './eventos/components/historial-evento/historial-evento.component';
 import { CalendarioEventoComponent } from './eventos/components/calendario-evento/calendario-evento.component';
-
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { MessageDialogComponent } from './eventos/components/templates/message-dialog/message-dialog.component';
+import { FinishRequerimentComponent } from './eventos/components/templates/finish-requeriment/finish-requeriment.component';
+import { AppEvDisableDirective } from './directives/app-ev-disable.directive'
+import { AddDimensionesComponent } from './components/templates/add-dimensiones/add-dimensiones.component';
+import { SalesReportComponent } from './components/procesos/sales-report/sales-report.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import { DimensionConfComponent } from './components/configuracion/dimension-conf/dimension-conf.component';
+import { DimensionesHelpPageComponent } from './components/templates/dimensiones-help-page/dimensiones-help-page.component';
 
 @NgModule({
   declarations: [
@@ -168,6 +176,13 @@ import { CalendarioEventoComponent } from './eventos/components/calendario-event
     AutoResizeDirective,
     HistorialEventoComponent,
     CalendarioEventoComponent,
+    MessageDialogComponent,
+    FinishRequerimentComponent,
+    AppEvDisableDirective,
+    AddDimensionesComponent,
+    SalesReportComponent,
+    DimensionConfComponent,
+    DimensionesHelpPageComponent
     
     
   ],
@@ -202,6 +217,8 @@ import { CalendarioEventoComponent } from './eventos/components/calendario-event
     MatTabsModule,
     MatExpansionModule,
     MatCheckboxModule,
+    MatButtonToggleModule,
+    MatTooltipModule,
     FormsModule // Agrega FormsModule al array de imports
     
     

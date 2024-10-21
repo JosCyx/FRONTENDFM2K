@@ -4,6 +4,10 @@ import { DialogComponentComponent } from 'src/app/components/templates/dialog-co
 import { RegistrarProductoComponent } from '../inventario/dialogs/registrar-producto/registrar-producto.component';
 import { AsignarProductoComponent } from '../inventario/dialogs/asignar-producto/asignar-producto.component';
 import { RegistrarMovimientoComponent } from '../inventario/dialogs/registrar-movimiento/registrar-movimiento.component';
+import { MessageDialogComponent } from '../eventos/components/templates/message-dialog/message-dialog.component';
+import { Subject } from 'rxjs';
+import { FinishRequerimentComponent } from '../eventos/components/templates/finish-requeriment/finish-requeriment.component';
+import { AddDimensionesComponent } from '../components/templates/add-dimensiones/add-dimensiones.component';
 
 @Injectable({
   providedIn: 'root'
@@ -13,13 +17,20 @@ export class DialogServiceService {
   constructor(private dialog: MatDialog) { }
 
   openAlertDialog(message: string, type: boolean) {
-    console.log('openAlertDialog called');
+    //console.log('openAlertDialog called');
     this.dialog.open(DialogComponentComponent, {
       data: { message, type },
       width: '400px',
     });
   }
 
+  openAddDimensiones(){
+    this.dialog.open(AddDimensionesComponent, {
+      width: '1000px',
+    });
+  }
+
+  //INVENTARIO
   openRegistroProductoDialog(){
     //console.log('openRegistroProductoDialog called');
     this.dialog.open(RegistrarProductoComponent, {
@@ -29,7 +40,7 @@ export class DialogServiceService {
   }
 
   openAsignarProductoDialog(){
-    console.log('openAsignarProductoDialog called');
+    //console.log('openAsignarProductoDialog called');
     this.dialog.open(AsignarProductoComponent, {
       width: '1000px',
       height: 'auto',
@@ -37,10 +48,48 @@ export class DialogServiceService {
   }
 
   openMovimientoDialog(){
-    console.log('openMovimientoDialog called');
+    //console.log('openMovimientoDialog called');
     this.dialog.open(RegistrarMovimientoComponent, {
       width: '1000px',
       height: 'auto',
     });
+  }
+
+  //PROYECTOS
+  private confirmResultSubject = new Subject<boolean>();
+  private confirmResultJustify = new Subject<boolean>();
+  
+  openMessageEvDialog(message: string){
+    this.dialog.open(MessageDialogComponent, {
+      data: { mensaje: message},
+      width: '600px',
+    });
+
+    return this.confirmResultSubject.asObservable();
+  }
+
+  
+  setConfirmResult(value: boolean){
+    if(value){
+      this.confirmResultSubject.next(true);
+    } else {
+      this.confirmResultSubject.next(false);
+    }
+  }
+
+  openFinishReqDialog(){
+    this.dialog.open(FinishRequerimentComponent, {
+      width: '800px',
+    })
+
+    return this.confirmResultJustify.asObservable();
+  }
+
+  setConfirmJustify(value: boolean){
+    if(value){
+      this.confirmResultJustify.next(true);
+    } else {
+      this.confirmResultJustify.next(false);
+    }
   }
 }

@@ -2,6 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+interface DIM {
+  dimPresupuesto: number,
+  dimSubAct: number,
+  /*dimAct: number,
+  dimSect: number,
+  dimProyecto: number*/
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -18,10 +26,12 @@ export class GlobalService {
   solID: number = 0;
   //setDestino: boolean = false;
   tipoSolBsq: number = 1;
-  currentPage: number = 1;
+  currentPage: number = 0;
 
   rutaJSON: string = 'assets/configfm2k.json';
   configJSON: any = {};
+
+  loadingSolicitud: boolean = false;
 
   private configLoaded$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
@@ -51,6 +61,49 @@ export class GlobalService {
 
   getApiUrl(): string {
     return this.APIUrl;
+  }
+
+  //DIMENSIONES DE LA SOLICITUD
+  solDimensiones: DIM = {
+    dimPresupuesto: 57,
+    dimSubAct: 158,
+    /*dimAct: 91,
+    dimSect: 56,
+    dimProyecto: 7*/
+  }
+
+  solIfProyecto: number = 0;
+
+  solValor: number = 0;
+  solOC: string = "";
+  solEstado: number = 10;
+
+  isDimSetted: boolean = false;
+
+  hasSolDimensiones(): boolean {
+    //si la solicitud esta en estado 50 (Proceso de compras), se debe verificar que esten todas las dimensiones
+    if (this.solEstado == 50) {
+      return this.solDimensiones.dimPresupuesto != 57 &&
+        this.solDimensiones.dimSubAct != 158
+      /*&& this.solDimensiones.dimAct != 91 && 
+      this.solDimensiones.dimSect != 56 && 
+      this.solDimensiones.dimProyecto != 7;*/
+    } else {
+      return this.solDimensiones.dimPresupuesto != 57
+      /* && this.solDimensiones.dimSect != 56 && 
+       this.solDimensiones.dimProyecto != 7;*/
+    }
+  }
+
+  clearSolDimensiones() {
+    console.log("Limpiando dimensiones...");
+    this.solDimensiones = {
+      dimPresupuesto: 57,
+      dimSubAct: 158,
+      /*dimAct: 91,
+      dimSect: 56,
+      dimProyecto: 7*/
+    }
   }
 
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { map } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { format, parseISO } from 'date-fns';
 import { AreasService } from 'src/app/services/comunicationAPI/seguridad/areas.service';
 import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
@@ -11,6 +12,7 @@ import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes
 import { GlobalService } from 'src/app/services/global.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 import { SolTimeService } from 'src/app/services/comunicationAPI/solicitudes/sol-time.service';
+import { DimensionesService } from 'src/app/services/dimensiones.service';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
@@ -27,6 +29,7 @@ interface CabOC {
 export class OcPdfComponent implements OnInit {
   //id de orden Compra
   solID: number = this.serviceGlobal.solID;
+  isNewVersion: boolean = false;
   //Variables
   datosCabOC!: CabOC;
   empleados: string = '';
@@ -55,7 +58,8 @@ export class OcPdfComponent implements OnInit {
     private nivRuteService: NivelRuteoService,
     private prespService: PresupuestoService,
     private sectService: SectoresService,
-    private solTimeService: SolTimeService
+    private solTimeService: SolTimeService,
+    private dimService: DimensionesService
   ) {}
 
   ngOnInit(): void {
@@ -104,6 +108,10 @@ export class OcPdfComponent implements OnInit {
       this.cabOCService.getOrdenComprabyId(this.solID).subscribe({
         next: async (resp: any) => {
           this.datosCabOC = resp;
+
+          if (this.datosCabOC.cabecera.cabSolOCNewDimVersion == 1) {
+            this.isNewVersion = true;
+          }
 
           if(this.datosCabOC.cabecera.cabSolOCEstadoTracking >= 50){
             this.datosCabOC.cabecera.cabSolOCFecha = await this.getFechaCompras();
@@ -195,6 +203,8 @@ export class OcPdfComponent implements OnInit {
                   ],
                 },
               },
+              //agregar dimensiones en caso de que existan
+              await this.getSolDimensions(),
               {
                 margin: [0, 5, 0, 0],
                 fontSize: 10,
@@ -584,4 +594,74 @@ export class OcPdfComponent implements OnInit {
       });
     });
   }
+
+  //dimensiones de la solicitud
+  async getSolDimensions() {
+    if (this.isNewVersion) {
+      //console.log('Es nueva versión');
+  
+      try {
+        // Convertir el observable a una promesa
+        const res = await firstValueFrom(
+          this.dimService.getDimNamesBySol(
+            this.datosCabOC.cabecera.cabSolOCTipoSolicitud,
+            this.datosCabOC.cabecera.cabSolOCNoSolicitud
+          )
+        );
+  
+        const dim = {
+          margin: [0, 5, 0, 0],
+          fontSize: 10,
+          table: {
+            widths: [76, 76, 76, 76, 76, 76],
+            body: [
+              [
+                { text: 'PRESUPUESTO', style: 'tableHeader', colSpan: 3 }, '', '',
+                { text: 'SUBACTIVIDAD', style: 'tableHeader', colSpan: 3 }, '', ''
+              ],
+              [
+                { text: res[0].presp, colSpan: 3 }, '', '',
+                { text: res[0].subac, colSpan: 3 }, '', ''
+              ]
+            ]
+          }
+        };
+  
+        return dim;
+  
+      } catch (err) {
+        //console.error('Error al obtener las dimensiones de la solicitud:', err);
+  
+        return {
+          margin: [0, 5, 0, 0],
+          fontSize: 10,
+          table: {
+            widths: [76, 76, 76, 76, 76, 76],
+            body: [
+              [
+                { text: 'PRESUPUESTO', style: 'tableHeader', colSpan: 3 }, '', '',
+                { text: 'SUBACTIVIDAD', style: 'tableHeader', colSpan: 3 }, '', ''
+              ],
+              [
+                { text: 'Error', colSpan: 3 }, '', '',
+                { text: 'Error', colSpan: 3 }, '', ''
+              ]
+            ]
+          }
+        };
+      }
+    } else {
+      //console.log('No es nueva versión');
+      // Si no es una nueva versión, retornar una tabla vacía
+      return {
+        margin: [0, 0, 0, 0],
+        fontSize: 10,
+        table: {
+          widths: [0],
+          body: [[]]
+        }
+      };
+    }
+  }
+
 }

@@ -79,7 +79,7 @@
       </form>
       <div class="text-end" *appAuthorize="'1'">
         <button
-          [disabled]="!nombre || !NivelRuteo || !estado"
+          [disabled]="!nombre || !estado"
           type="submit"
           class="btn btn-primary m-2"
           (click)="agregarRol()"

@@ -39,9 +39,6 @@ export class SolTimeService {
         }
       }
     );
-
-
-
   }
 
   private getHeadersWithAuthToken(): HttpHeaders {

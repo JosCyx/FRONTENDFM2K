@@ -138,12 +138,27 @@ export class CotDocumentacionComponent implements OnInit {
             const urlfile = URL.createObjectURL(file);
             const img = 'assets/img/image.webp';
             resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'PNG') {
+            const file = new Blob([blob], { type: 'image/png' });
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
           } else if (nombre == 'jpg') {
             const file = new Blob([blob], { type: 'image/jpg' });
             const urlfile = URL.createObjectURL(file);
             const img = 'assets/img/image.webp';
             resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'JPG') {
+            const file = new Blob([blob], { type: 'image/jpg' });
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
           } else if (nombre == 'jpeg') {
+            const file = new Blob([blob], { type: 'image/jpeg' });
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'JPEG') {
             const file = new Blob([blob], { type: 'image/jpeg' });
             const urlfile = URL.createObjectURL(file);
             const img = 'assets/img/image.webp';
@@ -233,6 +248,7 @@ export class CotDocumentacionComponent implements OnInit {
       console.log('FIN DEL  PROGRAMA');
     }
   }
+  
   DowmloadFile(url: any, fileName: any) {
     fetch(url)
       .then((response) => {
@@ -259,11 +275,13 @@ export class CotDocumentacionComponent implements OnInit {
         console.error('Error al descargar el archivo:', error);
       });
   }
+
   allDownload() {
     this.paths.forEach((item) => {
       this.DowmloadFile(item.docUrl, item.docNombre);
     });
   }
+
   //recorre toda la lista de documentos y los elimina
   deleteAllDocs() {
     this.paths.forEach((item) => {
@@ -293,6 +311,7 @@ export class CotDocumentacionComponent implements OnInit {
     });
 
   }
+
   callMensaje(mensaje: string, type: boolean) {
     this.dialogService.openAlertDialog(mensaje, type);
   }

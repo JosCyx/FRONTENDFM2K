@@ -1,220 +1,181 @@
 <app-menu></app-menu>
 <div class="container">
   <h2 class="font-weight-bolt ruteo">Todas las solicitudes</h2>
-  <!-- <app-breadcrumb></app-breadcrumb> -->
 
-  <!-- <nav class=" navbar-expand-lg navbar-light bg-light" style="height: 30px;" >
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-         <button class="btn btn-primary m-2" (click)="changeView('consultar')">Consultar</button> 
-         <button class="btn btn-primary m-2" (click)="changeView('editar')">Editar</button> 
-      </div>
-    </div>
-  </nav> -->
-
-  <div class="formRol" *appAuthorize="'34'">
-
-    <form class="form-tiposol d-flex row mb-3">
-
-      <div class="custom-form">
-        <select class="custom-select" name="tipoSol" [(ngModel)]="bsqTipoSol">
-          <option disabled selected value="0">Seleccione una opción...</option>
-          <option *ngFor="let tpsol of tipoSol$ | async" [value]="tpsol.tipoSolId">
-            {{ tpsol.tipoSolNombre }}
-          </option>
-        </select>
-        <button class="success-button-outline" (click)="consultarSol()">Consultar</button>
-      </div>
-      <div>
-        <div class="custom-input-group">
-          <label class="custom-label" style="padding-top: 8px; padding-bottom: 8px;">Filtrar por:</label>
-          <select  class="form-select custom-form-select" name="busqueda" [(ngModel)]="tipoBusqueda">
-            <option value="emp">Empleado</option>
-            <option value="area">Area</option>
-            <option value="asunto">Asunto</option>
-            <option value="num">Código</option>
-            <option value="trk">Nivel de tracking</option>
-          </select>
-          <input *ngIf="tipoBusqueda == 'emp'" type="text" list="sugerenciasemp" class="custom-form-control"
-            placeholder="Buscar por empleado" [(ngModel)]="bsqContenido" name="empleado"/>
-          <input *ngIf="tipoBusqueda == 'area'" type="text" list="sugerenciasarea" class="custom-form-control"
-            placeholder="Buscar por area" [(ngModel)]="bsqContenido" name="area"/>
-          <input *ngIf="tipoBusqueda == 'asunto'" type="text" class="custom-form-control" placeholder="Buscar por asunto"
-            [(ngModel)]="bsqContenido" name="asunto"/>
-          <input *ngIf="tipoBusqueda == 'num'" type="text" class="custom-form-control" placeholder="Buscar por numero"
-            [(ngModel)]="bsqContenido" name="numero"/>
-            <input *ngIf="tipoBusqueda == 'trk'" type="text" class="custom-form-control" placeholder="Buscar por nivel"
-            [(ngModel)]="bsqContenido" name="traking"/>
-          <button style="border-radius: 0px;" class="custom-btn success-button-outline" type="button" (click)="filtrarSolicitudes()">Buscar</button>
-          <button style="border-radius: 0 5px 5px 0; padding: 10px;" class="custom-btn success-button" (click)="clearBusqueda()">
-            <i class="bi bi-arrow-clockwise"></i>
-          </button>
-        </div>
-      </div>
-      <datalist id="sugerenciasemp">
-        <ng-container *ngFor="let emp of empleados">
-          <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
-        </ng-container>
-      </datalist>
-      <datalist id="sugerenciasarea">
-        <ng-container *ngFor="let area of areas">
-          <option [value]="area.areaDecp"></option>
-        </ng-container>
-      </datalist>
-    </form>
-    <!-- busqueda de solicitudes por empleados-->
-
-    <div class="mb-3 text-end">
-    
-      
-      <div>
-        <button class="pagination-btnl primary-button mr-2" (click)="prevPage()">
-          <i class="bi bi-arrow-left"></i>
-        </button>
-        <button class=" pagination-btnr primary-button" (click)="nextPage()">
-          <i class="bi bi-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-
-
-
-    <div class="mb-5">
-      <table class="table table-bordered text-center table-hover ">
-        <thead>
-          <tr>
-            <th class="align-middle cab-x">Código</th>
-            <th class="align-middle cab-z">Area solicitante</th>
-            <th class="align-middle cab-x">N° Solicitud</th>
-            <th class="align-middle cab-z">Empleado solicitante</th>
-            <th class="align-middle cab-z" *ngIf="btp != 3">Asunto</th>
-            <th class="align-middle cab-x">Fecha</th>
-            <th class="align-middle cab-x">Estado</th>
-            <th class="align-middle cab-x">Tracking</th>
-            <th class="align-middle cab-x">Encargado</th>
-            <th class="align-middle cab-x" *ngIf="btp == 3">Destino</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngIf="!isConsulta">
-            <td class="text-danger" colspan="9">
-              Aún no se han consultado solicitudes
-            </td>
-          </tr>
-          <tr *ngIf="!isSolicitud">
-            <td class="text-danger" colspan="9">
-              No se han registrado items para esta solicitud
-            </td>
-          </tr>
-          <ng-container *ngIf="btp == 1">
-            <tr *ngFor="let sol of allSol| paginate : { itemsPerPage: 10, currentPage: currentPage }"
-              (click)="selectSol(sol.cabSolCotID)">
-              <td class="align-middle">{{ sol.cabSolCotNumerico }}</td>
-              <ng-container *ngFor="let area of areaList$ | async">
-                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolCotIdArea">
-                  {{ area.areaDecp }}
-                </td>
-              </ng-container>
-              <td class="align-middle">{{ sol.cabSolCotNoSolicitud }}</td>
-              <ng-container *ngFor="let emp of empleadoList$ | async">
-                <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolCotSolicitante">
-                  {{ emp.empleadoNombres.split(' ')[0] }} {{ emp.empleadoApellidos.split(' ')[0] }}
-                </td>
-              </ng-container>
-              <td class="align-middle">{{ sol.cabSolCotAsunto }}</td>
-              <td class="align-middle">
-                {{ sol.cabSolCotFecha | date : "yyyy-MM-dd" }}
-              </td>
-              <td class="align-middle" [ngSwitch]="sol.cabSolCotEstado">
-                <span *ngSwitchCase="'A'">Activo</span>
-                <span *ngSwitchCase="'F'">Finalizado</span>
-                <span *ngSwitchCase="'C'">Anulado</span>
-              </td>
-              <ng-container *ngFor="let trck of trckList$ | async">
-                <td class="align-middle" *ngIf="trck.nivel === sol.cabSolCotEstadoTracking">
-                  {{ trck.descRuteo }}
-                </td>
-              </ng-container>
-              <td class="align-middle">{{sol.encargado}}</td>
-            </tr>
-          </ng-container>
-
-          <ng-container *ngIf="btp == 2">
-            <tr *ngFor="
-                let sol of allSol
-                  | paginate : { itemsPerPage: 10, currentPage: currentPage }
-              " (click)="selectSol(sol.cabSolOCID)">
-              <td class="align-middle">{{ sol.cabSolOCNumerico }}</td>
-              <ng-container *ngFor="let area of areaList$ | async">
-                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabSolOCIdArea">
-                  {{ area.areaDecp }}
-                </td>
-              </ng-container>
-              <td class="align-middle">{{ sol.cabSolOCNoSolicitud }}</td>
-              <ng-container *ngFor="let emp of empleadoList$ | async">
-                <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabSolOCSolicitante">
-                  {{ emp.empleadoNombres.split(' ')[0] }} {{ emp.empleadoApellidos.split(' ')[0] }}
-                </td>
-              </ng-container>
-              <td class="align-middle">{{ sol.cabSolOCAsunto }}</td>
-              <td class="align-middle">
-                {{ sol.cabSolOCFecha | date : "yyyy-MM-dd" }}
-              </td>
-              <td class="align-middle" [ngSwitch]="sol.cabSolOCEstado">
-                <span *ngSwitchCase="'A'">Activo</span>
-                <span *ngSwitchCase="'F'">Finalizado</span>
-                <span *ngSwitchCase="'C'">Anulado</span>
-              </td>
-              <ng-container *ngFor="let trck of trckList$ | async">
-                <td class="align-middle" *ngIf="trck.nivel === sol.cabSolOCEstadoTracking">
-                  {{ trck.descRuteo }}<span *ngIf="sol.cabSolOCSinPresupuesto == 1">
-                    <br><strong>Sin presupuesto</strong></span>                
-                </td>
-              </ng-container>
-              <td class="align-middle">{{sol.encargado}}</td>
-            </tr>
-          </ng-container>
-
-          <ng-container *ngIf="btp == 3">
-            <tr *ngFor="
-                let sol of allSol
-                  | paginate : { itemsPerPage: 10, currentPage: currentPage }
-              " (click)="selectSol(sol.cabPagoID)"  [ngClass]="{'fromfisica':sol.cabPagoFrom === 'F'}"  >
-              <td class="align-middle">{{ sol.cabPagoNumerico }}</td>
-              <ng-container *ngFor="let area of areaList$ | async">
-                <td class="align-middle" *ngIf="area.areaIdNomina === sol.cabPagoIdAreaSolicitante">
-                  {{ area.areaDecp }}
-                </td>
-              </ng-container>
-              <td class="align-middle">{{ sol.cabPagoNoSolicitud }}</td>
-              <ng-container *ngFor="let emp of empleadoList$ | async">
-                <td class="align-middle" *ngIf="emp.empleadoIdNomina === sol.cabPagoSolicitante">
-                  {{ emp.empleadoNombres.split(' ')[0] }} {{ emp.empleadoApellidos.split(' ')[0] }}
-                </td>
-              </ng-container>
-
-              <td class="align-middle">
-                {{ sol.cabPagoFechaEmision | date : "yyyy-MM-dd" }}
-              </td>
-              <td class="align-middle" [ngSwitch]="sol.cabPagoEstado">
-                <span *ngSwitchCase="'A'">Activo</span>
-                <span *ngSwitchCase="'F'">Finalizado</span>
-                <span *ngSwitchCase="'C'">Anulado</span>
-              </td>
-              <ng-container *ngFor="let trck of trckList$ | async">
-                <td class="align-middle" *ngIf="trck.nivel === sol.cabPagoEstadoTrack">
-                  {{ trck.descRuteo }}
-                </td>
-              </ng-container>
-              <td class="align-middle">{{sol.encargado}}</td>
-              <td class="align-middle" [ngSwitch]="sol.cabPagoIfDestino">
-                <span *ngSwitchCase="'S'"><i class="bi bi-check-circle-fill text-success h5"></i></span>
-                <span *ngSwitchCase="'N'"><i class="bi bi-x-circle-fill text-danger h5"></i></span>
-              </td>
-            </tr>
-          </ng-container>
-        </tbody>
-      </table>
-    </div>
+  <div class="custom-form">
+    <mat-form-field>
+      <mat-label>Seleccione el tipo de Solicitud</mat-label>
+      <mat-select mat-select name="tipoSol" [(ngModel)]="bsqTipoSol" (ngModelChange)="consultarSol()">
+        <mat-option *ngFor="let tpsol of tipoSol$ | async" [value]="tpsol.tipoSolId">
+          {{ tpsol.tipoSolNombre }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
+
+  <div class="mat-elevation-z8">
+
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+      <ng-container matColumnDef="column1">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="filter-head">
+            Código
+            <div style="display: flex; flex-direction: row;">
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(1)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+            </div>
+          </div>
+          <div class="input-container" *ngIf="handleFilter && filterType == 1">
+            <input type="text" #filterInput (input)="applyStrFilter($event)">
+            <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.column1}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="column2">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="filter-head">
+            Departamento
+            <div style="display: flex; flex-direction: row;">
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(2)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+            </div>
+          </div>
+          <div class="input-container" *ngIf="handleFilter && filterType == 2">
+            <input type="text" #filterInput (input)="applyStrFilter($event)">
+            <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.column2}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="column3">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="filter-head">
+            Solicitante
+            <div style="display: flex; flex-direction: row;">
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(3)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+            </div>
+          </div>
+          <div class="input-container" *ngIf="handleFilter && filterType == 3">
+            <input type="text" #filterInput (input)="applyStrFilter($event)">
+            <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.column3}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="column4">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="filter-head">
+            <ng-container *ngIf="bsqTipoSol != 3">Asunto</ng-container>
+            <ng-container *ngIf="bsqTipoSol == 3">OC Origen</ng-container>
+            <div style="display: flex; flex-direction: row;">
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(4)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+            </div>
+          </div>
+          <div class="input-container" *ngIf="handleFilter && filterType == 4">
+            <input type="text" #filterInput (input)="applyStrFilter($event)">
+            <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element" [matTooltip]="element.column4" matTooltipPosition="above" [matTooltipShowDelay]="700"
+        [matTooltipHideDelay]="0" > 
+          <span class="truncate-text">{{element.column4}}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="column5">
+        <th mat-header-cell *matHeaderCellDef> Fecha </th>
+        <td mat-cell *matCellDef="let element"> {{element.column5}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="column6">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="filter-head">
+            Tracking
+            <div style="display: flex; flex-direction: row;">
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(6)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+            </div>
+          </div>
+          <div class="input-container" *ngIf="handleFilter && filterType == 6">
+            <input type="text" #filterInput (input)="applyStrFilter($event)">
+            <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+          </div>
+        </th>
+        <td  [ngClass]="getRowColor(element.column11)" mat-cell *matCellDef="let element"> {{element.column6}} <br>
+          <ng-container *ngIf="element.column10 == 1">
+            <strong>Sin Presupuesto</strong>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="column7">
+        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <td mat-cell *matCellDef="let element"> {{element.column7}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="column8">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="filter-head">
+            Encargado
+            <div style="display: flex; flex-direction: row;">
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(8)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+            </div>
+          </div>
+          <div class="input-container" *ngIf="handleFilter && filterType == 8">
+            <input type="text" #filterInput (input)="applyStrFilter($event)">
+            <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.column8}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="column9">
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="filter-head">
+            <ng-container *ngIf="bsqTipoSol != 3">OC Generada</ng-container>
+            <ng-container *ngIf="bsqTipoSol == 3">Destino</ng-container>
+            <div style="display: flex; flex-direction: row;">
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(9)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+            </div>
+          </div>
+          <div class="input-container" *ngIf="handleFilter && filterType == 9">
+            <input type="text" #filterInput (input)="applyStrFilter($event)">
+            <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element">
+          <ng-container *ngIf="bsqTipoSol != 3">{{returnEmptyData(element.column9)}}</ng-container>
+          <ng-container *ngIf="bsqTipoSol == 3">
+            <ng-container *ngIf="element.column9 == 1"><i
+                class="bi bi-check-circle-fill text-success h5"></i></ng-container>
+            <ng-container *ngIf="element.column9 == 0"><i class="bi bi-x-circle-fill text-danger h5"></i></ng-container>
+          </ng-container>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr class="row-custom-hover" mat-row *matRowDef="let row; columns: displayedColumns;"
+        (click)="selectSol(row.column0)"></tr>
+    </table>
+    <mat-paginator [pageSize]="25" [pageSizeOptions]="[5,25, 50, 100, 500]" (page)="handlePage($event)" showFirstLastButtons></mat-paginator>
+  </div>
+  <p *ngIf="bsqTipoSol == 3" style="font-weight: bold; font-style: italic; font-size: 9pt;">*Si desea filtrar por destino ingrese 0 para visualizar las solicitudes sin destino y 1 para visualizar las que sí tienen destino.</p>
+
+
 </div>

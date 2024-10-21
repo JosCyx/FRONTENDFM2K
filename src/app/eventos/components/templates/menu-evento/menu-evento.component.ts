@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { GlobalService } from 'src/app/services/global.service';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { GlobalEventosService } from 'src/app/services/global-eventos.service';
 
 @Component({
   selector: 'app-menu-evento',
@@ -16,7 +17,8 @@ export class MenuEventoComponent {
   constructor(
     private globalService: GlobalService,
     private router: Router,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private globalEvService: GlobalEventosService
   ) {}
 
   isSidebarVisible = false;
@@ -34,6 +36,5 @@ export class MenuEventoComponent {
     this.router.navigate(['login']);
   }
 
-  // Puedes agregar más métodos según las necesidades específicas de tu componente de eventos
-
+  
 }

@@ -76,30 +76,21 @@
 .delete-button,
 .cancel-button,
 .save-button,
-.submit-button {
+.send-button {
   padding: 10px 20px;
   border: none;
   cursor: pointer;
 }
 
-.delete-button {
-  background-color: #d9534f;
-  color: white;
+.stop-button {
+  background-color: #ffc107;
+  color: black;
+  border: none;
 }
 
-.cancel-button {
-  background-color: #f0ad4e;
-  color: white;
-}
-
-.save-button {
-  background-color: #5bc0de;
-  color: white;
-}
-
-.submit-button {
-  background-color: #5cb85c;
-  color: white;
+.send-button {
+  background-color: #348d34;
+  color: white !important;
 }
 
 button:hover {
@@ -123,6 +114,13 @@ button:hover {
 
 .center-text {
   text-align: center;
+}
+
+.div-buttons{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 mat-form-field {
@@ -242,7 +240,7 @@ table {
 }
 
 textarea {
-  max-height: 150px;
+  max-height: 200px;
 }
 
 .delete-riesgo {
@@ -270,6 +268,11 @@ textarea {
 
 
 /*FICHA ETO*/
+.selected-subs{
+  color: #3f51b5;
+  font-weight: bold;
+}
+
 mat-panel-description {
   justify-content: flex-end;
 
@@ -354,6 +357,16 @@ mat-list-option {
   background-color: rgba(0, 0, 0, 0);
 }
 
+.add-observ-eto{
+  padding: 0px;
+  border: none;
+  color: #3f51b5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0); 
+}
+
 .input-eto:focus {
   border-radius: 5px;
   border: .1px solid #a3a3a3;
@@ -374,12 +387,89 @@ mat-list-option {
 }
 
 .img-icon-eto{
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 }
 
 .documentacion-eto{
   display: flex;
   flex-direction: column;
   gap: 5px;
+}
+
+.button-toggle-p{
+  display: flex; 
+  flex-direction: row;
+  margin-bottom: 5px;
+}
+
+.button-toggle-p button{
+  border: none;
+  padding: 5px;
+  background-color: rgba(175, 188, 224, 0.5);
+  font-size: 9pt;
+}
+
+.button-toggle-p button:hover{
+  background-color: rgb(175, 188, 224);
+  color: black;
+}
+
+.button-focus{
+  background-color: rgb(175, 188, 224) !important;
+  color: black !important;
+}
+
+.textarea-high-p{
+  border: .1px solid #ff0000;
+}
+
+.textarea-high-p:focus{
+  border: .1px solid #ff0000;
+}
+
+.textarea-low-p{
+  border: .1px solid #ffbb00;
+}
+
+.textarea-low-p:focus{
+  border: .1px solid #ffbb00;
+}
+
+.req-title{
+  display: inline; 
+  font-weight: bold;
+}
+
+.req-div{
+  display: flex; 
+  flex-direction: row; 
+  width: 100%;
+  gap: 5px;
+}
+
+.req-footer{
+  display: flex; 
+  justify-content: space-between; 
+  font-style: italic; 
+  font-weight: bold; 
+  font-size: 8pt; 
+  margin: 0px;
+}
+
+.tooltip-custom{
+  font-style: italic;
+  padding-top: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.tip-card{
+  margin-bottom: 20px; 
+  background-color: #93e093;
+}
+
+.riesgo-content:disabled, .input-eto:disabled{
+  color: black !important;
+  background-color: white !important;
 }

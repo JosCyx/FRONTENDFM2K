@@ -48,5 +48,9 @@ export class DepartamentosService {
     return this.http.get<any>(this.APIUrl + `/Departamentoes/${dptoId}`, { headers: headers });
   }
   
+  getOlderAreabyDep(idDep: number): Observable<any> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + `/Departamentoes/GetOlderAreabyDep?idDep=${idDep}`, { headers: headers });
+  }
 }
 

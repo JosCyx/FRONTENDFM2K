@@ -28,6 +28,7 @@ export class CabeceraOrdenCompra {
   public cabSolOCValorAprobacion: number;
   public cabSolOCValido: number;
   public cabSolOCSinPresupuesto: number;
+  public cabSolOCNewDimVersion: number;
 
   constructor(data: any) {
     this.cabSolOCTipoSolicitud = data.cabSolOCTipoSolicitud;
@@ -59,5 +60,6 @@ export class CabeceraOrdenCompra {
     this.cabSolOCValorAprobacion=data.cabSolOCValorAprobacion;
     this.cabSolOCValido = data.cabSolOCValido;
     this.cabSolOCSinPresupuesto = data.cabSolOCSinPresupuesto;
+    this.cabSolOCNewDimVersion = data.cabSolOCNewDimVersion
   }
 }

@@ -10,7 +10,7 @@ import { GlobalService } from '../../global.service';
   providedIn: 'root'
 })
 export class CabPagoService {
-   APIUrl = this.globalService.APIUrl;
+  APIUrl = this.globalService.APIUrl;
 
   constructor(
     private http: HttpClient,
@@ -26,7 +26,7 @@ export class CabPagoService {
         }
       }
     );
-   }
+  }
 
   private getHeadersWithAuthToken(): HttpHeaders {
     // Obtiene el token de la cookie
@@ -58,10 +58,23 @@ export class CabPagoService {
 
 
   //*METODO Cabecera SOLICITUD DE PAGO
-  addSolPag(data: any) {
+  /*addSolPag(data: any) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(this.APIUrl + '/CabSolPago', data, { headers: headers });
+  }*/
+
+
+  addSolPag(data: any, idEmpleado: string, tipoRuteo: string) {
+    const headers = this.getHeadersWithAuthToken();
+
+    // Crear la URL con los parámetros idEmpleado y tipoRuteo
+    const url = `${this.APIUrl}/CabSolPago?idEmpleado=${idEmpleado}&tipoRuteo=${tipoRuteo}`;
+
+    // Realizar la solicitud POST con la URL que incluye los parámetros
+    return this.http.post(url, data, { headers: headers });
   }
+
+
 
   //*Buscar el ID por cabecera y detalle de solicitud de pago 
   getSolPagobyId(id: number): Observable<any> {
@@ -70,12 +83,12 @@ export class CabPagoService {
   }
 
   //*Actualiza el ID por cabecera de solicitud de pago 
-  updatecabPago(id:number,data:any){
+  updatecabPago(id: number, data: any) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.put(this.APIUrl + `/CabSolPago/${id}`, data, { headers: headers });
   }
   //Obtener estado de pago  de A Y C
-  getEstadoPago(states:string){
+  getEstadoPago(states: string) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get<any>(this.APIUrl + `/CabSolPago/GetSOEstado?state=${states}`, { headers: headers });
 
@@ -83,19 +96,19 @@ export class CabPagoService {
 
 
   //metodos para cambiar de estado el tracking
-  updateEstadoTRKCotizacion(tipoSol: number, noSol: number, estado: number) {
+  updateEstadoTRKCotizacion(tipoSol: number, noSol: number, estado: number, idEmpleado: string, tipoRuteo: string) {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.put(this.APIUrl + `/CabSolPago/UpdateEstadoTracking?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`,null, { headers: headers });
+    return this.http.put(this.APIUrl + `/CabSolPago/UpdateEstadoTracking?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}&idEmpleado=${idEmpleado}&tipoRuteo=${tipoRuteo}`, null, { headers: headers });
   }
 
   updateEstadoCotizacion(tipoSol: number, noSol: number, estado: string) {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.put(this.APIUrl + `/CabSolPago/UpdateEstado?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`,null, { headers: headers });
+    return this.http.put(this.APIUrl + `/CabSolPago/UpdateEstado?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`, null, { headers: headers });
   }
 
   updateAprobadoCotizacion(tipoSol: number, noSol: number, id: string) {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.put(this.APIUrl + `/CabSolPago/UpdateAprobado?tipoSol=${tipoSol}&noSol=${noSol}&id=${id}`,null, { headers: headers });
+    return this.http.put(this.APIUrl + `/CabSolPago/UpdateAprobado?tipoSol=${tipoSol}&noSol=${noSol}&id=${id}`, null, { headers: headers });
   }
 
   updateFechaPago(tipoSol: number, noSol: number, fecha: Date) {
@@ -106,20 +119,20 @@ export class CabPagoService {
 
   updateMotivoDevolucion(tipoSol: number, noSol: number, motivo: string) {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.put(this.APIUrl + `/CabSolPago/UpdateMotivoDevolucion?tipoSol=${tipoSol}&noSol=${noSol}&motivo=${motivo}`,null, { headers: headers });
+    return this.http.put(this.APIUrl + `/CabSolPago/UpdateMotivoDevolucion?tipoSol=${tipoSol}&noSol=${noSol}&motivo=${motivo}`, null, { headers: headers });
   }
 
   updateIfDestino(tipoSol: number, noSol: number, destino: string) {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.put(this.APIUrl + `/CabSolPago/UpdateIfDestino?tipoSol=${tipoSol}&noSol=${noSol}&destino=${destino}`,null, { headers: headers });
+    return this.http.put(this.APIUrl + `/CabSolPago/UpdateIfDestino?tipoSol=${tipoSol}&noSol=${noSol}&destino=${destino}`, null, { headers: headers });
 
   }
 
-    //Metodo eliminar solicitud de pago , detalles  y documentoss
-    DeleteSolPago(TipoSol:number,NoSol:number){
-      const headers = this.getHeadersWithAuthToken();
-      return this.http.delete(this.APIUrl + `/CabSolPago/DeletesSolOrdenPago?tipoSol=${TipoSol}&noSol=${NoSol}`, { headers: headers });
-    }
+  //Metodo eliminar solicitud de pago , detalles  y documentoss
+  DeleteSolPago(TipoSol: number, NoSol: number) {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.delete(this.APIUrl + `/CabSolPago/DeletesSolOrdenPago?tipoSol=${TipoSol}&noSol=${NoSol}`, { headers: headers });
+  }
 
 
   /*updateFinancieroCotizacion(tipoSol: number, noSol: number, id: string) {

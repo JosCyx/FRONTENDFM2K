@@ -20,6 +20,7 @@ import { CookieService } from 'ngx-cookie-service';
   styleUrls: ['./solicitudes-aprobadas.component.css'],
 })
 export class SolicitudesAprobadasComponent implements OnInit {
+
   //Variables para mostrar las solicitudes
   AbierTipoSol: number = 1;
   Allstate: string = 'A';

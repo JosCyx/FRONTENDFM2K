@@ -1,5 +1,6 @@
 import { Directive, ElementRef, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { NgModel } from '@angular/forms';
+import { GlobalEventosService } from '../services/global-eventos.service';
 
 @Directive({
   selector: 'textarea[autoResize]'
@@ -11,7 +12,7 @@ export class AutoResizeDirective {
   ngOnInit(): void {
     setTimeout(() => {
       this.adjustHeight();
-    }, 10);
+    }, 20);
   }
 
   @HostListener('input')
@@ -24,7 +25,8 @@ export class AutoResizeDirective {
     this.adjustHeight();
   }
 
-  private adjustHeight(): void {
+  adjustHeight(): void {
+    console.log('adjustHeight Directive');
     const textarea = this.element.nativeElement;
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;

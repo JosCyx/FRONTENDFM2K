@@ -38,10 +38,22 @@ export class CabOrdCompraService {
     });
   }
 
-  addSolOC(data: any) {
+  /*addSolOC(data: any) {
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(this.APIUrl + '/CabSolOrdenCompras', data, { headers: headers });
-  } 
+  } */
+
+  addSolOC(data: any, idEmpleado: string, tipoRuteo: string) {
+    const headers = this.getHeadersWithAuthToken();
+
+    // Crear la URL con los parámetros de idEmpleado y tipoRuteo
+    const url = `${this.APIUrl}/CabSolOrdenCompras?idEmpleado=${idEmpleado}&tipoRuteo=${tipoRuteo}`;
+
+    // Realizar la solicitud POST con la URL que incluye los parámetros
+    return this.http.post(url, data, { headers: headers });
+  }
+
+
 
   //retorna todas las solicitudes de orden de compra
   getAllOrdenCmp(): Observable<any[]> {
@@ -82,9 +94,9 @@ export class CabOrdCompraService {
   }
 
   //metodos para cambiar de estado el tracking
-  updateEstadoTRKCotizacion(tipoSol: number, noSol: number, estado: number) {
+  updateEstadoTRKCotizacion(tipoSol: number, noSol: number, estado: number, idEmpleado: string, tipoRuteo: string) {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.put(this.APIUrl + `/CabSolOrdenCompras/UpdateEstadoTracking?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}`,null, { headers: headers });
+    return this.http.put(this.APIUrl + `/CabSolOrdenCompras/UpdateEstadoTracking?tipoSol=${tipoSol}&noSol=${noSol}&newEstado=${estado}&idEmpleado=${idEmpleado}&tipoRuteo=${tipoRuteo}`,null, { headers: headers });
   }
 
   updateEstadoCotizacion(tipoSol: number, noSol: number, estado: string) {

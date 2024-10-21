@@ -1,0 +1,23 @@
+.text-center-custom{
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    font-weight: bold;
+}
+
+.content-center-custom p {
+    text-align: center;
+    color: rgba(0, 0, 0, 0.75);
+}
+
+.modal-body-custom{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-direction: column;
+}
+
+mat-form-field {
+    width: 100% !important;
+}

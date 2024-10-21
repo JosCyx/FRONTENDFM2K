@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { FichaEventoService } from './comunicationAPI/eventos/ficha-evento.service';
+import { Subject } from 'rxjs';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class GlobalEventosService {
+
+  idFichaSelected: number = 0;
 
   editMode: boolean = false;
 
@@ -27,15 +30,22 @@ export class GlobalEventosService {
     fEvPorcentajeTotal: 0,
     fEvPorcentajeNuevos: 0,
     fEvEstadoActivo: 0
-   }
+  }
 
-   riesgos: any[] = [];   
-   req: any[] = [];
+  riesgos: any[] = [];
+  req: any[] = [];
+  fichaDocs: any[] = [];
+  reqDocs: any[] = [];
 
-  constructor(
+  observContent: string = '';
+  isReqComplete: boolean = false;
 
   
-  ) { }
+  constructor(
+    private fichaEvService: FichaEventoService
+  ) {
+    console.log("GlobalEventosService constructor iniciado");
+   }
 
   formatDateToSpanish(date: Date): string {
     const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
@@ -53,6 +63,7 @@ export class GlobalEventosService {
   }
 
   formatDateToYYYYMMDD(date: Date | undefined): string {
+
     if (!date) {
       return '';
     }
@@ -63,5 +74,49 @@ export class GlobalEventosService {
     return `${year}-${month}-${day}`;
   }
 
+  getFichaEvento(){
+    this.fichaEvService.getFichaEventoById(this.idFichaSelected).subscribe(
+      (data: any) => {
+        this.FormEv = data.ficha;
+        this.riesgos = data.riesgos;
+        this.req = data.req;
+        this.editMode = true;
+      },
+      (error) => {
+        console.log("Error al solicitar la ficha en globalService:", error);
+      }
+    );
+  }
 
+  clearEventoData(){
+    
+
+    this.editMode = false;
+
+    this.FormEv = {
+      fechaEmision: new Date(),
+      nombreProyecto: '',
+      usuarioSolicitante: '',
+      usuarioEncargado: '',
+      sector: 0,
+      area: 0,
+      referencia: '',
+      objetivo: '',
+      alcance: '',
+      detalle: '',
+      fechaInicio: new Date(),
+      horaInicio: '',
+      fechaFin: new Date(),
+      horaFin: '',
+      restricciones: '',
+      indicAdicionales: '',
+      inversion: undefined,
+      ingresos: undefined
+    };
+
+    this.riesgos = [];
+    this.req = [];
+    this.fichaDocs = [];
+    this.reqDocs = [];
+  }
 }

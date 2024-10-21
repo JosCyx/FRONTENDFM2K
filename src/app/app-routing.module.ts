@@ -39,6 +39,9 @@ import { MainEventoComponent } from './eventos/components/main-evento/main-event
 import { FormularioEventoComponent } from './eventos/components/formulario-evento/formulario-evento.component';
 import { HistorialEventoComponent } from './eventos/components/historial-evento/historial-evento.component';
 import { CalendarioEventoComponent } from './eventos/components/calendario-evento/calendario-evento.component';
+import { SalesReportComponent } from './components/procesos/sales-report/sales-report.component';
+import { DimensionConfComponent } from './components/configuracion/dimension-conf/dimension-conf.component';
+import { DimensionesHelpPageComponent } from './components/templates/dimensiones-help-page/dimensiones-help-page.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -62,6 +65,9 @@ const routes: Routes = [
   { path: 'rolUser', component: RolesUsersComponent, data: { breadcrumb: 'Roles-Usuarios' }, canActivate: [AuthGuard] },
   { path: 'empnivel', component: EmpleadoNivelComponent, data: { breadcrumb: 'Empleado-Nivel' }, canActivate: [AuthGuard] },
   { path: 'solAprob', component: SolicitudesAprobadasComponent, canActivate: [AuthGuard] },
+  { path: 'sales-report', component: SalesReportComponent, canActivate: [AuthGuard] },
+  { path: 'dim-conf', component: DimensionConfComponent, canActivate: [AuthGuard] },
+  { path: 'dim-help-page', component: DimensionesHelpPageComponent, canActivate: [AuthGuard] },
   { path: 'reportes', component: ReportesComponent, canActivate: [AuthGuard] },
   { path: 'mainnom', component: MainNominaComponent, canActivate: [AuthGuard] },
   { path: 'sendrol', component: SendNominaRolComponent, canActivate: [AuthGuard] },
@@ -84,6 +90,7 @@ const routes: Routes = [
   { path: 'formulario-evento', component: FormularioEventoComponent, canActivate: [AuthGuard] },
   { path: 'historial-evento', component: HistorialEventoComponent, canActivate: [AuthGuard] },
   { path: 'calendario-evento', component: CalendarioEventoComponent, canActivate: [AuthGuard] },
+  
 ];
 
 @NgModule({

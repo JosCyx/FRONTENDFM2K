@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -11,6 +12,7 @@ import { format, parseISO } from 'date-fns';
 import { PresupuestoService } from 'src/app/services/comunicationAPI/solicitudes/presupuesto.service';
 import { SectoresService } from 'src/app/services/comunicationAPI/seguridad/sectores.service';
 import { SolTimeService } from 'src/app/services/comunicationAPI/solicitudes/sol-time.service';
+import { DimensionesService } from 'src/app/services/dimensiones.service';
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
 interface SolicitudData {
@@ -25,11 +27,11 @@ interface SolicitudData {
 })
 export class CotPdfComponent implements OnInit {
   //variables
-  @Input() tipoSol: number = 0;
-  @Input() noSol: number = 0;
+
   CabCotiza: string = 'SOLICITUD DE COTIZACION';
   //global
   solID: number = this.serviceGlobal.solID;
+  isNewVersion: boolean = false;
   //guardar array de datos
   empleadosEdit: any[] = [];
   inspectoresEdit: any[] = [];
@@ -47,8 +49,8 @@ export class CotPdfComponent implements OnInit {
 
   areas: string = '';
   nivelRuta: string = '';
-  Imagen:string='assets/img/icon.png';
-  copiaImgen:string='';
+  Imagen: string = 'assets/img/icon.png';
+  copiaImgen: string = '';
   //varuables
   datosCabcot!: SolicitudData;
   constructor(
@@ -59,11 +61,12 @@ export class CotPdfComponent implements OnInit {
     private nivRuteService: NivelRuteoService,
     private prespService: PresupuestoService,
     private sectService: SectoresService,
-    private solTimeService: SolTimeService
-  ) {}
+    private solTimeService: SolTimeService,
+    private dimService: DimensionesService
+  ) { }
   ngOnInit(): void {
     setTimeout(() => {
-      
+
       this.empService.getEmpleadosList().subscribe((data) => {
         this.empleadosEdit = data;
       });
@@ -86,7 +89,7 @@ export class CotPdfComponent implements OnInit {
           this.presupues = respuestas;
         },
       });
-      this.sectService.getSectoresList().pipe(map(sector=>sector.sort((a,b)=>a.sectNombre.localeCompare(b.sectNombre)))).subscribe({
+      this.sectService.getSectoresList().pipe(map(sector => sector.sort((a, b) => a.sectNombre.localeCompare(b.sectNombre)))).subscribe({
         next: (respuestas: any) => {
           this.sectores = respuestas;
         }
@@ -94,273 +97,279 @@ export class CotPdfComponent implements OnInit {
     }, 200);
   }
 
-    clickpdf() {
-      this.traerdatos();
-      this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
+  async clickpdf() {
+    this.traerdatos();
+    this.serviceCabCo.getCotizacionbyId(this.solID).subscribe({
       next: async (res) => {
         this.datosCabcot = res;
 
-        if(this.datosCabcot.cabecera.cabSolCotEstadoTracking >= 50){
+        if (this.datosCabcot.cabecera.cabSolCotNewDimVersion == 1) {
+          this.isNewVersion = true;
+        }
+
+        if (this.datosCabcot.cabecera.cabSolCotEstadoTracking >= 50) {
           this.datosCabcot.cabecera.cabSolCotFecha = await this.getFechaCompras();
         }
 
-        console.log("solicitud de cotizacion",this.datosCabcot)
-          this.traerEmpleado();
-          this.TraerArea();
-          this.EstadoTracking();
-          this.BuscarInpector();
-          this.retornar();
-          this.retornarSub();
-          this.Aprobado();
-          this.financiero();
-          const dd: any = {
-            content: [
-              {
-                image: this.copiaImgen,
-                width: 50,
-                height: 50,
-                margin: [0, 20],
-              },
-              { text: 'FUNDACION MALECON 2000', style: 'header' },
-      
-              {
-                text: this.CabCotiza,
-                alignment: 'center',
-                style: 'subheader',
-                margin: [0, 10, 0, 30],
-              },
-              {
-                text: this.datosCabcot.cabecera.cabSolCotNumerico,
-                alignment: 'right',
-                margin: [0, 0, 10, 5],
-              },
-              {
-                fontSize: 10,
-                table: {
-                  widths: [90, 160, 60, 70, 85],
-                  body: [
-                    [
-                      { text: 'FECHA:', style: 'tableHeader' },
-                      {
-                        text: this.formatDateToSpanish(
-                          new Date(this.datosCabcot.cabecera.cabSolCotFecha)
-                        ),
-                      },
-                      { text: 'AREA:', style: 'tableHeader' },
-                      { text: this.areas, colSpan: 2 },
-      
-                      {},
-                    ],
-                    [
-                      { text: 'SOLICITADO POR :', style: 'tableHeader' },
-                      { text: this.empleados, colSpan: 4 },
-                      '',
-                      '',
-                      '',
-                    ],
-                    [
-                      { text: 'TRACKING', style: 'tableHeader' },
-                      { text: this.nivelRuta},
-                      { text: 'ESTADO:', style: 'tableHeader' },
-                      { text: this.estadoTexto(), colSpan: 2 },
-                      '',
-                    ],
-                    [
-                      { text: 'APROBADO POR :', style: 'tableHeader' },
-                      { text: this.datosCabcot.cabecera.cabSolCotApprovedBy, colSpan: 4},
-                      '',
-                      '',
-                      ''
-                    ],
-                    [
-                      { text: 'ASUNTO', style: 'tableHeader' },
-                      {
-                        text: this.datosCabcot.cabecera.cabSolCotAsunto,
-                        colSpan: 4,
-                      },
-                    ],
+        console.log("solicitud de cotizacion", this.datosCabcot)
+        this.traerEmpleado();
+        this.TraerArea();
+        this.EstadoTracking();
+        this.BuscarInpector();
+        this.retornar();
+        this.retornarSub();
+        this.Aprobado();
+        this.financiero();
+        const dd: any = {
+          content: [
+            {
+              image: this.copiaImgen,
+              width: 50,
+              height: 50,
+              margin: [0, 20],
+            },
+            { text: 'FUNDACION MALECON 2000', style: 'header' },
+
+            {
+              text: this.CabCotiza,
+              alignment: 'center',
+              style: 'subheader',
+              margin: [0, 10, 0, 30],
+            },
+            {
+              text: this.datosCabcot.cabecera.cabSolCotNumerico,
+              alignment: 'right',
+              margin: [0, 0, 10, 5],
+            },
+            {
+              fontSize: 10,
+              table: {
+                widths: [90, 160, 60, 70, 85],
+                body: [
+                  [
+                    { text: 'FECHA:', style: 'tableHeader' },
+                    {
+                      text: this.formatDateToSpanish(
+                        new Date(this.datosCabcot.cabecera.cabSolCotFecha)
+                      ),
+                    },
+                    { text: 'AREA:', style: 'tableHeader' },
+                    { text: this.areas, colSpan: 2 },
+
+                    {},
                   ],
-                },
-              },
-              {
-                margin: [0, 5, 0, 0],
-                fontSize: 10,
-                table: {
-                  widths: [30, 200, 70, 50, 50, 56],
-                  body: [
-                    [
-                      { text: 'ITEM', style: 'tableHeader' },
-                      {
-                        text: 'DESCRIPCION',
-                        style: 'tableHeader',
-                      },
-                      { text: 'PRESUPUESTO', style: 'tableHeader', colSpan: 2 },
-                      '',
-                      { text: 'UNIDAD', style: 'tableHeader' },
-                      {
-                        text: 'CANTIDAD',
-                        style: 'tableHeader',
-                        alignment: 'center',
-                      },
-                    ],
-                    //  [{}, {}, {}, {}, { text: '', colSpan: 2 }, ''],
-                    ...this.combinarObJ,
-                    [
-                      {
-                        text: 'MATERIALES Y PROCEDIMIENTO A SEGUIR:',
-                        style: 'tableHeader',
-                        colSpan: 6,
-                      },
-                      {
-                        text: '',
-                      },
-                      {
-                        text: '',
-                      },
-                      {
-                        text: '',
-                      },
-                      {
-                        text: '',
-                      },
-                      '',
-                    ],
-                    [
-                      { text: '1' },
-                      {
-                        text: this.datosCabcot.cabecera.cabSolCotProcedimiento,
-                        colSpan: 5,
-                      },
-                      '',
-                      '',
-                      '',
-                      '',
-                    ],
-                    [
-                      { text: 'OBSERVACIONES', style: 'textos', colSpan: 6 },
-                      '',
-                      '',
-                      '',
-                      '',
-                      '',
-                    ],
-                    [
-                      { text: '1' },
-                      {
-                        text: this.datosCabcot.cabecera.cabSolCotObervaciones,
-                        colSpan: 5,
-                      },
-                      '',
-                      '',
-                      '',
-                      '',
-                    ],
-                    [
-                      { text: 'ADJUNTO COTIZACIONES:', style: 'textos', colSpan: 2 },
-                      '',
-                      { text: this.datosCabcot.cabecera.cabSolCotAdjCot },
-                      {
-                        text: 'NUMERO DE COTIZACIONES:',
-                        colSpan: 2,
-                        style: 'textos',
-                      },
-                      '',
-                      { text: this.datosCabcot.cabecera.cabSolCotNumCotizacion },
-                    ],
+                  [
+                    { text: 'SOLICITADO POR :', style: 'tableHeader' },
+                    { text: this.empleados, colSpan: 4 },
+                    '',
+                    '',
+                    '',
                   ],
-                },
-              },
-              {
-                margin: [0, 10, 0, 0],
-                fontSize: 10,
-                table: {
-                  widths: [150, 87, 150, 87],
-                  body: [
-                    [
-                      { text: 'PLAZO DE ENTREGA:', style: 'textos' },
-                      {
-                        text: (this.datosCabcot.cabecera.cabSolCotPlazoEntrega === null ? 'Sin fecha' :  format(
-                            parseISO(this.datosCabcot.cabecera.cabSolCotPlazoEntrega),'yyyy-MM-dd')),
-                        alignment: 'center',
-                      },
-                      { text: 'FECHA MAXIMA DE ENTREGA:', style: 'textos' },
-                      {
-                        text: (this.datosCabcot.cabecera.cabSolCotFechaMaxentrega === null  ? 'Sin fecha' :
-                          format(
-                            parseISO(
-                              this.datosCabcot.cabecera.cabSolCotFechaMaxentrega
-                            ),
-                            'yyyy-MM-dd'
-                          )),
-                        alignment: 'center',
-                      },
-                    ],
+                  [
+                    { text: 'TRACKING', style: 'tableHeader' },
+                    { text: this.nivelRuta },
+                    { text: 'ESTADO:', style: 'tableHeader' },
+                    { text: this.estadoTexto(), colSpan: 2 },
+                    '',
                   ],
-                },
-              },
-              {
-                margin: [0, 5],
-                fontSize: 10,
-                table: {
-                  widths: [100, 200, 87, 87],
-                  body: [
-                    [
-                      { text: 'INSPECTOR:', style: 'footer' },
-                      { text: this.inpectores },
-                      { text: 'TELEFONO:', style: 'footer' },
-                      { text: this.datosCabcot.cabecera.cabSolCotTelefInspector },
-                    ],
+                  [
+                    { text: 'APROBADO POR :', style: 'tableHeader' },
+                    { text: this.datosCabcot.cabecera.cabSolCotApprovedBy, colSpan: 4 },
+                    '',
+                    '',
+                    ''
                   ],
-                },
-              },
-              {
-                margin: [0, 10, 0, 0],
-                text: 'Desglose de Sectores',
-                bold:true,
-                alignment:'center',
-                pageBreak: 'before',
-              },
-              {
-                table: {
-                  body: [
-                    [
-                      { text: 'DESCRIPCION', bold: true },
-                      { text: 'CANTIDAD', bold: true },
-                      { text: 'SECTOR', bold: true },
-                    ],
-                    ...this.combinarSecto
+                  [
+                    { text: 'ASUNTO', style: 'tableHeader' },
+                    {
+                      text: this.datosCabcot.cabecera.cabSolCotAsunto,
+                      colSpan: 4,
+                    },
                   ],
-                },
-              },
-            ],
-            styles: {
-              tableHeader: {
-                bold: true,
-              },
-              header: {
-                fontSize: 20,
-                alignment: 'center',
-              },
-              subheader: {
-                fontSize: 15,
-              },
-              textos: {
-                bold: true,
-              },
-              footer: {
-                bold: true,
+                ],
               },
             },
-          };
-          const pdf = pdfMake.createPdf(dd);
-          pdf.download(this.datosCabcot.cabecera.cabSolCotNumerico);
-          this.clear();
+            //agregar dimensiones en caso de que existan
+            await this.getSolDimensions(),
+            {
+              margin: [0, 5, 0, 0],
+              fontSize: 10,
+              table: {
+                widths: [30, 200, 70, 50, 50, 56],
+                body: [
+                  [
+                    { text: 'ITEM', style: 'tableHeader' },
+                    {
+                      text: 'DESCRIPCION',
+                      style: 'tableHeader',
+                    },
+                    { text: 'PRESUPUESTO', style: 'tableHeader', colSpan: 2 },
+                    '',
+                    { text: 'UNIDAD', style: 'tableHeader' },
+                    {
+                      text: 'CANTIDAD',
+                      style: 'tableHeader',
+                      alignment: 'center',
+                    },
+                  ],
+                  //  [{}, {}, {}, {}, { text: '', colSpan: 2 }, ''],
+                  ...this.combinarObJ,
+                  [
+                    {
+                      text: 'MATERIALES Y PROCEDIMIENTO A SEGUIR:',
+                      style: 'tableHeader',
+                      colSpan: 6,
+                    },
+                    {
+                      text: '',
+                    },
+                    {
+                      text: '',
+                    },
+                    {
+                      text: '',
+                    },
+                    {
+                      text: '',
+                    },
+                    '',
+                  ],
+                  [
+                    { text: '1' },
+                    {
+                      text: this.datosCabcot.cabecera.cabSolCotProcedimiento,
+                      colSpan: 5,
+                    },
+                    '',
+                    '',
+                    '',
+                    '',
+                  ],
+                  [
+                    { text: 'OBSERVACIONES', style: 'textos', colSpan: 6 },
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                  ],
+                  [
+                    { text: '1' },
+                    {
+                      text: this.datosCabcot.cabecera.cabSolCotObervaciones,
+                      colSpan: 5,
+                    },
+                    '',
+                    '',
+                    '',
+                    '',
+                  ],
+                  [
+                    { text: 'ADJUNTO COTIZACIONES:', style: 'textos', colSpan: 2 },
+                    '',
+                    { text: this.datosCabcot.cabecera.cabSolCotAdjCot },
+                    {
+                      text: 'NUMERO DE COTIZACIONES:',
+                      colSpan: 2,
+                      style: 'textos',
+                    },
+                    '',
+                    { text: this.datosCabcot.cabecera.cabSolCotNumCotizacion },
+                  ],
+                ],
+              },
+            },
+            {
+              margin: [0, 10, 0, 0],
+              fontSize: 10,
+              table: {
+                widths: [150, 87, 150, 87],
+                body: [
+                  [
+                    { text: 'PLAZO DE ENTREGA:', style: 'textos' },
+                    {
+                      text: (this.datosCabcot.cabecera.cabSolCotPlazoEntrega === null ? 'Sin fecha' : format(
+                        parseISO(this.datosCabcot.cabecera.cabSolCotPlazoEntrega), 'yyyy-MM-dd')),
+                      alignment: 'center',
+                    },
+                    { text: 'FECHA MAXIMA DE ENTREGA:', style: 'textos' },
+                    {
+                      text: (this.datosCabcot.cabecera.cabSolCotFechaMaxentrega === null ? 'Sin fecha' :
+                        format(
+                          parseISO(
+                            this.datosCabcot.cabecera.cabSolCotFechaMaxentrega
+                          ),
+                          'yyyy-MM-dd'
+                        )),
+                      alignment: 'center',
+                    },
+                  ],
+                ],
+              },
+            },
+            {
+              margin: [0, 5],
+              fontSize: 10,
+              table: {
+                widths: [100, 200, 87, 87],
+                body: [
+                  [
+                    { text: 'INSPECTOR:', style: 'footer' },
+                    { text: this.inpectores },
+                    { text: 'TELEFONO:', style: 'footer' },
+                    { text: this.datosCabcot.cabecera.cabSolCotTelefInspector },
+                  ],
+                ],
+              },
+            },
+            {
+              margin: [0, 10, 0, 0],
+              text: 'Desglose de Sectores',
+              bold: true,
+              alignment: 'center',
+              pageBreak: 'before',
+            },
+            {
+              table: {
+                body: [
+                  [
+                    { text: 'DESCRIPCION', bold: true },
+                    { text: 'CANTIDAD', bold: true },
+                    { text: 'SECTOR', bold: true },
+                  ],
+                  ...this.combinarSecto
+                ],
+              },
+            },
+          ],
+          styles: {
+            tableHeader: {
+              bold: true,
+            },
+            header: {
+              fontSize: 20,
+              alignment: 'center',
+            },
+            subheader: {
+              fontSize: 15,
+            },
+            textos: {
+              bold: true,
+            },
+            footer: {
+              bold: true,
+            },
+          },
+        };
+        const pdf = pdfMake.createPdf(dd);
+        pdf.download(this.datosCabcot.cabecera.cabSolCotNumerico);
+        this.clear();
       },
       error: (err) => {
         console.error('este es mi error ', err);
       },
     });
-     
+
   }
   //Metodos
   formatDateToSpanish(date: Date): string {
@@ -404,7 +413,7 @@ export class CotPdfComponent implements OnInit {
   }
 
   async getFechaCompras(): Promise<Date> {
-  
+
     return new Promise<Date>((resolve, reject) => {
       this.solTimeService.getFechabyNivel(this.datosCabcot.cabecera.cabSolCotTipoSolicitud, this.datosCabcot.cabecera.cabSolCotNoSolicitud, 50).subscribe({
         next: (res) => {
@@ -491,37 +500,37 @@ export class CotPdfComponent implements OnInit {
     }
   }
   retornarSub() {
-      const item = this.datosCabcot.items;
-      let arraysector=item.map((index:any)=>{
-        return{
-          itmIdDetalle:index.itmIdDetalle,
-          itmSector:index.itmSector,
-          itmCantidad:index.itmCantidad,
+    const item = this.datosCabcot.items;
+    let arraysector = item.map((index: any) => {
+      return {
+        itmIdDetalle: index.itmIdDetalle,
+        itmSector: index.itmSector,
+        itmCantidad: index.itmCantidad,
 
-        }
-      })
-      arraysector.sort((a:any,b:any)=>a.itmIdDetalle-b.itmIdDetalle);
-      for(let index=0; index< arraysector.length; index++){
-        let descripcion='';
-        for (const iterator of this.datosMapeados) {
-          if(iterator.solCotIdDetalle==arraysector[index].itmIdDetalle){
-            descripcion=iterator.solCotDescripcion;
-          }
-        }
-        let sector='';
-        for (const iterator of this.sectores) {
-          if (iterator.sectIdNomina == arraysector[index].itmSector ) {
-            sector = iterator.sectNombre;
-          }
-        }
-        const {itmCantidad}=arraysector[index];
-        const a=[
-          {text:descripcion,alignment:'center'},
-          {text:itmCantidad,alignment:'center'},
-          {text:sector,alignment:'left'},
-        ]
-        this.combinarSecto.push(a);
       }
+    })
+    arraysector.sort((a: any, b: any) => a.itmIdDetalle - b.itmIdDetalle);
+    for (let index = 0; index < arraysector.length; index++) {
+      let descripcion = '';
+      for (const iterator of this.datosMapeados) {
+        if (iterator.solCotIdDetalle == arraysector[index].itmIdDetalle) {
+          descripcion = iterator.solCotDescripcion;
+        }
+      }
+      let sector = '';
+      for (const iterator of this.sectores) {
+        if (iterator.sectIdNomina == arraysector[index].itmSector) {
+          sector = iterator.sectNombre;
+        }
+      }
+      const { itmCantidad } = arraysector[index];
+      const a = [
+        { text: descripcion, alignment: 'center' },
+        { text: itmCantidad, alignment: 'center' },
+        { text: sector, alignment: 'left' },
+      ]
+      this.combinarSecto.push(a);
+    }
   }
   BuscarInpector() {
     for (const iterator of this.inspectoresEdit) {
@@ -534,8 +543,8 @@ export class CotPdfComponent implements OnInit {
       }
     }
   }
-  Aprobado(){
-    if (this.datosCabcot.cabecera.cabSolCotApprovedBy === 'XXXXXX' ) {
+  Aprobado() {
+    if (this.datosCabcot.cabecera.cabSolCotApprovedBy === 'XXXXXX') {
       this.datosCabcot.cabecera.cabSolCotApprovedBy = 'NIVEL NO ALCANZADO';
     } else {
       for (const iterator of this.empleadosEdit) {
@@ -549,13 +558,13 @@ export class CotPdfComponent implements OnInit {
       }
     }
   }
-  financiero(){
+  financiero() {
     if (this.datosCabcot.cabecera.cabSolCotFinancieroBy === 'XXXXXX') {
       this.datosCabcot.cabecera.cabSolCotFinancieroBy = 'NIVEL NO ALCANZADO';
-    }else{
-      for(const itera of this.empleadosEdit){
-        if(itera.empleadoIdNomina==this.datosCabcot.cabecera.cabSolCotFinancieroBy){
-          this.datosCabcot.cabecera.cabSolCotFinancieroBy=itera.empleadoNombres+' '+itera.empleadoApellidos;
+    } else {
+      for (const itera of this.empleadosEdit) {
+        if (itera.empleadoIdNomina == this.datosCabcot.cabecera.cabSolCotFinancieroBy) {
+          this.datosCabcot.cabecera.cabSolCotFinancieroBy = itera.empleadoNombres + ' ' + itera.empleadoApellidos;
         }
       }
     }
@@ -563,7 +572,7 @@ export class CotPdfComponent implements OnInit {
   clear() {
     this.datosCabcot = { cabecera: {}, detalles: [], items: [] };
     this.combinarObJ = [];
-    this.combinarSecto=[];
+    this.combinarSecto = [];
   }
   async convertImageToDataUrl(imagePath: string): Promise<string> {
     try {
@@ -582,10 +591,82 @@ export class CotPdfComponent implements OnInit {
       throw error; // Lanza el error para que sea manejado por la parte que llama a esta función.
     }
   }
+
   traerdatos() {
     this.convertImageToDataUrl(this.Imagen).then((dataurl) => {
       this.copiaImgen = dataurl;
     });
   }
+
+  //dimensiones de la solicitud
+  async getSolDimensions() {
+    if (this.isNewVersion) {
+      //console.log('Es nueva versión');
+
+      try {
+        // Convertir el observable a una promesa
+        const res = await firstValueFrom(
+          this.dimService.getDimNamesBySol(
+            this.datosCabcot.cabecera.cabSolCotTipoSolicitud,
+            this.datosCabcot.cabecera.cabSolCotNoSolicitud
+          )
+        );
+
+        const dim = {
+          margin: [0, 5, 0, 0],
+          fontSize: 10,
+          table: {
+            widths: [76, 76, 76, 76, 76, 76],
+            body: [
+              [
+                { text: 'PRESUPUESTO', style: 'tableHeader', colSpan: 3 }, '', '',
+                { text: 'SUBACTIVIDAD', style: 'tableHeader', colSpan: 3 }, '', ''
+              ],
+              [
+                { text: res[0].presp , colSpan: 3 }, '', '',
+                { text: res[0].subac, colSpan: 3 }, '', ''
+              ]
+            ]
+          }
+        };
+
+        return dim;
+
+      } catch (err) {
+        //console.error('Error al obtener las dimensiones de la solicitud:', err);
+
+        return {
+          margin: [0, 5, 0, 0],
+          fontSize: 10,
+          table: {
+            widths: [76, 76, 76, 76, 76, 76],
+            body: [
+              [
+                { text: 'PRESUPUESTO', style: 'tableHeader', colSpan: 3 }, '', '',
+                { text: 'SUBACTIVIDAD', style: 'tableHeader', colSpan: 3 }, '', ''
+              ],
+              [
+                { text: 'Error', colSpan: 3 }, '', '',
+                { text: 'Error', colSpan: 3 }, '', ''
+              ]
+            ]
+          }
+        };
+      }
+    } else {
+      //console.log('No es nueva versión');
+      // Si no es una nueva versión, retornar una tabla vacía
+      return {
+        margin: [0, 0, 0, 0],
+        fontSize: 10,
+        table: {
+          widths: [0],
+          body: [[]]
+        }
+      };
+    }
+  }
+
+  
 
 }

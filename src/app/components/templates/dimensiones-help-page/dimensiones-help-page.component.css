@@ -1,0 +1,11 @@
+.container {
+    width: 75%;
+    margin: 0 auto;
+    padding-top: 120px;
+    padding-bottom: 50px;
+}
+
+.parrafo {
+    padding-left: 30px; /* Ajusta el valor según la cantidad de sangría que necesites */
+    padding-bottom: 30px;
+}

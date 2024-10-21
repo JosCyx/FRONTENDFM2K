@@ -2,69 +2,70 @@
 
 
 <div class="principal">
-  <h3 style="text-align: center;"><b>HISTORIAL DE EVENTOS - REQUERIMIENTO TECNICO OPERATIVO</b></h3>
+  <h3 style="text-align: center;"><b>HISTORIAL DE PROYECTOS</b></h3>
 
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="dataSource">
 
       <!-- USUARIO SOLICITANTE -->
       <ng-container matColumnDef="USUARIO_SOLICITANTE">
-        <th mat-header-cell *matHeaderCellDef> Solicitante 
-        </th>
-        <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{
-        getSolicitanteName(element.fEvSolicitante) }} </td>
-         <!-- <td mat-cell *matCellDef="let element"> {{element.fEvSolicitante}} </td> -->
+        <th mat-header-cell *matHeaderCellDef> Encargado </th>
+        <td class="mat-cell-custom" mat-cell *matCellDef="let element"
+          [ngStyle]="element.fEvSttoped === 1 ? {'border-left': '5px solid blue'} : {}">
+          {{ getSolicitanteName(element.fEvEncargado) }}
+        </td>
+        <!-- <td mat-cell *matCellDef="let element"> {{element.fEvSolicitante}} </td> -->
       </ng-container>
 
       <!-- AREA QUE ADMINISTRA -->
       <ng-container matColumnDef="AREA_ADMINISTRA">
-        <th mat-header-cell *matHeaderCellDef>  
+        <th mat-header-cell *matHeaderCellDef>
           <div class="filter-head">
             Área
             <div style="display: flex; flex-direction: row;">
-                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(1)"><i
-                        class="bi bi-funnel-fill"></i></button>
-                <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(1)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
             </div>
-        </div>
-        <div class="input-container" *ngIf="handleFilter  && filterType == 1">
+          </div>
+          <div class="input-container" *ngIf="handleFilter  && filterType == 1">
             <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
             <select (change)="applyListFilter($event)">
-                <ng-container *ngFor="let e of AreaList">
-                    <option [value]="e.areaIdNomina">{{e.areaDecp}}</option>
-                </ng-container>
+              <ng-container *ngFor="let e of AreaList">
+                <option [value]="e.areaIdNomina">{{e.areaDecp}}</option>
+              </ng-container>
             </select>
-        </div>
-      </th>
-      <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{
-      getArea(element.fEvArea) }} </td>
+          </div>
+        </th>
+        <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{
+          getArea(element.fEvArea) }} </td>
         <!-- <td mat-cell *matCellDef="let element"> {{element.fEvArea}} </td> -->
       </ng-container>
 
       <!-- NOMBRE DEL EVENTO -->
       <ng-container matColumnDef="NOMBRE_EVENTO">
-        <th mat-header-cell *matHeaderCellDef> 
+        <th mat-header-cell *matHeaderCellDef>
           <div class="filter-head">
-          Evento 
-          <div style="display: flex; flex-direction: row;">
-            <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(2)"><i
-                    class="bi bi-funnel-fill"></i></button>
-            <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
-            <button class="filter-btn" mat-icon-button color="basic"
-                [matMenuTriggerFor]="menuNombre"><i class="bi bi-sort-down"></i></button>
-            <mat-menu #menuNombre="matMenu">
-                <button mat-menu-item style="font-size: 10pt !important;"
-                    (click)="sortByEvento(1)"><i class="bi bi-sort-alpha-down"></i>
-                    Ascendente</button>
-                <button mat-menu-item style="font-size: 10pt !important;"
-                    (click)="sortByEvento(2)"><i class="bi bi-sort-alpha-down-alt"></i>
-                    Descendente</button>
-            </mat-menu>
-          </div>
+            Proyecto
+            <div style="display: flex; flex-direction: row;">
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(2)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+              <button class="filter-btn" mat-icon-button color="basic" [matMenuTriggerFor]="menuNombre"><i
+                  class="bi bi-sort-down"></i></button>
+              <mat-menu #menuNombre="matMenu">
+                <button mat-menu-item style="font-size: 10pt !important;" (click)="sortByEvento(1)"><i
+                    class="bi bi-sort-alpha-down"></i>
+                  Ascendente</button>
+                <button mat-menu-item style="font-size: 10pt !important;" (click)="sortByEvento(2)"><i
+                    class="bi bi-sort-alpha-down-alt"></i>
+                  Descendente</button>
+              </mat-menu>
+            </div>
           </div>
           <div class="input-container" *ngIf="handleFilter && filterType == 2">
-           <input type="text" (input)="applyStrFilter($event)">
-           <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+            <input type="text" (input)="applyStrFilter($event)">
+            <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
           </div>
         </th>
         <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{ element.fEvNombreProyecto }}</td>
@@ -73,69 +74,71 @@
 
       <!-- SECTOR -->
       <ng-container matColumnDef="SECTOR">
-        <th mat-header-cell *matHeaderCellDef> 
+        <th mat-header-cell *matHeaderCellDef>
           <div class="filter-head">
             Sector
             <div style="display: flex; flex-direction: row;">
-                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(3)"><i
-                        class="bi bi-funnel-fill"></i></button>
-                <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(3)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
             </div>
           </div>
           <div class="input-container" *ngIf="handleFilter  && filterType == 3">
             <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
             <select (change)="applyListFilter($event)">
-                <ng-container *ngFor="let e of SectorList">
-                    <option [value]="e.sectId">{{e.sectNombre}}</option>
-                </ng-container>
+              <ng-container *ngFor="let e of SectorList">
+                <option [value]="e.sectId">{{e.sectNombre}}</option>
+              </ng-container>
             </select>
           </div>
         </th>
         <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{
-        getSector(element.fEvSector)}} </td>
+          getSector(element.fEvSector)}} </td>
         <!-- <td mat-cell *matCellDef="let element"> {{element.fEvSector}} </td> -->
       </ng-container>
 
-       <!-- FECHA INICIO -->
-       <ng-container matColumnDef="FECHA_INICIO">
-        <th mat-header-cell *matHeaderCellDef> 
+      <!-- FECHA INICIO -->
+      <ng-container matColumnDef="FECHA_INICIO">
+        <th mat-header-cell *matHeaderCellDef>
           <div class="filter-head">
             Fecha inicio
             <div style="display: flex; flex-direction: row;">
-                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(4)"><i
-                        class="bi bi-funnel-fill"></i></button>
-                <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(4)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
             </div>
           </div>
           <div class="input-container" *ngIf="handleFilter  && filterType == 4">
-              <input type="date" (change)="applyDateFilter($event)">
-              
+            <input type="date" (change)="applyDateFilter($event)">
+
           </div>
         </th>
-        <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{element.fEvFechaInicio | date:'yyyy-MM-dd'}} </td>
+        <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{element.fEvFechaInicio | date:'yyyy-MM-dd'}}
+        </td>
 
         <!-- <td mat-cell *matCellDef="let element"> 
           {{element.fEvFechaImplementacion | date:'yyyy-MM-dd'}}
         </td> -->
       </ng-container>
-      
+
       <!-- FECHA FIN -->
       <ng-container matColumnDef="FECHA_FIN">
-        <th mat-header-cell *matHeaderCellDef> 
+        <th mat-header-cell *matHeaderCellDef>
           <div class="filter-head">
             Fecha fin
             <div style="display: flex; flex-direction: row;">
-                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(5)"><i
-                        class="bi bi-funnel-fill"></i></button>
-                <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(5)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
             </div>
           </div>
           <div class="input-container" *ngIf="handleFilter  && filterType == 5">
-              <input type="date" (change)="applyDateFilter($event)">
-              
+            <input type="date" (change)="applyDateFilter($event)">
+
           </div>
         </th>
-        <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{element.fEvFechaFin | date:'yyyy-MM-dd'}} </td>
+        <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{element.fEvFechaFin | date:'yyyy-MM-dd'}}
+        </td>
 
         <!-- <td mat-cell *matCellDef="let element"> 
           {{element.fEvFechaImplementacion | date:'yyyy-MM-dd'}}
@@ -153,40 +156,39 @@
       <!-- % DE AVANCE (NUEVO) -->
       <ng-container matColumnDef="AVANCE_REQ_NUEVO">
         <th mat-header-cell *matHeaderCellDef> Req. nuevos </th>
-        <td mat-cell *matCellDef="let element"> {{element.fEvPorcentajeTotal}}%</td>
+        <td mat-cell *matCellDef="let element"> {{element.fEvPorcentajeNuevos}}%</td>
       </ng-container>
 
-       <!-- ESTADO -->
+      <!-- ESTADO -->
       <ng-container matColumnDef="ESTADO">
-        <th mat-header-cell *matHeaderCellDef> 
+        <th mat-header-cell *matHeaderCellDef>
           <div class="filter-head">
             Estado
             <div style="display: flex; flex-direction: row;">
-                <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(6)"><i
-                        class="bi bi-funnel-fill"></i></button>
-                <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(6)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
             </div>
           </div>
           <div class="input-container" *ngIf="handleFilter  && filterType == 6">
-              <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
-              <select (change)="applyListFilter($event)">
-                  <ng-container *ngFor="let e of EstadoList">
-                      <option [value]="e.estPrId">{{e.estPrDescripcion}}</option>
-                  </ng-container>
-              </select>
+            <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+            <select (change)="applyListFilter($event)">
+              <ng-container *ngFor="let e of EstadoList">
+                <option [value]="e.estPrId">{{e.estPrDescripcion}}</option>
+              </ng-container>
+            </select>
           </div>
         </th>
-        <td class="mat-cell-custom" mat-cell *matCellDef="let element"> {{
-        getEstado(element.fEvEstadoProyecto) }} </td>
+        <td class="mat-cell-custom" [ngClass]="getRowColor(element)" mat-cell *matCellDef="let element"> {{
+          getEstado(element.fEvEstadoProyecto) }} </td>
         <!-- <td mat-cell *matCellDef="let element"> {{element.fEvEstadoProyecto}} </td> -->
       </ng-container>
 
-      
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns" class="center-content"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer-cursor" (click)="selectFichaEvent(row)"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer-cursor"
+        (click)="selectFichaEvent(row)"></tr>
     </table>
 
   </div>
-</div> 
-
-
+</div>

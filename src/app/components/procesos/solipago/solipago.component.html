@@ -137,7 +137,7 @@
           <div class="custom-input-group">
             <label class="custom-label"> Solicitud Asociada</label>
             <input [(ngModel)]="valorinputOC" type="text" class="custom-input mr-1"
-              placeholder="Ejemplo: OC_000073865"/>
+              placeholder="Ejemplo: OC_000073865" />
             <button class="btn btn-success" (click)="getDetFromOC()">
               <i class="bi bi-search"></i>
             </button>
@@ -158,7 +158,7 @@
 
           </div>
         </div>
-        
+
         <div *ngIf="actionCreate == 'creacion'">
           <!-- TABLA DE FACTURAS NUEVA -->
           <table class="table table-striped text-center table-hover">
@@ -174,23 +174,29 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let fact of facturasList; let i = index" >
-                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
+              <tr *ngFor="let fact of facturasList; let i = index">
+                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal"
+                  data-target="#detallesFactura">
                   {{fact.ordCompra}}
                 </td>
-                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
+                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal"
+                  data-target="#detallesFactura">
                   {{fact.numero}}
                 </td>
-                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
+                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal"
+                  data-target="#detallesFactura">
                   {{fact.fecha}}
                 </td>
-                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
+                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal"
+                  data-target="#detallesFactura">
                   {{fact.proveedor}}
                 </td>
-                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura" style="width: 150px">
+                <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal"
+                  data-target="#detallesFactura" style="width: 150px">
                   {{ fact.provRuc }}
                 </td>
-                <td class="align-middle cel-prep" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
+                <td class="align-middle cel-prep" (click)="selectFactura(fact)" data-toggle="modal"
+                  data-target="#detallesFactura">
                   {{fact.valorTotal}}
                 </td>
                 <td><a class="text-danger" data-toggle="modal" data-target="#eliminarFactura"
@@ -198,7 +204,8 @@
               </tr>
               <tr>
                 <td class="align-middle text-end" colspan="7">
-                  <button *ngIf="showNewFactBTN" (click)="activeVerifyBtn()" class="btn btn-primary" data-toggle="modal" data-target="#detallesFactura">Agregar nueva factura</button>
+                  <button *ngIf="showNewFactBTN" (click)="activeVerifyBtn()" class="btn btn-primary" data-toggle="modal"
+                    data-target="#detallesFactura">Agregar nueva factura</button>
                 </td>
               </tr>
 
@@ -322,21 +329,33 @@
         </div> -->
 
         <div class="foot-cabecera">
-          <div class="form-floating mb-3">
+          <div class=" mb-3">
+            <label for="floatingInput" style="color: rgba(0, 0, 0, 0.5);">Materiales y procedimientos a seguir:</label>
+            <textarea style="max-height: 300px;" class="form-control" id="floatingInput" rows="3"
+              [(ngModel)]="cab_observa"></textarea>
+          </div>
+          <div class=" mb-3">
+            <label for="floatingInput" style="color: rgba(0, 0, 0, 0.5);">Observaciones:</label>
+            <textarea style="max-height: 300px;" class="form-control" id="floatingInput" rows="3"
+              [(ngModel)]="cab_aplicarmult"></textarea>
+          </div>
+
+
+          <!-- <div class="form-floating mb-3">
             <input type="text" class="form-control" id="floatingInput" placeholder="" [(ngModel)]="cab_observa" />
             <label for="floatingInput">Observaciones:</label>
           </div>
           <div class="form-floating mb-3">
             <input type="text" class="form-control" id="floatingInputM" placeholder="" [(ngModel)]="cab_aplicarmult" />
             <label for="floatingInputM">Aplicar multa:</label>
-          </div>
+          </div> -->
           <div class="input-group mb-3">
             <label class="input-group-text">Valor a descontar:</label>
             <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
               placeholder="Ingrese el valor a descontar" [(ngModel)]="cab_valordescontar" />
             <label class="input-group-text">Pago total*:</label>
             <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
-              placeholder="Ingrese el valor Total" [(ngModel)]="cab_totalautorizado" disabled/>
+              placeholder="Ingrese el valor Total" [(ngModel)]="cab_totalautorizado" disabled />
           </div>
           <div class="input-group mb-3">
             <label class="input-group-text">Recibe*:</label>
@@ -412,295 +431,331 @@
 
   <ng-container *appAuthorize="'32'">
     <div class="form-cot" *ngIf="changeview === 'editar'">
-      <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
-      <h3 class="font-weight-bold" style="padding-top: 20pt">
-        Editar solicitud de pago
-      </h3>
-      <!-- Inicio -->
-      <div class="tabs-edit">
-        <ul class="nav nav-tabs">
-          <li class="nav-item">
-            <a class="nav-link" [ngClass]="{'active': actionEdit === 'edicion'}"
-              (click)="selectEditAction('edicion')">Edición</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}"
-              (click)="selectEditAction('documentacion')">Documentación</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" [ngClass]="{'active': actionEdit === 'destino'}"
-              (click)="selectEditAction('destino')">Destino</a>
-          </li>
-          <ng-container
-            *ngIf="cabecera.cabPagoEstadoTrack > 10 && cabecera.cabPagoEstadoTrack != 0 && cabecera.cabPagoEstadoTrack != 9999">
-            <li class="nav-item" *appAuthorize="'53'">
-              <a class="nav-link" [ngClass]="{'active': actionEdit === 'autorizacion'}"
-                (click)="selectEditAction('autorizacion')">Autorizacion</a>
+      <ng-container *ngIf="!serviceGlobal.loadingSolicitud">
+        <div class="custom-spinner">
+          <mat-spinner></mat-spinner>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="serviceGlobal.loadingSolicitud">
+        <!-- Aqui iría la condicion para mostrar u ocultar el contenido -->
+        <h3 class="font-weight-bold" style="padding-top: 20pt">
+          Editar solicitud de pago
+        </h3>
+        <!-- Inicio -->
+        <div class="tabs-edit">
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link" [ngClass]="{'active': actionEdit === 'edicion'}"
+                (click)="selectEditAction('edicion')">Edición</a>
             </li>
-          </ng-container>
-        </ul>
-      </div>
-      <!-- Fin -->
-      <div class="solicitud">
-        <div class="cabecera mb-3">
+            <li class="nav-item">
+              <a class="nav-link" [ngClass]="{'active': actionEdit === 'documentacion'}"
+                (click)="selectEditAction('documentacion')">Documentación</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" [ngClass]="{'active': actionEdit === 'destino'}"
+                (click)="selectEditAction('destino')">Destino</a>
+            </li>
+            <ng-container
+              *ngIf="cabecera.cabPagoEstadoTrack > 10 && cabecera.cabPagoEstadoTrack != 0 && cabecera.cabPagoEstadoTrack != 9999">
+              <li class="nav-item" *appAuthorize="'53'">
+                <a class="nav-link" [ngClass]="{'active': actionEdit === 'autorizacion'}"
+                  (click)="selectEditAction('autorizacion')">Autorizacion</a>
+              </li>
+            </ng-container>
+          </ul>
+        </div>
+        <!-- Fin -->
+        <div class="solicitud">
+          <div class="cabecera mb-3">
 
 
-          <div class="custom-row">
-            <div class="custom-input-group  mb-1">
-              <label class="custom-label">Fecha:</label>
-              <input type="text" class="custom-input" disabled [value]="fechaFormateada" />
-            </div>
-            <!--  -->
-            <div class="custom-input-group mb-1 ">
-              <label class="custom-label">Código:</label>
-              <input type="text" class="custom-input" [(ngModel)]="cabecera.cabPagoNumerico" disabled />
-            </div>
-          </div>
-          <div class="custom-row mb-1">
-            <div class="custom-input-group ">
-              <label class="custom-label">Solicitado por*:</label>
-              <ng-container *ngFor="let emPa of empleadoEdi">
-                <input *ngIf="emPa.empleadoIdNomina == cabecera.cabPagoSolicitante" type="text" class="custom-input"
-                  id="busqueda" list="sugerencias" [value]="emPa.empleadoNombres + ' ' + emPa.empleadoApellidos"
-                  disabled />
-              </ng-container>
-            </div>
-            <div class="custom-input-group ">
-              <label class="custom-label">Area:</label>
-              <ng-container *ngFor="let are of areas">
-                <input *ngIf="are.areaIdNomina == cabecera.cabPagoIdAreaSolicitante" type="text" class="custom-input"
-                  [value]="are.areaDecp" disabled />
-              </ng-container>
-            </div>
-            <!--  -->
-          </div>
-          <!--  -->
-          <div class="custom-row">
-            <div class="custom-input-group  mb-1">
-              <label class="custom-label">Aprobado por:</label>
-
-              <ng-container *ngIf="cabecera.cabPagoApprovedBy === 'XXXXXX'; else showValue">
-                <input type="text" class="custom-input" value="Nivel no alcanzado." disabled />
-              </ng-container>
-              <ng-template #showValue>
-                <ng-container *ngFor="let emp of empleadoEdi">
-                  <input *ngIf="emp.empleadoIdNomina == cabecera.cabPagoApprovedBy" type="text" class="custom-input"
-                    id="busqueda" [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled />
-                </ng-container>
-              </ng-template>
-            </div>
-          </div>
-          <!--  -->
-          <ng-container *ngIf="cabecera.cabPagoType == 'legacy'">
             <div class="custom-row">
-              <div class="custom-input-group mb-1" style="width: 60%;">
-                <label class="custom-label">No factura:</label>
-                <input type="text" class="custom-input" placeholder="Ingrese el numero Factura"
-                  [(ngModel)]="cabecera.cabPagoNumFactura" [appSecureDisable]="estadoSol" />
+              <div class="custom-input-group  mb-1">
+                <label class="custom-label">Fecha:</label>
+                <input type="text" class="custom-input" disabled [value]="fechaFormateada" />
               </div>
-              <div class="custom-input-group  mb-1" style="width: 40%;">
-                <label class="custom-label">Fecha de Factura:</label>
-                <input type="date" class="custom-input" [max]="FechaMaxEntrega(cabecera.cabPagoFechaFactura)"
-                  [(ngModel)]="cabecera.cabPagoFechaFactura" [appSecureDisable]="estadoSol" />
+              <!--  -->
+              <div class="custom-input-group mb-1 ">
+                <label class="custom-label">Código:</label>
+                <input type="text" class="custom-input" [(ngModel)]="cabecera.cabPagoNumerico" disabled />
               </div>
             </div>
-          </ng-container>
-          <div class="custom-row mb-1">
-            <div class="custom-input-group ">
-              <select name="" class="custom-input" style="background-color: #d6d6d6" [(ngModel)]="tipobusqueda"
-                (ngModelChange)="limpiarCampos()" [appSecureDisable]="estadoSol">
-                <option value="nombre" selected>Proveedor</option>
-                <option value="ruc">Ruc</option>
-              </select>
-              <input [(ngModel)]="cabecera.cabPagoProveedor" *ngIf="tipobusqueda == 'nombre'" type="text"
-                class="custom-input" list="proveedor" (keyup)="searchProveedor(cabecera.cabPagoProveedor)"
-                [appSecureDisable]="estadoSol" />
-              <input [(ngModel)]="cabecera.cabPagoRucProveedor" *ngIf="tipobusqueda == 'ruc'" type="text"
-                class="custom-input" list="proveedor" [appSecureDisable]="estadoSol" />
-              <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'">
-                <ng-container *ngFor="let prov of proveedores">
-                  <option [value]="prov.prov_nombre"></option>
-                </ng-container>
-              </datalist>
-              <button *ngIf="tipobusqueda == 'ruc'" class="btn btn-success"
-                (click)="searchProveedorRuc(cabecera.cabPagoRucProveedor)" [appSecureDisable]="estadoSol">
-                <i class="bi bi-check-lg"></i>
-              </button>
-            </div>
-            <div class="custom-input-group ">
-              <label class="custom-label">
-                <span *ngIf="tipobusqueda == 'nombre'"> RUC:</span>
-                <span *ngIf="tipobusqueda == 'ruc'">Nombre:</span>
-              </label>
-              <input type="text " class="custom-input" *ngIf="tipobusqueda == 'nombre'"
-                [(ngModel)]="cabecera.cabPagoRucProveedor" [appSecureDisable]="estadoSol" />
-              <input type="text " class="custom-input" *ngIf="tipobusqueda == 'ruc'"
-                [(ngModel)]="cabecera.cabPagoProveedor" [appSecureDisable]="estadoSol" />
-            </div>
-          </div>
-
-          <div class="custom-row mb-1">
-            <div class="custom-input-group " style="width: 50%;">
-              <label class="custom-label">Solicitud Asociada:</label>
-              <input type="text" class="custom-input" [value]="cabecera.cabPagoNoSolOC" disabled />
-            </div>
-            <div class="custom-row " style="width: 50%;">
+            <div class="custom-row mb-1">
               <div class="custom-input-group ">
-                <label class="custom-label">Estado:</label>
-                <input type="text" class="custom-input" [value]="estadoTexto" disabled />
-              </div>
-              <div class="custom-input-group  ">
-                <label class="custom-label">Tracking:</label>
-                <ng-container *ngFor="let nvTRK of nivelRut$ | async">
-                  <input *ngIf="nvTRK.nivel === cabecera.cabPagoEstadoTrack" type="text" class="custom-input"
-                    [value]="nvTRK.descRuteo" disabled />
+                <label class="custom-label">Solicitado por*:</label>
+                <ng-container *ngFor="let emPa of empleadoEdi">
+                  <input *ngIf="emPa.empleadoIdNomina == cabecera.cabPagoSolicitante" type="text" class="custom-input"
+                    id="busqueda" list="sugerencias" [value]="emPa.empleadoNombres + ' ' + emPa.empleadoApellidos"
+                    disabled />
                 </ng-container>
               </div>
+              <div class="custom-input-group ">
+                <label class="custom-label">Area:</label>
+                <ng-container *ngFor="let are of areas">
+                  <input *ngIf="are.areaIdNomina == cabecera.cabPagoIdAreaSolicitante" type="text" class="custom-input"
+                    [value]="are.areaDecp" disabled />
+                </ng-container>
+              </div>
+              <!--  -->
             </div>
-          </div>
-          <div class="custom-input-group mb-1" *ngIf="cabecera.cabPagoMotivoDev != 'NOHAYMOTIVO'">
-            <label class="custom-label motivo-dev-label">Motivo de devolución:</label>
-            <input type="text" class="custom-input  motivo-dev" [value]="cabecera.cabPagoMotivoDev" disabled />
-          </div>
-        </div>
-        <div *ngIf="actionEdit == 'documentacion'">
-          <app-sp-documentacion [view]="changeview" [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
-            [estadoSol]="estadoSol"></app-sp-documentacion>
-        </div>
-        <div *ngIf="actionEdit == 'autorizacion'">
-          <div class="anulacion mb-3">
-            <div class="m-2">
-              <h2>Autorización de solicitud</h2>
-              <div class="text-center">
-                <div class="row buttons-ruteo">
+            <!--  -->
+            <div class="custom-row">
+              <div class="custom-input-group  mb-1">
+                <label class="custom-label">Aprobado por:</label>
 
-                  <ng-container *appAuthorize="'56'">
-                    <button *ngIf="estadoSol == lastNivel" class="btn btn-success col m-2" data-toggle="modal"
-                      data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Finalizar</button>
-                    <button *ngIf="estadoSol != lastNivel" class="btn btn-success col m-2" data-toggle="modal"
-                      data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
+                <ng-container *ngIf="cabecera.cabPagoApprovedBy === 'XXXXXX'; else showValue">
+                  <input type="text" class="custom-input" value="Nivel no alcanzado." disabled />
+                </ng-container>
+                <ng-template #showValue>
+                  <ng-container *ngFor="let emp of empleadoEdi">
+                    <input *ngIf="emp.empleadoIdNomina == cabecera.cabPagoApprovedBy" type="text" class="custom-input"
+                      id="busqueda" [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos" disabled />
                   </ng-container>
-                  <button *appAuthorize="'59'" class="btn btn-warning col m-2" data-toggle="modal"
-                    data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>
-                  <button *appAuthorize="'62'" class="btn btn-danger col m-2" data-toggle="modal"
-                    data-target="#anularSolicitud" [appSecureDisable]="estadoSol">Anular</button>
+                </ng-template>
+              </div>
+            </div>
+            <!--  -->
+            <ng-container *ngIf="cabecera.cabPagoType == 'legacy'">
+              <div class="custom-row">
+                <div class="custom-input-group mb-1" style="width: 60%;">
+                  <label class="custom-label">No factura:</label>
+                  <input type="text" class="custom-input" placeholder="Ingrese el numero Factura"
+                    [(ngModel)]="cabecera.cabPagoNumFactura" [appSecureDisable]="estadoSol" />
+                </div>
+                <div class="custom-input-group  mb-1" style="width: 40%;">
+                  <label class="custom-label">Fecha de Factura:</label>
+                  <input type="date" class="custom-input" [max]="FechaMaxEntrega(cabecera.cabPagoFechaFactura)"
+                    [(ngModel)]="cabecera.cabPagoFechaFactura" [appSecureDisable]="estadoSol" />
+                </div>
+              </div>
+            </ng-container>
+            <div class="custom-row mb-1">
+              <div class="custom-input-group ">
+                <select name="" class="custom-input" style="background-color: #d6d6d6" [(ngModel)]="tipobusqueda"
+                  (ngModelChange)="limpiarCampos()" [appSecureDisable]="estadoSol">
+                  <option value="nombre" selected>Proveedor</option>
+                  <option value="ruc">Ruc</option>
+                </select>
+                <input [(ngModel)]="cabecera.cabPagoProveedor" *ngIf="tipobusqueda == 'nombre'" type="text"
+                  class="custom-input" list="proveedor" (keyup)="searchProveedor(cabecera.cabPagoProveedor)"
+                  [appSecureDisable]="estadoSol" />
+                <input [(ngModel)]="cabecera.cabPagoRucProveedor" *ngIf="tipobusqueda == 'ruc'" type="text"
+                  class="custom-input" list="proveedor" [appSecureDisable]="estadoSol" />
+                <datalist id="proveedor" *ngIf="tipobusqueda === 'nombre'">
+                  <ng-container *ngFor="let prov of proveedores">
+                    <option [value]="prov.prov_nombre"></option>
+                  </ng-container>
+                </datalist>
+                <button *ngIf="tipobusqueda == 'ruc'" class="btn btn-success"
+                  (click)="searchProveedorRuc(cabecera.cabPagoRucProveedor)" [appSecureDisable]="estadoSol">
+                  <i class="bi bi-check-lg"></i>
+                </button>
+              </div>
+              <div class="custom-input-group ">
+                <label class="custom-label">
+                  <span *ngIf="tipobusqueda == 'nombre'"> RUC:</span>
+                  <span *ngIf="tipobusqueda == 'ruc'">Nombre:</span>
+                </label>
+                <input type="text " class="custom-input" *ngIf="tipobusqueda == 'nombre'"
+                  [(ngModel)]="cabecera.cabPagoRucProveedor" [appSecureDisable]="estadoSol" />
+                <input type="text " class="custom-input" *ngIf="tipobusqueda == 'ruc'"
+                  [(ngModel)]="cabecera.cabPagoProveedor" [appSecureDisable]="estadoSol" />
+              </div>
+            </div>
+
+            <div class="custom-row mb-1">
+              <div class="custom-input-group " style="width: 50%;">
+                <label class="custom-label">Solicitud Asociada:</label>
+                <input type="text" class="custom-input" [value]="cabecera.cabPagoNoSolOC" disabled />
+              </div>
+              <div class="custom-row " style="width: 50%;">
+                <div class="custom-input-group ">
+                  <label class="custom-label">Estado:</label>
+                  <input type="text" class="custom-input" [value]="estadoTexto" disabled />
+                </div>
+                <div class="custom-input-group  ">
+                  <label class="custom-label">Tracking:</label>
+                  <ng-container *ngFor="let nvTRK of nivelRut$ | async">
+                    <input *ngIf="nvTRK.nivel === cabecera.cabPagoEstadoTrack" type="text" class="custom-input"
+                      [value]="nvTRK.descRuteo" disabled />
+                  </ng-container>
                 </div>
               </div>
             </div>
+            <div class="custom-input-group mb-1" *ngIf="cabecera.cabPagoMotivoDev != 'NOHAYMOTIVO'">
+              <label class="custom-label motivo-dev-label">Motivo de devolución:</label>
+              <input type="text" class="custom-input  motivo-dev" [value]="cabecera.cabPagoMotivoDev" disabled />
+            </div>
           </div>
-          <!-- <app-oc-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+          <div *ngIf="actionEdit == 'documentacion'">
+            <app-sp-documentacion [view]="changeview" [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
+              [estadoSol]="estadoSol"></app-sp-documentacion>
+          </div>
+          <div *ngIf="actionEdit == 'autorizacion' && checkAprovePermission()">
+            <div class="anulacion mb-3">
+              <div class="m-2">
+                <h2>Autorización de solicitud</h2>
+                <div class="text-center">
+                  <div class="row buttons-ruteo">
+
+                    <ng-container *appAuthorize="'56'">
+                      <button *ngIf="estadoSol == lastNivel" class="btn btn-success col m-2" data-toggle="modal"
+                        data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Finalizar</button>
+                      <button *ngIf="estadoSol != lastNivel" class="btn btn-success col m-2" data-toggle="modal"
+                        data-target="#aprobarSolicitud" [appSecureDisable]="estadoSol">Aprobar</button>
+                    </ng-container>
+                    <button *appAuthorize="'59'" class="btn btn-warning col m-2" data-toggle="modal"
+                      data-target="#rechazarSolicitud" [appSecureDisable]="estadoSol">Devolver</button>
+                    <button *appAuthorize="'62'" class="btn btn-danger col m-2" data-toggle="modal"
+                      data-target="#anularSolicitud" [appSecureDisable]="estadoSol">Anular</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- <app-oc-anulacion [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol"
               [estadoSol]="estadoSol"></app-oc-anulacion> -->
-        </div>
-        <div *ngIf="actionEdit == 'destino'">
-          <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"
-            [areaSol]="areaUserCookie" [numericoSol]="numericoSol"></app-sp-destino>
-        </div>
-        <div class="detalle" *ngIf="actionEdit =='edicion'">
-          <ng-container *ngIf="this.cabecera.cabPagoType == 'new'">
-            <table class="table table-striped text-center table-hover">
-              <thead>
-                <tr>
-                  <th scope="col">Orden de compra</th>
-                  <th scope="col">Número de factura</th>
-                  <th scope="col">Fecha de la factura</th>
-                  <th scope="col">Proveedor</th>
-                  <th scope="col">Ruc del proveedor</th>
-                  <th scope="col">Monto total</th>
-                  <th scope="col" *ngIf="estadoSol == '10'"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let fact of facturasList; let i = index">
-                  <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
-                    {{fact.ordCompra}}
-                  </td>
-                  <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
-                    {{fact.numero}}
-                  </td>
-                  <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
-                    {{fact.fecha}}
-                  </td>
-                  <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
-                    {{fact.proveedor}}
-                  </td>
-                  <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura" style="width: 150px">
-                    {{ fact.provRuc }}
-                  </td>
-                  <td class="align-middle cel-prep" (click)="selectFactura(fact)" data-toggle="modal" data-target="#detallesFactura">
-                    {{fact.valorTotal}}
-                  </td>
-                  <td *ngIf="estadoSol == '10'"><a class="text-danger" data-toggle="modal" data-target="#eliminarFacturaEdicion"
-                      (click)="selectFacturaIDEdit(fact)"><i class="bi bi-x-circle"></i></a></td>
-                </tr>
-                <tr *ngIf="estadoSol == '10'">
-                  <td class="align-middle text-end" colspan="7">
-                    <button *ngIf="showNewFactBTN" class="btn btn-primary" data-toggle="modal" data-target="#detallesFactura" (click)="setProveedorFactura()">Agregar nueva factura</button>
-                  </td>
-                </tr>
-  
-              </tbody>
-            </table>
-          </ng-container>
-          <ng-container *ngIf="this.cabecera.cabPagoType == 'legacy'">
+          </div>
+          <div *ngIf="actionEdit == 'autorizacion' && !checkAprovePermission()"
+            style="display:flex;  align-items: center; ">
+            <mat-card style="background-color: rgb(255,0,0,0.5); color: white; margin: 0 auto; ">
+              <mat-card-content>Su usuario no está autorizado para realizar esta transacción</mat-card-content>
+            </mat-card>
+          </div>
 
-            <table class="table table-striped text-center">
-              <thead>
-                <tr>
-                  <th scope="col"></th>
-                  <th scope="col">Item a Cancelar*</th>
-                  <th scope="col">Cantidad contratada</th>
-                  <th scope="col">Cantidad recibida</th>
-                  <th scope="col">Valor unitario</th>
-                  <th scope="col">Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let det of detallePago; let i = index">
-                  <th class="align-middle">{{ i + 1 }}</th>
-                  <td class="align-middle">
-                    <textarea name="descripcion" class="form-control" rows="2" cols="50"
-                      disabled>{{ det.detPagoItemDesc }}</textarea>
-                  </td>
-                  <td class="align-middle">
-                    <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
-                      [(ngModel)]="det.detPagoCantContratada" disabled />
-                  </td>
-                  <td class="align-middle" style="width: 150px">
-                    <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
-                      [(ngModel)]="det.detPagoCantRecibida"/>
-                  </td>
-                  <td class="align-middle cel-prep">
-                    <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
-                      [(ngModel)]="det.detPagoValUnitario" disabled />
-                  </td>
-                  <td class="align-middle">
-                    <input disabled type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
-                      [(ngModel)]="det.detPagoSubtotal" (input)="calculoEditotal()" />
-                  </td>
-                </tr>
-                <tr>
-                  <td class="align-middle text-end" colspan="6">
-                    <button class="btn btn-outline-primary" [appSecureDisable]="estadoSol"
-                      (click)="calculoEditotal()">Calcular total</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="align-middle text-end"></td>
-                  <td class="align-middle text-end"></td>
-                  <td class="align-middle text-end"></td>
-                  <td class="align-middle text-end"></td>
-                  <td class="align-middle text-end">Total</td>
-                  <td class="align-middle text-end">
-                    <input disabled type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
-                      [(ngModel)]="cabecera.cabpagototal" />
-                  </td>
-                </tr>
-              </tbody>
-            </table> 
-          </ng-container>
-        </div>
+          <div *ngIf="actionEdit == 'destino'">
+            <app-sp-destino [tipoSol]="sharedTipoSol" [noSol]="sharedNoSol" [estadoSol]="estadoSol"
+              [areaSol]="areaUserCookie" [numericoSol]="numericoSol"></app-sp-destino>
+          </div>
+          <div class="detalle" *ngIf="actionEdit =='edicion'">
+            <ng-container *ngIf="this.cabecera.cabPagoType == 'new'">
+              <table class="table table-striped text-center table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Orden de compra</th>
+                    <th scope="col">Número de factura</th>
+                    <th scope="col">Fecha de la factura</th>
+                    <th scope="col">Proveedor</th>
+                    <th scope="col">Ruc del proveedor</th>
+                    <th scope="col">Monto total</th>
+                    <th scope="col" *ngIf="estadoSol == '10'"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let fact of facturasList; let i = index">
+                    <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal"
+                      data-target="#detallesFactura">
+                      {{fact.ordCompra}}
+                    </td>
+                    <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal"
+                      data-target="#detallesFactura">
+                      {{fact.numero}}
+                    </td>
+                    <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal"
+                      data-target="#detallesFactura">
+                      {{fact.fecha}}
+                    </td>
+                    <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal"
+                      data-target="#detallesFactura">
+                      {{fact.proveedor}}
+                    </td>
+                    <td class="align-middle" (click)="selectFactura(fact)" data-toggle="modal"
+                      data-target="#detallesFactura" style="width: 150px">
+                      {{ fact.provRuc }}
+                    </td>
+                    <td class="align-middle cel-prep" (click)="selectFactura(fact)" data-toggle="modal"
+                      data-target="#detallesFactura">
+                      {{fact.valorTotal}}
+                    </td>
+                    <td *ngIf="estadoSol == '10'"><a class="text-danger" data-toggle="modal"
+                        data-target="#eliminarFacturaEdicion" (click)="selectFacturaIDEdit(fact)"><i
+                          class="bi bi-x-circle"></i></a></td>
+                  </tr>
+                  <tr *ngIf="estadoSol == '10'">
+                    <td class="align-middle text-end" colspan="7">
+                      <button *ngIf="showNewFactBTN" class="btn btn-primary" data-toggle="modal"
+                        data-target="#detallesFactura" (click)="setProveedorFactura()">Agregar nueva factura</button>
+                    </td>
+                  </tr>
 
-        <div class="foot-cabecera">
+                </tbody>
+              </table>
+            </ng-container>
+            <ng-container *ngIf="this.cabecera.cabPagoType == 'legacy'">
+
+              <table class="table table-striped text-center">
+                <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Item a Cancelar*</th>
+                    <th scope="col">Cantidad contratada</th>
+                    <th scope="col">Cantidad recibida</th>
+                    <th scope="col">Valor unitario</th>
+                    <th scope="col">Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let det of detallePago; let i = index">
+                    <th class="align-middle">{{ i + 1 }}</th>
+                    <td class="align-middle">
+                      <textarea name="descripcion" class="form-control" rows="2" cols="50"
+                        disabled>{{ det.detPagoItemDesc }}</textarea>
+                    </td>
+                    <td class="align-middle">
+                      <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                        [(ngModel)]="det.detPagoCantContratada" disabled />
+                    </td>
+                    <td class="align-middle" style="width: 150px">
+                      <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                        [(ngModel)]="det.detPagoCantRecibida" />
+                    </td>
+                    <td class="align-middle cel-prep">
+                      <input type="number" (input)="validarNumero($event)" min="1" class="form-control text-center"
+                        [(ngModel)]="det.detPagoValUnitario" disabled />
+                    </td>
+                    <td class="align-middle">
+                      <input disabled type="number" (input)="validarNumero($event)" min="1"
+                        class="form-control text-center" [(ngModel)]="det.detPagoSubtotal"
+                        (input)="calculoEditotal()" />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="align-middle text-end" colspan="6">
+                      <button class="btn btn-outline-primary" [appSecureDisable]="estadoSol"
+                        (click)="calculoEditotal()">Calcular total</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="align-middle text-end"></td>
+                    <td class="align-middle text-end"></td>
+                    <td class="align-middle text-end"></td>
+                    <td class="align-middle text-end"></td>
+                    <td class="align-middle text-end">Total</td>
+                    <td class="align-middle text-end">
+                      <input disabled type="number" (input)="validarNumero($event)" min="1"
+                        class="form-control text-center" [(ngModel)]="cabecera.cabpagototal" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-container>
+          </div>
+
+          <div class="foot-cabecera">
+            <div class=" mb-3">
+              <label for="floatingInput" style="color: rgba(0, 0, 0, 0.5);">Materiales y procedimientos a
+                seguir:</label>
+              <textarea style="max-height: 300px;" class="form-control" id="floatingInput" rows="3"
+                [(ngModel)]="cabecera.cabPagoObservaciones" [appSecureDisable]="estadoSol"></textarea>
+            </div>
+            <div class=" mb-3">
+              <label for="floatingInput" style="color: rgba(0, 0, 0, 0.5);">Observaciones:</label>
+              <textarea style="max-height: 300px;" class="form-control" id="floatingInput" rows="3"
+                [(ngModel)]="cabecera.cabPagoAplicarMulta" [appSecureDisable]="estadoSol"></textarea>
+            </div>
+
+            <!-- 
           <div class="form-floating mb-3">
             <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cabecera.cabPagoObservaciones"
               [appSecureDisable]="estadoSol" />
@@ -710,52 +765,53 @@
             <input type="text" class="form-control" id="floatingInput" [(ngModel)]="cabecera.cabPagoAplicarMulta"
               [appSecureDisable]="estadoSol" />
             <label for="floatingInput">Aplicar multa:</label>
-          </div>
-          <div class="input-group mb-3">
-            <label class="input-group-text">Valor a descontar:</label>
-            <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
-              placeholder="Ingrese el valor a descontar" [(ngModel)]="cabecera.cabPagoValorMulta"
-              [appSecureDisable]="estadoSol" />
-            <label class="input-group-text">Pago total*:</label>
-            <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
-            placeholder="Ingrese el valor Total" [(ngModel)]="cabecera.cabPagoValorTotalAut" disabled/>
-          </div>
-          <div class="input-group mb-3">
-            <label class="input-group-text">Recibe*:</label>
-            <input type="text" class="form-control" list="sugerenciasEdit" [(ngModel)]="receptor"
-              (keyup)="searchEmpleado()" [appSecureDisable]="estadoSol" />
-            <datalist id="sugerenciasEdit">
-              <ng-container *ngFor="let emp of empleadoEdi">
-                <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
-              </ng-container>
-            </datalist>
-            <label class="input-group-text">Fecha de Inspeccion*:</label>
-            <input [max]="FechaMaxEntrega(cabecera.cabPagoFechaInspeccion)" class="form-control" type="date"
-              for="fechamaxima" [(ngModel)]="cabecera.cabPagoFechaInspeccion" [appSecureDisable]="estadoSol" />
-          </div>
-          <div class="input-group mb-3">
-            <label class="input-group-text">Cancelación de orden*:</label>
-            <select (change)="setCancelacionOrden(cabecera.cabPagoCancelacionOrden)" class="form-select"
-              [(ngModel)]="cabecera.cabPagoCancelacionOrden" [appSecureDisable]="estadoSol">
-              <option disabled selected value="">Seleccione un opcion....</option>
-              <option value="TTL">TOTAL</option>
-              <option value="PCL">PARCIAL</option>
-            </select>
-          </div>
-          <div class="input-group mb-3" *ngIf="showCancelacion">
-            <label class="input-group-text">Comentarios de orden*:</label>
-            <textarea style="max-height: 200px;" type="text" class="form-control" cols="2"
-              [(ngModel)]="cabecera.cabPagoObservCancelacion" [appSecureDisable]="estadoSol"></textarea>
-          </div>
-          <div class="text-end">
-            <app-sp-pdf></app-sp-pdf>
-            <p class="tip">*Campos obligatorios</p>
+          </div> -->
+
+            <div class="input-group mb-3">
+              <label class="input-group-text">Valor a descontar:</label>
+              <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
+                placeholder="Ingrese el valor a descontar" [(ngModel)]="cabecera.cabPagoValorMulta"
+                [appSecureDisable]="estadoSol" />
+              <label class="input-group-text">Pago total*:</label>
+              <input class="form-control" type="number" (input)="validarNumero($event)" min="1"
+                placeholder="Ingrese el valor Total" [(ngModel)]="cabecera.cabPagoValorTotalAut" disabled />
+            </div>
+            <div class="input-group mb-3">
+              <label class="input-group-text">Recibe*:</label>
+              <input type="text" class="form-control" list="sugerenciasEdit" [(ngModel)]="receptor"
+                (keyup)="searchEmpleado()" [appSecureDisable]="estadoSol" />
+              <datalist id="sugerenciasEdit">
+                <ng-container *ngFor="let emp of empleadoEdi">
+                  <option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos"></option>
+                </ng-container>
+              </datalist>
+              <label class="input-group-text">Fecha de Inspeccion*:</label>
+              <input [max]="FechaMaxEntrega(cabecera.cabPagoFechaInspeccion)" class="form-control" type="date"
+                for="fechamaxima" [(ngModel)]="cabecera.cabPagoFechaInspeccion" [appSecureDisable]="estadoSol" />
+            </div>
+            <div class="input-group mb-3">
+              <label class="input-group-text">Cancelación de orden*:</label>
+              <select (change)="setCancelacionOrden(cabecera.cabPagoCancelacionOrden)" class="form-select"
+                [(ngModel)]="cabecera.cabPagoCancelacionOrden" [appSecureDisable]="estadoSol">
+                <option disabled selected value="">Seleccione un opcion....</option>
+                <option value="TTL">TOTAL</option>
+                <option value="PCL">PARCIAL</option>
+              </select>
+            </div>
+            <div class="input-group mb-3" *ngIf="showCancelacion">
+              <label class="input-group-text">Comentarios de orden*:</label>
+              <textarea style="max-height: 200px;" type="text" class="form-control" cols="2"
+                [(ngModel)]="cabecera.cabPagoObservCancelacion" [appSecureDisable]="estadoSol"></textarea>
+            </div>
+            <div class="text-end">
+              <app-sp-pdf></app-sp-pdf>
+              <p class="tip">*Campos obligatorios</p>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="d-flex row">
-        <div class="col">
-          <!-- <div *ngIf="showmsj" class="alert alert-success" role="alert">
+        <div class="d-flex row">
+          <div class="col">
+            <!-- <div *ngIf="showmsj" class="alert alert-success" role="alert">
             <span
               ><i class="bi bi-check-circle-fill">{{ msjExito }}</i></span
             >
@@ -767,29 +823,30 @@
               ></span
             >
           </div> -->
-        </div>
+          </div>
 
-        <div class="col text-end">
-          <ng-container *ngIf="cabecera.cabPagoEstadoTrack == 10">
+          <div class="col text-end">
+            <ng-container *ngIf="cabecera.cabPagoEstadoTrack == 10">
 
-            <button mat-raised-button class="primary-button m-2" data-toggle="modal" data-target="#guardarEdicion"
-              (click)="saveReceptor()" [appSecureDisable]="estadoSol">
-              Guardar
+              <button mat-raised-button class="primary-button m-2" data-toggle="modal" data-target="#guardarEdicion"
+                (click)="saveReceptor()" [appSecureDisable]="estadoSol">
+                Guardar
+              </button>
+              <button mat-raised-button class="success-button m-2" data-toggle="modal"
+                data-target="#enviarSolicitudGuardada" *appAuthorize="'33'" [appSecureDisable]="estadoSol">
+                Guardar y enviar
+              </button>
+            </ng-container>
+            <button mat-raised-button *ngIf="cabecera.cabPagoEstadoTrack == 10" class="danger-button m-2"
+              data-toggle="modal" data-target="#deleteSolP" [appSecureDisable]="estadoSol">
+              Eliminar solicitud
             </button>
-            <button mat-raised-button class="success-button m-2" data-toggle="modal"
-              data-target="#enviarSolicitudGuardada" *appAuthorize="'33'" [appSecureDisable]="estadoSol">
-              Guardar y enviar
+            <button mat-raised-button class="danger-button m-2" (click)="cancelarEdi()">
+              Cancelar
             </button>
-          </ng-container>
-          <button mat-raised-button *ngIf="cabecera.cabPagoEstadoTrack == 10" class="danger-button m-2"
-            data-toggle="modal" data-target="#deleteSolP" [appSecureDisable]="estadoSol">
-            Eliminar solicitud
-          </button>
-          <button mat-raised-button class="danger-button m-2" (click)="cancelarEdi()">
-            Cancelar
-          </button>
+          </div>
         </div>
-      </div>
+      </ng-container>
     </div>
   </ng-container>
 </div>
@@ -1090,7 +1147,7 @@
             <div class="custom-input-group">
               <label class="custom-label">No. factura:</label>
               <input type="text" class="custom-input" placeholder="Ingrese el número de la factura"
-                [(ngModel)]="factura.numero" (keyup)="updateCabeceraFact()" [readOnly]="estadoSol  != '10'"/>
+                [(ngModel)]="factura.numero" (keyup)="updateCabeceraFact()" [readOnly]="estadoSol  != '10'" />
             </div>
             <div class="custom-input-group">
               <label class="custom-label">Fecha de Factura:</label>
@@ -1113,8 +1170,8 @@
           <div class="custom-row mb-1">
             <div class="custom-input-group">
               <label class="custom-label"> Solicitud Asociada</label>
-              <input [(ngModel)]="valorinputOC" type="text" class="custom-input"
-                placeholder="Ejemplo: OC_000073865" disabled/>
+              <input [(ngModel)]="valorinputOC" type="text" class="custom-input" placeholder="Ejemplo: OC_000073865"
+                disabled />
             </div>
             <div class="custom-input-group">
               <label class="custom-label">Monto total:</label>
@@ -1147,30 +1204,31 @@
                   <td class="align-middle">{{ det.itemProd }}</td>
                   <td class="align-middle">{{ det.descProd }}</td>
                   <td class="align-middle" [ngClass]="{'invalid-det':det.checkC === false}"><input
-                      [readonly]="!showDltFactBTN"
-                      class="det-fact-input" type="number" [(ngModel)]="det.cantidad"
+                      [readonly]="!showDltFactBTN" class="det-fact-input" type="number" [(ngModel)]="det.cantidad"
                       (input)="ValidarcantidadRe($event)" (input)="calculateSubtotalDet(det)" min="0"></td>
                   <td class="align-middle">$<input class="det-fact-input" type="number" [value]="det.valorUnitario"
                       readonly></td>
                   <td class="align-middle">{{ $prefix }}
 
                     <input *ngIf="tipoDescuentoFact == 'x100'" class="det-fact-input" type="number"
-                      [(ngModel)]="det.descuento" (input)="ValidarcantidadRe($event)" [readonly]="!showDltFactBTN" 
+                      [(ngModel)]="det.descuento" (input)="ValidarcantidadRe($event)" [readonly]="!showDltFactBTN"
                       (input)="calculateSubtotalDet(det)" min="0" max="100">
 
                     <input *ngIf="tipoDescuentoFact == 'cash'" class="det-fact-input" type="number"
-                      [(ngModel)]="det.descuento" (input)="validarNumero($event)" [readonly]="!showDltFactBTN" 
+                      [(ngModel)]="det.descuento" (input)="validarNumero($event)" [readonly]="!showDltFactBTN"
                       (input)="calculateSubtotalDet(det)" min="0">
 
                     {{ x100prefix }}
                   </td>
                   <td class="align-middle" [ngClass]="{'invalid-det':det.checkS === false}">$<input
-                    class="det-fact-input" type="number" [value]="det.subTotal" readonly></td>
-                  <td *ngIf="showDltFactBTN"><a class="text-danger" (click)="deleteDetalleFactura(i)"><i class="bi bi-x-circle"></i></a></td>
+                      class="det-fact-input" type="number" [value]="det.subTotal" readonly></td>
+                  <td *ngIf="showDltFactBTN"><a class="text-danger" (click)="deleteDetalleFactura(i)"><i
+                        class="bi bi-x-circle"></i></a></td>
                 </tr>
                 <tr>
                   <td colspan="7" class="text-end">
-                    <button *ngIf="showVerifyTotal" class="btn btn-outline-primary" (click)="verificarMontoFactura()">Verificar monto</button>
+                    <button *ngIf="showVerifyTotal" class="btn btn-outline-primary"
+                      (click)="verificarMontoFactura()">Verificar monto</button>
                   </td>
                 </tr>
 
@@ -1194,7 +1252,7 @@
               Confirmar
             </button>
           </ng-container>
-          <button type="button" class="btn btn-primary"  data-dismiss="modal" (click)="cancelarFactura()">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="cancelarFactura()">
             Salir
           </button>
         </div>

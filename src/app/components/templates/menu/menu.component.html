@@ -38,22 +38,29 @@
   <div class="sidebar" >
     <ul class="nav flex-column">
       <li class="nav-item dropdown" *appAuthorize="'42'">
-        <button mat-stroked-button>Configuración</button>
+        <button mat-stroked-button>Config</button>
         <div class="menu" >
-          <a class="item"  mat-button routerLink="/ruteo" *appAuthorize="'21'">Ruteo</a>
+          <a class="item"  mat-button routerLink="/ruteo" *appAuthorize="'21'">Configurar ruteo</a>
+          <a class="item"  mat-button routerLink="/dim-conf" *appAuthorize="'103'">Configurar dimensiones</a>
           <!-- <a class="dropdown-item" routerLink="/documentos">Documentos</a> -->
         </div>
       </li>
       <li class="nav-item dropdown" *appAuthorize="'43'">
         <button mat-stroked-button>Procesos</button>
-        <div class="menu"  >
+        <div class="menu">
           <a class="item" mat-button (click)="routToCot()" *appAuthorize="'25'">Solicitud de cotizacion</a>
           <a class="item" mat-button (click)="routToOC()" *appAuthorize="'28'">Solicitud de O/C</a>
           <a class="item" mat-button (click)="routToPago()" *appAuthorize="'31'">Solicitud de pago</a>
           <a class="item" mat-button routerLink="/allrequest" *appAuthorize="'34'">Todas las solicitudes</a>
           <a class="item" mat-button routerLink="/solAprob" *appAuthorize="'35'">Consultar solicitudes</a>
-          <a class="item" mat-button routerLink="/reportes" *appAuthorize="'9999'">Reportes</a>
           <!-- <a class="dropdown-item" routerLink="/solNoAprob">Solicitudes no aprobadas</a> -->
+        </div>
+      </li>
+      <li class="nav-item dropdown" *appAuthorize="'100'">
+        <button mat-stroked-button>Consultas</button>
+        <div class="menu"  >
+          <a class="item" mat-button routerLink="/sales-report" *appAuthorize="'101'">Reporte de Egresos</a>
+          <a class="item" mat-button routerLink="/reportes" *appAuthorize="'9999'">Reportes</a>
         </div>
       </li>
       <!-- <li class="nav-item dropdown" *appAuthorize="'44'">

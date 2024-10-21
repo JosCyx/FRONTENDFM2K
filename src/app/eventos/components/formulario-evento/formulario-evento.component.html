@@ -1,7 +1,7 @@
 <app-menu-evento></app-menu-evento>
 <div class="form-container">
 
-  <h2 class="font-weight-bolt ruteo">Ficha de Evento</h2>
+  <h2 class="font-weight-bolt ruteo">Ficha de Proyecto</h2>
 
   <h3 class="font-weight-bold" style="padding-top: 20pt">
     Registrar una nueva ficha
@@ -16,10 +16,8 @@
     </mat-tab>
   </mat-tab-group>
 
-
-
-
   <ng-template #ficha_proyecto>
+
     <div class="project-form">
       <div class="form-row">
         <mat-form-field class="example-full-width">
@@ -30,12 +28,13 @@
       <div class="form-row">
         <mat-form-field class="example-full-width">
           <mat-label>NOMBRE DEL PROYECTO</mat-label>
-          <input matInput placeholder="Escribe el nombre del proyecto" [(ngModel)]="evento.nombreProyecto">
+          <input matInput placeholder="Escribe el nombre del proyecto" [(ngModel)]="evento.nombreProyecto"
+            [appEvDisable]="estadoFicha">
         </mat-form-field>
       </div>
 
 
-      <div class="form-row">
+      <!-- <div class="form-row">
         <mat-form-field class="example-full-width">
           <mat-label>USUARIO SOLICITANTE</mat-label>
           <input type="text" for="solicitante" placeholder="Ingrese el nombre del solicitante"
@@ -49,48 +48,82 @@
 
           </mat-autocomplete>
         </mat-form-field>
+      </div> -->
 
-      </div>
       <div class="dual-container">
+        <!-- <mat-form-field>
+          <mat-label>ÁREA</mat-label>
+          <mat-select [(ngModel)]="evento.area" (ngModelChange)="filterEmployedByArea()">
+            <ng-container *ngFor="let area of areasList">
+              <mat-option [value]="area.areaIdNomina">{{area.areaDecp}}</mat-option>
+            </ng-container>
+          </mat-select>
+        </mat-form-field> -->
+
         <mat-form-field>
-          <mat-label>SECTOR</mat-label>
+          <mat-label>ÁREA</mat-label>
+          <input matInput type="text" for="area" placeholder="Ingrese el área" [appEvDisable]="estadoFicha"
+            [(ngModel)]="nombreArea" (ngModelChange)="filterEmployedByArea()" [matAutocomplete]="area">
+          <mat-autocomplete autoActiveFirstOption #area="matAutocomplete">
+            <ng-container *ngFor="let area of areasList">
+              <mat-option [value]="area.areaDecp">{{area.areaDecp}}</mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label>USUARIO RESPONSABLE</mat-label>
+          <input type="text" for="solicitante" placeholder="Ingrese el nombre del solicitante"
+            [appEvDisable]="estadoFicha" (input)="updateEmpleadosListFiltered($event)" matInput [matAutocomplete]="auto"
+            [(ngModel)]="nombreEmpleado">
+          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+            <ng-container *ngFor="let emp of empleadosListFiltered">
+              <mat-option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos">{{emp.empleadoNombres + " " +
+                emp.empleadoApellidos}}</mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+
+        <mat-form-field>
+          <mat-label>SECTOR DEL PROYECTO</mat-label>
+          <input matInput type="text" for="area" placeholder="Ingrese el área" [appEvDisable]="estadoFicha"
+            [(ngModel)]="nombreSector" [matAutocomplete]="sector">
+          <mat-autocomplete autoActiveFirstOption #sector="matAutocomplete">
+            <ng-container *ngFor="let sect of sectoresList">
+              <mat-option [value]="sect.sectNombre">{{sect.sectNombre}}</mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <!-- <mat-form-field>
+          <mat-label>SECTOR DEL PROYECTO</mat-label>
           <mat-select [(ngModel)]="evento.sector">
             <ng-container *ngFor="let sect of sectoresList">
               <mat-option [value]="sect.sectId">{{sect.sectNombre}}</mat-option>
             </ng-container>
           </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>ÁREA QUE ADMINISTRA</mat-label>
-          <mat-select [(ngModel)]="evento.area">
-            <ng-container *ngFor="let area of areasList">
-              <mat-option [value]="area.areaIdNomina">{{area.areaDecp}}</mat-option>
-            </ng-container>
-          </mat-select>
-        </mat-form-field>
-
+        </mat-form-field> -->
       </div>
       <div class="form-row">
-        <!-- <mat-form-field class="example-full-width">
-          <mat-label>REFERENCIA</mat-label>
-          <input matInput placeholder="Escribe la referencia" id="referencia" name="referencia">
-        </mat-form-field> -->
         <mat-form-field class="example-full-width">
-          <mat-label>REFERENCIA</mat-label>
-          <textarea matInput placeholder="Ingrese la referencia del lugar" rows="3"
+          <mat-label>REFERENCIA DEL SECTOR</mat-label>
+          <textarea matInput placeholder="Ingrese la referencia del lugar" rows="3" [appEvDisable]="estadoFicha"
             [(ngModel)]="evento.referencia"></textarea>
         </mat-form-field>
       </div>
 
       <mat-form-field class="example-full-width">
         <mat-label>OBJETIVO DEL PROYECTO</mat-label>
-        <textarea matInput placeholder="Ingrese el objetivo del proyecto" rows="4"
+        <textarea matInput placeholder="Ingrese el objetivo del proyecto" rows="4" [appEvDisable]="estadoFicha"
           [(ngModel)]="evento.objetivo"></textarea>
       </mat-form-field>
 
       <mat-form-field class="example-full-width">
         <mat-label>ALCANCE DEL PROYECTO</mat-label>
-        <textarea matInput placeholder="Ingrese el alcance del proyecto" rows="4"
+        <textarea matInput placeholder="Ingrese el alcance del proyecto" rows="4" [appEvDisable]="estadoFicha"
           [(ngModel)]="evento.alcance"></textarea>
       </mat-form-field>
 
@@ -102,44 +135,75 @@
         <ng-container *ngFor="let item of riesgosList; let i = index; trackBy: trackByIndex">
           <tr>
             <td>
-              <textarea [(ngModel)]="riesgosList[i].rsg" name="riesgo{{i}}" rows="4"></textarea>
+              <textarea class="riesgo-content" [(ngModel)]="riesgosList[i].rsg" name="riesgo{{i}}" rows="4"
+                [appEvDisable]="estadoFicha"></textarea>
             </td>
             <td>
-              <textarea [(ngModel)]="riesgosList[i].mit" name="mitigacion{{i}}" rows="4"></textarea>
-              <button class="delete-riesgo" (click)="deleteRiesgo(i)"><i class="bi bi-x-lg"></i></button>
+              <textarea class="riesgo-content" [(ngModel)]="riesgosList[i].mit" name="mitigacion{{i}}" rows="4"
+                [appEvDisable]="estadoFicha"></textarea>
+              <button [appEvDisable]="estadoFicha" class="delete-riesgo" (click)="deleteRiesgo(i)"><i
+                  class="bi bi-x-lg"></i></button>
             </td>
           </tr>
         </ng-container>
-        <tr>
-          <td>
-            <textarea [(ngModel)]="riesgoObj.rsg" name="riesgo" (keyup)="listenKey($event)" (keydown.enter)="onEnter($event)" rows="4"></textarea>
-          </td>
-          <td>
-            <textarea [(ngModel)]="riesgoObj.mit" name="mitigacion" (keyup)="listenKey($event)" (keydown.enter)="onEnter($event)"
-              rows="4"></textarea>
-          </td>
-        </tr>
+        <ng-container>
+          <tr>
+            <td>
+              <textarea [(ngModel)]="riesgoObj.rsg" name="riesgo" (keyup)="listenKey($event)"
+                [appEvDisable]="estadoFicha" (keydown.enter)="onEnter($event)" rows="4"></textarea>
+            </td>
+            <td>
+              <textarea [(ngModel)]="riesgoObj.mit" name="mitigacion" (keyup)="listenKey($event)"
+                [appEvDisable]="estadoFicha" (keydown.enter)="onEnter($event)" rows="4"></textarea>
+            </td>
+          </tr>
+        </ng-container>
       </table>
 
       <mat-form-field class="example-full-width">
+        <mat-label>RESTRICCIONES</mat-label>
+        <textarea matInput placeholder="Ingrese el detalle de producto final" rows="4" [appEvDisable]="estadoFicha"
+          [(ngModel)]="evento.restricciones"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
+        <mat-label>INDICACIONES ADICIONALES</mat-label>
+        <textarea matInput placeholder="Ingrese el detalle de producto final" rows="4" [appEvDisable]="estadoFicha"
+          [(ngModel)]="evento.indicAdicionales"></textarea>
+      </mat-form-field>
+
+      <mat-form-field class="example-full-width">
         <mat-label>DETALLE DEL PRODUCTO FINAL</mat-label>
-        <textarea matInput placeholder="Ingrese el detalle de producto final" rows="4"
+        <textarea matInput placeholder="Ingrese el detalle de producto final" rows="4" [appEvDisable]="estadoFicha"
           [(ngModel)]="evento.detalle"></textarea>
       </mat-form-field>
+
+      <div style="display: flex; flex-direction: row; gap: 10px; width: 100%;">
+        <mat-form-field>
+          <mat-label>INVERSIÓN</mat-label>
+          <input matInput type="number" [(ngModel)]="evento.inversion" [appEvDisable]="estadoFicha">
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>INGRESOS</mat-label>
+          <input matInput type="number" [(ngModel)]="evento.ingresos" [appEvDisable]="estadoFicha">
+        </mat-form-field>
+      </div>
 
       <div class="form-row">
         <div style="display: flex; flex-direction: row; gap: 10px; width: 100%;">
           <mat-form-field>
             <mat-label>FECHA DE INICIO</mat-label>
-            <input matInput [matDatepicker]="fechaInicioPicker" [(ngModel)]="evento.fechaInicio">
-            <mat-datepicker-toggle matIconSuffix [for]="fechaInicioPicker"></mat-datepicker-toggle>
+            <input matInput [matDatepicker]="fechaInicioPicker" [(ngModel)]="evento.fechaInicio"
+              [appEvDisable]="estadoFicha">
+            <mat-datepicker-toggle matIconSuffix [for]="fechaInicioPicker"
+              [appEvDisable]="estadoFicha"></mat-datepicker-toggle>
             <mat-datepicker #fechaInicioPicker></mat-datepicker>
           </mat-form-field>
           <mat-form-field>
             <mat-label>HORA DE INICIO</mat-label>
             <input type="text" for="solicitante" placeholder="Ingrese el nombre del solicitante"
-              (input)="updateHorasListFiltered($event, 1)" matInput [matAutocomplete]="autoHoraInicio"
-              [(ngModel)]="evento.horaInicio">
+              [appEvDisable]="estadoFicha" (input)="updateHorasListFiltered($event, 1)" matInput
+              [matAutocomplete]="autoHoraInicio" [(ngModel)]="evento.horaInicio">
             <mat-autocomplete autoActiveFirstOption #autoHoraInicio="matAutocomplete">
               <ng-container *ngFor="let time of timeListFiltered1">
                 <mat-option [value]="time">{{time}}</mat-option>
@@ -159,15 +223,16 @@
         <div style="display: flex; flex-direction: row; gap: 10px; width: 100%;">
           <mat-form-field>
             <mat-label>FECHA DE FIN</mat-label>
-            <input matInput [matDatepicker]="fechaFinPicker" [(ngModel)]="evento.fechaFin">
-            <mat-datepicker-toggle matIconSuffix [for]="fechaFinPicker"></mat-datepicker-toggle>
+            <input matInput [matDatepicker]="fechaFinPicker" [(ngModel)]="evento.fechaFin" [appEvDisable]="estadoFicha">
+            <mat-datepicker-toggle matIconSuffix [for]="fechaFinPicker"
+              [appEvDisable]="estadoFicha"></mat-datepicker-toggle>
             <mat-datepicker #fechaFinPicker></mat-datepicker>
           </mat-form-field>
           <mat-form-field>
             <mat-label>HORA DE FIN</mat-label>
             <input type="text" for="solicitante" placeholder="Ingrese el nombre del solicitante"
-              (input)="updateHorasListFiltered($event, 2)" matInput [matAutocomplete]="autoHoraFin"
-              [(ngModel)]="evento.horaFin">
+              [appEvDisable]="estadoFicha" (input)="updateHorasListFiltered($event, 2)" matInput
+              [matAutocomplete]="autoHoraFin" [(ngModel)]="evento.horaFin">
             <mat-autocomplete autoActiveFirstOption #autoHoraFin="matAutocomplete">
               <ng-container *ngFor="let time of timeListFiltered2">
                 <mat-option [value]="time">{{time}}</mat-option>
@@ -183,6 +248,56 @@
         </div>
       </div>
 
+      <mat-card class="tip-card">
+        <mat-card-header>
+          <mat-card-subtitle>Recomendación</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          Puede subir un mapa, croquis o la localización georeferenciada de la zona donde se realizará el proyecto.
+        </mat-card-content>
+      </mat-card>
+
+      <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Documentación general de la ficha
+            </mat-panel-title>
+            <mat-panel-description>
+              <h5 class="tooltip-custom">Tipos de archivos admitidos: .pdf, .PDF, .doc, .docx, .jpg, .jpeg, .png, .xlsx
+              </h5>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <button type="button" mat-raised-button color="primary" style="margin-bottom: 5px;"
+            [appEvDisable]="estadoFicha" (click)="fileInput.click()"><i class="bi bi-upload"></i></button>
+          <input hidden (change)="onFileSelected($event)" #fileInput type="file"
+            accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xlsx" id="file">
+
+
+          <!-- aqui debe ir un for para iterar toda la documentacion -->
+
+          <div class="documentacion-eto">
+            <ng-container *ngFor="let doc of documentList; let i = index">
+              <ng-container>
+                <mat-card>
+                  <mat-card-content>
+                    <div
+                      style="display: flex; flex-direction: row; justify-content: space-between; align-items: center">
+                      <!-- Mostrar el nombre del documento y un botón de eliminar -->
+                      <div class="card-documento" (click)="openDoc(doc)">
+                        <h4 style="font-weight: bold; margin-bottom: 5px;">{{ doc.name }}</h4>
+                      </div>
+                      <button class="delete-input-eto" (click)="deleteDocument(i, doc, 1)" [appEvDisable]="estadoFicha">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </ng-container>
+            </ng-container>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
     </div>
   </ng-template>
 
@@ -190,33 +305,65 @@
     <!-- Contenido de la ficha ETO si es necesario -->
     <mat-accordion>
       <ng-container *ngFor="let sub of subsistemasList">
-        <mat-expansion-panel>
+        <mat-expansion-panel (click)="ngAfterViewInit()">
           <mat-expansion-panel-header>
-            <mat-panel-title>
-              {{sub.subsNombre}}
+            <mat-panel-title [ngClass]="{'selected-subs': returnCheckSubs(sub.subsId)}">
+              {{ sub.subsNombre }}
+              <!-- <mat-icon *ngIf="returnCheckSubs(sub.subsId)">touch_app</mat-icon>  -->
             </mat-panel-title>
             <mat-panel-description>
-              100%
+              <ng-container *ngIf="sub.percent != '-' && estadoFicha == 3">{{sub.percent}} • {{ sub.percentNew
+                }}</ng-container>
             </mat-panel-description>
           </mat-expansion-panel-header>
 
-          <!-- BLOQUE DE REQUERIMIENTOS INICIALES  -->
+          <!-- BLOQUE DE REQUERIMIENTOS INICIALES -->
           <ng-container *ngIf="requerimientosList.length > 0">
             <mat-list role="list" class="added-eto">
-              <!-- muestra la fecha de los requerimientos por estado -->
-              <label for="fecha" style="font-weight: bold; display: inline;"> {{
-                GlobalEventosService.formatDateToYYYYMMDD(findDateByEstadoReq(sub.subsId, 1)) }} </label>
+              <div>
+                <h5 class="req-title">Requerimientos iniciales</h5>
+              </div>
 
               <!-- recorre la lista de susbsistemas y los lista -->
               <ng-container *ngFor="let req of requerimientosList; let i = index">
                 <!-- muestar unicamente los requerimientos que coincidan con el subsistema seleccioando -->
                 <ng-container *ngIf="req.idSubs == sub.subsId && req.estado == 1">
-                  <div style="display: flex; flex-direction: row; width: 100%;gap: 5px;">
-                    <textarea autoResize class="input-eto" [(ngModel)]="req.req"></textarea>
-                    <textarea *ngIf="req.observ != ''" autoResize class="input-eto" [(ngModel)]="req.observ"></textarea>
-                    <button class="delete-input-eto" (click)="deleteReqEto(i)"><mat-icon>close</mat-icon></button>
-                    <mat-checkbox></mat-checkbox>
-                    <button class="delete-input-eto"><mat-icon>delete</mat-icon></button>
+                  <div class="req-div">
+
+                    <textarea #autoResizeTextarea [ngClass]="{
+                      'textarea-high-p': req.prioridad === 1,
+                      'textarea-low-p': req.prioridad === 2,
+                      'textarea-high-p:focus': req.prioridad === 1,
+                      'textarea-low-p:focus': req.prioridad === 2
+                    }" class="input-eto" [(ngModel)]="req.req" maxlength="750" [appEvDisable]="estadoFicha"></textarea>
+
+                    <textarea #autoResizeTextarea [ngClass]="{
+                      'textarea-high-p': req.prioridad === 1,
+                      'textarea-low-p': req.prioridad === 2,
+                      'textarea-high-p:focus': req.prioridad === 1,
+                      'textarea-low-p:focus': req.prioridad === 2
+                    }" *ngIf="req.observ != ''" class="input-eto" [(ngModel)]="req.observ" maxlength="750"
+                      [appEvDisable]="estadoFicha"></textarea>
+
+                    <ng-container *ngIf="estadoFicha == 1">
+                      <button class="delete-input-eto" (click)="deleteReqEto(i)"><mat-icon>close</mat-icon></button>
+                    </ng-container>
+                    <ng-container *ngIf="estadoFicha == 3">
+                      <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+                        <mat-checkbox color="primary" [disabled]="req.closed" [checked]="req.checked"
+                          (change)="checkSavedReq(req.idReq, $event)"></mat-checkbox>
+                        <button class="delete-input-eto" data-toggle="modal" data-target="#addObservReqDelete"
+                          (click)="selectIdReqTemp(req.idReq)"
+                          [appEvDisable]="estadoFicha"><mat-icon>delete</mat-icon></button>
+                      </div>
+                    </ng-container>
+                  </div>
+                  <!-- muestra la fecha de los requerimientos por estado -->
+                  <div class="req-footer">
+                    <!-- <label for="">Motivo: {{req.motivoNuevo}}</label> -->
+                    <!-- muestra la fecha de los requerimientos por estado -->
+                    <label for="fecha" class="req-date-ind">{{
+                      GlobalEventosService.formatDateToYYYYMMDD(req.fecha) }}</label>
                   </div>
                   <mat-divider></mat-divider>
                 </ng-container>
@@ -227,10 +374,8 @@
           <!-- BLOQUE DE REQUERIMIENTOS NUEVOS -->
           <ng-container *ngIf="requerimientosList.length > 0 && findDateByEstadoReq(sub.subsId, 2) != undefined">
             <mat-list role="list" class="added-eto">
-              <!-- muestra la fecha de los requerimientos por estado -->
-              <div style="display: flex; flex-direction: row; gap: 5px;">
-                <label for="fecha" style="font-weight: bold; display: inline;"> {{
-                  GlobalEventosService.formatDateToYYYYMMDD(findDateByEstadoReq(sub.subsId, 2)) }} </label>
+              <div>
+                <h5 class="req-title">Requerimientos nuevos</h5>
                 <img class="img-icon-eto" src="assets/img/new.webp" alt="imagen de nuevo">
               </div>
 
@@ -238,11 +383,53 @@
               <ng-container *ngFor="let req of requerimientosList; let i = index">
                 <!-- muestar unicamente los requerimientos que coincidan con el subsistema seleccioando -->
                 <ng-container *ngIf="req.idSubs == sub.subsId && req.estado == 2">
-                  <div style="display: flex; flex-direction: row; width: 100%;">
-                    <textarea autoResize class="input-eto" [(ngModel)]="req.req"></textarea>
-                    <textarea *ngIf="req.observ != ''" autoResize class="input-eto" [(ngModel)]="req.observ"></textarea>
-                    <button class="delete-input-eto" (click)="deleteReqEto(i)"><mat-icon>close</mat-icon></button>
+                  <div class="req-div">
+
+                    <!-- requerimiento -->
+                    <textarea #autoResizeTextarea [ngClass]="{
+                      'textarea-high-p': req.prioridad === 1,
+                      'textarea-low-p': req.prioridad === 2,
+                      'textarea-high-p:focus': req.prioridad === 1,
+                      'textarea-low-p:focus': req.prioridad === 2
+                    }" class="input-eto" [(ngModel)]="req.req" maxlength="750" [appEvDisable]="estadoFicha"></textarea>
+
+                    <!-- motivo nuevo requerimiento -->
+                    <!-- <textarea #autoResizeTextarea [ngClass]="{
+                      'textarea-high-p': req.prioridad === 1,
+                      'textarea-low-p': req.prioridad === 2,
+                      'textarea-high-p:focus': req.prioridad === 1,
+                      'textarea-low-p:focus': req.prioridad === 2
+                    }" *ngIf="req.motivoNuevo != ''" class="input-eto" [(ngModel)]="req.motivoNuevo"></textarea> -->
+
+                    <!-- observaciones -->
+                    <textarea #autoResizeTextarea [ngClass]="{
+                      'textarea-high-p': req.prioridad === 1,
+                      'textarea-low-p': req.prioridad === 2,
+                      'textarea-high-p:focus': req.prioridad === 1,
+                      'textarea-low-p:focus': req.prioridad === 2
+                    }" *ngIf="req.observ != ''" class="input-eto" [(ngModel)]="req.observ" maxlength="750"
+                      [appEvDisable]="estadoFicha"></textarea>
+
+                    <ng-container *ngIf="estadoFicha == 1">
+                      <button class="delete-input-eto" (click)="deleteReqEto(i)"><mat-icon>close</mat-icon></button>
+                    </ng-container>
+                    <ng-container *ngIf="estadoFicha == 3">
+                      <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+                        <mat-checkbox color="primary" [disabled]="req.closed" [checked]="req.checked"
+                          (change)="checkSavedReq(req.idReq, $event)"></mat-checkbox>
+                        <button class="delete-input-eto" data-toggle="modal" data-target="#addObservReqDelete"
+                          (click)="selectIdReqTemp(req.idReq)"
+                          [appEvDisable]="estadoFicha"><mat-icon>delete</mat-icon></button>
+                      </div>
+                    </ng-container>
                   </div>
+                  <div class="req-footer">
+                    <label for="">Motivo: {{req.motivoNuevo}}</label>
+                    <!-- muestra la fecha de los requerimientos por estado -->
+                    <label for="fecha" class="req-date-ind">{{
+                      GlobalEventosService.formatDateToYYYYMMDD(req.fecha) }}</label>
+                  </div>
+                  <mat-divider></mat-divider>
                 </ng-container>
               </ng-container>
             </mat-list>
@@ -251,22 +438,42 @@
           <!-- BLOQUE DE REQUERIMIENTOS ELIMINADOS -->
           <ng-container *ngIf="requerimientosList.length > 0 && findDateByEstadoReq(sub.subsId, 3) != undefined">
             <mat-list role="list" class="added-eto">
-              <!-- muestra la fecha de los requerimientos por estado -->
-              <div style="display: flex; flex-direction: row; gap: 5px;">
-                <label for="fecha" style="font-weight: bold; display: inline;"> {{
-                  GlobalEventosService.formatDateToYYYYMMDD(findDateByEstadoReq(sub.subsId, 3)) }} </label>
-                <img class="img-icon-eto" src="assets/img/new.webp" alt="imagen de nuevo">
-              </div>
 
+              <div>
+                <h5 class="req-title">Requerimientos eliminados </h5>
+                <img class="img-icon-eto" src="assets/img/forbidden.webp" alt="imagen de nuevo">
+              </div>
               <!-- recorre la lista de susbsistemas y los lista -->
               <ng-container *ngFor="let req of requerimientosList; let i = index">
                 <!-- muestar unicamente los requerimientos que coincidan con el subsistema seleccioando -->
                 <ng-container *ngIf="req.idSubs == sub.subsId && req.estado == 3">
-                  <div style="display: flex; flex-direction: row; width: 100%;">
-                    <textarea autoResize class="input-eto" [(ngModel)]="req.req"></textarea>
-                    <textarea *ngIf="req.observ != ''" autoResize class="input-eto" [(ngModel)]="req.observ"></textarea>
+                  <div class="req-div">
+
+                    <!-- requerimiento -->
+                    <textarea #autoResizeTextarea [ngClass]="{
+                      'textarea-high-p': req.prioridad === 1,
+                      'textarea-low-p': req.prioridad === 2,
+                      'textarea-high-p:focus': req.prioridad === 1,
+                      'textarea-low-p:focus': req.prioridad === 2
+                    }" class="input-eto" [(ngModel)]="req.req" readonly></textarea>
+
+                    <!-- obervaciones -->
+                    <textarea #autoResizeTextarea [ngClass]="{
+                      'textarea-high-p': req.prioridad === 1,
+                      'textarea-low-p': req.prioridad === 2,
+                      'textarea-high-p:focus': req.prioridad === 1,
+                      'textarea-low-p:focus': req.prioridad === 2
+                    }" *ngIf="req.observ != ''" class="input-eto" [(ngModel)]="req.observ" readonly></textarea>
+
                     <!-- <button class="delete-input-eto" (click)="deleteReqEto(i)"><mat-icon>close</mat-icon></button> -->
                   </div>
+                  <div class="req-footer">
+                    <!-- <label for="">Motivo: {{req.motivoNuevo}}</label> -->
+                    <!-- muestra la fecha de los requerimientos por estado -->
+                    <label for="fecha" class="req-date-ind">{{
+                      GlobalEventosService.formatDateToYYYYMMDD(req.fecha) }}</label>
+                  </div>
+                  <mat-divider></mat-divider>
                 </ng-container>
               </ng-container>
             </mat-list>
@@ -275,38 +482,56 @@
 
           <!-- BLOQUE DE REGISTRO DEL NUEVO REQUERIMIENTO -->
           <div class="textarea-container">
-            <textarea class="textarea-eto" placeholder="Ingrese su requerimiento"
+            <div class="button-toggle-p">
+              <button style="border-radius: 5px 0px 0px 5px;" (click)="setReqPrioridad(1)"
+                [ngClass]="{'button-focus': reqPrioridad == 1}"><i class="bi bi-bookmark-fill"
+                  style="color: #ff0000;"></i> Prioridad alta</button>
+              <button style="border-radius: 0px 5px 5px 0px;" (click)="setReqPrioridad(2)"
+                [ngClass]="{'button-focus': reqPrioridad == 2}"><i class="bi bi-bookmark-fill"
+                  style="color: #ffbb00;"></i> Prioridad baja</button>
+            </div>
+            <textarea class="textarea-eto" placeholder="Ingrese su requerimiento" [appEvDisable]="estadoFicha"
               [(ngModel)]="requerimiento.req"></textarea>
+            <ng-container *ngIf="estadoFicha == 3">
+              <textarea class="textarea-eto" placeholder="Ingrese un motivo para su nuevo requerimiento"
+                [(ngModel)]="requerimiento.motivoNuevo" [appEvDisable]="estadoFicha"></textarea>
+            </ng-container>
           </div>
-          <div class="textarea-container">
-            <textarea class="textarea-eto" placeholder="Ingrese una observación"
-              [(ngModel)]="requerimiento.observ"></textarea>
+          <div class="div-buttons">
+            <button mat-raised-button color="warn" (click)="clearReq()" [appEvDisable]="estadoFicha">Cancelar</button>
+            <button mat-raised-button color="primary" (click)="addRequerimiento(sub.subsId)"
+              [appEvDisable]="estadoFicha">Agregar</button>
           </div>
+
           <!-- <div class="element-eto">
-            
             <div class="textarea-container">
               <textarea class="textarea-eto" placeholder="Ingrese una observación" [(ngModel)]="requerimiento.obop"></textarea>
             </div>
           </div> -->
+
 
           <!-- BLOQUE DE DOCUMENTACION -->
           <mat-accordion>
             <mat-expansion-panel>
               <mat-expansion-panel-header>
                 <mat-panel-title>
-                  Documentación
+                  Documentación de requerimientos
                 </mat-panel-title>
+                <mat-panel-description>
+                  <h5 class="tooltip-custom">Tipos de archivos admitidos: .pdf, .PDF, .doc, .docx, .jpg, .jpeg, .png,
+                    .xlsx</h5>
+                </mat-panel-description>
               </mat-expansion-panel-header>
               <button type="button" mat-raised-button color="primary" style="margin-bottom: 5px;"
-                (click)="fileInput.click()"><i class="bi bi-upload"></i></button>
-              <input hidden (change)="onFileSelected($event, sub.subsId)" #fileInput type="file"
+                [appEvDisable]="estadoFicha" (click)="fileReqInput.click()"><i class="bi bi-upload"></i></button>
+              <input hidden (change)="onFileSelectedReq($event, sub.subsId)" #fileReqInput type="file"
                 accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xlsx" id="file">
 
 
               <!-- aqui debe ir un for para iterar toda la documentacion -->
 
               <div class="documentacion-eto">
-                <ng-container *ngFor="let doc of documentList; let i = index">
+                <ng-container *ngFor="let doc of documentListReq; let i = index">
                   <ng-container *ngIf="doc.idSubs == sub.subsId">
                     <mat-card>
                       <mat-card-content>
@@ -317,7 +542,8 @@
                             <h4 style="font-weight: bold; margin-bottom: 5px;">{{ doc.name }}</h4>
                             <h5 style="margin-bottom: 0px;">{{ doc.uploadedBy }}</h5>
                           </div>
-                          <button class="delete-input-eto" (click)="deleteDocument(i)">
+                          <button class="delete-input-eto" (click)="deleteDocument(i, doc, 2)"
+                            [appEvDisable]="estadoFicha">
                             <mat-icon>delete</mat-icon>
                           </button>
                         </div>
@@ -329,20 +555,121 @@
             </mat-expansion-panel>
           </mat-accordion>
 
-          <mat-action-row>
-            <button mat-button color="warn" (click)="clearReq()">Cancelar</button>
-            <button mat-button color="primary" (click)="addRequerimiento(sub.subsId)">Agregar</button>
-          </mat-action-row>
+          <!-- <mat-action-row *ngIf="estadoFicha == 3">
+
+            <button mat-stroked-button color="primary" (click)="finallyReqs()">Finalizar requerimientos</button>
+
+
+          </mat-action-row> -->
         </mat-expansion-panel>
       </ng-container>
     </mat-accordion>
   </ng-template>
 
   <div class="form-buttons">
-    <button mat-stroked-button type="button" class="delete-button">Eliminar</button>
-    <button mat-stroked-button type="button" class="cancel-button">Cancelar</button>
-    <button mat-stroked-button type="button" class="save-button">Guardar</button>
-    <button mat-stroked-button type="submit" class="submit-button" (click)="saveFicha()">Enviar</button>
+    <button *ngIf="estadoFicha == 1 || estadoFicha == 3" mat-raised-button [matMenuTriggerFor]="menu">Más
+      opciones</button>
+    <mat-menu #menu="matMenu">
+      <ng-container *ngIf="estadoFicha == 3">
+        <button [appEvDisable]="estadoFicha" mat-menu-item data-toggle="modal" data-target="#addJustificacionStop"><span
+            style="font-weight: 500; color: rgb(255, 100, 0) !important;">Pausar proyecto</span></button>
+        <button [appEvDisable]="estadoFicha" mat-menu-item data-toggle="modal" data-target="#addJustificacionNull"><span
+            style="font-weight: 500;  color: rgb(255, 0, 0) !important;">Cancelar proyecto</span></button>
+        <button [appEvDisable]="estadoFicha" mat-menu-item (click)="finallyFicha()"><span
+            style="font-weight: 500;  color: rgb(0, 200, 0) !important;">Finalizar proyecto</span></button>
+      </ng-container>
+      <button *ngIf="estadoFicha == 1" [appEvDisable]="estadoFicha" (click)="deleteFicha()" mat-menu-item><span
+          style="font-weight: 500; color: rgb(255, 0, 0) !important;">Eliminar ficha</span></button>
+    </mat-menu>
+    <ng-container *ngIf="estadoFicha <= 2">
+      <button *ngIf="estadoFicha == 1" [appEvDisable]="estadoFicha" mat-raised-button color="primary" (click)="saveFicha(false)">Guardar</button>
+      <button [appEvDisable]="estadoFicha" 
+      mat-stroked-button class="send-button" (click)="saveFicha(true)">Enviar</button>
+    </ng-container>
   </div>
 
+</div>
+
+<div class="modal fade" #exampleModal id="addObservReqDelete" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          Por favor ingrese la observación de justificación
+        </h3>
+      </div>
+      <div class="modal-body">
+        <mat-form-field class="example-full-width">
+          <mat-label>Observación</mat-label>
+          <textarea matInput rows="4" cols="10" [(ngModel)]="GlobalEventosService.observContent"
+            maxlength="750"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="modal-footer">
+        <button mat-raised-button color="warn" data-dismiss="modal" (click)="clearReqObserv()">
+          Cancelar
+        </button>
+        <button mat-raised-button color="primary" data-dismiss="modal" (click)="deleteSavedReq()">
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" #exampleModal id="addJustificacionStop" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          Por favor ingrese una justificación para continuar
+        </h3>
+      </div>
+      <div class="modal-body">
+        <mat-form-field class="example-full-width">
+          <mat-label>Justificación</mat-label>
+          <textarea matInput rows="4" cols="10" [(ngModel)]="GlobalEventosService.observContent"
+            maxlength="750"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="modal-footer">
+        <button mat-raised-button color="warn" data-dismiss="modal" (click)="clearReqObserv()">
+          Cancelar
+        </button>
+        <button mat-raised-button color="primary" data-dismiss="modal" (click)="stopEvent()">
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" #exampleModal id="addJustificacionNull" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <h3 class="font-weight-bold" id="exampleModalLabel">
+          Por favor ingrese una justificación para continuar
+        </h3>
+      </div>
+      <div class="modal-body">
+        <mat-form-field class="example-full-width">
+          <mat-label>Justificación</mat-label>
+          <textarea matInput rows="4" cols="10" [(ngModel)]="GlobalEventosService.observContent"
+            maxlength="750"></textarea>
+        </mat-form-field>
+      </div>
+      <div class="modal-footer">
+        <button mat-raised-button color="warn" data-dismiss="modal" (click)="clearReqObserv()">
+          Cancelar
+        </button>
+        <button mat-raised-button color="primary" data-dismiss="modal" (click)="nullEvent()">
+          Confirmar
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

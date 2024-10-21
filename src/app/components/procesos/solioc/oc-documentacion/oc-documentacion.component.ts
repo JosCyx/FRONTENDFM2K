@@ -130,48 +130,63 @@ export class OCDocumentacionComponent implements OnInit, OnDestroy {
     return new Promise<{ url: string, icono: string }>((resolve, reject) => {
       this.uploadfile.viewFile(ruta).subscribe({
         next:(blob) => {
-          if(nombre == 'pdf'){
+          if (nombre == 'pdf') {
             const file = new Blob([blob], { type: 'application/pdf' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/pdf.webp';
-          //console.log('URL del documento: ', urlfile);
-          resolve({url: urlfile, icono: img});
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/pdf.webp';
+            //console.log('URL del documento: ', urlfile);
+            resolve({ url: urlfile, icono: img });
           } else if (nombre == 'PDF') {
             const file = new Blob([blob], { type: 'application/pdf' });
             const urlfile = URL.createObjectURL(file);
             const img = 'assets/img/pdf.webp';
             //console.log('URL del documento: ', urlfile);
             resolve({ url: urlfile, icono: img });
-          } else if(nombre == 'png'){
+          } else if (nombre == 'png') {
             const file = new Blob([blob], { type: 'image/png' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/image.webp';
-          resolve({url: urlfile, icono: img});
-          }else if(nombre == 'jpg'){
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'PNG') {
+            const file = new Blob([blob], { type: 'image/png' });
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'jpg') {
             const file = new Blob([blob], { type: 'image/jpg' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/image.webp';
-          resolve({url: urlfile, icono: img});
-          }else if(nombre == 'jpeg'){
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'JPG') {
+            const file = new Blob([blob], { type: 'image/jpg' });
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'jpeg') {
             const file = new Blob([blob], { type: 'image/jpeg' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/image.webp';
-          resolve({url: urlfile, icono: img});
-          } else if(nombre == 'xlsx'){
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'JPEG') {
+            const file = new Blob([blob], { type: 'image/jpeg' });
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'xlsx') {
             const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/excel.webp';
-          resolve({url: urlfile, icono: img});
-          } else if(nombre == 'docx'){
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/excel.webp';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'docx') {
             const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/docx.webp';
-          resolve({url: urlfile, icono: img});
-          } else if(nombre == 'doc'){
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/docx.webp';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'doc') {
             const file = new Blob([blob], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-          const urlfile = URL.createObjectURL(file);
-          const img = 'assets/img/doc.webp';
-          resolve({url: urlfile, icono: img});
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/doc.webp';
+            resolve({ url: urlfile, icono: img });
           }
         },
         error:(error) => {

@@ -258,7 +258,14 @@ a:hover {
   z-index: 1500 !important;
 }
 
-/*modificar valor de variable --mdc-circular-progress-active-indicator-color*/
+/*modificar valor de variable --mdc-circular-progress-active-indicator-color
 .mat-mdc-progress-spinner .mdc-circular-progress__indeterminate-circle-graphic {
   stroke: white !important;
+}*/
+
+.custom-spinner{
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  margin-top: 150px;
 }

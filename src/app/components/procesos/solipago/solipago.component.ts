@@ -204,6 +204,8 @@ export class SolipagoComponent implements OnInit, OnDestroy {
   //almacena los detalles de una factura que se registra en el momento sin modificaciones
   detalleFactDefault: DetalleFactura[] = [];
 
+  areaUserCookieId: number = 0;
+
   constructor(
     private empService: EmpleadosService,
     private areaService: AreasService,
@@ -214,7 +216,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     private detSolService: DetCotOCService,
     private router: Router,
     private provService: ProveedorService,
-    private serviceGlobal: GlobalService,
+    public serviceGlobal: GlobalService,
     private cookieService: CookieService,
     private ruteoService: RuteoAreaService,
     private sendMailService: SendEmailService,
@@ -224,7 +226,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
     private facturasService: FacturasPagoService,
     private solTimeService: SolTimeService
   ) {
-
+    this.areaUserCookieId = this.cookieService.get('userArea') ? parseInt(this.cookieService.get('userArea')) : 0;
     /*//se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobarsp$.subscribe(() => {
       //console.log("Aprobando solicitud...");
@@ -623,7 +625,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
     //enviar datos de cabecera a la API
     console.log('2. guardando solicitud...', dataCAB);
-    await this.cabPagoService.addSolPag(dataCAB).subscribe(
+    await this.cabPagoService.addSolPag(dataCAB, this.cookieService.get('userIdNomina'), 'Envío').subscribe(
       (response) => {
         /*const msjExito = 'Solicitud de Pago Generada Exitosamente.';
         this.callMensaje(msjExito, true);*/
@@ -632,14 +634,14 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         
         this.saveOCValues();
 
-        this.solTimeService.saveSolTime(
+        /*this.solTimeService.saveSolTime(
           this.trTipoSolicitud,
           this.trLastNoSol,
           this.cookieService.get('userIdNomina'),
           this.cookieService.get('userName'),
           this.trNivelEmision,
           'Envío'
-        );
+        );*/
 
         //controlar que este mensaje solo se muestre si todas las facturas se guardaron exitosamente con todos sus detalles
         if (this.correctSave) {
@@ -845,6 +847,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
 
     await this.getSoliPagos();
     await this.saveData();
+    this.serviceGlobal.loadingSolicitud = true;
   }
   //* Obtener los datos de cabecera de solicitud y detalle
   async getSoliPagos() {
@@ -1393,7 +1396,7 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       this.savePagoEdit();
       setTimeout(() => {
         this.enviarSolicitud();
-      }, 500);
+      }, 800);
       //this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
@@ -1499,21 +1502,21 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);
           this.cabPagoService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'F').subscribe(
             (response) => {
-              this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
+              this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0, this.cookieService.get('userIdNomina'), 'Finalizado').subscribe(
                 (response) => {
 
                   this.showmsj = true;
                   const msjExito = `La solicitud ha sido enviada exitosamente.`;
                   this.callMensaje(msjExito, true);
 
-                  this.solTimeService.saveSolTime(
+                  /*this.solTimeService.saveSolTime(
                     this.trTipoSolicitud,
                     this.noSolTmp,
                     this.cookieService.get('userIdNomina'),
                     this.cookieService.get('userName'),
                     0,
                     'Finalizado'
-                  );
+                  );*/
 
                   setTimeout(() => {
                     this.clear();
@@ -1561,18 +1564,18 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         //hace la peticion a la API para cambiar el estado de la solicitud
         //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);
         setTimeout(() => {
-          this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+          this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado, this.cookieService.get('userIdNomina'), 'Envío').subscribe(
             (response) => {
               console.log("Solicitud enviada");
 
-              this.solTimeService.saveSolTime(
+              /*this.solTimeService.saveSolTime(
                 this.trTipoSolicitud,
                 this.noSolTmp,
                 this.cookieService.get('userIdNomina'),
                 this.cookieService.get('userName'),
                 newEstado,
                 'Envío'
-              );
+              );*/
 
 
               const msjExito = `La solicitud ha sido enviada exitosamente.`;
@@ -1674,18 +1677,18 @@ export class SolipagoComponent implements OnInit, OnDestroy {
         }
       );
 
-      this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 9999).subscribe(
+      this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 9999, this.cookieService.get('userIdNomina'), 'Anulación').subscribe(
         (response) => {
           //console.log('Estado de tracknig actualizado exitosamente');
 
-          this.solTimeService.saveSolTime(
+          /*this.solTimeService.saveSolTime(
             this.trTipoSolicitud,
             this.noSolTmp,
             this.cookieService.get('userIdNomina'),
             this.cookieService.get('userName'),
             9999,
             'Anulación'
-          );
+          );*/
 
           exitotrk = true;
         },
@@ -1753,20 +1756,20 @@ export class SolipagoComponent implements OnInit, OnDestroy {
                 }
               );
 
-              this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+              this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado, this.cookieService.get('userIdNomina'), 'Devolución').subscribe(
                 (response) => {
                   //console.log('Estado de tracknig actualizado exitosamente');
                   const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel anterior.`;
                   this.callMensaje(msjExito, true)
 
-                  this.solTimeService.saveSolTime(
+                  /*this.solTimeService.saveSolTime(
                     this.trTipoSolicitud,
                     this.noSolTmp,
                     this.cookieService.get('userIdNomina'),
                     this.cookieService.get('userName'),
                     newEstado,
                     'Devolución'
-                  );
+                  );*/
 
                   if (newEstado == 10) {
                     //extraer el contenido del email correspondiente
@@ -1799,18 +1802,18 @@ export class SolipagoComponent implements OnInit, OnDestroy {
           }
         } else {
           //regresar la solicitud al nivel 10 y notificar a todos los niveles anteriores
-          this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10).subscribe(
+          this.cabPagoService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10, this.cookieService.get('userIdNomina'), 'Devolución').subscribe(
             (response) => {
               //console.log('Estado de tracknig actualizado exitosamente');
 
-              this.solTimeService.saveSolTime(
+              /*this.solTimeService.saveSolTime(
                 this.trTipoSolicitud,
                 this.noSolTmp,
                 this.cookieService.get('userIdNomina'),
                 this.cookieService.get('userName'),
                 10,
                 'Devolución'
-              );
+              );*/
 
               const msjExito = `La solicitud N° ${this.cabecera.cabPagoNumerico} ha sido devuelta al nivel inicial.`;
               this.callMensaje(msjExito, true)
@@ -2656,6 +2659,19 @@ export class SolipagoComponent implements OnInit, OnDestroy {
       this.facturasList[index].numero = this.factura.numero;
       //console.log("numero de factura actualizada: ", this.facturasList[index].numero);
       //this.facturasList[index].fecha = this.factura.fecha;
+    }
+  }
+
+   //verifica si el usuario esta habilitado para autorizar las solicitudes segun su maximo nivel de rol
+   checkAprovePermission(): boolean{
+    const maxRolNivel = this.cookieService.get('userRolNiveles').split(',').map(Number).reduce((a, b) => Math.max(a, b));
+
+    if(maxRolNivel >= 50){
+      return true
+    } else if (this.areaSolTmp == this.areaUserCookieId){
+      return true
+    } else {
+      return false
     }
   }
 }

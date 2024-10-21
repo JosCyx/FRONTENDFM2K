@@ -30,6 +30,9 @@ import { CotAnulacionComponent } from './cot-anulacion/cot-anulacion.component';
 import { SharedService } from 'src/app/services/shared.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { SolTimeService } from 'src/app/services/comunicationAPI/solicitudes/sol-time.service';
+import { DimensionesService } from 'src/app/services/dimensiones.service';
+import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { xor } from 'lodash';
 
 interface RuteoArea {
   rutareaNivel: number;
@@ -138,6 +141,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   inspectoresEdit: any[] = [];
   areas: any[] = [];
   presupuestos: any[] = [];
+  presupuestosFiltered: any[] = [];
   //sectores: any[] = [];
   inspectores: any[] = [];
   //nivGerencias: any[] = [];
@@ -165,7 +169,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   @Input() sharedDetalle: any[] = [];
 
 
+
   areaUserCookie: string = '';
+  areaUserCookieId: number = 0;
 
   setMotivo: string = 'NO';
   //Variables para validacion de fecha 
@@ -184,6 +190,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
   isSaved: boolean = false;
 
+  //almacenar si una solicitud es de la nueva version con dimensiones
+  isDim: boolean = false;
+
+  checkedToggle: boolean = false;
+  cabSolSinPresupuesto: number = 0;
+
   constructor(private router: Router,
     private empService: EmpleadosService,
     private sectService: SectoresService,
@@ -193,7 +205,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     private cabCotService: CabCotizacionService,
     private detCotService: DetCotOCService,
     private itmSectService: ItemSectorService,
-    private serviceGlobal: GlobalService,
+    public serviceGlobal: GlobalService,
     private cookieService: CookieService,
     private ruteoService: RuteoAreaService,
     private prespService: PresupuestoService,
@@ -201,7 +213,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     private sendMailService: SendEmailService,
     private sharedService: SharedService,
     private dialogService: DialogServiceService,
-    private solTimeService: SolTimeService) {
+    private solTimeService: SolTimeService,
+    private dimService: DimensionesService) {
+    this.areaUserCookieId = this.cookieService.get('userArea') ? parseInt(this.cookieService.get('userArea')) : 0;
     /*  
     //se suscribe al observable de aprobacion y ejecuta el metodo enviarSolicitud
     this.sharedService.aprobar$.subscribe(() => {
@@ -222,6 +236,31 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     });*/
   }
 
+  changeToggleButton(event: MatSlideToggleChange) {
+    this.checkedToggle = event.checked;
+
+    if (this.checkedToggle) {
+      this.cabSolSinPresupuesto = 1;
+    } else {
+      this.cabSolSinPresupuesto = 0;
+    }
+
+    this.cabCotService.updateSinPresupuesto(1, this.cabecera.cabSolCotNoSolicitud, this.cabSolSinPresupuesto).subscribe(
+      response => {
+        //console.log('Sin presupuesto actualizado.');
+        this.callMensaje('Se ha modificado el indicador correctamente.', true);
+      },
+      error => {
+        //console.log('Error al actualizar el estado de sin presupuesto: ', error);
+        this.callMensaje('Ha habido un error al actualizar el estado de sin presupuesto, por favor intente de nuevo.', false);
+      }
+    );
+    //console.log('Toggle:', this.checkedToggle, this.cabSolSinPresupuesto);
+  }
+
+  metodo() {
+    console.log(this.serviceGlobal.solDimensiones)
+  }
 
   validarNumero(event: Event): void {
     const patron: RegExp = /^[0-9]+$/;
@@ -268,6 +307,10 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
       this.prespService.getPresupuestos().subscribe((data: any) => {
         this.presupuestos = data;
+        this.presupuestosFiltered = data.filter((x: any) => x.prespEstado === 1);
+
+        console.log("Presupuestos:", this.presupuestos);
+        console.log("Presupuestos filtrados:", this.presupuestosFiltered);
       });
 
     }, 100)
@@ -295,6 +338,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       this.deleteLastTracking();
     }
     window.removeEventListener('beforeunload', this.beforeUnloadHandler);
+
+    this.serviceGlobal.clearSolDimensiones();
   }
 
   callMensaje(mensaje: string, type: boolean) {
@@ -472,9 +517,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }
 
   getSolName(noSol: number) {
-    console.log("numero de solicitud:",noSol);
+    console.log("numero de solicitud:", noSol);
     const noSolString = noSol.toString();
-    console.log("numero de solicitud string:",noSolString);
+    console.log("numero de solicitud string:", noSolString);
     const paddedNoSol = noSolString.padStart(6, '0');
     this.solNumerico = `COT ${this.areaNmco} ${this.trTipoSolicitud}-${paddedNoSol}`;
   }
@@ -554,65 +599,76 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
   //guarda la solicitud con estado emitido
   async generarSolicitud() {
-    this.isSaved = true;//controla que la solicitud se haya guardado
-    this.getSolName(this.trLastNoSol);
-    this.numeroSolicitudEmail = this.solNumerico;
-    this.tipoSolicitudEmail = 'Cotización';
+    try {
 
-    const dataCAB = {
-      cabSolCotTipoSolicitud: this.trTipoSolicitud,
-      cabSolCotIdArea: this.cab_id_area,
-      cabSolCotIdDept: this.cab_id_dpto,
-      cabSolCotNoSolicitud: this.trLastNoSol,
-      cabSolCotSolicitante: this.trIdNomEmp,
-      cabSolCotFecha: this.cab_fecha,
-      cabSolCotAsunto: this.cab_asunto,
-      cabSolCotProcedimiento: this.cab_proc,
-      cabSolCotObervaciones: this.cab_obsrv,
-      cabSolCotAdjCot: this.cab_adjCot,
-      cabSolCotNumCotizacion: this.cab_ncot,
-      cabSolCotEstado: this.cab_estado,
-      cabSolCotEstadoTracking: this.trNivelEmision,
-      cabSolCotPlazoEntrega: this.cab_plazo,
-      cabSolCotFechaMaxentrega: this.cab_fechaMax,
-      cabSolCotInspector: this.cab_inspector,
-      cabSolCotTelefInspector: this.cab_telef_insp,
-      cabSolCotNumerico: this.solNumerico,
-      cabSolCotIdEmisor: this.cookieService.get('userIdNomina'),
-      cabSolCotApprovedBy: 'XXXXXX',
-      cabSolCotFinancieroBy: 'XXXXXX',
-      cabSolCotAprobPresup: 'SI',
-      cabSolCotMtovioDev: 'NOHAYMOTIVO',
-      cabSolCotValido: 1
-    }
+      const ifProyecto = this.isProyectoChecked ? 1 : 0;
 
+      this.isSaved = true;//controla que la solicitud se haya guardado
+      this.getSolName(this.trLastNoSol);
+      this.numeroSolicitudEmail = this.solNumerico;
+      this.tipoSolicitudEmail = 'Cotización';
 
-    //enviar datos de cabecera a la API
-    await this.cabCotService.addSolCot(dataCAB).subscribe(
-      response => {
-        //console.log("Cabecera agregada.");
-        //console.log("Solicitud", this.solNumerico);
-        //console.log("Agregando cuerpo de la cabecera...");
-        this.addBodySol();
-        this.solTimeService.saveSolTime(
-          this.trTipoSolicitud,
-          this.trLastNoSol,
-          this.cookieService.get('userIdNomina'),
-          this.cookieService.get('userName'),
-          this.trNivelEmision,
-          'Envío'
-        );
-      },
-      error => {
-        this.isSaved = false;
-        this.deleteLastTracking();
-        console.log("error al guardar la cabecera: ", error)
-        //AGREGAR MENSAJE DE ERROR 
-        const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
-        this.callMensaje(mensaje, false);
+      const dataCAB = {
+        cabSolCotTipoSolicitud: this.trTipoSolicitud,
+        cabSolCotIdArea: this.cab_id_area,
+        cabSolCotIdDept: this.cab_id_dpto,
+        cabSolCotNoSolicitud: this.trLastNoSol,
+        cabSolCotSolicitante: this.trIdNomEmp,
+        cabSolCotFecha: this.cab_fecha,
+        cabSolCotAsunto: this.cab_asunto,
+        cabSolCotProcedimiento: this.cab_proc,
+        cabSolCotObervaciones: this.cab_obsrv,
+        cabSolCotAdjCot: this.cab_adjCot,
+        cabSolCotNumCotizacion: this.cab_ncot,
+        cabSolCotEstado: this.cab_estado,
+        cabSolCotEstadoTracking: this.trNivelEmision,
+        cabSolCotPlazoEntrega: this.cab_plazo,
+        cabSolCotFechaMaxentrega: this.cab_fechaMax,
+        cabSolCotInspector: this.cab_inspector,
+        cabSolCotTelefInspector: this.cab_telef_insp,
+        cabSolCotNumerico: this.solNumerico,
+        cabSolCotIdEmisor: this.cookieService.get('userIdNomina'),
+        cabSolCotApprovedBy: 'XXXXXX',
+        cabSolCotFinancieroBy: 'XXXXXX',
+        cabSolCotAprobPresup: 'SI',
+        cabSolCotMtovioDev: 'NOHAYMOTIVO',
+        cabSolCotValido: 1,
+        cabSolCotNewDimVersion: ifProyecto,
+        cabSolCotSinPresupuesto: 0
       }
-    );
 
+      //console.log("2. guardando cabecera: ", dataCAB);
+
+      //enviar datos de cabecera a la API
+      await this.cabCotService.addSolCot(dataCAB, this.cookieService.get('userIdNomina'), 'Envío').subscribe(
+        response => {
+          //console.log("Cabecera agregada.");
+          //console.log("Solicitud", this.solNumerico);
+          //console.log("Agregando cuerpo de la cabecera...");
+          this.addBodySol();
+          /*this.solTimeService.saveSolTime(
+            this.trTipoSolicitud,
+            this.trLastNoSol,
+            this.cookieService.get('userIdNomina'),
+            this.cookieService.get('userName'),
+            this.trNivelEmision,
+            'Envío'
+          );*/
+        },
+        error => {
+          this.isSaved = false;
+          this.deleteLastTracking();
+          console.log("error al guardar la cabecera: ", error)
+          //AGREGAR MENSAJE DE ERROR 
+          const mensaje = "Ha habido un error al guardar los datos, por favor revise que haya ingresado todo correctamente e intente de nuevo.";
+          this.callMensaje(mensaje, false);
+        }
+      );
+    }
+    catch (error) {
+      console.error("Error al generar la solicitud: ", error);
+      this.callMensaje("Ha habido un error al generar la solicitud, por favor intente de nuevo.\nError: " + error, false);
+    }
   }
 
   async deleteLastTracking() {
@@ -642,6 +698,10 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       this.showmsj = true;
       const msjExito = `Solicitud N° ${this.solNumerico} generada exitosamente.`;
       this.callMensaje(msjExito, true);
+
+      //crea o actualiza la informacion de las dimensiones de la solicitud
+      this.updateOrCreateDimSolData();
+
       setTimeout(() => {
         this.clear();
         this.serviceGlobal.tipoSolBsq = 1;
@@ -743,6 +803,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   }
 
   check() {
+
+    if (this.isProyectoChecked && this.serviceGlobal.solDimensiones.dimPresupuesto == 57) {
+      this.callMensaje('Debe seleccionar como mínimo la dimensión presupuestaria para continuar.', false)
+      return;
+    }
+
     for (let idDet of this.itemSectorList) {
       for (let det of this.detalleList) {
         if (idDet.det_id == det.det_id) {
@@ -1038,6 +1104,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     this.clearSolGuardada();
     await this.getSolicitud();
     await this.saveData();
+    this.serviceGlobal.loadingSolicitud = true;
     //await this.changeView('editar');
   }
 
@@ -1074,7 +1141,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     this.estadoSol = this.cabecera.cabSolCotEstadoTracking.toString();
     this.numeroSolicitudEmail = this.cabecera.cabSolCotNumerico;
     this.tipoSolicitudEmail = 'Cotización';
+    this.checkedToggle = this.cabecera.cabSolCotSinPresupuesto === 1 ? true : false;
     this.getNombreNivel(this.cabecera.cabSolCotEstadoTracking);
+
+    if (this.cabecera.cabSolCotNewDimVersion == 1) {
+      this.isDim = true;
+    }
 
     if (this.cabecera.cabSolCotEstadoTracking > 10) {
       this.showEdicionItem = false;
@@ -1126,7 +1198,10 @@ export class SolicotiComponent implements OnInit, OnDestroy {
 
     this.getLastNivel();
 
+    this.getDimSolInfo(this.cabecera.cabSolCotTipoSolicitud, this.cabecera.cabSolCotNoSolicitud);
   }
+
+
   lastNivel: string = '';
 
   async getInspector() {
@@ -1150,7 +1225,6 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         const nivel = element.rutareaNivel;
         this.lastNivel = nivel.toString();
       }
-      //console.log(this.estadoSol)
     }
   }
 
@@ -1424,7 +1498,9 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       cabSolCotIdEmisor: this.cabecera.cabSolCotIdEmisor,
       cabSolCotApprovedBy: this.aprobadopor,
       cabSolCotFinancieroBy: this.financieropor,
-      cabSolCotValido: this.cabecera.cabSolCotValido
+      cabSolCotValido: this.cabecera.cabSolCotValido,
+      cabSolCotNewDimVersion: this.cabecera.cabSolCotNewDimVersion,
+      cabSolCotSinPresupuesto: this.cabecera.cabSolCotSinPresupuesto
     };
 
 
@@ -1554,6 +1630,8 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       const msjExito = `Solicitud N° ${this.cabecera.cabSolCotNumerico} editada exitosamente.`;
       this.callMensaje(msjExito, true)
 
+      this.updateOrCreateDimSolData();
+
       setTimeout(() => {
 
         this.clear();
@@ -1629,7 +1707,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       this.saveEdit();
       setTimeout(() => {
         this.enviarSolicitud();
-      }, 500);
+      }, 800);
       //this.sendNotify();
     } catch (error) {
       console.log('Error:', error);
@@ -1641,7 +1719,6 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   guardarDevolverSolEditada() {
     this.devolucion = true;
     try {
-      //this.saveEdit();
       let motivoDevolucion = '';
       let aprobPresp = '';
       if (this.devolucion) {
@@ -1679,6 +1756,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
   financieropor: string = 'XXXXXX';
   // Método que cambia el estado del tracking de la solicitud ingresada como parámetro al siguiente nivel
   async enviarSolicitud() {
+
+    if (this.estadoSol == '50') {
+      //crea o actualiza la informacion de las dimensiones de la solicitud
+      this.updateOrCreateDimSolData();
+    }
+
     this.devolucion = false;
 
     let motivoDevolucion = 'NOHAYMOTIVO';
@@ -1734,20 +1817,20 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);
           this.cabCotService.updateEstadoCotizacion(this.trTipoSolicitud, this.noSolTmp, 'F').subscribe(
             (response) => {
-              this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0).subscribe(
+              this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 0, this.cookieService.get('userIdNomina'), 'Finalizado').subscribe(
                 (response) => {
                   const msjExito = `La solicitud ha finalizado exitosamente.`;
                   this.callMensaje(msjExito, true)
 
-                  this.solTimeService.saveSolTime(
-                    this.trTipoSolicitud, 
-                    this.noSolTmp, 
-                    this.cookieService.get('userIdNomina'), 
-                    this.cookieService.get('userName'), 
+                  /*this.solTimeService.saveSolTime(
+                    this.trTipoSolicitud,
+                    this.noSolTmp,
+                    this.cookieService.get('userIdNomina'),
+                    this.cookieService.get('userName'),
                     0,
                     'Finalizado'
-                  );
-    
+                  );*/
+
 
                   setTimeout(() => {
                     this.clear();
@@ -1793,18 +1876,18 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         //hace la peticion a la API para cambiar el estado de la solicitud
         //console.log("Valores de actualizacion de estado:", this.trTipoSolicitud, this.noSolTmp, newEstado);
         setTimeout(() => {
-          this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+          this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado, this.cookieService.get('userIdNomina'), 'Envío').subscribe(
             (response) => {
 
               //guardar la fecha actual del momento en que se envía la solicitud
-              this.solTimeService.saveSolTime(
-                this.trTipoSolicitud, 
-                this.noSolTmp, 
-                this.cookieService.get('userIdNomina'), 
-                this.cookieService.get('userName'), 
+              /*this.solTimeService.saveSolTime(
+                this.trTipoSolicitud,
+                this.noSolTmp,
+                this.cookieService.get('userIdNomina'),
+                this.cookieService.get('userName'),
                 newEstado,
                 'Envío'
-              );
+              );*/
 
 
               //console.log("Solicitud enviada");
@@ -1903,19 +1986,19 @@ export class SolicotiComponent implements OnInit, OnDestroy {
         }
       );
 
-      this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 9999).subscribe(
+      this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 9999, this.cookieService.get('userIdNomina'), 'Anulación').subscribe(
         (response) => {
           //console.log('Estado de tracknig actualizado exitosamente');
           exitotrk = true;
 
-          this.solTimeService.saveSolTime(
-            this.trTipoSolicitud, 
-            this.noSolTmp, 
-            this.cookieService.get('userIdNomina'), 
-            this.cookieService.get('userName'), 
+          /*this.solTimeService.saveSolTime(
+            this.trTipoSolicitud,
+            this.noSolTmp,
+            this.cookieService.get('userIdNomina'),
+            this.cookieService.get('userName'),
             9999,
             'Anulación'
-          );
+          );*/
 
         },
         (error) => {
@@ -1969,12 +2052,12 @@ export class SolicotiComponent implements OnInit, OnDestroy {
           for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
             let niv = this.nivelRuteotoAut[i];
             //si encuentra un nivel que coincida con el estado actual de la solicitud, actualiza el estado con el nivel anterior y envia el correo al que corresponda
-    
+
             if (niv.rutareaNivel == this.estadoTrkTmp) {
               //extrae el nivel al que se va a retroceder la solicitud
               let newEstado = this.nivelRuteotoAut[i - 1].rutareaNivel;
               let newestadoSt = '';
-    
+
               //extrae el tipo de proceso del nivel al que se va a retroceder la solicitud
               this.nivRuteService.getNivelInfo(newEstado).subscribe(
                 (response) => {
@@ -1985,36 +2068,36 @@ export class SolicotiComponent implements OnInit, OnDestroy {
                   console.log('Error al obtener el nuevo estado de tracking: ', error);
                 }
               );
-    
+
               //cambia el estado de la solicitud al nivel anterior
-              this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado).subscribe(
+              this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, newEstado, this.cookieService.get('userIdNomina'), 'Devolución').subscribe(
                 (response) => {
                   //console.log('Estado de tracknig actualizado exitosamente');
 
-                  this.solTimeService.saveSolTime(
-                    this.trTipoSolicitud, 
-                    this.noSolTmp, 
-                    this.cookieService.get('userIdNomina'), 
-                    this.cookieService.get('userName'), 
+                  /*this.solTimeService.saveSolTime(
+                    this.trTipoSolicitud,
+                    this.noSolTmp,
+                    this.cookieService.get('userIdNomina'),
+                    this.cookieService.get('userName'),
                     newEstado,
                     'Devolución'
-                  );
+                  );*/
 
                   this.showmsj = true;
                   const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel anterior.`;
                   this.callMensaje(msjExito, true)
-    
+
                   if (newEstado == 10) {
                     //extraer el contenido del email correspondiente
                     this.getMailContentSM(20, mailToNotify);
-    
+
                   } else {
-    
+
                     //extraer el contenido del email correspondiente
                     this.getMailContentSN(21, newEstado, newestadoSt);
                   }
-    
-    
+
+
                   setTimeout(() => {
                     this.clear();
                     this.serviceGlobal.solView = 'crear';
@@ -2030,42 +2113,42 @@ export class SolicotiComponent implements OnInit, OnDestroy {
               );
               break;
             }
-    
+
           }
         } else {//si no es del area de operaciones se regresa al nivel mas bajo y se notifica a todos los niveles saltados
-    
+
           //regresar la solicitud al nivel 10 y notificar a todos los niveles anteriores
-          this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10).subscribe(
+          this.cabCotService.updateEstadoTRKCotizacion(this.trTipoSolicitud, this.noSolTmp, 10, this.cookieService.get('userIdNomina'), 'Devolución').subscribe(
             (response) => {
               //console.log('Estado de tracknig actualizado exitosamente');
 
-              this.solTimeService.saveSolTime(
-                this.trTipoSolicitud, 
-                this.noSolTmp, 
-                this.cookieService.get('userIdNomina'), 
-                this.cookieService.get('userName'), 
+              /*this.solTimeService.saveSolTime(
+                this.trTipoSolicitud,
+                this.noSolTmp,
+                this.cookieService.get('userIdNomina'),
+                this.cookieService.get('userName'),
                 10,
                 'Devolución'
-              );
+              );*/
 
 
               this.showmsj = true;
               const msjExito = `La solicitud N° ${this.cabecera.cabSolCotNumerico} ha sido devuelta al nivel inicial.`;
               this.callMensaje(msjExito, true)
-    
+
               this.getMailContentSM(20, mailToNotify);
-    
+
               //recorrer los niveles inferiores a estadoTrkTmp y enviar correo a todos ellos
               setTimeout(() => {
                 for (let i = 0; i < this.nivelRuteotoAut.length; i++) {
                   let niv = this.nivelRuteotoAut[i];
                   if (niv.rutareaNivel < this.estadoTrkTmp && niv.rutareaNivel != 10) {
-    
+
                     this.getMailContentSN(22, niv.rutareaNivel, 'E');
                   }
                 }
               }, 300);
-    
+
               setTimeout(() => {
                 this.clear();
                 this.serviceGlobal.solView = 'crear';
@@ -2079,7 +2162,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
               this.callMensaje(msjError, false)
             }
           );
-    
+
         }
       },
       (error) => {
@@ -2087,7 +2170,7 @@ export class SolicotiComponent implements OnInit, OnDestroy {
       }
     );
 
-    
+
 
   }
 
@@ -2301,4 +2384,128 @@ export class SolicotiComponent implements OnInit, OnDestroy {
     this.showMotivoDev = !this.showMotivoDev;
   }
 
+  openDimensiones() {
+    this.serviceGlobal.solEstado = Number(this.estadoSol);
+    this.dialogService.openAddDimensiones();
+  }
+
+  //si el registro existe, lo actualiza (valor y OC), de lo contrario lo crea
+  updateOrCreateDimSolData() {
+    //console.log('Actualizando OC y valor de solicitud, linea 2348');
+
+    const fecha = new Date();
+
+    fecha.setHours(fecha.getHours() - 5);
+
+    var data = {};
+
+    if (this.isDim) {
+      data = {
+        sdimTipoSol: this.sharedTipoSol,
+        sdimNumSol: this.sharedNoSol,
+        sdimProyecto: 7, //ID DEL PROYECTO AUXILIAR
+        sdimSector: 56, //ID DEL SECTOR AUXILIAR
+        sdimActividad: 91, //ID DE LA ACTIVIDAD AUXILIAR / 91 - produccion - 92 - desarrollo
+        sdimSubactividad: this.serviceGlobal.solDimensiones.dimSubAct,
+        sdimDimPresp: this.serviceGlobal.solDimensiones.dimPresupuesto,
+        sdimIfProyecto: 1,
+        sdimValorSolicitud: this.serviceGlobal.solValor,
+        sdimFechaSolicitud: fecha,
+        sdimOcSolicitud: this.serviceGlobal.solOC
+      }
+    } else {
+      data = {
+        sdimTipoSol: this.sharedTipoSol,
+        sdimNumSol: this.sharedNoSol,
+        sdimProyecto: 7, //ID DEL PROYECTO AUXILIAR
+        sdimSector: 56, //ID DEL SECTOR AUXILIAR
+        sdimActividad: 91, //ID DE LA ACTIVIDAD AUXILIAR / 91 - produccion - 92 - desarrollo
+        sdimSubactividad: 158, //ID DE LA SUBACTIVIDAD AUXILIAR
+        sdimDimPresp: 57, //ID DEL PRESUPUESTO AUXILIAR
+        sdimIfProyecto: 0,
+        sdimValorSolicitud: this.serviceGlobal.solValor,
+        sdimFechaSolicitud: fecha,
+        sdimOcSolicitud: this.serviceGlobal.solOC
+      }
+    }
+
+    //console.log(data);
+
+    this.dimService.updateSolDimensiones(data).subscribe(
+      response => {
+        console.log('OC y valor de solicitud actualizado correctamente');
+        this.serviceGlobal.solDimensiones = {
+          //dimProyecto: 0,
+          //dimSect: 0,
+          //dimAct: 0,
+          dimSubAct: 0,
+          dimPresupuesto: 0
+        }
+      },
+      error => {
+        if (error.status == 409) {
+          console.log("***IGNORAR*** \nERROR 409:", error)
+        } else {
+          console.log('Error al actualizar OC y valor de solicitud: ', error);
+          this.callMensaje('Error al actualizar OC y valor de solicitud, intente nuevamente.', false)
+        }
+      }
+    );
+  }
+
+  getDimSolInfo(tipoSol: number, noSol: number) {
+    this.dimService.getDimSolInfo(tipoSol, noSol).subscribe(
+      response => {
+        console.log('Dimensiones de la solicitud: ', response);
+        if (response.length > 0) {
+          this.serviceGlobal.solDimensiones = {
+            //dimProyecto: response[0].sdimProyecto,
+            //dimSect: response[0].sdimSector,
+            //dimAct: response[0].sdimActividad,
+            dimSubAct: response[0].sdimSubactividad,
+            dimPresupuesto: response[0].sdimDimPresp
+          }
+          this.serviceGlobal.solIfProyecto = response[0].sdimIfProyecto;
+          this.serviceGlobal.isDimSetted = true;
+
+        }
+      },
+      error => {
+        console.log('Error al obtener las dimensiones de la solicitud: ', error);
+      }
+    );
+  }
+
+  //verifica si el usuario esta habilitado para autorizar las solicitudes segun su maximo nivel de rol
+  checkAprovePermission(): boolean {
+    const maxRolNivel = this.cookieService.get('userRolNiveles').split(',').map(Number).reduce((a, b) => Math.max(a, b));
+
+    if (maxRolNivel >= 50) {
+      return true
+    } else if (this.areaSolTmp == this.areaUserCookieId) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  //verifica si la solicitud es de nueva version y devuelve el valor del metodo de hasSolDimension, si no es de nueva version devuelve true
+  checkNewVersion(): boolean {
+    if (this.isDim) {
+      return this.serviceGlobal.hasSolDimensiones();
+    } else {
+      return true;
+    }
+  }
+
+  isProyectoChecked: boolean = false;
+  checkProyecto(Event: any) {
+    if (Event.checked) {
+      this.isDim = true
+      this.isProyectoChecked = true;
+    } else {
+      this.isDim = false
+      this.isProyectoChecked = false;
+    }
+  }
 }

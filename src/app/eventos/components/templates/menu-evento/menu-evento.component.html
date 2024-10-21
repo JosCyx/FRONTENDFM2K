@@ -18,18 +18,18 @@
         Consultas
       </button>
       <div class="menu">
-        <a *appAuthorize="'75'" class="item" mat-button routerLink="/historial-evento">Historial de eventos</a>
-        <a *appAuthorize="'75'" class="item" mat-button routerLink="/calendario-evento">Calendario</a>
+        <a *appAuthorize="'75'" class="item" mat-button routerLink="/historial-evento">Historial de proyectos</a>
+        <!-- <a *appAuthorize="'75'" class="item" mat-button routerLink="/calendario-evento">Calendario</a> -->
       </div>
     </li>
 
     <li class="nav-item dropdown" *appAuthorize="'74'">
       <button mat-stroked-button>
-        Eventos
+        Proyectos
       </button>
       <div class="menu">
 
-        <a *appAuthorize="'75'" class="item" mat-button routerLink="/formulario-evento">Crear Evento</a>
+        <a *appAuthorize="'75'" class="item" mat-button routerLink="/formulario-evento" >Crear proyectos</a>
 
       </div>
     </li>

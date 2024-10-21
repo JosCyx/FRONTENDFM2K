@@ -91,7 +91,7 @@
       aria-label="Select page of periodic elements"></mat-paginator>
 
   </div>
-  <div style="display: flex; justify-content: end; padding-top: 20px;" *appAuthorize="'77'">
+  <div style="display: flex; justify-content: flex-end; padding-top: 20px;" *appAuthorize="'77'">
     <button class="custom-material-button" *ngIf="consulted" (click)="sendAllNomina()" [disabled]="loadingc">
       <ng-container *ngIf="!loadingc">Enviar correos</ng-container>
       <mat-spinner color="basic" *ngIf="loadingc" [diameter]="25"></mat-spinner>

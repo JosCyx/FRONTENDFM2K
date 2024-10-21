@@ -111,7 +111,7 @@ export class HistorialEventoComponent {
 
       this.FichaEventoService.getFichaEventoList().subscribe(
         (res: any) => {
-          console.log("Fichas obtenidas: ", res);
+          //console.log("Fichas obtenidas: ", res);
           //this.alertEventList = _.cloneDeep(res);
           this.originalData = _.cloneDeep(res);
 
@@ -133,16 +133,26 @@ export class HistorialEventoComponent {
   }
 
   selectFichaEvent(row: any) {
-    console.log("Ficha seleccionada: ", row.fEvId);
+    //console.log("Ficha seleccionada: ", row.fEvId);
+    this.globalEventosService.editMode = true;
+    setTimeout(() => {
+      this.router.navigate(['formulario-evento']);
+    }, 200);
+
     //hacer la peticion de la alerta seleccionada
     this.FichaEventoService.getFichaEventoById(row.fEvId).subscribe(
       (res: any) => {
         this.globalEventosService.editMode = true;
-        console.log("Ficha seleccionada: ", res);
+        //console.log("Ficha seleccionada: ", res);
         this.globalEventosService.FormEv = _.cloneDeep(res.ficha);
         this.globalEventosService.riesgos = _.cloneDeep(res.riesgos);
         this.globalEventosService.req = _.cloneDeep(res.req);
-        this.router.navigate(['formulario-evento']);
+        this.globalEventosService.fichaDocs = _.cloneDeep(res.fichaDocs);
+        this.globalEventosService.reqDocs = _.cloneDeep(res.reqDocs);
+        
+        setTimeout(() => {
+          this.router.navigate(['formulario-evento']);
+        }, 200);
       },
       (error) => {
         console.error(error);
@@ -165,12 +175,16 @@ export class HistorialEventoComponent {
     }
   }
 
-
-
-
   getSolicitanteName(idSolicitante: string) {
+    if(this.SolicitanteList.length == 0){
+      return;
+    }
     let sol = this.SolicitanteList.find((solicitante) => solicitante.empleadoIdNomina == idSolicitante);
-    return sol ? sol.empleadoNombres + ' ' + sol.empleadoApellidos : 'Sin solicitante';
+
+    //extraer solo el primer nombre de los dos nombres
+    const nombre = sol.empleadoNombres.split(' ')[0];
+
+    return sol ? nombre + ' ' + sol.empleadoApellidos : 'Sin solicitante';
   }
 
   getArea(idArea: number) {
@@ -277,4 +291,25 @@ export class HistorialEventoComponent {
       this.applyFilter();
     }
   }
+
+  getRowColor(element: any): string {
+    if(element.fEvEstadoProyecto == 3){
+      const promedio = (element.fEvPorcentajeTotal + element.fEvPorcentajeNuevos) / 2;
+      
+      if (promedio === 0) {
+        return 'rojo';
+      } else if (promedio < 70) {
+        return 'naranja';
+      } else {
+        return 'verde';
+      }
+    } else if(element.fEvEstadoProyecto == 5){
+      return 'gris';
+    } else {
+      return '';
+    }
+    
+  }
+  
+  
 }

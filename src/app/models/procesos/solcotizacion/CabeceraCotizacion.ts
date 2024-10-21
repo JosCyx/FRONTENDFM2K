@@ -24,6 +24,8 @@ export class CabeceraCotizacion {
   public cabSolCotFinancieroBy:string;
   public cabSolCotIdDept: number;
   public cabSolCotValido: number;
+  public cabSolCotNewDimVersion: number;
+  public cabSolCotSinPresupuesto: number;
 
   constructor(data: any) {
       this.cabSolCotTipoSolicitud = data.cabSolCotTipoSolicitud;
@@ -51,5 +53,7 @@ export class CabeceraCotizacion {
       this.cabSolCotFinancieroBy = data.cabSolCotFinancieroBy;
       this.cabSolCotIdDept = data.cabSolCotIdDept;
       this.cabSolCotValido = data.cabSolCotValido;
+      this.cabSolCotNewDimVersion = data.cabSolCotNewDim;
+      this.cabSolCotSinPresupuesto = data.cabSolCotSinPresupuesto;
   }
 }

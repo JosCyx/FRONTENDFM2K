@@ -51,7 +51,7 @@ textarea{
     display: flex;
     gap: 10px;
     flex-direction: row;
-    justify-content: end;
+    justify-content: flex-end;
     margin-top: 20px;
 }
 

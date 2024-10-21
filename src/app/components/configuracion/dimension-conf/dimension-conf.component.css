@@ -1,0 +1,24 @@
+.container{
+    width: 70%;
+    margin: 0 auto;
+    padding-top: 120px;
+    padding-bottom: 100px;
+  }
+  mat-form-field{
+    width: 100% !important;
+  }
+
+  .select-dim{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .mat-column-proyecto,
+  .mat-column-sector,
+  .mat-column-actividad,
+  .mat-column-options{
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+  }

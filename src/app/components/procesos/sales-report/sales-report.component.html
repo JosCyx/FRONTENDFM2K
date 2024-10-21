@@ -1,0 +1,93 @@
+<app-menu></app-menu>
+<div class="container">
+
+    <h2 class="font-weight-bolt ruteo">Reporte de egresos por proyecto</h2>
+
+
+    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+        <mat-form-field appearance="fill">
+            <mat-label>Dimensión presupuestaria</mat-label>
+            <mat-select [(ngModel)]="prespSelected" (ngModelChange)="triggerGetReport()">
+                <ng-container *ngFor="let item of presupuestos">
+                    <mat-option [value]="item.dimDimprepId">{{item.dimDimprepCodigo + ' - ' +
+                        item.dimDimprepDescripcion}}</mat-option>
+                </ng-container>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Desde</mat-label>
+            <input matInput [matDatepicker]="picker1" [(ngModel)]="startDate" (ngModelChange)="triggerGetReport()">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Hasta</mat-label>
+            <input matInput [matDatepicker]="picker2" [(ngModel)]="endDate" (ngModelChange)="triggerGetReport()">
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+        </mat-form-field>
+
+    </div>
+
+    <div>
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+            <ng-container matColumnDef="subact">
+                <th mat-header-cell *matHeaderCellDef> Subactividad </th>
+                <td mat-cell *matCellDef="let element"> {{element.subactividad}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="cot">
+                <th mat-header-cell *matHeaderCellDef> Cotizaciones </th>
+                <td mat-cell *matCellDef="let element"> {{element.cotizaciones | currency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="oc">
+                <th mat-header-cell *matHeaderCellDef> Ordenes de compra </th>
+                <td mat-cell *matCellDef="let element"> {{element.ordenesCompra | currency}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef> Total Subactividad</th>
+                <td mat-cell *matCellDef="let element"> {{totalRow(element.cotizaciones, element.ordenesCompra) | currency}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        <div style="margin: 0 auto; display: flex; justify-content: center; margin-top: 20px; color: white;" *ngIf="dataSource.length == 0 && !loadingData">
+            <mat-card style="padding: 0px 100px 0px 100px; background-color: rgb(255, 70, 70);">
+                <mat-card-content>Sin registros</mat-card-content>
+              </mat-card>              
+        </div>
+
+        <div style="margin: 0 auto; display: flex; justify-content: center; margin-top: 20px; color: black;" *ngIf="loadingData">
+            <mat-card style="padding: 0px 100px 0px 100px; background-color: rgb(255, 175, 70);">
+                <mat-card-content>Buscando...</mat-card-content>
+              </mat-card>              
+        </div>
+
+        <div style="margin-top: 20px; text-align: right;  font-style: italic;">
+            <strong>Total:</strong> {{totalValor | currency}}
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: 15px;" *appAuthorize="'102'">
+            <button mat-stroked-button color="primary" [matMenuTriggerFor]="menuExport" [disabled]="!enableExportButton">Exportar</button>
+        </div>
+        <mat-menu #menuExport="matMenu">
+            <!-- <ng-container *appAuthorize="'103'">
+              <button mat-menu-item (click)="exportPDF()" disabled><i class="bi bi-filetype-pdf" style="color: red;"></i> Exportar a PDF</button>
+            </ng-container> -->
+            <ng-container *appAuthorize="'102'">
+                <button mat-menu-item (click)="exportToExcel()" [disabled]="!enableExportButton"><i class="bi bi-filetype-xlsx"
+                        style="color: green;"></i> Exportar a Excel</button>
+            </ng-container>
+        </mat-menu>
+    </div>
+</div>

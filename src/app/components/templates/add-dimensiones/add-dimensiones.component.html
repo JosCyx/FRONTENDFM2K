@@ -1,0 +1,99 @@
+<div class="main-content">
+
+
+    <div class="main-header">
+        <h3 class="font-weight-bold text-center" id="exampleModalLabel">
+            Asignar dimensiones a la solicitud  <span><a href="/dim-help-page" target="_blank" matTooltip="Información sobre las dimensiones"><i class="bi bi-info-circle"></i></a></span>
+        </h3>
+    </div>
+    <div class="body-content">
+        <!-- <div style=" margin-bottom: 20px;">
+            <mat-checkbox color="primary" [(ngModel)]="checkProyecto" (change)="filterPresupuestos($event)" [disabled]="globalService.solEstado != 10">
+                <div style="margin-top: 10px;">Proyecto</div>
+            </mat-checkbox>
+        </div> -->
+
+        <div class="two-group">
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Dimensión presupuestaria*</mat-label>
+                <input type="text" placeholder="Ingrese la dimensión presupuestaria" aria-label="Number" matInput [(ngModel)]="dimPrespName" [readonly]="globalService.hasSolDimensiones()" (ngModelChange)="filterPresupuestosList($event)"
+                    [matAutocomplete]="autoPrep" [readonly]="globalService.solEstado != 10 && globalService.solEstado != 50">
+                <mat-autocomplete autoActiveFirstOption #autoPrep="matAutocomplete">
+                    <ng-container *ngFor="let item of prespFiltered">
+                        <mat-option [value]="item.dimDimprepCodigo + ' - ' + item.dimDimprepDescripcion">{{item.dimDimprepCodigo + ' - ' + item.dimDimprepDescripcion}}</mat-option>
+                    </ng-container>
+                </mat-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <mat-label>Subactividad</mat-label>
+                <input type="text" placeholder="Ingrese la subactividad" aria-label="Number" matInput [(ngModel)]="dimSubActName"
+                    (ngModelChange)="filterSubActividadesList($event)" [matAutocomplete]="autoSub" [readonly]="globalService.solEstado != 10 && globalService.solEstado != 50">
+                <mat-autocomplete autoActiveFirstOption #autoSub="matAutocomplete">
+                    <ng-container *ngFor="let item of subactividadesfiltered">
+                        <mat-option [value]="item.dimSubactCodigo + ' - ' + item.dimSubactDescripcion">{{item.dimSubactCodigo + ' - ' + item.dimSubactDescripcion}}</mat-option>
+                    </ng-container>
+                </mat-autocomplete>
+            </mat-form-field>
+            
+        </div>
+
+        <!-- PROYECTO - SECTOR - ACTIVIDAD -->
+        <!-- <div class="three-group">
+            <mat-form-field class="example-full-width">
+                <mat-label>Proyecto*</mat-label>
+                <input type="text" placeholder="Ingrese el proyecto" aria-label="Number" matInput [(ngModel)]="dimProyName"
+                    (ngModelChange)="filterProyectosList($event)" [matAutocomplete]="autoEmp" [readonly]="globalService.solEstado != 10 && globalService.solEstado != 50">
+                <mat-autocomplete autoActiveFirstOption #autoEmp="matAutocomplete">
+                    <ng-container *ngFor="let item of proyectosfiltered">
+                        <mat-option [value]="item.dimPrCodigo + ' - ' + item.dimPrDescripcion">{{item.dimPrCodigo + ' - ' + item.dimPrDescripcion}}</mat-option>
+                    </ng-container>
+                </mat-autocomplete>
+            </mat-form-field>
+            
+            <mat-form-field class="example-full-width">
+                <mat-label>Sector*</mat-label>
+                <input type="text" placeholder="Ingrese el sector" aria-label="Number" matInput [(ngModel)]="dimSectName"
+                 (ngModelChange)="filterSectoresList($event)" [matAutocomplete]="autoSec" [readonly]="globalService.solEstado != 10 && globalService.solEstado != 50">
+                <mat-autocomplete autoActiveFirstOption #autoSec="matAutocomplete">
+                    <ng-container *ngFor="let item of sectoresfiltered">
+                        <mat-option [value]="item.dimSectCodigo + ' - ' + item.dimSectDescripcion">{{item.dimSectCodigo + ' - ' + item.dimSectDescripcion}}</mat-option>
+                    </ng-container>
+                </mat-autocomplete>
+            </mat-form-field>
+            
+            <mat-form-field class="example-full-width">
+                <mat-label>Actividad</mat-label>
+                <input type="text" placeholder="Ingrese la actividad" aria-label="Number" matInput [(ngModel)]="dimActName"
+                    (ngModelChange)="filterActividadesList($event)" [matAutocomplete]="autoAct" [readonly]="globalService.solEstado != 10 && globalService.solEstado != 50">
+                <mat-autocomplete autoActiveFirstOption #autoAct="matAutocomplete">
+                    <ng-container *ngFor="let item of actividadesfiltered">
+                        <mat-option [value]="item.dimActCodigo + ' - ' + item.dimActDescripcion">{{item.dimActCodigo + ' - ' + item.dimActDescripcion}}</mat-option>
+                    </ng-container>
+                </mat-autocomplete>
+            </mat-form-field>
+        </div> -->
+        
+        <!-- <p style="font-style: italic; font-size: 8pt; color: black; font-weight: bold;">Si su solicitud forma parte de un proyecto, por
+            favor seleccione el recuadro "Proyecto" para mostrar las dimensiones presupuestarias correspondientes.</p> -->
+
+        <p style="font-style: italic; font-size: 8pt; color: black;">*Campos obligatorios.</p>
+
+    </div>
+    <div class="footer-content">
+        <ng-container *ngIf="globalService.solEstado == 10 || globalService.solEstado == 50">
+            <button mat-raised-button type="button" class="danger-button" (click)="closeDialog()">
+                Cancelar
+            </button>
+            <button mat-raised-button type="button" class="primary-button" (click)="saveDimensions()">
+                Confirmar
+            </button>
+        </ng-container>
+        <ng-container *ngIf="globalService.solEstado != 10 && globalService.solEstado != 50">
+            <button mat-raised-button type="button" class="danger-button" (click)="closeDialog()">
+                Cerrar
+            </button>
+        </ng-container>
+    </div>
+</div>

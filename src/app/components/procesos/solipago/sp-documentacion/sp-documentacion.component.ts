@@ -143,12 +143,27 @@ export class SPDocumentacionComponent implements OnInit {
             const urlfile = URL.createObjectURL(file);
             const img = 'assets/img/image.webp';
             resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'PNG') {
+            const file = new Blob([blob], { type: 'image/png' });
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
           } else if (nombre == 'jpg') {
             const file = new Blob([blob], { type: 'image/jpg' });
             const urlfile = URL.createObjectURL(file);
             const img = 'assets/img/image.webp';
             resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'JPG') {
+            const file = new Blob([blob], { type: 'image/jpg' });
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
           } else if (nombre == 'jpeg') {
+            const file = new Blob([blob], { type: 'image/jpeg' });
+            const urlfile = URL.createObjectURL(file);
+            const img = 'assets/img/image.webp';
+            resolve({ url: urlfile, icono: img });
+          } else if (nombre == 'JPEG') {
             const file = new Blob([blob], { type: 'image/jpeg' });
             const urlfile = URL.createObjectURL(file);
             const img = 'assets/img/image.webp';

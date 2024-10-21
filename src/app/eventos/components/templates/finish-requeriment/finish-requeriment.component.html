@@ -1,0 +1,27 @@
+<div>
+    <div class="text-center-custom">
+        <h2 mat-dialog-title>Culminar requerimiento</h2>
+    </div>
+    <div class="span-divisor"></div>
+    <div mat-dialog-content class="content-center-custom">
+        <div class="modal-body-custom">
+            <mat-form-field>
+                <mat-label>Culminado</mat-label>
+                <mat-select [(ngModel)]="globalEvService.isReqComplete">
+                    <mat-option [value]="true">Sí</mat-option>
+                    <mat-option [value]="false">No</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+              <mat-label>Justificación</mat-label>
+              <textarea matInput rows="4" cols="10" [(ngModel)]="globalEvService.observContent"
+                maxlength="750"></textarea>
+            </mat-form-field>
+          </div>
+    </div>
+    <div mat-dialog-actions style="justify-content: center; padding-bottom: 20px;">
+        <button mat-flat-button color="warn" (click)="closeDialog()">Cancelar</button>
+        <button mat-flat-button color="primary" (click)="confirmAction()">Aceptar</button>
+    </div>
+</div>
