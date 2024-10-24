@@ -1,111 +1,220 @@
 
 .calendar-container {
-  width: 70%;
+  width: 80%;
   margin: 0 auto;
   padding-top: 120px;
-  /* background-color: #cfd6fd52; Fondo similar al código proporcionado */
-  /* border: 1px solid #ccc; Borde del calendario */
   border-radius: 10px; /* Bordes redondeados */
   padding-bottom: 30px;
 }
 
-.project-form {
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #cfd6fd52;
-  color: black;
-}
-
-
-.header {
+/*encabezado*/
+.calendar-header {
+  width: 100%;
+  margin: 0 auto;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding: 10px;
-  background-color: #f0f0f0;
-  border-radius: 5px;
-  color: #333;
+  flex-direction: column;
 }
 
-.header h2 {
-  font-weight: bold;
-  color: #3f51b5;
+/*botones de navegacion de meses*/
+.nav-button {
+  margin-left: 10px;
 }
 
-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  border: none;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
+/*calendario en general*/
 .calendar {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 10px;
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: #dfeeff;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
   border-radius: 10px;
-  padding: 15px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-.day {
+/*tabla de dias de la semana*/
+.table-days {
+  width: 100%;
+  padding: 10px;
+  font-style: italic;
+}
+
+/*dias de la semana de la tabla*/
+.day-week {
+  width: 100px;
+  padding: 20px;
   text-align: center;
-  font-weight: bold;
+  font-size: 12pt;
+}
+
+/*grid de dias del mes*/
+.calendar-content {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  gap: 5px;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+  border-radius: 10px;
+  /* padding-bottom: 10px; */
+}
+
+/*elementos del grid de dias del mes*/
+.day-month {
+  width: 100%;
+  height: 150px;
+  padding: 10px;
+  font-size: 8pt;
+  overflow: hidden; /* Limita cualquier contenido que pueda desbordarse */
+}
+
+/*dias del mes actual*/
+.current-month {
   color: black;
-  background-color: #f0f0f0;
-  border-radius: 5px;
-  padding: 10px;
+  font-style: italic;
+  margin: 4px;
+  border: .5px solid #b9daff;
+  border-radius: 10px;
 }
 
-.date {
-  text-align:end;
-  padding: 10px;
-  padding-top: 80px;
-  background-color: whitesmoke;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  border: 1px solid #ccc;
+/*dias del mes actual al pasar el mouse*/
+.current-month:hover {
+  background-color:  #b9daff;
+  border-radius: 10px;
 }
 
-.date:hover {
-  background-color: #c7cfff52; /* Color de fondo al hacer hover */
+.current-day{
+  background-color:  #b9daff;
+}
+
+/*dias de los demas meses*/
+.other-month {
+  color: rgb(157, 157, 157);
+}
+
+/*eventos del dia*/
+.day-event{
+  /* background-color: #4758b8; */
+  color: white;
+  border-radius: 4px;
+  padding-left: 5px;
+  margin-bottom: 2px;
+  font-size: 10pt;
+  width: 100%;
+  height: auto;
+  overflow: hidden; /* Asegura que el contenido se oculte cuando excede el ancho */
+}
+
+.day-event:hover{
+  /* background-color: #1430cf; */
   cursor: pointer;
 }
 
-.has-event {
-  background-color: #ffc107; /* Resaltar días con eventos */
-  color: black;
+/*eventos aprobados*/
+.day-event-aprobado{
+  background-color: #2b8a3e;
 }
 
-.has-event:hover {
-  background-color: #e0a800; /* Cambio de color cuando se hace hover sobre un evento */
+.day-event-aprobado:hover{
+  background-color: #0f6d2b;
 }
 
-.selected-day {
-  background-color: #007bff;
-  color: white;
-  border: 1px solid #0056b3;
+/*eventos finalizados*/
+.day-event-solicitado{
+  background-color: #b8b8b8;
 }
 
-.event-info {
-  font-size: 12px;
+.day-event-solicitado:hover{
+  background-color: #8c8c8c;
+}
+
+/*eventos cancelados*/
+.day-event-finalizado{
+  background-color: #4758b8;
+}
+
+.day-event-finalizado:hover{
+  background-color: #1430cf;
+}
+
+.estado-txt-aprobado{
+  color: #2b8a3e;
   font-weight: bold;
-  color: #333;
-  background-color: #f5f5f5;
-  padding: 5px;
-  border-radius: 4px;
 }
 
-.event-info:hover {
-  background-color: #e0e0e0;
+.estado-txt-solicitado{
+  color: #6e6e6e;
+  font-weight: bold;
+
 }
+
+.estado-txt-finalizado{
+  color: #4758b8;
+  font-weight: bold;
+
+}
+
+.truncate-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0 !important;
+}
+
+.day-event-container {
+  max-height: 100px; /* Ajusta este valor según el espacio que desees */
+  overflow-y: auto;  /* Habilita solo el scroll vertical */
+  overflow-x: hidden; /* Evita el scroll horizontal */
+}
+
+/* Ocultar la barra de scroll */
+.day-event-container::-webkit-scrollbar {
+  width: 0px; /* Oculta la barra de scroll en navegadores WebKit */
+  background: transparent; /* Hace que el fondo sea transparente */
+}
+
+.day-event-container {
+  scrollbar-width: none; /* Oculta la barra en Firefox */
+}
+
+.svg-icon-style{
+  width: 18px;
+  height: 18px;
+}
+
+.div-help{
+  background-color: #2b40b6b9; 
+  border-radius: 10px; 
+  padding: 5px;
+}
+
+.help-contrato{
+  font-style: italic;
+  font-weight: 500;
+  font-size: 10pt;
+  color: white;
+  margin-bottom: 0;
+  padding-bottom: 5px;
+}
+
+.event-info{
+  padding: 20px;
+}
+
+.title-event{
+  background-color: #d6e7fa;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.edit-event{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+::ng-deep .mdc-form-field > label {
+  margin-bottom: 0 !important;
+}
+

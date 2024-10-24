@@ -99,7 +99,10 @@ export class FormularioEventoGestComponent {
   ) { }
 
 
-
+  ngOnDestroy(): void {
+    this.GlobalGestEventosService.editMode = false;
+    this.GlobalGestEventosService.idEventoSelected = 0;
+  }
 
 
   ngOnInit(): void {
@@ -593,7 +596,7 @@ export class FormularioEventoGestComponent {
     } else if (this.gestEvento.tipoPago === 1 && this.gestEvento.pagoTotal === 0) {
       this.callMensaje("Ingrese un monto total", false);
       return false;
-    } else if (this.gestEvento.tipoPago === 2) {
+    } /*else if (this.gestEvento.tipoPago === 2) {
       if (this.gestEvento.pagoAbono === 0) {
         this.callMensaje("Ingrese un monto de abono", false);
         return false;
@@ -601,7 +604,7 @@ export class FormularioEventoGestComponent {
         this.callMensaje("El monto de abono no puede ser mayor al monto total", false);
         return false
       }
-    }
+    }*/
 
     //validaciones de las fechas
     console.log("Validando fechas", this.fechasList);
@@ -674,6 +677,7 @@ export class FormularioEventoGestComponent {
         evPagoTotal: this.gestEvento.pagoTotal,
         evTipoPago: this.gestEvento.tipoPago,
         evDescripcion: this.gestEvento.descripcion,
+        evEstadoValido: 1
       };
 
       //console.log("Guardando evento", data);

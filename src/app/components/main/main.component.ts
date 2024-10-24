@@ -41,7 +41,7 @@ export class MainComponent implements OnInit {
 
   }
   goRequests(): void {
-    this.router.navigate(['mainconfig']);
+    this.router.navigate(['allrequest']);
   }
 
   goAdmin(): void {
@@ -49,7 +49,7 @@ export class MainComponent implements OnInit {
   }
 
   goNomina(){
-    this.router.navigate(['mainnom']);
+    this.router.navigate(['sendrol']);
   }
 
   goComInt(){
@@ -66,7 +66,8 @@ export class MainComponent implements OnInit {
   }
 
   goGestEventos(){
-    this.router.navigate(['maineventogest']);
+   // this.router.navigate(['maineventogest']);
+    this.router.navigate(['calendario-evento-gest']);
   }
 
   clearCookies() {
