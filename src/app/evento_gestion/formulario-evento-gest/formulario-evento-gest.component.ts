@@ -1,4 +1,4 @@
-import { Component, ViewChild, TemplateRef } from '@angular/core';
+import { Component, ViewChild, TemplateRef, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs';
@@ -43,7 +43,7 @@ interface Fecha {
   styleUrls: ['./formulario-evento-gest.component.css'],
 
 })
-export class FormularioEventoGestComponent {
+export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   // Referencia al template del diálogo
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
 
