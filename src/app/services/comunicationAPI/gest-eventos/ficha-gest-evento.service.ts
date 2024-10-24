@@ -133,22 +133,16 @@ export class FichaGestEventoService {
   getFechasById(id: number): Observable<any> {
     return this.http.get(`${this.APIUrl}/GestevFechas/${id}`, { headers: this.getHeadersWithAuthToken() });
   }
-
   
+  //obtener los datos de los eventos para el calendario
+  getCalendarData(): Observable<any> {
+    return this.http.get(`${this.APIUrl}/GestevEvento/GetEvCalendarData`, { headers: this.getHeadersWithAuthToken() });
+  }
 
-
-  
-
-  
-
-
-
-
-
-
-
-
-
+  //obtener los datos del evento seleccionado del calendario
+  getOneEventData(id: number): Observable<any> {
+    return this.http.get(`${this.APIUrl}/GestevEvento/GetOneEvData/${id}`, { headers: this.getHeadersWithAuthToken() });
+  }
 
   // updateEstadoProceso(idficha: number, estado: number, sttoped: number = 0): Observable<any> {
   //   return this.http.put(`${this.APIUrl}/GestevEstadoProceso/UpdateStatusFicha?idFicha=${idficha}&status=${estado}&sttoped=${sttoped}`, { headers: this.getHeadersWithAuthToken() });
@@ -157,10 +151,5 @@ export class FichaGestEventoService {
   // updateEstado(data: any): Observable<any> {
   //   return this.http.put(`${this.APIUrl}/GestevEstado/UpdateStatusReq?idFicha=${data.idFicha}&idReq=${data.idReq}&status=${data.status}&observ=${data.observ}`, { headers: this.getHeadersWithAuthToken() });
   // }
-
-
-
-
-
 
 }

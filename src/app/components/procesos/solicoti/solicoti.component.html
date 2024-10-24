@@ -596,7 +596,7 @@
                                     </td>
                                 </tr>
                                 <tr *appAuthorize="'66'">
-                                    <ng-container *ngIf="det_descp && det_presupuesto && det_cantidad != 0">
+                                    <ng-container *ngIf="det_descp && det_cantidad != 0">
                                         <td colspan="6" class="align-middle text-end">
                                             <button class="btn btn-success"
                                                 [disabled]="!det_descp || tmpItemSect.length === 0"

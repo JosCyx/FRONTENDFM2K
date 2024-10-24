@@ -2,27 +2,119 @@
 
 <div class="calendar-container">
 
-  <div class="project-form">
-    <div class="header">
-      <button (click)="prevMonth()"><</button>
-      <h2>{{ months[selectedMonth] }} {{ selectedYear }}</h2>
-      <button (click)="nextMonth()">></button>
+  <h2 class="font-weight-bolt">Calendario de Eventos</h2>
+
+  <!-- encabezado -->
+  <div class="calendar-header">
+    <div>
+      <h2 style="font-style: italic;">{{ getMonthName(currentMonth) }} {{ currentYear }}</h2>
     </div>
-
-    <div class="calendar">
-      <div class="day" *ngFor="let day of weekDays">{{ day }}</div>
-
-      <div
-        class="date"
-        *ngFor="let day of getDaysInMonth(selectedMonth, selectedYear); let i = index"
-        [ngClass]="{ 'has-event': hasEvent(day) }"
-        (click)="selectDay(day)"
-      >
-        <div>{{ day.getDate() }}</div>
-        <div *ngIf="getEvent(day)">
-          <span>{{ getEvent(day)?.nombreEvento }}</span>
-        </div>
+    <div style="display: flex; flex-direction: row; gap: 10px; justify-content: space-between; margin-bottom: 20px;">
+      <div>
+        <mat-radio-group color="primary" (change)="sendEstadoToHandle($event)">
+          <mat-radio-button value="1">Todos</mat-radio-button>
+          <mat-radio-button value="2">Solicitados</mat-radio-button>
+          <mat-radio-button value="3" checked>Aprobados</mat-radio-button>
+          <mat-radio-button value="4">Finalizados</mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div>
+        <button class="nav-button" mat-mini-fab color="primary"
+        (click)="prevMonth()"><mat-icon>chevron_left</mat-icon></button>
+        <button class="nav-button" mat-mini-fab color="primary"
+        (click)="nextMonth()"><mat-icon>chevron_right</mat-icon></button>
       </div>
     </div>
   </div>
+
+  <!-- calendario -->
+  <div class="calendar">
+    <!-- dias de la semana -->
+    <table class="table-days">
+      <thead>
+        <tr>
+          <th class="day-week" *ngFor="let day of daysOfWeek">{{ day }}</th>
+        </tr>
+      </thead>
+    </table>
+    <!-- grid -->
+    <div class="calendar-content">
+
+      <!-- contenido del calendario -->
+      <div *ngFor="let day of days"
+        [ngClass]="{'day-month': true, 'current-month': day.belongsToCurrentMonth, 'other-month': !day.belongsToCurrentMonth}">
+        {{ day.day }}
+        <div class="day-event-container">
+          <div class="day-event" *ngFor="let event of day.events" (click)="showEventDetails(event)"
+            [matTooltip]="event.name + '\n' + event.eventType" matTooltipPosition="above" [matTooltipShowDelay]="600" [matTooltipHideDelay]="0"
+            [ngClass]="{
+              'day-event-solicitado': event.estadop == 20,
+              'day-event-aprobado': event.estadop == 30,
+              'day-event-finalizado': event.estadop == 40
+            }">
+            <p class="truncate-text">
+              <span *ngIf="event.contrato === 1">
+                <img src="assets/icons/hall.svg" alt="Indoor Event Icon" class="svg-icon-style" />
+              </span>
+              <span *ngIf="event.contrato === 2">
+                <img src="assets/icons/brand.svg" alt="Outdoor Event Icon" class="svg-icon-style" />
+              </span>
+              {{event.name}} <br> <span style="font-size: 8pt;">{{event.eventType}}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- <div class="div-help">
+    <p class="help-contrato"><img src="assets/icons/hall.svg" alt="Indoor Event Icon" class="svg-icon-style"/> Alquiler de salones</p>
+    <p class="help-contrato"><img src="assets/icons/brand.svg" alt="Outdoor Event Icon" class="svg-icon-style"/> Activaciones de marca</p>
+  </div> -->
+
+
 </div>
+
+<ng-template #dialogTemplate>
+  <div class="event-info">
+    <h2>Información del evento</h2>
+
+    <div class="grl-info">
+      <div class="title-event">
+        <div style="display: flex; justify-content: space-between; gap: 10px; ">
+          <h3 style="font-weight: bold;">{{ eventoSelected.nombre }}</h3>
+          <p [ngClass]="{
+            'estado-txt-solicitado': eventoSelected.estado == 'Solicitado',
+            'estado-txt-aprobado': eventoSelected.estado == 'Aprobado',
+            'estado-txt-finalizado': eventoSelected.estado == 'Finalizado'
+          }">{{ eventoSelected.estado }}</p>
+        </div>
+        <p style="font-style: italic;">{{ eventoSelected.lugar }}</p>
+      </div>
+      <div class="title-event">
+        <p>{{ eventoSelected.cliente }}</p>
+      </div>
+      <div class="title-event">
+        <p>{{ eventoSelected.descp }}</p>
+      </div>
+
+    </div>
+
+    <div class="title-event">
+      <p><strong>Montaje:</strong> {{ eventoSelected.montaje }}</p>
+      <p><strong>Ejecución:</strong> {{ eventoSelected.ejecucion }}</p>
+      <p><strong>Desmontaje:</strong> {{ eventoSelected.desmontaje }}</p>
+    </div>
+
+    <!-- tabla para ingresar los valores pendientes -->
+    <!-- <div class="pagos-info">
+    </div> -->
+
+    <div class="edit-event">
+      <button mat-raised-button color="primary">Más detalles</button>
+      <button mat-raised-button color="warn" (click)="closeEvDialog()">Cerrar</button>
+    </div>
+
+  </div>
+</ng-template>

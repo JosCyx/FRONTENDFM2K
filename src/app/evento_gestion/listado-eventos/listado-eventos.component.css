@@ -54,6 +54,7 @@
 .mat-column-lugar,
 .mat-column-cliente,
 .mat-column-tp_contrato,
+.mat-column-asesor,
 .mat-column-estado{
   text-align: center;
 }
