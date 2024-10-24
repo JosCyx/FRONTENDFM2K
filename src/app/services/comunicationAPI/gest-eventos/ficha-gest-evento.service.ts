@@ -46,6 +46,9 @@ export class FichaGestEventoService {
   postFichaGestEvento(data: any): Observable<any> {
     return this.http.post(`${this.APIUrl}/GestevEvento`, data, { headers: this.getHeadersWithAuthToken() });
   }
+  postAutorizacion(IdEvento: number, Accion: number, Motivo: string=""): Observable<any> {
+    return this.http.post(`${this.APIUrl}/GestevEvento/ActualizarEstadoEvento?IdEvento=${IdEvento}&Accion=${Accion}&Motivo=${Motivo}`, { headers: this.getHeadersWithAuthToken() });
+  }
 
   postFecha(data: any): Observable<any> {
     return this.http.post(`${this.APIUrl}/GestevFechas`, data, { headers: this.getHeadersWithAuthToken() });
@@ -53,10 +56,6 @@ export class FichaGestEventoService {
 
   postTipoFecha(data: any): Observable<any> {
     return this.http.post(`${this.APIUrl}/GestevTipoFecha`, data, { headers: this.getHeadersWithAuthToken() });
-  }
-
-  postEstado(data: any): Observable<any> {
-    return this.http.post(`${this.APIUrl}/EGestevEstado`, data, { headers: this.getHeadersWithAuthToken() });
   }
 
   postArea(data: any): Observable<any> {
@@ -120,6 +119,9 @@ export class FichaGestEventoService {
   }
   
 
+  postdeleteEvento(id: number): Observable<any> {
+    return this.http.post(`${this.APIUrl}/GestevEvento/EliminarEvento?IdEvento=${id}`, { headers: this.getHeadersWithAuthToken() });
+  }
 
 
 

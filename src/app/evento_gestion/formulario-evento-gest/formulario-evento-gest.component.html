@@ -14,7 +14,11 @@
     <mat-tab label="Fechas del Evento">
       <div *ngTemplateOutlet="ficha_fecha"></div>
     </mat-tab>
+    <mat-tab label="Autorización"> 
+      <div *ngTemplateOutlet="ficha_autorizacion"></div>
+    </mat-tab>
   </mat-tab-group>
+
 
 
 
@@ -255,9 +259,20 @@
 
   </ng-template>
 
+  <ng-template #ficha_autorizacion>
+    <div class="project-autorizar">
+      <div class="button-container-aut">
+      <button mat-raised-button color="primary" type="button" class="save-button" (click)="aprobarEvento()">Aprobar</button>
+      <button mat-raised-button color="warm" type="button" class="delete-button" (click)="devolverEvento()" >Devolver</button>
+      <button mat-raised-button color="warn" type="button" class="cancel-button" (click)="cancelarEvento()">Cancelar</button>
+      </div>
+    </div>
+
+  </ng-template>
+
 
   <div class="form-buttons">
-    <button mat-stroked-button color="warn" type="button" class="delete-button" >Eliminar</button>
+    <button mat-stroked-button color="warn" type="button" class="delete-button" (click)="eliminarEvento()">Eliminar</button>
     <button mat-raised-button color="warn" type="button" class="cancel-button" (click)="cancelEvento()">Cancelar</button>
     <button mat-raised-button color="primary" type="button" class="save-button" (click)="triggerSaveEvento()">Guardar</button>
 

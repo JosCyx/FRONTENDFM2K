@@ -1,0 +1,17 @@
+<div>
+  <div class="text-center-custom">
+      <h2 mat-dialog-title>Mensaje</h2>
+  </div>
+  <div class="span-divisor"></div>
+  <div mat-dialog-content class="content-center-custom">
+      <p>{{ data.mensaje }}</p>
+      <mat-form-field class="example-full-width">
+        <mat-label>Escribe el motivo de devolución</mat-label>
+        <textarea matInput [(ngModel)]="GlobalGestEvService.motivoDevolucion"></textarea>
+      </mat-form-field>
+  </div>
+  <div mat-dialog-actions style="justify-content: center; padding-bottom: 20px;">
+      <button mat-flat-button color="warn" (click)="closeDialog()">Cancelar</button>
+      <button mat-flat-button color="primary" (click)="confirmAction()">Aceptar</button>
+  </div>
+</div>

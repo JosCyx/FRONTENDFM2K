@@ -118,6 +118,7 @@ import { MenuEventoGestComponent } from './evento_gestion/menu-evento-gest/menu-
 import { FormularioEventoGestComponent } from './evento_gestion/formulario-evento-gest/formulario-evento-gest.component';
 import { CalendarioEventoGestComponent } from './evento_gestion/calendario-evento-gest/calendario-evento-gest.component';
 import { ListadoEventosComponent } from './evento_gestion/listado-eventos/listado-eventos.component';
+import { DevolverDialogComponent } from './evento_gestion/devolver-dialog/devolver-dialog.component';
 
 @NgModule({
   declarations: [
@@ -194,7 +195,8 @@ import { ListadoEventosComponent } from './evento_gestion/listado-eventos/listad
     MenuEventoGestComponent,
     FormularioEventoGestComponent,
     CalendarioEventoGestComponent,
-    ListadoEventosComponent
+    ListadoEventosComponent,
+    DevolverDialogComponent
     
     
   ],

@@ -272,3 +272,15 @@ textarea {
   text-decoration: none !important;
   cursor: pointer;
 }
+
+.project-autorizar {
+  display: flex;
+  justify-content: center; /* Para centrar los botones horizontalmente */
+  margin-top: 20px;
+}
+
+.button-container-aut {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Espacio entre los botones */
+}
