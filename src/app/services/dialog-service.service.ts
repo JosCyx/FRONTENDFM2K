@@ -8,6 +8,7 @@ import { MessageDialogComponent } from '../eventos/components/templates/message-
 import { Subject } from 'rxjs';
 import { FinishRequerimentComponent } from '../eventos/components/templates/finish-requeriment/finish-requeriment.component';
 import { AddDimensionesComponent } from '../components/templates/add-dimensiones/add-dimensiones.component';
+import { DevolverDialogComponent } from '../evento_gestion/devolver-dialog/devolver-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -68,7 +69,6 @@ export class DialogServiceService {
     return this.confirmResultSubject.asObservable();
   }
 
-  
   setConfirmResult(value: boolean){
     if(value){
       this.confirmResultSubject.next(true);
@@ -76,6 +76,35 @@ export class DialogServiceService {
       this.confirmResultSubject.next(false);
     }
   }
+
+  //GESTION DE EVENTOS
+  private confirmResultSubjectGestev = new Subject<boolean>();
+
+  
+  openMessageGestEvDialog(message: string){
+    this.dialog.open(DevolverDialogComponent, {
+      data: { mensaje: message},
+      width: '600px',
+    });
+
+    return this.confirmResultSubjectGestev.asObservable();
+  }
+  
+
+
+  setConfirmResultGestEv(value: boolean){
+    if(value){
+      this.confirmResultSubjectGestev.next(true);
+    } else {
+      this.confirmResultSubjectGestev.next(false);
+    }
+  }
+
+
+
+
+
+  
 
   openFinishReqDialog(){
     this.dialog.open(FinishRequerimentComponent, {

@@ -95,7 +95,7 @@ export class FormularioEventoGestComponent {
     public dialog: MatDialog,
     public GlobalGestEventosService: GlobalGestEventosService,
     private fichaGestEvService: FichaGestEventoService,
-        private dialogService: DialogServiceService,
+    private dialogService: DialogServiceService,
   ) { }
 
 
@@ -106,7 +106,7 @@ export class FormularioEventoGestComponent {
 
 
   ngOnInit(): void {
-    setTimeout(async() => {
+    setTimeout(async () => {
       const empleados$ = this.fichaGestEvService.getEmpleadoList();
       const localidad$ = this.fichaGestEvService.getLocalidadList();
       const tipoContrato$ = this.fichaGestEvService.getTipoContratoList();
@@ -178,7 +178,7 @@ export class FormularioEventoGestComponent {
       (response) => {
         //console.log("Fechas del evento", response);
 
-        if(response.length == 0){
+        if (response.length == 0) {
           this.callMensaje("No se encontraron fechas para el evento", false);
         }
 
@@ -229,7 +229,7 @@ export class FormularioEventoGestComponent {
     }
     //limpiar el registro de fechas
     this.fechasList = [];
-    
+
     //limpiar el objeto de fechas
     this.FechasObj = { tipo: 0, fechaInicio: undefined, horaInicio: '', fechaFin: undefined, horafin: '' };
 
@@ -253,7 +253,14 @@ export class FormularioEventoGestComponent {
 
 
   cancelEvento() {
-    this.clearEventoData();
+          const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro de que desea cancelar este evento? Esta acción no se puede deshacer. Si desea reagendar el evento, deberá registrarlo nuevamente.`).subscribe(
+        (response) => {
+          confirmDialogSubscription.unsubscribe();
+          if (response) {
+            this.clearEventoData();
+          }
+        }
+      ); 
   }
 
   disableDateType(tipo: number) {
@@ -375,7 +382,7 @@ export class FormularioEventoGestComponent {
   timeListFiltered2: string[] = _.cloneDeep(this.timeList);
 
   async setFormatTime() {
-    if(this.FechasObj.fechaInicio == undefined || this.FechasObj.fechaFin == undefined){
+    if (this.FechasObj.fechaInicio == undefined || this.FechasObj.fechaFin == undefined) {
       console.log("Fechas no definidas");
       return;
     }
@@ -431,12 +438,12 @@ export class FormularioEventoGestComponent {
     this.tipoFechaList = this.tipoFechaList.filter(tipo =>
       !this.fechasList.some(registro => registro.tipo === tipo)
     );
-    
+
   }
 
   //validar que los campos de la fecha no esten vacios
   registroValido(): boolean {
-    if(this.FechasObj.fechaInicio == undefined || this.FechasObj.fechaFin == undefined){
+    if (this.FechasObj.fechaInicio == undefined || this.FechasObj.fechaFin == undefined) {
       console.log("Fechas no definidas");
       return false
     }
@@ -467,10 +474,10 @@ export class FormularioEventoGestComponent {
         if (this.isSameDay(this.minDate, this.FechasObj.fechaInicio)) {
           const horaInicioMin = instalacionDate.fechaFin.getHours().toString().padStart(2, '0') + ':' + instalacionDate.fechaFin.getMinutes().toString().padStart(2, '0');
           this.filtrarHorasDisponibles(horaInicioMin, 1);
-        } else if(this.isSameDay(this.minDate, this.FechasObj.fechaFin)){
+        } else if (this.isSameDay(this.minDate, this.FechasObj.fechaFin)) {
           const horaInicioMin = instalacionDate.fechaFin.getHours().toString().padStart(2, '0') + ':' + instalacionDate.fechaFin.getMinutes().toString().padStart(2, '0');
           this.filtrarHorasDisponibles(horaInicioMin, 2);
-        } else {          
+        } else {
           this.limpiarRestriccionesHoras(); // Limpiar restricciones si es un día diferente
         }
 
@@ -485,7 +492,7 @@ export class FormularioEventoGestComponent {
         if (this.isSameDay(this.minDate, this.FechasObj.fechaInicio)) {
           const horaInicioMin = ejecucionDate.fechaFin.getHours().toString().padStart(2, '0') + ':' + ejecucionDate.fechaFin.getMinutes().toString().padStart(2, '0');
           this.filtrarHorasDisponibles(horaInicioMin, 1);
-        } else if(this.isSameDay(this.minDate, this.FechasObj.fechaFin)){
+        } else if (this.isSameDay(this.minDate, this.FechasObj.fechaFin)) {
           const horaInicioMin = ejecucionDate.fechaFin.getHours().toString().padStart(2, '0') + ':' + ejecucionDate.fechaFin.getMinutes().toString().padStart(2, '0');
           this.filtrarHorasDisponibles(horaInicioMin, 2);
         } else {
@@ -515,9 +522,9 @@ export class FormularioEventoGestComponent {
     const index = this.timeList.indexOf(horaMinima);
     if (index !== -1) {
       // Recortar las listas de horas desde la hora mínima permitida
-      if(tipo == 1){
+      if (tipo == 1) {
         this.timeListFiltered1 = this.timeList.slice(index + 1);
-      } else if(tipo == 2){
+      } else if (tipo == 2) {
         this.timeListFiltered2 = this.timeList.slice(index + 1);
       }
     }
@@ -578,7 +585,7 @@ export class FormularioEventoGestComponent {
   }
 
   async validarCampos(): Promise<boolean> {
-  const idValidos = await this.searchIdDataEvent();
+    const idValidos = await this.searchIdDataEvent();
     if (!idValidos) {
       return false;
     }
@@ -608,13 +615,13 @@ export class FormularioEventoGestComponent {
 
     //validaciones de las fechas
     console.log("Validando fechas", this.fechasList);
-    if(!this.fechasList.some(fecha => fecha.tipo == 1)){
+    if (!this.fechasList.some(fecha => fecha.tipo == 1)) {
       this.callMensaje("Debe ingresar la fecha de montaje", false);
       return false;
-    } else if(!this.fechasList.some(fecha => fecha.tipo == 2)){
+    } else if (!this.fechasList.some(fecha => fecha.tipo == 2)) {
       this.callMensaje("Debe ingresaar la fecha de ejecución", false);
       return false;
-    } else if(!this.fechasList.some(fecha => fecha.tipo == 3)){
+    } else if (!this.fechasList.some(fecha => fecha.tipo == 3)) {
       this.callMensaje("Debe ingresar la fecha de desmontaje", false);
       return false;
     }
@@ -625,6 +632,16 @@ export class FormularioEventoGestComponent {
   //GUARDAR EL EVENTO
   async triggerSaveEvento() {
     //VALIDAR QUE LOS CAMPOS ESTEN LLENOS
+
+      // const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea guardar este evento?`).subscribe(
+      //   (response) => {
+      //     confirmDialogSubscription.unsubscribe();
+      //     if (response) {
+
+      //     }
+      //   }
+      // ); 
+
     console.log("Validando campos");
 
     const camposValidos = await this.validarCampos();
@@ -699,7 +716,7 @@ export class FormularioEventoGestComponent {
         fechaInicio: fecha.fechaInicio,
         fechaFin: fecha.fechaFin,
       };
-     //console.log("Guardando fecha", data);
+      //console.log("Guardando fecha", data);
       try {
         const response = await this.fichaGestEvService.postFecha(data).toPromise();
         console.log("Fecha guardada", response);
@@ -749,23 +766,142 @@ export class FormularioEventoGestComponent {
 
     //console.log("Guardando cliente", data);
 
-    this.fichaGestEvService.postClientes(data).subscribe(
+
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea guardar un nuevo cliente?`).subscribe(
       (response) => {
-        console.log("Cliente guardado", response);
-        this.dialog.closeAll();
-        this.clearEventoData();
-        this.fichaGestEvService.getClientesList().subscribe(
-          (response) => {
-            this.clienteList = _.cloneDeep(response);
-            this.clienteListFiltered = _.cloneDeep(response);
-          }
-        )
-      },
-      (error) => {
-        console.error("Error al guardar el cliente", error);
+        confirmDialogSubscription.unsubscribe();
+        if (response) {
+          this.fichaGestEvService.postClientes(data).subscribe(
+            (response) => {
+              console.log("Cliente guardado", response);
+              this.dialog.closeAll();
+              this.clearEventoData();
+              this.fichaGestEvService.getClientesList().subscribe(
+                (response) => {
+                  this.clienteList = _.cloneDeep(response);
+                  this.clienteListFiltered = _.cloneDeep(response);
+                }
+              )
+            },
+            (error) => {
+              console.error("Error al guardar el cliente", error);
+            }
+          );
+
+        }
       }
-    );
+    )
+    
   }
 
 
+  //Boton eliminar evento, elimina el evento del listado-eventos 
+
+
+  eliminarEvento() {
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea eliminar este evento? Esta acción no se puede deshacer.`).subscribe(
+      (response) => {
+        confirmDialogSubscription.unsubscribe();
+        if (response) {
+          const idEventSelected = this.GlobalGestEventosService.idEventoSelected;
+
+          this.fichaGestEvService.postdeleteEvento(idEventSelected).subscribe(
+            (response) => {
+              console.log("Evento eliminado", response);
+              this.callMensaje("Evento eliminado", true);
+            },
+            (error) => {
+              console.error("Error al eliminar el evento", error);
+              this.callMensaje("Error al eliminar el evento", false);
+            }
+          )
+        }
+      }
+    )
+  }
+
+
+
+  //FICHA AUTORIZACION
+
+  //Aprobar evento
+  aprobarEvento() {
+    //console.log("Aprobando evento");
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea aprobar este evento?`).subscribe(
+      (response) => {
+        confirmDialogSubscription.unsubscribe();
+        if (response) {
+          const idEventSelected = this.GlobalGestEventosService.idEventoSelected;
+          this.fichaGestEvService.postAutorizacion(idEventSelected, 1).subscribe(
+            (response) => {
+              console.log("Evento aprobado", response);
+              this.callMensaje("Evento aprobado", true);
+            },
+            (error) => {
+              if(error. status == 409){
+                this.callMensaje("No se puede aprobar el evento desde el estado Aprobado", false);
+              }
+              console.error("Error al aprobar el evento", error);
+              this.callMensaje("Error al aprobar el evento", false);
+            }
+          )
+        }
+      }
+    )
+  }
+
+
+  devolverEvento() {
+    //console.log("Devolviendo evento");
+    const confirmDialogSubscription = this.dialogService.openMessageGestEvDialog(`¿Está seguro de que desea devolver este evento para revisión? A continuación, ingrese el motivo de devolución.`).subscribe(
+      (response) => {
+        console.log("Respuesta del dialogo", response);
+        confirmDialogSubscription.unsubscribe();
+        if (response) {
+          const idEventSelected = this.GlobalGestEventosService.idEventoSelected;
+          const motivo = this.GlobalGestEventosService.motivoDevolucion;
+          
+          this.fichaGestEvService.postAutorizacion(idEventSelected, 2, motivo).subscribe(
+            (response) => {
+              console.log("Evento devuelto", response);
+              
+              this.callMensaje("Evento devuelto", true);
+            },
+            (error) => {
+              if(error. status == 409){
+                this.callMensaje("No se puede devolver el evento desde el estado Ingresado o Finalizado", false);
+              }
+              console.error("Error al devolver el evento", error);
+              this.callMensaje("Error al devolver el evento", false);
+            }
+          )
+        }
+      }
+    )
+  }
+
+
+  cancelarEvento() {
+    //console.log("Cancelando evento");
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea cancelar este evento?
+    El evento ya no se llevará a cabo y esta acción es irreversible. Deberá crear un nuevo evento si desea reprogramarlo.`).subscribe(
+      (response) => {
+        confirmDialogSubscription.unsubscribe();
+        if (response) {
+          const idEventSelected = this.GlobalGestEventosService.idEventoSelected;
+      
+          this.fichaGestEvService.postAutorizacion(idEventSelected, 3).subscribe(
+            (response) => {
+              //console.log("Evento cancelado", response);
+              this.callMensaje("Evento cancelado", true);
+            },
+            (error) => {
+              console.error("Error al cancelar el evento", error);
+              this.callMensaje("Error al cancelar el evento", false);
+            }
+          )
+        }
+      }
+    )
+  }
 }
