@@ -2,6 +2,8 @@ import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FichaGestEventoService } from 'src/app/services/comunicationAPI/gest-eventos/ficha-gest-evento.service';
 import * as _ from 'lodash';
+import { GlobalGestEventosService } from 'src/app/services/global-gest-eventos.service';
+import { Router } from '@angular/router';
 
 interface Day {
   day: number;
@@ -55,7 +57,9 @@ export class CalendarioEventoGestComponent {
 
   constructor(
     private dialog: MatDialog,
-    private gestEvService: FichaGestEventoService
+    private gestEvService: FichaGestEventoService,
+    private globalEvGestService: GlobalGestEventosService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -238,6 +242,14 @@ export class CalendarioEventoGestComponent {
       this.events = _.cloneDeep(this.eventsBackup.filter((ev: any) => ev.estadop == 40));
       this.generateCalendar();
     }
+  }
+
+  selectEvent(idEvent: number){
+    this.closeEvDialog();
+    this.globalEvGestService.idEventoSelected = idEvent;
+    this.globalEvGestService.editMode = true;
+
+    this.router.navigate(['addEventoGest']);
   }
 
 }

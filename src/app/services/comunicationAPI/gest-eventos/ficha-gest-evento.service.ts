@@ -98,8 +98,8 @@ export class FichaGestEventoService {
     return this.http.get(`${this.APIUrl}/GestevClientes`, { headers: this.getHeadersWithAuthToken() });
   }
 
-  getLocalidadList(): Observable<any> {
-    return this.http.get(`${this.APIUrl}/GestevLocalidad`, { headers: this.getHeadersWithAuthToken() });
+  getLocalidadList(tipoContrato: number): Observable<any> {
+    return this.http.get(`${this.APIUrl}/GestevLocalidad/GetGestevLocalidadByArea/${tipoContrato}`, { headers: this.getHeadersWithAuthToken() });
   }
 
   getTipoContratoList(): Observable<any> {

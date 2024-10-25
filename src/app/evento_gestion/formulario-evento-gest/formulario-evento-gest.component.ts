@@ -1,6 +1,7 @@
 import { Component, ViewChild, TemplateRef, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
+import { CookieService } from 'ngx-cookie-service';
 import { forkJoin } from 'rxjs';
 import { FichaGestEventoService } from 'src/app/services/comunicationAPI/gest-eventos/ficha-gest-evento.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
@@ -57,7 +58,9 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   empleadosList: any[] = [];
   empleadosListFiltered: any[] = [];
   tipoFechaList: any[] = [];
+  tipoFechaListFiltered: any[] = [];
   tipoPagoList: any[] = [];
+  tipoPagoListFiltered: any[] = [];
 
   //variables que almacenan el nombre de los datalist
   nombreEmpleado: string = '';
@@ -65,6 +68,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   nombreTipoContrato: string = '';
   nombreLocalidad: string = '';
   nombreTipoFecha: string = '';
+  nombreTipoPago: string = '';
 
   //objeto que almacena las propiedades del evento
   gestEvento: GestEvento = {
@@ -89,39 +93,44 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     correo: '',
   }
 
-
+  currentEvEstado: number = 10;
+  currentUserLogued: string = this.cookieService.get('userIdNomina');
+  currentEvSeller: string = '';
 
   constructor(
     public dialog: MatDialog,
     public GlobalGestEventosService: GlobalGestEventosService,
     private fichaGestEvService: FichaGestEventoService,
     private dialogService: DialogServiceService,
+    private cookieService: CookieService
   ) { }
 
 
   ngOnDestroy(): void {
     this.GlobalGestEventosService.editMode = false;
     this.GlobalGestEventosService.idEventoSelected = 0;
+
+    this.clearEventoData();
   }
 
 
   ngOnInit(): void {
     setTimeout(async () => {
       const empleados$ = this.fichaGestEvService.getEmpleadoList();
-      const localidad$ = this.fichaGestEvService.getLocalidadList();
+      //const localidad$ = this.fichaGestEvService.getLocalidadList();
       const tipoContrato$ = this.fichaGestEvService.getTipoContratoList();
       const cliente$ = this.fichaGestEvService.getClientesList();
       const tipoFecha$ = this.fichaGestEvService.getTipoFechaList();
       const tipoPago$ = this.fichaGestEvService.getTipoPagoList();
 
       //Usar forkJoin para esperar a que todas las observables se completen
-      await forkJoin([empleados$, localidad$, tipoContrato$, cliente$, tipoFecha$, tipoPago$]).subscribe(
-        ([empleadosData, localidadData, tipoContratoData, clienteData, tipoFechaData, tipoPagoData]) => {
+      await forkJoin([empleados$, /*localidad$,*/ tipoContrato$, cliente$, tipoFecha$, tipoPago$]).subscribe(
+        ([empleadosData, /*localidadData,*/ tipoContratoData, clienteData, tipoFechaData, tipoPagoData]) => {
           this.empleadosList = _.cloneDeep(empleadosData);
           this.empleadosListFiltered = _.cloneDeep(empleadosData);
 
-          this.localidadList = _.cloneDeep(localidadData);
-          this.localidadListFiltered = _.cloneDeep(localidadData);
+          /*this.localidadList = _.cloneDeep(localidadData);
+          this.localidadListFiltered = _.cloneDeep(localidadData);*/
 
           this.tipoContratoList = _.cloneDeep(tipoContratoData);
           this.tipoContratoListFiltered = _.cloneDeep(tipoContratoData);
@@ -130,8 +139,10 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
           this.clienteListFiltered = _.cloneDeep(clienteData);
 
           this.tipoFechaList = _.cloneDeep(tipoFechaData);
+          this.tipoFechaListFiltered = _.cloneDeep(tipoFechaData);
 
           this.tipoPagoList = _.cloneDeep(tipoPagoData);
+          this.tipoPagoListFiltered = _.cloneDeep(tipoPagoData);
 
           if (this.GlobalGestEventosService.editMode) {
             // Cargar los datos del evento seleccionado
@@ -149,7 +160,8 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
     //consultar los datos del evento seleccionado
     this.fichaGestEvService.getFichaGestEventoById(idEventSelected).subscribe(
-      (response) => {
+      async (response) => {
+        //console.log("Datos del evento", response);
         this.gestEvento = {
           nombreEvento: response.evNombre,
           usuarioSolicitante: response.evEmpleado,//
@@ -162,10 +174,22 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
           estadoProceso: response.evEstado,
         }
 
+        console.log("Tipo de contrato", response.evTipoContrato);
+
+        await this.getLocalidadByArea(response.evTipoContrato);
+
+        //console.log("Rellenar campos de empleado, cliente y localidad");
         const solicitante = this.empleadosList.find(emp => emp.empleadoIdNomina == response.evEmpleado);
         this.nombreEmpleado = solicitante.empleadoNombres + ' ' + solicitante.empleadoApellidos;
         this.nombreCliente = this.clienteList.find(cli => cli.cliId === response.evCliente).cliNombre;
-        this.nombreLocalidad = this.localidadList.find(loc => loc.locId === response.evLocalidad).locNombre;
+        this.nombreLocalidad = this.localidadList.find(loc => loc.id === response.evLocalidad).lugar;
+        this.nombreTipoContrato = this.tipoContratoList.find(cont => cont.contrId === response.evTipoContrato).contrNombre;
+        this.nombreTipoPago = this.tipoPagoList.find(pago => pago.pagId === response.evTipoPago).pagNombre;
+
+        this.currentEvEstado = response.evEstado;
+        this.currentEvSeller = response.evEmpleado;
+
+        //console.log("Estado del evento", this.currentEvEstado)
       },
       (error) => {
         console.error("Error al cargar los datos del evento", error);
@@ -203,6 +227,14 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
   callMensaje(mensaje: string, type: boolean) {
     this.dialogService.openAlertDialog(mensaje, type);
+  }
+
+  checkEditPermission(): boolean{
+    if(this.GlobalGestEventosService.editMode){
+      return this.currentEvSeller != this.currentUserLogued || this.currentEvEstado != 10;
+    } else {
+      return false;
+    }
   }
 
   clearEventoData() {
@@ -251,16 +283,34 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     }
   }
 
+  async getLocalidadByArea(event: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.fichaGestEvService.getLocalidadList(event).subscribe(
+        (response) => {
+          //console.log("Localidades cargadas", response);
+          this.localidadList = _.cloneDeep(response);
+          this.localidadListFiltered = _.cloneDeep(response);
+          resolve();  // Resuelve la promesa cuando la respuesta llega
+        },
+        (error) => {
+          console.error("Error al cargar las localidades", error);
+          this.callMensaje("Error al cargar las localidades", false);
+          reject(error);  // Rechaza la promesa en caso de error
+        }
+      );
+    });
+  }
+
 
   cancelEvento() {
-          const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro de que desea cancelar este evento? Esta acción no se puede deshacer. Si desea reagendar el evento, deberá registrarlo nuevamente.`).subscribe(
-        (response) => {
-          confirmDialogSubscription.unsubscribe();
-          if (response) {
-            this.clearEventoData();
-          }
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro de que desea cancelar este evento? Esta acción no se puede deshacer. Si desea reagendar el evento, deberá registrarlo nuevamente.`).subscribe(
+      (response) => {
+        confirmDialogSubscription.unsubscribe();
+        if (response) {
+          this.clearEventoData();
         }
-      ); 
+      }
+    );
   }
 
   disableDateType(tipo: number) {
@@ -291,6 +341,18 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     );
   }
 
+  filterTipoPago(filterValue: string) {
+    this.tipoPagoListFiltered = this.tipoPagoList.filter(tipoPago =>
+      (tipoPago.pagNombre).toLowerCase().includes(filterValue.toLowerCase())
+    );
+  }
+
+  filterTipoFecha(filterValue: string) {
+    this.tipoFechaListFiltered = this.tipoFechaList.filter(tipoFecha =>
+      (tipoFecha.tipofeNombre).toLowerCase().includes(filterValue.toLowerCase())
+    );
+  }
+
   updateEmpleadosListFiltered(event: any) {
     this.filterEmpleados(event.target.value);
   }
@@ -305,6 +367,14 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
   updateTipoContratoListFiltered(event: any) {
     this.filterTipoContrato(event.target.value);
+  }
+
+  updateTipoPagoListFiltered(event: any) {
+    this.filterTipoPago(event.target.value);
+  }
+
+  updateTipoFechaListFiltered(event: any) {
+    this.filterTipoFecha(event.target.value);
   }
 
   updateHorasListFiltered(event: any, idList: number) {
@@ -541,7 +611,8 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     solicitante: 0,
     tipoContrato: 0,
     localidad: 0,
-    cliente: 0
+    cliente: 0,
+    tipoPago: 0
   }
 
   async searchIdDataEvent() {
@@ -549,12 +620,16 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
     const solicitante = this.empleadosList.find(emp => emp.empleadoNombres + ' ' + emp.empleadoApellidos === this.nombreEmpleado);
 
-    const tipoContrato = this.tipoContratoList.find(cont => cont.contrId === this.gestEvento.tipoContrato);
+    const tipoContrato = this.tipoContratoList.find(cont => cont.contrNombre === this.nombreTipoContrato);
 
-    const localidad = this.localidadList.find(loc => loc.locNombre === this.nombreLocalidad);
+    const localidad = this.localidadList.find(loc => loc.lugar === this.nombreLocalidad);
 
     const cliente = this.clienteList.find(cli => cli.cliNombre === this.nombreCliente);
-    console.log("Datos del evento", solicitante, tipoContrato, localidad, cliente);
+
+    const tipoPago = this.tipoPagoList.find(pago => pago.pagNombre === this.nombreTipoPago);
+
+
+    //console.log("Datos del evento", solicitante, tipoContrato, localidad, cliente);
 
     //validar que los inputs con autocomplete tengan un valor
     if (solicitante === undefined) {
@@ -572,13 +647,18 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     } else if (cliente === undefined) {
       this.callMensaje("Seleccione un cliente", false);
       return false;
+
+    } else if (tipoPago === undefined) {
+      this.callMensaje("Seleccione un tipo de pago", false);
+      return false
     }
 
     this.idData = {
       solicitante: solicitante.empleadoIdNomina,
       tipoContrato: tipoContrato.contrId,
-      localidad: localidad.locId,
-      cliente: cliente.cliId
+      localidad: localidad.id,
+      cliente: cliente.cliId,
+      tipoPago: tipoPago.pagId
     }
 
     return true;
@@ -597,10 +677,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     } else if (this.gestEvento.descripcion === '') {
       this.callMensaje("Ingrese una descripción para el evento", false);
       return false;
-    } else if (this.gestEvento.tipoPago === 0) {
-      this.callMensaje("Seleccione un tipo de pago", false);
-      return false;
-    } else if (this.gestEvento.tipoPago === 1 && this.gestEvento.pagoTotal === 0) {
+    } else if (this.nombreTipoPago === '' && this.gestEvento.pagoTotal === 0) {
       this.callMensaje("Ingrese un monto total", false);
       return false;
     } /*else if (this.gestEvento.tipoPago === 2) {
@@ -631,17 +708,6 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
   //GUARDAR EL EVENTO
   async triggerSaveEvento() {
-    //VALIDAR QUE LOS CAMPOS ESTEN LLENOS
-
-      // const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea guardar este evento?`).subscribe(
-      //   (response) => {
-      //     confirmDialogSubscription.unsubscribe();
-      //     if (response) {
-
-      //     }
-      //   }
-      // ); 
-
     console.log("Validando campos");
 
     const camposValidos = await this.validarCampos();
@@ -650,35 +716,43 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       return;
     }
 
-    //console.log("Guardando evento");
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea guardar este evento?`).subscribe(
+      async (response) => {
+        confirmDialogSubscription.unsubscribe();
 
-    try {
-      const evExito = await this.saveEvento();
-      if (!evExito) {
-        this.callMensaje("Error al guardar el evento", false);
-        return;
+        if (response) {
+          try {
+            const evExito = await this.saveEvento();
+            if (!evExito) {
+              this.callMensaje("Error al guardar el evento", false);
+              return;
+            }
+
+            // Obtén el ID del evento guardado
+            const eventId = evExito; // Aquí obtienes el ID del evento desde el resultado de saveEvento
+
+            const [fechaExito, cuotaExito] = await Promise.all([
+              this.saveFecha(eventId),  // Pasa el ID del evento
+              this.saveCuota(eventId)    // Pasa el ID del evento
+            ]);
+
+            if (fechaExito && cuotaExito) {
+              this.callMensaje("Evento guardado con éxito", true);
+            } else if (!fechaExito) {
+              this.callMensaje("Error al guardar las fechas", false);
+            } else if (!cuotaExito) {
+              this.callMensaje("Error al guardar la cuota", false);
+            }
+
+          } catch (error) {
+            console.error("Error en el proceso de guardado", error);
+            this.callMensaje("Error en el proceso de guardado", false);
+          }
+        }
       }
+    );
 
-      // Obtén el ID del evento guardado
-      const eventId = evExito; // Aquí obtienes el ID del evento desde el resultado de saveEvento
 
-      const [fechaExito, cuotaExito] = await Promise.all([
-        this.saveFecha(eventId),  // Pasa el ID del evento
-        this.saveCuota(eventId)    // Pasa el ID del evento
-      ]);
-
-      if (fechaExito && cuotaExito) {
-        this.callMensaje("Evento guardado con éxito", true);
-      } else if (!fechaExito) {
-        this.callMensaje("Error al guardar las fechas", false);
-      } else if (!cuotaExito) {
-        this.callMensaje("Error al guardar la cuota", false);
-      }
-
-    } catch (error) {
-      console.error("Error en el proceso de guardado", error);
-      this.callMensaje("Error en el proceso de guardado", false);
-    }
   }
 
   async saveEvento(): Promise<number | false> {
@@ -791,7 +865,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         }
       }
     )
-    
+
   }
 
 
@@ -838,7 +912,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
               this.callMensaje("Evento aprobado", true);
             },
             (error) => {
-              if(error. status == 409){
+              if (error.status == 409) {
                 this.callMensaje("No se puede aprobar el evento desde el estado Aprobado", false);
               }
               console.error("Error al aprobar el evento", error);
@@ -860,15 +934,15 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         if (response) {
           const idEventSelected = this.GlobalGestEventosService.idEventoSelected;
           const motivo = this.GlobalGestEventosService.motivoDevolucion;
-          
+
           this.fichaGestEvService.postAutorizacion(idEventSelected, 2, motivo).subscribe(
             (response) => {
               console.log("Evento devuelto", response);
-              
+
               this.callMensaje("Evento devuelto", true);
             },
             (error) => {
-              if(error. status == 409){
+              if (error.status == 409) {
                 this.callMensaje("No se puede devolver el evento desde el estado Ingresado o Finalizado", false);
               }
               console.error("Error al devolver el evento", error);
@@ -889,7 +963,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         confirmDialogSubscription.unsubscribe();
         if (response) {
           const idEventSelected = this.GlobalGestEventosService.idEventoSelected;
-      
+
           this.fichaGestEvService.postAutorizacion(idEventSelected, 3).subscribe(
             (response) => {
               //console.log("Evento cancelado", response);

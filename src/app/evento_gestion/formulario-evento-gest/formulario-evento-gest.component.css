@@ -273,14 +273,20 @@ textarea {
   cursor: pointer;
 }
 
-.project-autorizar {
-  display: flex;
-  justify-content: center; /* Para centrar los botones horizontalmente */
-  margin-top: 20px;
-}
-
 .button-container-aut {
   display: flex;
-  justify-content: space-between;
-  gap: 20px; /* Espacio entre los botones */
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
 }
+
+.refuse-button{
+  background-color: #d39b00 !important;
+  color: white !important;
+}
+
+.disabled-select, 
+.disabled-select * {
+  pointer-events: none;
+}
+

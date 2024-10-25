@@ -93,12 +93,17 @@
         <p style="font-style: italic;">{{ eventoSelected.lugar }}</p>
       </div>
       <div class="title-event">
-        <p>{{ eventoSelected.cliente }}</p>
-      </div>
-      <div class="title-event">
         <p>{{ eventoSelected.descp }}</p>
       </div>
+      <div class="title-event">
+        <p><span class="bold-txt">Cliente:</span> {{ eventoSelected.cliente }}</p>
+        <p><span class="bold-txt">Asesor:</span> {{ eventoSelected.asesor }}</p>
+      </div>
+    </div>
 
+    <div class="title-event">
+      <p><span class="bold-txt">Tipo de pago:</span>  {{ eventoSelected.tpago }}</p>
+      <p><span class="bold-txt">Valor contrato:</span>  {{ eventoSelected.vpago }}</p>
     </div>
 
     <div class="title-event">
@@ -112,7 +117,7 @@
     </div> -->
 
     <div class="edit-event">
-      <button mat-raised-button color="primary">Más detalles</button>
+      <button mat-raised-button color="primary" (click)="selectEvent(eventoSelected.id)">Más detalles</button>
       <button mat-raised-button color="warn" (click)="closeEvDialog()">Cerrar</button>
     </div>
 
