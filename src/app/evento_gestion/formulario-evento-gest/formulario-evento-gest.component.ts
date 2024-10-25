@@ -18,6 +18,7 @@ interface GestEvento {
   pagoAbono: number,
   descripcion: string,
   estadoProceso: number,
+  motivoDev: string,
 }
 
 interface Cliente {
@@ -81,6 +82,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     pagoAbono: 0,
     descripcion: '',
     estadoProceso: 0,
+    motivoDev: '',
   }
 
   //objeto que almacena las propiedades del cliente
@@ -172,6 +174,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
           pagoAbono: response.evPagoAbono,
           descripcion: response.evDescripcion,
           estadoProceso: response.evEstado,
+          motivoDev: response.evMotivoDev,
         }
 
         console.log("Tipo de contrato", response.evTipoContrato);
@@ -249,6 +252,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       pagoAbono: 0,
       descripcion: '',
       estadoProceso: 0,
+      motivoDev: '',
     }
     //limpiar el registro de cliente
     this.cliente = {
@@ -768,7 +772,8 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         evPagoTotal: this.gestEvento.pagoTotal,
         evTipoPago: this.gestEvento.tipoPago,
         evDescripcion: this.gestEvento.descripcion,
-        evEstadoValido: 1
+        evEstadoValido: 1,
+        evMotivoDev: this.gestEvento.motivoDev,        
       };
 
       //console.log("Guardando evento", data);
