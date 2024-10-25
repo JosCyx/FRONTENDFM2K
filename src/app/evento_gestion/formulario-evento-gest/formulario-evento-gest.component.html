@@ -28,13 +28,13 @@
 
       <mat-form-field class="example-full-width">
         <mat-label>NOMBRE DEL EVENTO</mat-label>
-        <input matInput placeholder="Escribe el nombre del evento" [(ngModel)]="gestEvento.nombreEvento">
+        <input matInput placeholder="Escribe el nombre del evento" [(ngModel)]="gestEvento.nombreEvento" [readonly]="checkEditPermission()">
       </mat-form-field>
 
       <mat-form-field class="example-full-width">
         <mat-label>DESCRIPCIÓN DEL EVENTO</mat-label>
         <textarea matInput placeholder="Ingrese el detalle de producto final" rows="4"
-          [(ngModel)]="gestEvento.descripcion"></textarea>
+          [(ngModel)]="gestEvento.descripcion" [readonly]="checkEditPermission()"></textarea>
       </mat-form-field>
 
       <mat-form-field class="example-full-width">
