@@ -49,7 +49,7 @@ export class ListadoEventosComponent implements OnInit{
     this.globalEvService.editMode = true;
 
     this.router.navigate(['addEventoGest']);
-
+    
     
 
   }
