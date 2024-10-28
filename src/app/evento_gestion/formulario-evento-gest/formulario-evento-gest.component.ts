@@ -947,7 +947,6 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     )
   }
 
-
   cancelarEvento() {
     //console.log("Cancelando evento");
     const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea cancelar este evento?
