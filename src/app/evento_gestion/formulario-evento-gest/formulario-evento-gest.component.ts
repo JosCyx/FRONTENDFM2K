@@ -157,6 +157,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
   }
 
+  //carga los datos del evento seleccionado
   loadEventoData() {
     const idEventSelected = this.GlobalGestEventosService.idEventoSelected;
 
@@ -763,6 +764,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     try {
       //const idData = this.searchIdDataEvent();
       const data = {
+        evId: this.GlobalGestEventosService.idEventoSelected,
         evNombre: this.gestEvento.nombreEvento,
         evLocalidad: this.idData.localidad,
         evCliente: this.idData.cliente,
