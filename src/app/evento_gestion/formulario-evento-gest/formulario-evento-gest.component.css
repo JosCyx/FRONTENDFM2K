@@ -290,3 +290,8 @@ textarea {
   pointer-events: none;
 }
 
+.send-button{
+  background-color: #348d34 !important;
+  color: white;
+}
+

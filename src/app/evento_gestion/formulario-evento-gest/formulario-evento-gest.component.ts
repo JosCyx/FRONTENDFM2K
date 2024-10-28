@@ -131,6 +131,8 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
           this.empleadosList = _.cloneDeep(empleadosData);
           this.empleadosListFiltered = _.cloneDeep(empleadosData);
 
+          this.nombreEmpleado = this.empleadosList.find(emp => emp.empleadoIdNomina == this.currentUserLogued).empleadoNombres + ' ' + this.empleadosList.find(emp => emp.empleadoIdNomina == this.currentUserLogued).empleadoApellidos;
+
           /*this.localidadList = _.cloneDeep(localidadData);
           this.localidadListFiltered = _.cloneDeep(localidadData);*/
 
@@ -304,18 +306,6 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         }
       );
     });
-  }
-
-
-  cancelEvento() {
-    const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro de que desea cancelar este evento? Esta acción no se puede deshacer. Si desea reagendar el evento, deberá registrarlo nuevamente.`).subscribe(
-      (response) => {
-        confirmDialogSubscription.unsubscribe();
-        if (response) {
-          this.clearEventoData();
-        }
-      }
-    );
   }
 
   disableDateType(tipo: number) {
@@ -536,7 +526,6 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     return this.tipoFechaList.find(tipofe => tipofe.tipofeId === tipo).tipofeNombre;
   }
 
-
   // RESTRICCIONES DE FECHA SEGÚN EL TIPO DE EVENTO
   onTipoChange(tipo: number) {
 
@@ -712,7 +701,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   }
 
   //GUARDAR EL EVENTO
-  async triggerSaveEvento() {
+  async triggerSaveEvento(hasToSend: boolean) {
     console.log("Validando campos");
 
     const camposValidos = await this.validarCampos();
@@ -727,7 +716,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
         if (response) {
           try {
-            const evExito = await this.saveEvento();
+            const evExito = await this.saveEvento(hasToSend);
             if (!evExito) {
               this.callMensaje("Error al guardar el evento", false);
               return;
@@ -756,11 +745,9 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         }
       }
     );
-
-
   }
 
-  async saveEvento(): Promise<number | false> {
+  async saveEvento(hasToSend: boolean): Promise<number | false> {
     try {
       //const idData = this.searchIdDataEvent();
       const data = {
@@ -782,6 +769,12 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
       const response = await this.fichaGestEvService.postFichaGestEvento(data).toPromise();
       console.log("Evento guardado", response.evId);
+
+      //enviar el evento
+      if(hasToSend){
+        this.aprobarEvento();
+      };
+
       return response.evId; // Devuelve el ID del evento guardado
     } catch (error) {
       console.error("Error al guardar el evento", error);
@@ -832,8 +825,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     }
   }
 
-  ////////////////////////////////////////////////////////////////////////////////////////
-
+  ////////////////////////////////////////////////////////////////////////////////////////////
   saveCliente() {
     //Guardar el cliente
     const data = {
@@ -846,7 +838,6 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     }
 
     //console.log("Guardando cliente", data);
-
 
     const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea guardar un nuevo cliente?`).subscribe(
       (response) => {
@@ -868,16 +859,13 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
               console.error("Error al guardar el cliente", error);
             }
           );
-
         }
       }
     )
 
   }
 
-
   //Boton eliminar evento, elimina el evento del listado-eventos 
-
 
   eliminarEvento() {
     const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea eliminar este evento? Esta acción no se puede deshacer.`).subscribe(

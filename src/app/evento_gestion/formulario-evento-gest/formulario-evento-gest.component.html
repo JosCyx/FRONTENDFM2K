@@ -28,7 +28,8 @@
 
       <mat-form-field class="example-full-width">
         <mat-label>NOMBRE DEL EVENTO</mat-label>
-        <input matInput placeholder="Escribe el nombre del evento" [(ngModel)]="gestEvento.nombreEvento" [readonly]="checkEditPermission()">
+        <input matInput placeholder="Escribe el nombre del evento" [(ngModel)]="gestEvento.nombreEvento"
+          [readonly]="checkEditPermission()">
       </mat-form-field>
 
       <mat-form-field class="example-full-width">
@@ -40,7 +41,8 @@
       <mat-form-field class="example-full-width">
         <mat-label>USUARIO SOLICITANTE</mat-label>
         <input type="text" for="solicitante" placeholder="Ingrese el nombre del solicitante"
-          (input)="updateEmpleadosListFiltered($event)" matInput [matAutocomplete]="auto" [(ngModel)]="nombreEmpleado" [readonly]="checkEditPermission()">
+          (input)="updateEmpleadosListFiltered($event)" matInput [matAutocomplete]="auto" [(ngModel)]="nombreEmpleado"
+          readonly>
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
           <ng-container *ngFor="let emp of empleadosListFiltered">
             <mat-option [value]="emp.empleadoNombres + ' ' + emp.empleadoApellidos">{{emp.empleadoNombres + " " +
@@ -52,15 +54,16 @@
       <mat-form-field class="example-full-width">
         <mat-label>CLIENTE</mat-label>
         <input type="text" for="cliente" placeholder="Ingrese el nombre del cliente"
-          (input)="updateClientesListFiltered($event)" matInput [matAutocomplete]="cli" [(ngModel)]="nombreCliente" [readonly]="checkEditPermission()">
+          (input)="updateClientesListFiltered($event)" matInput [matAutocomplete]="cli" [(ngModel)]="nombreCliente"
+          [readonly]="checkEditPermission()">
         <mat-autocomplete autoActiveFirstOption #cli="matAutocomplete">
           <ng-container *ngFor="let cli of clienteListFiltered">
             <mat-option [value]="cli.cliNombre">{{cli.cliNombre}}</mat-option>
           </ng-container>
         </mat-autocomplete>
       </mat-form-field>
-      <div class="agg-cliente">
-        <h3><a class="client-link" (click)="abrirVentanaAgregarCliente()">Agregar nuevo cliente</a></h3>
+      <div class="agg-cliente" *ngIf="!checkEditPermission()">
+        <h3><a class="client-link" (click)="abrirVentanaAgregarCliente()" disabled>Agregar nuevo cliente</a></h3>
       </div>
 
       <!-- plantilla de registro de cliente -->
@@ -121,7 +124,8 @@
       <mat-form-field class="example-full-width">
         <mat-label>TIPO DE CONTRATO</mat-label>
         <input type="text" for="localidad" placeholder="Ingrese el tipo de contrato"
-          (input)="updateTipoContratoListFiltered($event)" matInput [matAutocomplete]="tpc" [(ngModel)]="nombreTipoContrato" [readonly]="checkEditPermission()">
+          (input)="updateTipoContratoListFiltered($event)" matInput [matAutocomplete]="tpc"
+          [(ngModel)]="nombreTipoContrato" [readonly]="checkEditPermission()">
         <mat-autocomplete autoActiveFirstOption #tpc="matAutocomplete">
           <ng-container *ngFor="let cont of tipoContratoListFiltered">
             <mat-option [value]="cont.contrNombre">{{cont.contrNombre}}</mat-option>
@@ -134,7 +138,8 @@
       <mat-form-field class="example-full-width">
         <mat-label>ESPACIO</mat-label>
         <input type="text" for="localidad" placeholder="Ingrese el espacio"
-          (input)="updateLocalidadListFiltered($event)" matInput [matAutocomplete]="loc" [(ngModel)]="nombreLocalidad" [readonly]="checkEditPermission()">
+          (input)="updateLocalidadListFiltered($event)" matInput [matAutocomplete]="loc" [(ngModel)]="nombreLocalidad"
+          [readonly]="checkEditPermission()">
         <mat-autocomplete autoActiveFirstOption #loc="matAutocomplete">
           <ng-container *ngFor="let loc of localidadListFiltered">
             <mat-option [value]="loc.lugar">{{loc.lugar}}</mat-option>
@@ -156,9 +161,10 @@
         <mat-form-field class="example-full-width">
           <mat-label>TIPO DE PAGO</mat-label>
           <input type="text" for="localidad" placeholder="Ingrese el tipo de pago"
-            (input)="updateTipoPagoListFiltered($event)" matInput [matAutocomplete]="tpp" [(ngModel)]="nombreTipoPago" [readonly]="checkEditPermission()">
+            (input)="updateTipoPagoListFiltered($event)" matInput [matAutocomplete]="tpp" [(ngModel)]="nombreTipoPago"
+            [readonly]="checkEditPermission()">
           <mat-autocomplete autoActiveFirstOption #tpp="matAutocomplete">
-            <ng-container *ngFor="let pag of tipoPagoListFiltered">   
+            <ng-container *ngFor="let pag of tipoPagoListFiltered">
               <mat-option [value]="pag.pagNombre">{{pag.pagNombre}}</mat-option>
             </ng-container>
           </mat-autocomplete>
@@ -177,7 +183,7 @@
         </mat-form-field>
       </div>
 
-      
+
 
     </div>
   </ng-template>
@@ -190,17 +196,17 @@
 
       <ng-container *ngIf="!checkEditPermission()">
 
-        
-        <!-- select -->
-      <mat-form-field>
-        <mat-label>ETAPAS</mat-label>
-        <mat-select [(ngModel)]="FechasObj.tipo" (selectionChange)="onTipoChange($event.value)">
-          <mat-option *ngFor="let tipo of tipoFechaList" [value]="tipo.tipofeId"
-          [disabled]="disableDateType(tipo.tipofeId)">{{tipo.tipofeNombre}}</mat-option>
-        </mat-select>
-      </mat-form-field>
 
-      <!-- <mat-form-field class="example-full-width">
+        <!-- select -->
+        <mat-form-field>
+          <mat-label>ETAPAS</mat-label>
+          <mat-select [(ngModel)]="FechasObj.tipo" (selectionChange)="onTipoChange($event.value)">
+            <mat-option *ngFor="let tipo of tipoFechaList" [value]="tipo.tipofeId"
+              [disabled]="disableDateType(tipo.tipofeId)">{{tipo.tipofeNombre}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- <mat-form-field class="example-full-width">
         <mat-label>ETAPAS</mat-label>
         <input type="text" for="localidad" placeholder="Ingrese el tipo de pago"
           (input)="updateTipoFechaListFiltered($event)" matInput [matAutocomplete]="tpp" [(ngModel)]="nombreTipoFecha" [readonly]="checkEditPermission()">
@@ -210,59 +216,59 @@
           </ng-container>
         </mat-autocomplete>
       </mat-form-field> -->
-      
-      <div class="dual-container">
-        <!-- Selección de Fecha Inicio -->
-        <mat-form-field>
-          <mat-label>FECHA INICIO</mat-label>
-          <input matInput [matDatepicker]="fechaInicioPicker" [(ngModel)]="FechasObj.fechaInicio"
-          (ngModelChange)="onTipoChange(FechasObj.tipo)" [min]="minDate"
-          [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaInicioDisabled">
-          <mat-datepicker-toggle matIconSuffix [for]="fechaInicioPicker"></mat-datepicker-toggle>
-          <mat-datepicker #fechaInicioPicker></mat-datepicker>
-        </mat-form-field>
-        
-        <mat-form-field>
-          <mat-label>HORA DE INICIO</mat-label>
-          <input type="text" for="solicitante" (input)="updateHorasListFiltered($event, 1)" matInput
-          [(ngModel)]="FechasObj.horaInicio" (ngModelChange)="setFormatTime()" [matAutocomplete]="autoHoraInicio1"
-          [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaInicioDisabled">
-          <mat-autocomplete autoActiveFirstOption #autoHoraInicio1="matAutocomplete">
-            <ng-container *ngFor="let time of timeListFiltered1">
-              <mat-option [value]="time">{{time}}</mat-option>
-            </ng-container>
-          </mat-autocomplete>
-        </mat-form-field>
-        
-        <!-- Selección de Fecha Fin -->
-        <mat-form-field>
-          <mat-label>FECHA FIN</mat-label>
-          <input matInput [matDatepicker]="fechaFinPicker" [(ngModel)]="FechasObj.fechaFin"
-          (ngModelChange)="onTipoChange(FechasObj.tipo)" [min]="FechasObj.fechaInicio || minDate"
-          [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaFinDisabled">
-          <mat-datepicker-toggle matIconSuffix [for]="fechaFinPicker"></mat-datepicker-toggle>
-          <mat-datepicker #fechaFinPicker></mat-datepicker>
-        </mat-form-field>
 
-        <mat-form-field>
-          <mat-label>HORA DE FIN</mat-label>
-          <input type="text" for="solicitante" (input)="updateHorasListFiltered($event, 1)" matInput
-          [(ngModel)]="FechasObj.horafin" (ngModelChange)="setFormatTime()" [matAutocomplete]="autoHoraInicio2"
-          [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaFinDisabled">
-          <mat-autocomplete autoActiveFirstOption #autoHoraInicio2="matAutocomplete">
-            <ng-container *ngFor="let time of timeListFiltered2">
-              <mat-option [value]="time">{{time}}</mat-option>
-            </ng-container>
-          </mat-autocomplete>
-        </mat-form-field>
-        
-        <!-- Botón para agregar o actualizar el registro -->
-        <button mat-icon-button color="primary" (click)="agregarRegistro()" [disabled]="!registroValido()">
-          <mat-icon>{{ editIndex !== null ? 'save' : 'add_circle' }}</mat-icon>
-        </button>
-        
-      </div>
-    </ng-container>
+        <div class="dual-container">
+          <!-- Selección de Fecha Inicio -->
+          <mat-form-field>
+            <mat-label>FECHA INICIO</mat-label>
+            <input matInput [matDatepicker]="fechaInicioPicker" [(ngModel)]="FechasObj.fechaInicio"
+              (ngModelChange)="onTipoChange(FechasObj.tipo)" [min]="minDate"
+              [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaInicioDisabled">
+            <mat-datepicker-toggle matIconSuffix [for]="fechaInicioPicker"></mat-datepicker-toggle>
+            <mat-datepicker #fechaInicioPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>HORA DE INICIO</mat-label>
+            <input type="text" for="solicitante" (input)="updateHorasListFiltered($event, 1)" matInput
+              [(ngModel)]="FechasObj.horaInicio" (ngModelChange)="setFormatTime()" [matAutocomplete]="autoHoraInicio1"
+              [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaInicioDisabled">
+            <mat-autocomplete autoActiveFirstOption #autoHoraInicio1="matAutocomplete">
+              <ng-container *ngFor="let time of timeListFiltered1">
+                <mat-option [value]="time">{{time}}</mat-option>
+              </ng-container>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <!-- Selección de Fecha Fin -->
+          <mat-form-field>
+            <mat-label>FECHA FIN</mat-label>
+            <input matInput [matDatepicker]="fechaFinPicker" [(ngModel)]="FechasObj.fechaFin"
+              (ngModelChange)="onTipoChange(FechasObj.tipo)" [min]="FechasObj.fechaInicio || minDate"
+              [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaFinDisabled">
+            <mat-datepicker-toggle matIconSuffix [for]="fechaFinPicker"></mat-datepicker-toggle>
+            <mat-datepicker #fechaFinPicker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>HORA DE FIN</mat-label>
+            <input type="text" for="solicitante" (input)="updateHorasListFiltered($event, 1)" matInput
+              [(ngModel)]="FechasObj.horafin" (ngModelChange)="setFormatTime()" [matAutocomplete]="autoHoraInicio2"
+              [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaFinDisabled">
+            <mat-autocomplete autoActiveFirstOption #autoHoraInicio2="matAutocomplete">
+              <ng-container *ngFor="let time of timeListFiltered2">
+                <mat-option [value]="time">{{time}}</mat-option>
+              </ng-container>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <!-- Botón para agregar o actualizar el registro -->
+          <button mat-icon-button color="primary" (click)="agregarRegistro()" [disabled]="!registroValido()">
+            <mat-icon>{{ editIndex !== null ? 'save' : 'add_circle' }}</mat-icon>
+          </button>
+
+        </div>
+      </ng-container>
 
 
       <!-- Tabla para mostrar los registros agregados -->
@@ -313,10 +319,13 @@
   </ng-template>
 
   <div class="form-buttons" *ngIf="currentEvEstado == 10">
-    <button mat-raised-button color="warn" type="button" class="delete-button" *ngIf="GlobalGestEventosService.editMode == true && currentEvEstado == 10" [disabled]="checkEditPermission()"
+    <button mat-raised-button color="warn" type="button" class="delete-button"
+      *ngIf="GlobalGestEventosService.editMode == true && currentEvEstado == 10" [disabled]="checkEditPermission()"
       (click)="eliminarEvento()">Eliminar</button>
-    <button mat-raised-button color="primary" type="button" class="save-button"
-      (click)="triggerSaveEvento()" [disabled]="checkEditPermission()">Guardar</button>
+    <button mat-raised-button color="primary" type="button" class="save-button" (click)="triggerSaveEvento(false)"
+      [disabled]="checkEditPermission()">Guardar</button>
+    <button mat-raised-button type="button" class="send-button" (click)="triggerSaveEvento(true)"
+      [disabled]="checkEditPermission()">Guardar y Enviar</button>
   </div>
 
 </div>
