@@ -11,18 +11,20 @@
     </div>
     <div style="display: flex; flex-direction: row; gap: 10px; justify-content: space-between; margin-bottom: 20px;">
       <div>
-        <mat-radio-group color="primary" (change)="sendEstadoToHandle($event)">
-          <mat-radio-button value="1">Todos</mat-radio-button>
-          <mat-radio-button value="2">Solicitados</mat-radio-button>
-          <mat-radio-button value="3" checked>Aprobados</mat-radio-button>
-          <mat-radio-button value="4">Finalizados</mat-radio-button>
-        </mat-radio-group>
+        <ng-container *appAuthorize="'112'">
+          <mat-radio-group color="primary" (change)="sendEstadoToHandle($event)">
+            <mat-radio-button value="1">Todos</mat-radio-button>
+            <mat-radio-button value="2">Solicitados</mat-radio-button>
+            <mat-radio-button value="3" checked>Aprobados</mat-radio-button>
+            <mat-radio-button value="4">Finalizados</mat-radio-button>
+          </mat-radio-group>
+        </ng-container>
       </div>
       <div>
         <button class="nav-button" mat-mini-fab color="primary"
-        (click)="prevMonth()"><mat-icon>chevron_left</mat-icon></button>
+          (click)="prevMonth()"><mat-icon>chevron_left</mat-icon></button>
         <button class="nav-button" mat-mini-fab color="primary"
-        (click)="nextMonth()"><mat-icon>chevron_right</mat-icon></button>
+          (click)="nextMonth()"><mat-icon>chevron_right</mat-icon></button>
       </div>
     </div>
   </div>
@@ -41,13 +43,17 @@
     <div class="calendar-content">
 
       <!-- contenido del calendario -->
-      <div *ngFor="let day of days"
-        [ngClass]="{'day-month': true, 'current-month': day.belongsToCurrentMonth, 'other-month': !day.belongsToCurrentMonth}">
+      <div *ngFor="let day of days" [ngClass]="{
+          'day-month': true, 
+          'current-month': day.belongsToCurrentMonth, 
+          'other-month': !day.belongsToCurrentMonth, 
+          'is-today': day.isToday
+          }">
         {{ day.day }}
         <div class="day-event-container">
           <div class="day-event" *ngFor="let event of day.events" (click)="showEventDetails(event)"
-            [matTooltip]="event.name + '\n' + event.eventType" matTooltipPosition="above" [matTooltipShowDelay]="600" [matTooltipHideDelay]="0"
-            [ngClass]="{
+            [matTooltip]="event.name + '\n' + event.eventType" matTooltipPosition="above" [matTooltipShowDelay]="600"
+            [matTooltipHideDelay]="0" [ngClass]="{
               'day-event-solicitado': event.estadop == 20,
               'day-event-aprobado': event.estadop == 30,
               'day-event-finalizado': event.estadop == 40
@@ -102,8 +108,8 @@
     </div>
 
     <div class="title-event">
-      <p><span class="bold-txt">Tipo de pago:</span>  {{ eventoSelected.tpago }}</p>
-      <p><span class="bold-txt">Valor contrato:</span>  {{ eventoSelected.vpago }}</p>
+      <p><span class="bold-txt">Tipo de pago:</span> {{ eventoSelected.tpago }}</p>
+      <p><span class="bold-txt">Valor contrato:</span> {{ eventoSelected.vpago }}</p>
     </div>
 
     <div class="title-event">

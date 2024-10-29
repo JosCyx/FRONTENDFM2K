@@ -21,7 +21,7 @@ export class DialogServiceService {
     //console.log('openAlertDialog called');
     this.dialog.open(DialogComponentComponent, {
       data: { message, type },
-      width: '400px',
+      width: '600px',
     });
   }
 

@@ -124,8 +124,8 @@
       <mat-form-field class="example-full-width">
         <mat-label>TIPO DE CONTRATO</mat-label>
         <input type="text" for="localidad" placeholder="Ingrese el tipo de contrato"
-          (input)="updateTipoContratoListFiltered($event)" matInput [matAutocomplete]="tpc"
-          [(ngModel)]="nombreTipoContrato" [readonly]="checkEditPermission()">
+          (ngModelChange)="triggerGetLocalidadByArea($event)" (input)="updateTipoContratoListFiltered($event)" matInput
+          [matAutocomplete]="tpc" [(ngModel)]="nombreTipoContrato" [readonly]="checkEditPermission()">
         <mat-autocomplete autoActiveFirstOption #tpc="matAutocomplete">
           <ng-container *ngFor="let cont of tipoContratoListFiltered">
             <mat-option [value]="cont.contrNombre">{{cont.contrNombre}}</mat-option>
@@ -322,10 +322,14 @@
     <button mat-raised-button color="warn" type="button" class="delete-button"
       *ngIf="GlobalGestEventosService.editMode == true && currentEvEstado == 10" [disabled]="checkEditPermission()"
       (click)="eliminarEvento()">Eliminar</button>
-    <button mat-raised-button color="primary" type="button" class="save-button" (click)="triggerSaveEvento(false)"
-      [disabled]="checkEditPermission()">Guardar</button>
-    <button mat-raised-button type="button" class="send-button" (click)="triggerSaveEvento(true)"
-      [disabled]="checkEditPermission()">Guardar y Enviar</button>
+    <ng-container *appAuthorize="'110'">
+      <button mat-raised-button color="primary" type="button" class="save-button" (click)="triggerSaveEvento(false)"
+        [disabled]="checkEditPermission()">Guardar</button>
+    </ng-container>
+    <ng-container *appAuthorize="'111'">
+      <button mat-raised-button type="button" class="send-button" (click)="triggerSaveEvento(true)"
+        [disabled]="checkEditPermission()">Guardar y Enviar</button>
+    </ng-container>
   </div>
 
 </div>

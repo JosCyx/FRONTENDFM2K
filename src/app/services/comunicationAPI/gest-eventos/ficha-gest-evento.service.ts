@@ -46,6 +46,7 @@ export class FichaGestEventoService {
   postFichaGestEvento(data: any): Observable<any> {
     return this.http.post(`${this.APIUrl}/GestevEvento/PostGestevEventoEdit`, data, { headers: this.getHeadersWithAuthToken() });
   }
+  
   postAutorizacion(IdEvento: number, Accion: number, Motivo: string=""): Observable<any> {
     return this.http.post(`${this.APIUrl}/GestevEvento/ActualizarEstadoEvento?IdEvento=${IdEvento}&Accion=${Accion}&Motivo=${Motivo}`, { headers: this.getHeadersWithAuthToken() });
   }

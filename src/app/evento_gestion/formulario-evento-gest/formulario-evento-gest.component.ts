@@ -1,5 +1,6 @@
 import { Component, ViewChild, TemplateRef, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { CookieService } from 'ngx-cookie-service';
 import { forkJoin } from 'rxjs';
@@ -104,7 +105,8 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     public GlobalGestEventosService: GlobalGestEventosService,
     private fichaGestEvService: FichaGestEventoService,
     private dialogService: DialogServiceService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private router: Router
   ) { }
 
 
@@ -288,6 +290,12 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       telefono: '',
       correo: '',
     }
+  }
+
+  async triggerGetLocalidadByArea(event: any) {
+    //buscar el id de la localidad por el tipo de contrato seleccionada
+    const tpContrato = this.tipoContratoList.find(cont => cont.contrNombre === event).contrId;
+    await this.getLocalidadByArea(tpContrato);
   }
 
   async getLocalidadByArea(event: any): Promise<void> {
@@ -732,6 +740,11 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
             if (fechaExito && cuotaExito) {
               this.callMensaje("Evento guardado con éxito", true);
+              //enviar el evento
+              if(hasToSend){
+                this.aproveEvent(this.GlobalGestEventosService.idEventoSelected, 'enviado');
+              }
+              this.router.navigate(['lista-ev-gest']);
             } else if (!fechaExito) {
               this.callMensaje("Error al guardar las fechas", false);
             } else if (!cuotaExito) {
@@ -759,10 +772,10 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         evTipoContrato: this.idData.tipoContrato,
         evEmpleado: this.idData.solicitante,
         evPagoTotal: this.gestEvento.pagoTotal,
-        evTipoPago: this.gestEvento.tipoPago,
+        evTipoPago: this.idData.tipoPago,
         evDescripcion: this.gestEvento.descripcion,
         evEstadoValido: 1,
-        evMotivoDev: this.gestEvento.motivoDev,        
+        evMotivoDev: this.gestEvento.motivoDev
       };
 
       //console.log("Guardando evento", data);
@@ -770,11 +783,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       const response = await this.fichaGestEvService.postFichaGestEvento(data).toPromise();
       console.log("Evento guardado", response.evId);
 
-      //enviar el evento
-      if(hasToSend){
-        this.aprobarEvento();
-      };
-
+      
       return response.evId; // Devuelve el ID del evento guardado
     } catch (error) {
       console.error("Error al guardar el evento", error);
@@ -810,7 +819,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
     const data = {
       cuoIdEvento: idEvento,
-      cuoTipoPago: this.gestEvento.tipoPago,
+      cuoTipoPago: this.idData.tipoPago,
       cuoValor: valor,
       cuoFecha: new Date(),
     };
@@ -866,7 +875,6 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   }
 
   //Boton eliminar evento, elimina el evento del listado-eventos 
-
   eliminarEvento() {
     const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea eliminar este evento? Esta acción no se puede deshacer.`).subscribe(
       (response) => {
@@ -878,6 +886,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
             (response) => {
               console.log("Evento eliminado", response);
               this.callMensaje("Evento eliminado", true);
+              this.router.navigate(['lista-ev-gest']);
             },
             (error) => {
               console.error("Error al eliminar el evento", error);
@@ -896,12 +905,23 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   //Aprobar evento
   aprobarEvento() {
     //console.log("Aprobando evento");
-    const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea aprobar este evento?`).subscribe(
+
+    var op = 'aprobar'
+    var op2 = 'aprobado'
+
+    if(this.currentEvEstado == 30){
+      op = 'finalizar'
+      op2 = 'finalizado'
+    }
+
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea ${op} este evento?`).subscribe(
       (response) => {
         confirmDialogSubscription.unsubscribe();
         if (response) {
           const idEventSelected = this.GlobalGestEventosService.idEventoSelected;
-          this.fichaGestEvService.postAutorizacion(idEventSelected, 1).subscribe(
+          this.aproveEvent(idEventSelected, op2);
+
+          /*this.fichaGestEvService.postAutorizacion(idEventSelected, 1, '0').subscribe(
             (response) => {
               console.log("Evento aprobado", response);
               this.callMensaje("Evento aprobado", true);
@@ -913,7 +933,30 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
               console.error("Error al aprobar el evento", error);
               this.callMensaje("Error al aprobar el evento", false);
             }
-          )
+          )*/
+
+        }
+      }
+    )
+  }
+
+  aproveEvent(idEvent: number, op: string){
+    this.fichaGestEvService.postAutorizacion(idEvent, 1, '0').subscribe(
+      (response) => {
+        console.log("Evento aprobado", response);
+        this.callMensaje(`Evento ${op} con éxito`, true);
+
+        this.router.navigate(['lista-ev-gest']);
+      },
+      (error) => {
+        if (error.status == 409) {
+          this.callMensaje(
+            `Conflicto con fechas de otro evento:\nNombre del evento: ${error.error.eventoConflicto}\nFecha con conflicto: ${error.error.fechaInicio} hasta ${error.error.fechaFin}.`,
+            false
+          );
+        } else {
+          console.error("Error al aprobar el evento", error);
+          this.callMensaje(`Error al aprobar el evento`, false);
         }
       }
     )
@@ -932,9 +975,10 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
           this.fichaGestEvService.postAutorizacion(idEventSelected, 2, motivo).subscribe(
             (response) => {
-              console.log("Evento devuelto", response);
+              //console.log("Evento devuelto", response);
 
               this.callMensaje("Evento devuelto", true);
+              this.router.navigate(['lista-ev-gest']);
             },
             (error) => {
               if (error.status == 409) {
@@ -958,10 +1002,11 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         if (response) {
           const idEventSelected = this.GlobalGestEventosService.idEventoSelected;
 
-          this.fichaGestEvService.postAutorizacion(idEventSelected, 3).subscribe(
+          this.fichaGestEvService.postAutorizacion(idEventSelected, 3, '0').subscribe(
             (response) => {
               //console.log("Evento cancelado", response);
               this.callMensaje("Evento cancelado", true);
+              this.router.navigate(['lista-ev-gest']);
             },
             (error) => {
               console.error("Error al cancelar el evento", error);
@@ -972,4 +1017,5 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       }
     )
   }
+
 }

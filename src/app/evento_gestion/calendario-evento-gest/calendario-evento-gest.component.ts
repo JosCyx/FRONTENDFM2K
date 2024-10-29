@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 
 interface Day {
   day: number;
+  isToday?: boolean; // Agrega esta propiedad
   belongsToCurrentMonth: boolean;
   events?: any[]; // Agrega esta propiedad
 }
@@ -98,6 +99,7 @@ export class CalendarioEventoGestComponent {
 
   generateCalendar(): void {
     this.days = [];
+    const today = new Date();
     const firstDay = new Date(this.currentYear, this.currentMonth, 1);
     const lastDay = new Date(this.currentYear, this.currentMonth + 1, 0);
     const numberOfDays = lastDay.getDate();
@@ -109,14 +111,14 @@ export class CalendarioEventoGestComponent {
     // Rellenar los días iniciales con los días del mes anterior
     for (let i = startingDay - 1; i >= 0; i--) {
 
-      this.days.push({ day: lastDayOfPreviousMonth - i, belongsToCurrentMonth: false });
+      this.days.push({ day: lastDayOfPreviousMonth - i, belongsToCurrentMonth: false});
     }
 
     // Rellenar los días del mes actual
     for (let i = 1; i <= numberOfDays; i++) {
       const currentDate = new Date(this.currentYear, this.currentMonth, i);
       const eventsForDay = this.getEventsForDay(currentDate);
-      this.days.push({ day: i, belongsToCurrentMonth: true, events: eventsForDay });
+      this.days.push({ day: i, belongsToCurrentMonth: true, events: eventsForDay,  isToday: this.isSameDay(currentDate, today) });
     }
 
     // Rellenar los días finales con los días del mes siguiente
@@ -252,4 +254,11 @@ export class CalendarioEventoGestComponent {
     this.router.navigate(['addEventoGest']);
   }
 
+  isSameDay(date1: Date, date2: Date): boolean {
+    return (
+        date1.getDate() === date2.getDate() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getFullYear() === date2.getFullYear()
+    );
+}
 }
