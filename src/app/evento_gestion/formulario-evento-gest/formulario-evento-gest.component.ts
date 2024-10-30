@@ -468,7 +468,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     fechaInicio.setHours(parseInt(horaInicio[0]));
     fechaInicio.setMinutes(parseInt(horaInicio[1]));
     // Restar 5 horas para ajustar a UTC -5
-    fechaInicio.setHours(fechaInicio.getHours() - 5);
+    //fechaInicio.setHours(fechaInicio.getHours() - 5);
     this.FechasObj.fechaInicio = fechaInicio;
 
     const fechaFin = new Date(this.FechasObj.fechaFin);
@@ -476,7 +476,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     fechaFin.setHours(parseInt(horaFin[0]));
     fechaFin.setMinutes(parseInt(horaFin[1]));
     // Restar 5 horas para ajustar a UTC -5
-    fechaFin.setHours(fechaFin.getHours() - 5);
+    //fechaFin.setHours(fechaFin.getHours() - 5);
     this.FechasObj.fechaFin = fechaFin;
   }
 
@@ -800,12 +800,21 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
   async saveFecha(idEvento: number) {
     const promises = this.fechasList.map(async (fecha) => {
+
+      // Restar 5 horas a fechaInicio y fechaFin
+      const fechaInicio = new Date(fecha.fechaInicio);
+      fechaInicio.setHours(fechaInicio.getHours() - 5);
+
+      const fechaFin = new Date(fecha.fechaFin);
+      fechaFin.setHours(fechaFin.getHours() - 5);
+
       const data = {
         fechaEvento: idEvento,
         fechaTipoFecha: fecha.tipo,
-        fechaInicio: fecha.fechaInicio,
-        fechaFin: fecha.fechaFin,
+        fechaInicio: fechaInicio, // Usar la fecha con la hora ajustada
+        fechaFin: fechaFin, // Usar la fecha con la hora ajustada
       };
+
       //console.log("Guardando fecha", data);
       try {
         const response = await this.fichaGestEvService.postFecha(data).toPromise();
@@ -815,6 +824,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         console.error("Error al guardar la fecha", error);
         return false; // Retorna false si hay un error
       }
+      
     });
 
     const results = await Promise.all(promises); // Espera a que todas las fechas se guarden
