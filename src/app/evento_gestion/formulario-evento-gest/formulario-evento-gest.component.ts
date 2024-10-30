@@ -100,6 +100,8 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   currentUserLogued: string = this.cookieService.get('userIdNomina');
   currentEvSeller: string = '';
 
+  motivoDevolucion: string = '';
+
   constructor(
     public dialog: MatDialog,
     public GlobalGestEventosService: GlobalGestEventosService,
@@ -196,6 +198,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
         this.currentEvEstado = response.evEstado;
         this.currentEvSeller = response.evEmpleado;
+        this.motivoDevolucion = response.evMotivoDev;
 
         //console.log("Estado del evento", this.currentEvEstado)
       },
@@ -237,8 +240,8 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     this.dialogService.openAlertDialog(mensaje, type);
   }
 
-  checkEditPermission(): boolean{
-    if(this.GlobalGestEventosService.editMode){
+  checkEditPermission(): boolean {
+    if (this.GlobalGestEventosService.editMode) {
       return this.currentEvSeller != this.currentUserLogued || this.currentEvEstado != 10;
     } else {
       return false;
@@ -464,12 +467,16 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     const horaInicio = this.FechasObj.horaInicio.split(':');
     fechaInicio.setHours(parseInt(horaInicio[0]));
     fechaInicio.setMinutes(parseInt(horaInicio[1]));
+    // Restar 5 horas para ajustar a UTC -5
+    fechaInicio.setHours(fechaInicio.getHours() - 5);
     this.FechasObj.fechaInicio = fechaInicio;
 
     const fechaFin = new Date(this.FechasObj.fechaFin);
     const horaFin = this.FechasObj.horafin.split(':');
     fechaFin.setHours(parseInt(horaFin[0]));
     fechaFin.setMinutes(parseInt(horaFin[1]));
+    // Restar 5 horas para ajustar a UTC -5
+    fechaFin.setHours(fechaFin.getHours() - 5);
     this.FechasObj.fechaFin = fechaFin;
   }
 
@@ -693,7 +700,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     }*/
 
     //validaciones de las fechas
-    console.log("Validando fechas", this.fechasList);
+    //console.log("Validando fechas", this.fechasList);
     if (!this.fechasList.some(fecha => fecha.tipo == 1)) {
       this.callMensaje("Debe ingresar la fecha de montaje", false);
       return false;
@@ -734,15 +741,15 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
             const eventId = evExito; // Aquí obtienes el ID del evento desde el resultado de saveEvento
 
             const [fechaExito, cuotaExito] = await Promise.all([
-              this.saveFecha(eventId),  // Pasa el ID del evento
-              this.saveCuota(eventId)    // Pasa el ID del evento
+              this.saveFecha(eventId),// Pasa el ID del evento
+              this.saveCuota(eventId) // Pasa el ID del evento
             ]);
 
             if (fechaExito && cuotaExito) {
               this.callMensaje("Evento guardado con éxito", true);
               //enviar el evento
-              if(hasToSend){
-                this.aproveEvent(this.GlobalGestEventosService.idEventoSelected, 'enviado');
+              if (hasToSend) {
+                this.aproveEvent(eventId, 'enviado');
               }
               this.router.navigate(['lista-ev-gest']);
             } else if (!fechaExito) {
@@ -783,7 +790,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       const response = await this.fichaGestEvService.postFichaGestEvento(data).toPromise();
       //console.log("Evento guardado", response.evId);
 
-      
+
       return response.evId; // Devuelve el ID del evento guardado
     } catch (error) {
       console.error("Error al guardar el evento", error);
@@ -910,7 +917,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     var op2 = 'aprobado'
     var plus = ''
 
-    if(this.currentEvEstado == 30){
+    if (this.currentEvEstado == 30) {
       op = 'finalizar'
       op2 = 'finalizado'
       plus = 'El evento se dará por finalizado y no podrá ser modificado.'
@@ -942,7 +949,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     )
   }
 
-  aproveEvent(idEvent: number, op: string){
+  aproveEvent(idEvent: number, op: string) {
     this.fichaGestEvService.postAutorizacion(idEvent, 1, '0').subscribe(
       (response) => {
         console.log("Evento aprobado", response);

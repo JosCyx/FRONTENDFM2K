@@ -22,6 +22,17 @@
   </mat-tab-group>
 
 
+  <ng-container *ngIf="motivoDevolucion.length != 0 && currentEvEstado == 10">
+    <mat-card appearance="outlined"
+      style="background-color: rgb(255, 198, 198); border: 1px red solid; margin-bottom:20px">
+      <mat-card-content>
+        <div>
+          <h5 style="font-weight: bold;">Motivo de devolución</h5>
+          <p style="font-size: 10pt;">{{ motivoDevolucion }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
 
 
   <!-- plantilla de registro del evento -->
