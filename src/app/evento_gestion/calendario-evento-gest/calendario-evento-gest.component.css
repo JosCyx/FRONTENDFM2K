@@ -226,3 +226,7 @@
   background-color: #2b40b627;
   border: 1px solid #2b40b6b9;
 }
+
+*{
+  white-space: pre-line;
+}

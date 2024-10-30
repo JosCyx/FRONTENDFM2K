@@ -57,4 +57,5 @@
 .mat-column-asesor,
 .mat-column-estado{
   text-align: center;
+  font-size: 9pt !important;
 }

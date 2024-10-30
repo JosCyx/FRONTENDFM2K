@@ -182,7 +182,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
           motivoDev: response.evMotivoDev,
         }
 
-        console.log("Tipo de contrato", response.evTipoContrato);
+        //console.log("Tipo de contrato", response.evTipoContrato);
 
         await this.getLocalidadByArea(response.evTipoContrato);
 
@@ -456,7 +456,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
   async setFormatTime() {
     if (this.FechasObj.fechaInicio == undefined || this.FechasObj.fechaFin == undefined) {
-      console.log("Fechas no definidas");
+      //console.log("Fechas no definidas");
       return;
     }
 
@@ -517,7 +517,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   //validar que los campos de la fecha no esten vacios
   registroValido(): boolean {
     if (this.FechasObj.fechaInicio == undefined || this.FechasObj.fechaFin == undefined) {
-      console.log("Fechas no definidas");
+      //console.log("Fechas no definidas");
       return false
     }
     return (
@@ -618,7 +618,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   }
 
   async searchIdDataEvent() {
-    console.log("Buscando ID de los datos del evento");
+    //console.log("Buscando ID de los datos del evento");
 
     const solicitante = this.empleadosList.find(emp => emp.empleadoNombres + ' ' + emp.empleadoApellidos === this.nombreEmpleado);
 
@@ -710,7 +710,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
   //GUARDAR EL EVENTO
   async triggerSaveEvento(hasToSend: boolean) {
-    console.log("Validando campos");
+    //console.log("Validando campos");
 
     const camposValidos = await this.validarCampos();
     if (!camposValidos) {
@@ -724,7 +724,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
         if (response) {
           try {
-            const evExito = await this.saveEvento(hasToSend);
+            const evExito = await this.saveEvento();
             if (!evExito) {
               this.callMensaje("Error al guardar el evento", false);
               return;
@@ -760,7 +760,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     );
   }
 
-  async saveEvento(hasToSend: boolean): Promise<number | false> {
+  async saveEvento(): Promise<number | false> {
     try {
       //const idData = this.searchIdDataEvent();
       const data = {
@@ -781,7 +781,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       //console.log("Guardando evento", data);
 
       const response = await this.fichaGestEvService.postFichaGestEvento(data).toPromise();
-      console.log("Evento guardado", response.evId);
+      //console.log("Evento guardado", response.evId);
 
       
       return response.evId; // Devuelve el ID del evento guardado
@@ -802,7 +802,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       //console.log("Guardando fecha", data);
       try {
         const response = await this.fichaGestEvService.postFecha(data).toPromise();
-        console.log("Fecha guardada", response);
+        //console.log("Fecha guardada", response);
         return true; // Retorna true si se guarda la fecha
       } catch (error) {
         console.error("Error al guardar la fecha", error);
@@ -826,7 +826,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
     try {
       const response = await this.fichaGestEvService.postCuotas(data).toPromise();
-      console.log("Cuota guardada", response);
+      //console.log("Cuota guardada", response);
       return true; // Retorna true si se guarda la cuota
     } catch (error) {
       console.error("Error al guardar la cuota", error);
@@ -854,7 +854,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         if (response) {
           this.fichaGestEvService.postClientes(data).subscribe(
             (response) => {
-              console.log("Cliente guardado", response);
+              //console.log("Cliente guardado", response);
               this.dialog.closeAll();
               this.clearEventoData();
               this.fichaGestEvService.getClientesList().subscribe(
@@ -884,7 +884,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
           this.fichaGestEvService.postdeleteEvento(idEventSelected).subscribe(
             (response) => {
-              console.log("Evento eliminado", response);
+              //console.log("Evento eliminado", response);
               this.callMensaje("Evento eliminado", true);
               this.router.navigate(['lista-ev-gest']);
             },
@@ -908,13 +908,15 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
     var op = 'aprobar'
     var op2 = 'aprobado'
+    var plus = ''
 
     if(this.currentEvEstado == 30){
       op = 'finalizar'
       op2 = 'finalizado'
+      plus = 'El evento se dará por finalizado y no podrá ser modificado.'
     }
 
-    const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea ${op} este evento?`).subscribe(
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea ${op} este evento?\n${plus}`).subscribe(
       (response) => {
         confirmDialogSubscription.unsubscribe();
         if (response) {

@@ -14,9 +14,11 @@
     <mat-tab label="Fechas del Evento">
       <div *ngTemplateOutlet="ficha_fecha"></div>
     </mat-tab>
-    <mat-tab label="Autorización" *ngIf="currentEvEstado >= 20 && currentEvEstado <= 30">
-      <div *ngTemplateOutlet="ficha_autorizacion"></div>
-    </mat-tab>
+    <ng-container *appAuthorize="'113'">
+      <mat-tab label="Autorización" *ngIf="currentEvEstado >= 20 && currentEvEstado <= 30">
+        <div *ngTemplateOutlet="ficha_autorizacion"></div>
+      </mat-tab>
+    </ng-container>
   </mat-tab-group>
 
 
@@ -306,16 +308,18 @@
   </ng-template>
 
   <ng-template #ficha_autorizacion>
-    <div class="project-form">
-      <div class="button-container-aut">
-        <button mat-raised-button color="primary" type="button" class="save-button" (click)="aprobarEvento()">
-          <span *ngIf="currentEvEstado < 30">Aprobar</span>
-          <span *ngIf="currentEvEstado == 30">Finalizar</span> </button>
-        <button mat-raised-button type="button" class="refuse-button" (click)="devolverEvento()">Devolver</button>
-        <button mat-raised-button color="warn" type="button" class="cancel-button"
-          (click)="cancelarEvento()">Cancelar</button>
+    <ng-container *appAuthorize="'113'">
+      <div class="project-form">
+        <div class="button-container-aut">
+          <button mat-raised-button color="primary" type="button" class="save-button" (click)="aprobarEvento()">
+            <span *ngIf="currentEvEstado < 30">Aprobar</span>
+            <span *ngIf="currentEvEstado == 30">Finalizar</span> </button>
+          <button mat-raised-button type="button" class="refuse-button" (click)="devolverEvento()">Devolver</button>
+          <button mat-raised-button color="warn" type="button" class="cancel-button"
+            (click)="cancelarEvento()">Cancelar</button>
+        </div>
       </div>
-    </div>
+    </ng-container>
   </ng-template>
 
   <div class="form-buttons" *ngIf="currentEvEstado == 10">
