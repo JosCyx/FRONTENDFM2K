@@ -749,9 +749,10 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
               this.callMensaje("Evento guardado con éxito", true);
               //enviar el evento
               if (hasToSend) {
-                this.aproveEvent(eventId, 'enviado');
+                this.aproveEvent(eventId, 'enviado', this.gestEvento.nombreEvento);
+              } else {
+                this.router.navigate(['lista-ev-gest']);
               }
-              this.router.navigate(['lista-ev-gest']);
             } else if (!fechaExito) {
               this.callMensaje("Error al guardar las fechas", false);
             } else if (!cuotaExito) {
@@ -824,7 +825,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         console.error("Error al guardar la fecha", error);
         return false; // Retorna false si hay un error
       }
-      
+
     });
 
     const results = await Promise.all(promises); // Espera a que todas las fechas se guarden
@@ -938,7 +939,9 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         confirmDialogSubscription.unsubscribe();
         if (response) {
           const idEventSelected = this.GlobalGestEventosService.idEventoSelected;
-          this.aproveEvent(idEventSelected, op2);
+          this.aproveEvent(idEventSelected, op2, this.gestEvento.nombreEvento);
+
+          
 
           /*this.fichaGestEvService.postAutorizacion(idEventSelected, 1, '0').subscribe(
             (response) => {
@@ -959,11 +962,33 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     )
   }
 
-  aproveEvent(idEvent: number, op: string) {
+  aproveEvent(idEvent: number, op: string, eventoNombre: string) {
     this.fichaGestEvService.postAutorizacion(idEvent, 1, '0').subscribe(
       (response) => {
         console.log("Evento aprobado", response);
         this.callMensaje(`Evento ${op} con éxito`, true);
+
+        //enviar correo de confirmacion
+        //si el estado actual de la solicitud es 10, enviar correo de solicitud, si es 20 enviar correo de aprobacion
+        if (this.currentEvEstado == 10) {
+          this.fichaGestEvService.sendMailEvNotification(1, 20, idEvent, eventoNombre).subscribe(
+            (response) => {
+              console.log("Correo enviado", response);
+            },
+            (error) => {
+              console.error("Error al enviar el correo", error);
+            }
+          );
+        } else if(this.currentEvEstado == 20){
+          this.fichaGestEvService.sendMailEvNotification(1, 30, idEvent, eventoNombre).subscribe(
+            (response) => {
+              console.log("Correo enviado", response);
+            },
+            (error) => {
+              console.error("Error al enviar el correo", error);
+            }
+          );
+        }
 
         this.router.navigate(['lista-ev-gest']);
       },
@@ -996,7 +1021,17 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
             (response) => {
               //console.log("Evento devuelto", response);
 
-              this.callMensaje("Evento devuelto", true);
+              //enviar correo de notificacion
+              this.fichaGestEvService.sendMailEvNotification(2, 10, idEventSelected, this.gestEvento.nombreEvento).subscribe(
+                (response) => {
+                  console.log("Correo enviado", response);
+                },
+                (error) => {
+                  console.error("Error al enviar el correo", error);
+                }
+              )
+
+              this.callMensaje("Evento devuelto con éxito", true);
               this.router.navigate(['lista-ev-gest']);
             },
             (error) => {
@@ -1024,7 +1059,17 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
           this.fichaGestEvService.postAutorizacion(idEventSelected, 3, '0').subscribe(
             (response) => {
               //console.log("Evento cancelado", response);
-              this.callMensaje("Evento cancelado", true);
+              this.callMensaje("Evento anulado con éxito", true);
+
+              //enviar correo de notificacion
+              this.fichaGestEvService.sendMailEvNotification(1, 50, idEventSelected, this.gestEvento.nombreEvento).subscribe(
+                (response) => {
+                  console.log("Correo enviado", response);
+                },
+                (error) => {
+                  console.error("Error al enviar el correo", error);
+                }
+              )
               this.router.navigate(['lista-ev-gest']);
             },
             (error) => {
