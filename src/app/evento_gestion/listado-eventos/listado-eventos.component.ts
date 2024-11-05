@@ -19,7 +19,7 @@ export class ListadoEventosComponent implements OnInit{
 
   dataSourceOriginal: MatTableDataSource<any> = new MatTableDataSource();
   dataSourceEv: MatTableDataSource<any> = new MatTableDataSource();
-  displayedColumns: string[] = ['nombre', 'asesor', 'lugar', 'cliente', 'tp_contrato', 'estado'];
+  displayedColumns: string[] = ['codigo_evento', 'nombre', 'asesor', 'lugar', 'cliente', 'tp_contrato', 'estado'];
 
   constructor(
     private evGestservice: FichaGestEventoService,
@@ -96,8 +96,6 @@ export class ListadoEventosComponent implements OnInit{
       this.dataSourceEv.data = _.cloneDeep(this.dataSourceOriginal.data.filter((item: any) => item.asesor.toLowerCase().includes(this.filterStrContent.toLowerCase())));
     }
   }
-
-
 
 
 }

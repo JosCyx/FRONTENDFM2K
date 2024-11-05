@@ -7,37 +7,58 @@
     Registrar un nuevo evento
   </h3>
 
-  <mat-tab-group animationDuration="0ms">
-    <mat-tab label="Información">
-      <div *ngTemplateOutlet="ficha_evento"></div>
-    </mat-tab>
-    <mat-tab label="Fechas del Evento">
-      <div *ngTemplateOutlet="ficha_fecha"></div>
-    </mat-tab>
-    <ng-container *appAuthorize="'113'">
-      <mat-tab label="Autorización" *ngIf="currentEvEstado >= 20 && currentEvEstado <= 30">
-        <div *ngTemplateOutlet="ficha_autorizacion"></div>
+  <ng-container *ngIf="loading">
+    <div class="custom-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!loading">
+
+    <mat-tab-group animationDuration="0ms">
+      <mat-tab label="Información">
+        <div *ngTemplateOutlet="ficha_evento"></div>
       </mat-tab>
+      <mat-tab label="Fechas del Evento">
+        <div *ngTemplateOutlet="ficha_fecha"></div>
+      </mat-tab>
+      <ng-container *appAuthorize="'113'">
+        <mat-tab label="Autorización" *ngIf="currentEvEstado >= 20 && currentEvEstado <= 30">
+          <div *ngTemplateOutlet="ficha_autorizacion"></div>
+        </mat-tab>
+      </ng-container>
+    </mat-tab-group>
+
+
+    <ng-container *ngIf="motivoDevolucion.length != 0 && currentEvEstado == 10">
+      <mat-card appearance="outlined"
+        style="background-color: rgb(255, 198, 198); border: 1px red solid; margin-bottom:20px">
+        <mat-card-content>
+          <div>
+            <h5 style="font-weight: bold;">Motivo de devolución</h5>
+            <p style="font-size: 10pt;">{{ motivoDevolucion }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </ng-container>
-  </mat-tab-group>
-
-
-  <ng-container *ngIf="motivoDevolucion.length != 0 && currentEvEstado == 10">
-    <mat-card appearance="outlined"
-      style="background-color: rgb(255, 198, 198); border: 1px red solid; margin-bottom:20px">
-      <mat-card-content>
-        <div>
-          <h5 style="font-weight: bold;">Motivo de devolución</h5>
-          <p style="font-size: 10pt;">{{ motivoDevolucion }}</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
   </ng-container>
 
 
   <!-- plantilla de registro del evento -->
   <ng-template #ficha_evento>
     <div class="project-form">
+
+      <div *ngIf="GlobalGestEventosService.editMode == true" style="display:flex; gap: 10px">
+        <mat-form-field class="example-full-width">
+          <mat-label>CÓDIGO</mat-label>
+          <input matInput [value]="getEvCode()" readonly>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width">
+          <mat-label>ESTADO DEL EVENTO</mat-label>
+          <input matInput [value]="getEstadoName(currentEvEstado)" readonly>
+        </mat-form-field>
+      </div>
 
       <mat-form-field class="example-full-width">
         <mat-label>NOMBRE DEL EVENTO</mat-label>
@@ -333,18 +354,21 @@
     </ng-container>
   </ng-template>
 
-  <div class="form-buttons" *ngIf="currentEvEstado == 10">
-    <button mat-raised-button color="warn" type="button" class="delete-button"
-      *ngIf="GlobalGestEventosService.editMode == true && currentEvEstado == 10" [disabled]="checkEditPermission()"
-      (click)="eliminarEvento()">Eliminar</button>
-    <ng-container *appAuthorize="'110'">
-      <button mat-raised-button color="primary" type="button" class="save-button" (click)="triggerSaveEvento(false)"
-        [disabled]="checkEditPermission()">Guardar</button>
-    </ng-container>
-    <ng-container *appAuthorize="'111'">
-      <button mat-raised-button type="button" class="send-button" (click)="triggerSaveEvento(true)"
-        [disabled]="checkEditPermission()">Guardar y Enviar</button>
-    </ng-container>
-  </div>
+  <ng-container *ngIf="!loading">
+
+    <div class="form-buttons" *ngIf="currentEvEstado == 10">
+      <button mat-raised-button color="warn" type="button" class="delete-button"
+        *ngIf="GlobalGestEventosService.editMode == true && currentEvEstado == 10" [disabled]="checkEditPermission()"
+        (click)="eliminarEvento()">Eliminar</button>
+      <ng-container *appAuthorize="'110'">
+        <button mat-raised-button color="primary" type="button" class="save-button" (click)="triggerSaveEvento(false)"
+          [disabled]="checkEditPermission()">Guardar</button>
+      </ng-container>
+      <ng-container *appAuthorize="'111'">
+        <button mat-raised-button type="button" class="send-button" (click)="triggerSaveEvento(true)"
+          [disabled]="checkEditPermission()">Guardar y Enviar</button>
+      </ng-container>
+    </div>
+  </ng-container>
 
 </div>

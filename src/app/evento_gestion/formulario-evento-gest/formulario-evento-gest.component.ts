@@ -63,6 +63,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   tipoFechaListFiltered: any[] = [];
   tipoPagoList: any[] = [];
   tipoPagoListFiltered: any[] = [];
+  estadosList: any[] = [];
 
   //variables que almacenan el nombre de los datalist
   nombreEmpleado: string = '';
@@ -119,7 +120,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     this.clearEventoData();
   }
 
-
+  loading: boolean = true;
   ngOnInit(): void {
     setTimeout(async () => {
       const empleados$ = this.fichaGestEvService.getEmpleadoList();
@@ -128,10 +129,13 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       const cliente$ = this.fichaGestEvService.getClientesList();
       const tipoFecha$ = this.fichaGestEvService.getTipoFechaList();
       const tipoPago$ = this.fichaGestEvService.getTipoPagoList();
+      const estados$ = this.fichaGestEvService.getEstadosList();
 
       //Usar forkJoin para esperar a que todas las observables se completen
-      await forkJoin([empleados$, /*localidad$,*/ tipoContrato$, cliente$, tipoFecha$, tipoPago$]).subscribe(
-        ([empleadosData, /*localidadData,*/ tipoContratoData, clienteData, tipoFechaData, tipoPagoData]) => {
+      await forkJoin([empleados$, /*localidad$,*/ tipoContrato$, cliente$, tipoFecha$, tipoPago$, estados$]).subscribe(
+        ([empleadosData, /*localidadData,*/ tipoContratoData, clienteData, tipoFechaData, tipoPagoData, estadosList]) => {
+          this.estadosList = _.cloneDeep(estadosList);
+          
           this.empleadosList = _.cloneDeep(empleadosData);
           this.empleadosListFiltered = _.cloneDeep(empleadosData);
 
@@ -152,10 +156,18 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
           this.tipoPagoList = _.cloneDeep(tipoPagoData);
           this.tipoPagoListFiltered = _.cloneDeep(tipoPagoData);
 
+          
+
           if (this.GlobalGestEventosService.editMode) {
             // Cargar los datos del evento seleccionado
             this.loadEventoData();
           }
+
+          this.loading = false;
+        },
+        (error) => {
+          console.error("Error al cargar los datos:", error);
+          this.loading = false; // Cambiar a false en caso de error también
         }
       );
 
@@ -234,6 +246,8 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         this.callMensaje("Error al cargar las fechas del evento", false);
       }
     )
+
+
   }
 
   callMensaje(mensaje: string, type: boolean) {
@@ -1082,4 +1096,17 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     )
   }
 
+  getEstadoName(estado: number): string {
+    return this.estadosList.find(est => est.estproId == estado).estproNivel;
+  }
+
+  getEvCode(): string{
+    const tpContrato = this.gestEvento.tipoContrato === 1 ? 'HALL' : 'BRAND';
+
+    const idEvento = this.GlobalGestEventosService.idEventoSelected;
+
+    //unir el prefijo mas un guion y completar con 0 hasta llegar a 6 digitos
+    return tpContrato + ' - ' + idEvento.toString().padStart(6, '0');
+
+  }
 }

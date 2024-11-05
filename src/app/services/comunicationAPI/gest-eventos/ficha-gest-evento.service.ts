@@ -118,6 +118,10 @@ export class FichaGestEventoService {
   getTipoPagoList(): Observable<any> {
     return this.http.get(`${this.APIUrl}/GestevTipoPago`, { headers: this.getHeadersWithAuthToken() });
   }
+
+  getEstadosList(): Observable<any> {
+    return this.http.get(`${this.APIUrl}/GestevEstadoProceso`, { headers: this.getHeadersWithAuthToken() });
+  }
   
 
   postdeleteEvento(id: number): Observable<any> {

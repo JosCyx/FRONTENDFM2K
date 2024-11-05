@@ -295,5 +295,10 @@ textarea {
   color: white;
 }
 
+.send-button:disabled{
+  background-color: #e0e0e0 !important;
+  color: #8b8b8b !important;
+}
+
 
 
