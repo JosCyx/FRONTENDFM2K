@@ -183,16 +183,38 @@
 }
 
 .div-help{
-  background-color: #2b40b6b9; 
+  background-color: #dfeeff; 
   border-radius: 10px; 
   padding: 5px;
 }
+
+
+.help-leyenda{
+  font-style: italic;
+  font-weight: 500;
+  font-size: 10pt;
+  color: black(0, 0, 0);
+  margin-bottom: 0;
+  padding-bottom: 5px;
+  display: flex; 
+  align-items: center; 
+  margin-bottom: 5px; 
+  margin-left: 8px
+}
+
+.leyenda{
+  width: 15px; 
+  height: 15px; 
+  border-radius: 50%
+}
+
+
 
 .help-contrato{
   font-style: italic;
   font-weight: 500;
   font-size: 10pt;
-  color: white;
+  color: black(0, 0, 0);
   margin-bottom: 0;
   padding-bottom: 5px;
 }
