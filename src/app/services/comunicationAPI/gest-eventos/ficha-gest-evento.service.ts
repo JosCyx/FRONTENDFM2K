@@ -122,6 +122,10 @@ export class FichaGestEventoService {
   getTipoPagoList(): Observable<any> {
     return this.http.get(`${this.APIUrl}/GestevTipoPago`, { headers: this.getHeadersWithAuthToken() });
   }
+
+  getEstadosList(): Observable<any> {
+    return this.http.get(`${this.APIUrl}/GestevEstadoProceso`, { headers: this.getHeadersWithAuthToken() });
+  }
   
 
   postdeleteEvento(id: number): Observable<any> {
@@ -157,4 +161,7 @@ export class FichaGestEventoService {
   //   return this.http.put(`${this.APIUrl}/GestevEstado/UpdateStatusReq?idFicha=${data.idFicha}&idReq=${data.idReq}&status=${data.status}&observ=${data.observ}`, { headers: this.getHeadersWithAuthToken() });
   // }
 
+  sendMailEvNotification(tipo: number, estado: number, eventoId: number, eventoNombre: string): Observable<any> {
+    return this.http.post(`${this.APIUrl}/GestevEvento/SendMailEvNotification?tipo=${tipo}&estado=${estado}&eventoId=${eventoId}&eventoNombre=${eventoNombre}`, { headers: this.getHeadersWithAuthToken() });
+  }
 }

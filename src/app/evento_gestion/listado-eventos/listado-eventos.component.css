@@ -55,7 +55,8 @@
 .mat-column-cliente,
 .mat-column-tp_contrato,
 .mat-column-asesor,
-.mat-column-estado{
+.mat-column-estado,
+.mat-column-codigo_evento{
   text-align: center;
   font-size: 9pt !important;
 }
