@@ -1,9 +1,10 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { FichaGestEventoService } from 'src/app/services/comunicationAPI/gest-eventos/ficha-gest-evento.service';
 import * as _ from 'lodash';
 import { GlobalGestEventosService } from 'src/app/services/global-gest-eventos.service';
 import { Router } from '@angular/router';
+import { forkJoin } from 'rxjs';
 
 interface Day {
   day: number;
@@ -23,6 +24,7 @@ interface Evento {
   enddateT: Date;
   contrato: number;
   estadop: number;
+  espacio: number;
 }
 
 @Component({
@@ -39,6 +41,13 @@ export class CalendarioEventoGestComponent {
   currentMonth: number = this.currentDay.getMonth();
   currentYear: number = this.currentDay.getFullYear();
 
+  localidadListFiltered: any[] = [];
+  localidadList: any[] = [];
+  nombreLocalidad: number = 0;
+  
+
+
+
   //eventos por dia
   /*events: Evento[] = [
     { name: 'Evento 1', startdate: new Date(2024, 9, 8), isMultiDay: false},
@@ -53,6 +62,7 @@ export class CalendarioEventoGestComponent {
 
   events: Evento[] = []
   eventsBackup: Evento[] = [];
+  eventsBackupFiltered: Evento[] = [];
 
   eventoSelected: any = {};
 
@@ -63,9 +73,21 @@ export class CalendarioEventoGestComponent {
     private router: Router
   ) { }
 
+
   ngOnInit(): void {
 
     setTimeout(() => {
+
+      this.gestEvService.getLocalidadLista().subscribe(
+        response => {
+          this.localidadList = _.cloneDeep(response);
+          this.localidadListFiltered = _.cloneDeep(response);
+        },
+        error => {
+          console.error(error);
+        }
+      );
+
       this.gestEvService.getCalendarData().subscribe(
         (data: any) => {
 
@@ -79,7 +101,8 @@ export class CalendarioEventoGestComponent {
             startdateT: new Date(item.startdateT),
             enddateT: new Date(item.enddateT),
             contrato: item.contrato,
-            estadop: item.estadop
+            estadop: item.estadop,
+            espacio: item.espacio
           }));
 
           //creamos una copia de los datos originales
@@ -97,6 +120,17 @@ export class CalendarioEventoGestComponent {
     }, 300);
   }
 
+
+  filtroLocalidad() {
+    if (this.nombreLocalidad == 0) {
+      this.events = _.cloneDeep(this.eventsBackupFiltered);
+      this.generateCalendar();
+    } else {
+      this.events = _.cloneDeep(this.eventsBackupFiltered.filter((ev: any) => ev.espacio == this.nombreLocalidad));
+      this.generateCalendar();
+    }
+  }
+
   generateCalendar(): void {
     this.days = [];
     const today = new Date();
@@ -111,14 +145,14 @@ export class CalendarioEventoGestComponent {
     // Rellenar los días iniciales con los días del mes anterior
     for (let i = startingDay - 1; i >= 0; i--) {
 
-      this.days.push({ day: lastDayOfPreviousMonth - i, belongsToCurrentMonth: false});
+      this.days.push({ day: lastDayOfPreviousMonth - i, belongsToCurrentMonth: false });
     }
 
     // Rellenar los días del mes actual
     for (let i = 1; i <= numberOfDays; i++) {
       const currentDate = new Date(this.currentYear, this.currentMonth, i);
       const eventsForDay = this.getEventsForDay(currentDate);
-      this.days.push({ day: i, belongsToCurrentMonth: true, events: eventsForDay,  isToday: this.isSameDay(currentDate, today) });
+      this.days.push({ day: i, belongsToCurrentMonth: true, events: eventsForDay, isToday: this.isSameDay(currentDate, today) });
     }
 
     // Rellenar los días finales con los días del mes siguiente
@@ -215,11 +249,11 @@ export class CalendarioEventoGestComponent {
     );
   }
 
-  closeEvDialog(){
+  closeEvDialog() {
     this.dialog.closeAll();
   }
 
-  sendEstadoToHandle(event: any){
+  sendEstadoToHandle(event: any) {
     //console.log("Estado seleccionado: ", event.value);
     this.handleFilterByState(event.value);
   }
@@ -227,26 +261,51 @@ export class CalendarioEventoGestComponent {
   //filtrar eventos por estado
   handleFilterByState(estado: number): void {
 
-    if (estado == 1){
+    if (estado == 1) {
       //mostrar todos los eventos
       this.events = _.cloneDeep(this.eventsBackup);
+      this.eventsBackupFiltered = _.cloneDeep(this.events);
+      this.nombreLocalidad = 0;
       this.generateCalendar();
-    } else if (estado == 2){
+    } else if (estado == 2) {
       //filtrar por estado 20 - Solicitado
       this.events = _.cloneDeep(this.eventsBackup.filter((ev: any) => ev.estadop == 20));
+      this.eventsBackupFiltered = _.cloneDeep(this.events);
+      this.nombreLocalidad = 0;
       this.generateCalendar();
-    } else if (estado == 3){
+    } else if (estado == 3) {
       //filtrar por estado 30 - Aprobado
       this.events = _.cloneDeep(this.eventsBackup.filter((ev: any) => ev.estadop == 30));
+      this.eventsBackupFiltered = _.cloneDeep(this.events);
+      this.nombreLocalidad = 0;
       this.generateCalendar();
     } else if (estado == 4) {
       //filtrar por estado 40 - Finalizado
       this.events = _.cloneDeep(this.eventsBackup.filter((ev: any) => ev.estadop == 40));
+      this.eventsBackupFiltered = _.cloneDeep(this.events);
+      this.nombreLocalidad = 0;
       this.generateCalendar();
     }
   }
 
-  selectEvent(idEvent: number){
+
+
+
+
+  filterLocalidad(filterValue: string) {
+    this.localidadListFiltered = this.localidadList.filter(loc =>
+      (loc.locNombre).toLowerCase().includes(filterValue.toLowerCase())
+    );
+  }
+
+  updateLocalidadListFiltered(event: any) {
+    this.filterLocalidad(event.target.value);
+  }
+
+
+
+
+  selectEvent(idEvent: number) {
     this.closeEvDialog();
     this.globalEvGestService.idEventoSelected = idEvent;
     this.globalEvGestService.editMode = true;
@@ -256,9 +315,9 @@ export class CalendarioEventoGestComponent {
 
   isSameDay(date1: Date, date2: Date): boolean {
     return (
-        date1.getDate() === date2.getDate() &&
-        date1.getMonth() === date2.getMonth() &&
-        date1.getFullYear() === date2.getFullYear()
+      date1.getDate() === date2.getDate() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getFullYear() === date2.getFullYear()
     );
-}
+  }
 }

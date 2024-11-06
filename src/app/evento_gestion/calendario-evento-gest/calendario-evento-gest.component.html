@@ -10,16 +10,29 @@
       <h2 style="font-style: italic;">{{ getMonthName(currentMonth) }} {{ currentYear }}</h2>
     </div>
     <div style="display: flex; flex-direction: row; gap: 10px; justify-content: space-between; margin-bottom: 20px;">
-      <div>
-        <ng-container *appAuthorize="'112'">
-          <mat-radio-group color="primary" (change)="sendEstadoToHandle($event)">
-            <mat-radio-button value="1">Todos</mat-radio-button>
-            <mat-radio-button value="2">Solicitados</mat-radio-button>
-            <mat-radio-button value="3" checked>Aprobados</mat-radio-button>
-            <mat-radio-button value="4">Finalizados</mat-radio-button>
-          </mat-radio-group>
-        </ng-container>
+      <!-- Filtro Estados del evento -->
+      <div style="display: flex; flex-direction: column;">
+        <div>
+          <ng-container *appAuthorize="'112'">
+            <mat-radio-group color="primary" (change)="sendEstadoToHandle($event)">
+              <mat-radio-button value="1">Todos</mat-radio-button>
+              <mat-radio-button value="2">Solicitados</mat-radio-button>
+              <mat-radio-button value="3" checked>Aprobados</mat-radio-button>
+              <mat-radio-button value="4">Finalizados</mat-radio-button>
+            </mat-radio-group>
+          </ng-container>
+        </div>
+        <div class="custom-select-container">
+          <label class="custom-label-select">Filtrar por espacio</label>
+          <select class="custom-select" [(ngModel)]="nombreLocalidad" (change)="filtroLocalidad()">
+
+            <option [value]="0">TODOS</option>
+            <option *ngFor="let loc of localidadListFiltered" [value]="loc.id">{{ loc.lugar }}</option>
+          </select>
+        </div>
+
       </div>
+
       <div>
         <button class="nav-button" mat-mini-fab color="primary"
           (click)="prevMonth()"><mat-icon>chevron_left</mat-icon></button>
@@ -78,32 +91,32 @@
     <!-- Columna de leyenda -->
     <div class="div-help">
       <div class="help-leyenda">
-        <div class="leyenda" style="background-color: #b8b8b8;" ></div>
+        <div class="leyenda" style="background-color: #b8b8b8;"></div>
         <span style="margin-left: 8px; margin-right: 20px;">Solicitado</span>
       </div>
-      
+
       <div class="help-leyenda">
         <div class="leyenda" style="background-color: #2b8a3e;"></div>
         <span style="margin-left: 8px;">Aprobado</span>
       </div>
-      
+
       <div class="help-leyenda">
         <div class="leyenda" style="background-color: #4758b8;"></div>
         <span style="margin-left: 8px;">Finalizado</span>
       </div>
     </div>
-    
+
     <!-- Columna de información de eventos -->
-    <div class="div-help"  style= "margin-right: 20px;">
-      <p class="help-contrato"  style= "margin-right: 30px;">
-        <img src="assets/icons/hall-black.svg" alt="Indoor Event Icon" class="svg-icon-style"/> Alquiler de salones
+    <div class="div-help" style="margin-right: 20px;">
+      <p class="help-contrato" style="margin-right: 30px;">
+        <img src="assets/icons/hall-black.svg" alt="Indoor Event Icon" class="svg-icon-style" /> Alquiler de salones
       </p>
-      <p class="help-contrato" >
-        <img src="assets/icons/brand-black.svg" alt="Outdoor Event Icon" class="svg-icon-style"/> Activaciones de marca
+      <p class="help-contrato">
+        <img src="assets/icons/brand-black.svg" alt="Outdoor Event Icon" class="svg-icon-style" /> Activaciones de marca
       </p>
     </div>
   </div>
-  
+
 </div>
 
 <ng-template #dialogTemplate>

@@ -252,3 +252,12 @@
 *{
   white-space: pre-line;
 }
+
+mat-form-field{
+  width: 100% !important;
+}
+
+.custom-label-select{
+  font-size: 9pt;
+  margin: 0px;
+}
