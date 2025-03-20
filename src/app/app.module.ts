@@ -123,8 +123,6 @@ import { registerLocaleData } from '@angular/common';
 
 import {MatChipsModule} from '@angular/material/chips';
 import { FilterModalComponent } from './evento_gestion/templates/filter-modal/filter-modal.component';
-import { VistaMarcacionesComponent } from './talento_humano/components/vista-marcaciones/vista-marcaciones.component';
-import { VistaAusentismosComponent } from './talento_humano/components/vista-ausentismos/vista-ausentismos.component';
 import { VistaRegistroAusentismoComponent } from './talento_humano/components/vista-registro-ausentismo/vista-registro-ausentismo.component';
 import { VistaListadoAusentismosComponent } from './talento_humano/components/vista-listado-ausentismos/vista-listado-ausentismos.component';
 import { VistaListadoMarcacionesComponent } from './talento_humano/components/vista-listado-marcaciones/vista-listado-marcaciones.component';
@@ -212,8 +210,6 @@ import { VistaAdminTipoEstadoHistComponent } from './talento_humano/components/v
     ListadoEventosComponent,
     DevolverDialogComponent,
     FilterModalComponent,
-    VistaMarcacionesComponent,
-    VistaAusentismosComponent,
     VistaRegistroAusentismoComponent,
     VistaListadoAusentismosComponent,
     VistaListadoMarcacionesComponent,
