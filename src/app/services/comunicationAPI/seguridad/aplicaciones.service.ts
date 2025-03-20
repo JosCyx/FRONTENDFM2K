@@ -54,5 +54,9 @@ export class AplicacionesService {
     return this.http.put(this.APIUrl + `/Aplicaciones/${appcodigo}`, val, { headers: headers });
   }
 
+  getCurrentImage(): Observable<any> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get<any>(this.APIUrl + '/Aplicaciones/getCurrentImage', { headers: headers });
+  }
 }
 

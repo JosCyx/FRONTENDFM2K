@@ -64,7 +64,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 
 import { MatCardModule } from '@angular/material/card';
@@ -119,6 +119,20 @@ import { FormularioEventoGestComponent } from './evento_gestion/formulario-event
 import { CalendarioEventoGestComponent } from './evento_gestion/calendario-evento-gest/calendario-evento-gest.component';
 import { ListadoEventosComponent } from './evento_gestion/listado-eventos/listado-eventos.component';
 import { DevolverDialogComponent } from './evento_gestion/devolver-dialog/devolver-dialog.component';
+import { registerLocaleData } from '@angular/common';
+
+import {MatChipsModule} from '@angular/material/chips';
+import { FilterModalComponent } from './evento_gestion/templates/filter-modal/filter-modal.component';
+import { VistaMarcacionesComponent } from './talento_humano/components/vista-marcaciones/vista-marcaciones.component';
+import { VistaAusentismosComponent } from './talento_humano/components/vista-ausentismos/vista-ausentismos.component';
+import { VistaRegistroAusentismoComponent } from './talento_humano/components/vista-registro-ausentismo/vista-registro-ausentismo.component';
+import { VistaListadoAusentismosComponent } from './talento_humano/components/vista-listado-ausentismos/vista-listado-ausentismos.component';
+import { VistaListadoMarcacionesComponent } from './talento_humano/components/vista-listado-marcaciones/vista-listado-marcaciones.component';
+import { VistaAdminJefeInmComponent } from './talento_humano/components/vista-admin-jefe-inm/vista-admin-jefe-inm.component';
+import { VistaAdminParametrosComponent } from './talento_humano/components/vista-admin-parametros/vista-admin-parametros.component';
+import { VistaAdminMotivosComponent } from './talento_humano/components/vista-admin-motivos/vista-admin-motivos.component';
+import { VistaAdminEstadoProcesoComponent } from './talento_humano/components/vista-admin-estado-proceso/vista-admin-estado-proceso.component';
+import { VistaAdminTipoEstadoHistComponent } from './talento_humano/components/vista-admin-tipo-estado-hist/vista-admin-tipo-estado-hist.component';
 
 @NgModule({
   declarations: [
@@ -196,9 +210,18 @@ import { DevolverDialogComponent } from './evento_gestion/devolver-dialog/devolv
     FormularioEventoGestComponent,
     CalendarioEventoGestComponent,
     ListadoEventosComponent,
-    DevolverDialogComponent
-    
-    
+    DevolverDialogComponent,
+    FilterModalComponent,
+    VistaMarcacionesComponent,
+    VistaAusentismosComponent,
+    VistaRegistroAusentismoComponent,
+    VistaListadoAusentismosComponent,
+    VistaListadoMarcacionesComponent,
+    VistaAdminJefeInmComponent,
+    VistaAdminParametrosComponent,
+    VistaAdminMotivosComponent,
+    VistaAdminEstadoProcesoComponent,
+    VistaAdminTipoEstadoHistComponent
   ],
   imports: [
     BrowserModule,
@@ -233,17 +256,12 @@ import { DevolverDialogComponent } from './evento_gestion/devolver-dialog/devolv
     MatCheckboxModule,
     MatButtonToggleModule,
     MatTooltipModule,
+    MatChipsModule,
     FormsModule // Agrega FormsModule al array de imports
-    
-    
   ],
-  providers: [AuthService, MatDialog, DialogServiceService],
+  providers: [AuthService, MatDialog, DialogServiceService, {provide: MAT_DATE_LOCALE, useValue: 'es-EN'}],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
-
-
-  
-
 })
 export class AppModule { }
 

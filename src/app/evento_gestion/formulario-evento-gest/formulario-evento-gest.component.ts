@@ -1,4 +1,5 @@
-import { Component, ViewChild, TemplateRef, OnInit, OnDestroy } from '@angular/core';
+import { Component, ViewChild, TemplateRef, OnInit, OnDestroy, ElementRef } from '@angular/core';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
@@ -7,6 +8,10 @@ import { forkJoin } from 'rxjs';
 import { FichaGestEventoService } from 'src/app/services/comunicationAPI/gest-eventos/ficha-gest-evento.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { GlobalGestEventosService } from 'src/app/services/global-gest-eventos.service';
+
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 
 interface GestEvento {
@@ -20,6 +25,7 @@ interface GestEvento {
   descripcion: string,
   estadoProceso: number,
   motivoDev: string,
+  observaciones: string
 }
 
 interface Cliente {
@@ -38,7 +44,6 @@ interface Fecha {
   fechaFin: Date,
   horaFin: string,
 }
-
 
 @Component({
   selector: 'app-formulario-evento-gest',
@@ -85,6 +90,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     descripcion: '',
     estadoProceso: 0,
     motivoDev: '',
+    observaciones: ''
   }
 
   //objeto que almacena las propiedades del cliente
@@ -135,7 +141,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       await forkJoin([empleados$, /*localidad$,*/ tipoContrato$, cliente$, tipoFecha$, tipoPago$, estados$]).subscribe(
         ([empleadosData, /*localidadData,*/ tipoContratoData, clienteData, tipoFechaData, tipoPagoData, estadosList]) => {
           this.estadosList = _.cloneDeep(estadosList);
-          
+
           this.empleadosList = _.cloneDeep(empleadosData);
           this.empleadosListFiltered = _.cloneDeep(empleadosData);
 
@@ -156,7 +162,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
           this.tipoPagoList = _.cloneDeep(tipoPagoData);
           this.tipoPagoListFiltered = _.cloneDeep(tipoPagoData);
 
-          
+
 
           if (this.GlobalGestEventosService.editMode) {
             // Cargar los datos del evento seleccionado
@@ -194,21 +200,25 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
           descripcion: response.evDescripcion,
           estadoProceso: response.evEstado,
           motivoDev: response.evMotivoDev,
+          observaciones: response.evObservaciones
         }
 
         //console.log("Tipo de contrato", response.evTipoContrato);
 
-        await this.getLocalidadByArea(response.evTipoContrato);
+        await this.getLocalidadByContrato(response.evTipoContrato);
+
+                
 
         //console.log("Rellenar campos de empleado, cliente y localidad");
         const solicitante = this.empleadosList.find(emp => emp.empleadoIdNomina == response.evEmpleado);
         this.nombreEmpleado = solicitante.empleadoNombres + ' ' + solicitante.empleadoApellidos;
         this.nombreCliente = this.clienteList.find(cli => cli.cliId === response.evCliente).cliNombre;
-        this.nombreLocalidad = this.localidadList.find(loc => loc.id === response.evLocalidad).lugar;
+        //this.nombreLocalidad = this.localidadList.find(loc => loc.id === response.evLocalidad).lugar;
         this.nombreTipoContrato = this.tipoContratoList.find(cont => cont.contrId === response.evTipoContrato).contrNombre;
         this.nombreTipoPago = this.tipoPagoList.find(pago => pago.pagId === response.evTipoPago).pagNombre;
 
         this.currentEvEstado = response.evEstado;
+
         this.currentEvSeller = response.evEmpleado;
         this.motivoDevolucion = response.evMotivoDev;
 
@@ -217,6 +227,22 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       (error) => {
         console.error("Error al cargar los datos del evento", error);
         this.callMensaje("Error al cargar los datos del evento", false);
+      }
+    );
+
+    //cargar las localidades del evento
+    this.fichaGestEvService.getLocSelectedByEvento(idEventSelected).subscribe(
+      (response) => {
+        //console.log("Localidades del evento", response);
+        if (response.length == 0) {
+          this.callMensaje("No se encontraron localidades para el evento", false);
+        }
+        this.locationsSelected = _.cloneDeep(response);
+        //console.log("Localidades del evento", this.locationsSelected);
+      },
+      (error) => {
+        console.error("Error al cargar las localidades del evento", error);
+        this.callMensaje("Error al cargar las localidades del evento", false);
       }
     );
 
@@ -248,6 +274,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     )
 
 
+
   }
 
   callMensaje(mensaje: string, type: boolean) {
@@ -275,6 +302,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       descripcion: '',
       estadoProceso: 0,
       motivoDev: '',
+      observaciones: ''
     }
     //limpiar el registro de cliente
     this.cliente = {
@@ -310,12 +338,14 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   }
 
   async triggerGetLocalidadByArea(event: any) {
+    //limpia las localidades que se hayan seleccionado
+    this.locationsSelected = [];
     //buscar el id de la localidad por el tipo de contrato seleccionada
     const tpContrato = this.tipoContratoList.find(cont => cont.contrNombre === event).contrId;
-    await this.getLocalidadByArea(tpContrato);
+    await this.getLocalidadByContrato(tpContrato);
   }
 
-  async getLocalidadByArea(event: any): Promise<void> {
+  async getLocalidadByContrato(event: any): Promise<void> {
     return new Promise((resolve, reject) => {
       this.fichaGestEvService.getLocalidadList(event).subscribe(
         (response) => {
@@ -351,7 +381,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
   filterLocalidad(filterValue: string) {
     this.localidadListFiltered = this.localidadList.filter(loc =>
-      (loc.locNombre).toLowerCase().includes(filterValue.toLowerCase())
+      (loc.lugar).toLowerCase().includes(filterValue.toLowerCase())
     );
   }
 
@@ -382,6 +412,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   }
 
   updateLocalidadListFiltered(event: any) {
+
     this.filterLocalidad(event.target.value);
   }
 
@@ -472,26 +503,33 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   timeListFiltered2: string[] = _.cloneDeep(this.timeList);
 
   async setFormatTime() {
+    //console.log("Fechas", this.FechasObj.fechaInicio, this.FechasObj.fechaFin);
     if (this.FechasObj.fechaInicio == undefined || this.FechasObj.fechaFin == undefined) {
       //console.log("Fechas no definidas");
       return;
     }
 
-    const fechaInicio = new Date(this.FechasObj.fechaInicio);
-    const horaInicio = this.FechasObj.horaInicio.split(':');
-    fechaInicio.setHours(parseInt(horaInicio[0]));
-    fechaInicio.setMinutes(parseInt(horaInicio[1]));
-    // Restar 5 horas para ajustar a UTC -5
-    //fechaInicio.setHours(fechaInicio.getHours() - 5);
-    this.FechasObj.fechaInicio = fechaInicio;
+    if (this.FechasObj.horaInicio.length == 5 && this.FechasObj.horaInicio.includes(':')) {
+      const fechaInicio = new Date(this.FechasObj.fechaInicio);
+      const horaInicio = this.FechasObj.horaInicio.split(':');
+      fechaInicio.setHours(parseInt(horaInicio[0]));
+      fechaInicio.setMinutes(parseInt(horaInicio[1]));
+      // Restar 5 horas para ajustar a UTC -5
+      //fechaInicio.setHours(fechaInicio.getHours() - 5);
+      this.FechasObj.fechaInicio = fechaInicio;
+      //console.log("Fecha inicio", this.FechasObj.fechaInicio);
+    }
 
-    const fechaFin = new Date(this.FechasObj.fechaFin);
-    const horaFin = this.FechasObj.horafin.split(':');
-    fechaFin.setHours(parseInt(horaFin[0]));
-    fechaFin.setMinutes(parseInt(horaFin[1]));
-    // Restar 5 horas para ajustar a UTC -5
-    //fechaFin.setHours(fechaFin.getHours() - 5);
-    this.FechasObj.fechaFin = fechaFin;
+    if (this.FechasObj.horafin.length == 5 && this.FechasObj.horafin.includes(':')) {
+      const fechaFin = new Date(this.FechasObj.fechaFin);
+      const horaFin = this.FechasObj.horafin.split(':');
+      fechaFin.setHours(parseInt(horaFin[0]));
+      fechaFin.setMinutes(parseInt(horaFin[1]));
+      // Restar 5 horas para ajustar a UTC -5
+      //fechaFin.setHours(fechaFin.getHours() - 5);
+      this.FechasObj.fechaFin = fechaFin;
+      //console.log("Fecha inicio", this.FechasObj.fechaInicio);
+    }
   }
 
   async agregarRegistro() {
@@ -557,7 +595,6 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
   // RESTRICCIONES DE FECHA SEGÚN EL TIPO DE EVENTO
   onTipoChange(tipo: number) {
-
     if (tipo === 2) { // Ejecución
       const instalacionDate = this.fechasList.find(fecha => fecha.tipo === 1); // Buscar la etapa de montaje
       if (instalacionDate) {
@@ -633,7 +670,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
   idData = {
     solicitante: 0,
     tipoContrato: 0,
-    localidad: 0,
+    //localidad: 0,
     cliente: 0,
     tipoPago: 0
   }
@@ -645,7 +682,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
     const tipoContrato = this.tipoContratoList.find(cont => cont.contrNombre === this.nombreTipoContrato);
 
-    const localidad = this.localidadList.find(loc => loc.lugar === this.nombreLocalidad);
+    //const localidad = this.localidadList.find(loc => loc.lugar === this.nombreLocalidad);
 
     const cliente = this.clienteList.find(cli => cli.cliNombre === this.nombreCliente);
 
@@ -663,11 +700,11 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       this.callMensaje("Seleccione un tipo de contrato", false);
       return false;
 
-    } else if (localidad === undefined) {
+    } /*else if (localidad === undefined) {
       this.callMensaje("Seleccione una localidad", false);
       return false;
 
-    } else if (cliente === undefined) {
+    }*/ else if (cliente === undefined) {
       this.callMensaje("Seleccione un cliente", false);
       return false;
 
@@ -679,7 +716,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     this.idData = {
       solicitante: solicitante.empleadoIdNomina,
       tipoContrato: tipoContrato.contrId,
-      localidad: localidad.id,
+      //localidad: localidad.id,
       cliente: cliente.cliId,
       tipoPago: tipoPago.pagId
     }
@@ -693,12 +730,21 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       return false;
     }
 
+    //validar si hay como minimo 1 localidad
+    if(this.locationsSelected.length == 0){
+      this.callMensaje("Seleccione al menos una localidad", false);
+      return false;
+    }
+
     //validar nombre, descripcion y tipo de pago
     if (this.gestEvento.nombreEvento === '') {
       this.callMensaje("Ingrese un nombre para el evento", false);
       return false;
     } else if (this.gestEvento.descripcion === '') {
       this.callMensaje("Ingrese una descripción para el evento", false);
+      return false;
+    } else if (this.gestEvento.observaciones === '') {
+      this.callMensaje("Ingrese una observación para el evento", false);
       return false;
     } else if (this.nombreTipoPago === '' && this.gestEvento.pagoTotal === 0) {
       this.callMensaje("Ingrese un monto total", false);
@@ -756,7 +802,8 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
 
             const [fechaExito, cuotaExito] = await Promise.all([
               this.saveFecha(eventId),// Pasa el ID del evento
-              this.saveCuota(eventId) // Pasa el ID del evento
+              this.saveCuota(eventId), // Pasa el ID del evento
+              this.saveLocalidades(eventId) // Pasa el ID del evento
             ]);
 
             if (fechaExito && cuotaExito) {
@@ -788,7 +835,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
       const data = {
         evId: this.GlobalGestEventosService.idEventoSelected,
         evNombre: this.gestEvento.nombreEvento,
-        evLocalidad: this.idData.localidad,
+        evLocalidad: 13, //id de la localidad auxiliar
         evCliente: this.idData.cliente,
         evEstado: 10,
         evTipoContrato: this.idData.tipoContrato,
@@ -797,7 +844,8 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         evTipoPago: this.idData.tipoPago,
         evDescripcion: this.gestEvento.descripcion,
         evEstadoValido: 1,
-        evMotivoDev: this.gestEvento.motivoDev
+        evMotivoDev: this.gestEvento.motivoDev,
+        evObservaciones: this.gestEvento.observaciones
       };
 
       //console.log("Guardando evento", data);
@@ -866,6 +914,40 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     }
   }
 
+  async saveLocalidades(idEvento: number): Promise<boolean> {
+    try {
+      // Eliminar las localidades anteriores
+      await this.fichaGestEvService.deleteLocalidades(idEvento).toPromise();
+
+      // Crear un array de promesas para guardar cada localidad
+      const promises = this.locationsSelected.map(async (loc) => {
+        const data = {
+          evLocIdEvento: idEvento,
+          evLocIdLocalidad: loc.id, // Usar el ID correcto de la localidad seleccionada
+          evLocEstado: 1
+        };
+
+        try {
+          await this.fichaGestEvService.postLocalidades(data).toPromise();
+          return true; // Retorna true si la localidad se guarda exitosamente
+        } catch (error) {
+          console.error("Error al guardar la localidad", error);
+          return false; // Retorna false si ocurre un error
+        }
+      });
+
+      // Esperar a que todas las promesas se resuelvan
+      const results = await Promise.all(promises);
+
+      // Retorna true solo si todas las localidades se guardaron correctamente
+      return results.every(result => result);
+    } catch (error) {
+      console.error("Error en el proceso de guardado de localidades", error);
+      return false; // Retorna false si ocurre un error global
+    }
+  }
+
+
   ////////////////////////////////////////////////////////////////////////////////////////////
   saveCliente() {
     //Guardar el cliente
@@ -888,7 +970,17 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
             (response) => {
               //console.log("Cliente guardado", response);
               this.dialog.closeAll();
-              this.clearEventoData();
+
+              //limpiar el registro de cliente
+              this.cliente = {
+                codigo: '',
+                clienteNombre: '',
+                cedula: '',
+                direccion: '',
+                telefono: '',
+                correo: '',
+              }
+
               this.fichaGestEvService.getClientesList().subscribe(
                 (response) => {
                   this.clienteList = _.cloneDeep(response);
@@ -955,7 +1047,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
           const idEventSelected = this.GlobalGestEventosService.idEventoSelected;
           this.aproveEvent(idEventSelected, op2, this.gestEvento.nombreEvento);
 
-          
+
 
           /*this.fichaGestEvService.postAutorizacion(idEventSelected, 1, '0').subscribe(
             (response) => {
@@ -993,7 +1085,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
               console.error("Error al enviar el correo", error);
             }
           );
-        } else if(this.currentEvEstado == 20){
+        } else if (this.currentEvEstado == 20) {
           this.fichaGestEvService.sendMailEvNotification(1, 30, idEvent, eventoNombre).subscribe(
             (response) => {
               console.log("Correo enviado", response);
@@ -1002,6 +1094,17 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
               console.error("Error al enviar el correo", error);
             }
           );
+        } else if (this.currentEvEstado == 30) {
+          //si el estado es finalizado, enviar correo de encuesta
+          this.fichaGestEvService.sendMailSurvey(idEvent).subscribe(
+            (response) => {
+              console.log("Correo enviado", response);
+            },
+            (error) => {
+              console.error("Error al enviar el correo", error);
+            }
+          );
+
         }
 
         this.router.navigate(['lista-ev-gest']);
@@ -1100,8 +1203,8 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     return this.estadosList.find(est => est.estproId == estado).estproNivel;
   }
 
-  getEvCode(): string{
-    const tpContrato = this.gestEvento.tipoContrato === 1 ? 'HALL' : 'BRAND';
+  getEvCode(): string {
+    const tpContrato = this.getTpContratoName(this.gestEvento.tipoContrato );
 
     const idEvento = this.GlobalGestEventosService.idEventoSelected;
 
@@ -1109,4 +1212,90 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     return tpContrato + ' - ' + idEvento.toString().padStart(6, '0');
 
   }
+
+  getTpContratoName(tipo: number): string {
+    switch (tipo) {
+      case 1:
+        return 'HALL';
+      case 2:
+        return 'BRAND';
+      case 3:
+        return 'FAIR';
+      case 4:
+        return 'CITY';
+      case 4:
+        return 'EVFM';
+      default:
+        return '';
+    }
+  }
+
+  ///////////////////////////////////AGREGAR VARIOS ESPACIOS A UN EVENTO//////////////////////////////////////
+  @ViewChild('locInput') locInput!: ElementRef<HTMLInputElement>;
+  separatorKeysCodes: number[] = [];
+  locationIn: string = '';
+
+  //almacena los espacios para mostrar en el chip
+  locationsSelected: { id: number, nombre: string }[] = [];
+
+  add(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    // Buscar si el lugar existe en la lista
+    const localidad = this.localidadList.find(item => item.lugar === value);
+
+    if (localidad) {
+      // Verificar si ya existe en locationsSelected
+      const exists = this.locationsSelected.some(item => item.id === localidad.id);
+
+      if (!exists) {
+        this.locationsSelected.push({ id: localidad.id, nombre: localidad.lugar });
+      }
+
+      // Limpiar el valor del input
+      this.locationIn = '';
+      event.chipInput!.clear();
+    } else {
+      this.callMensaje('Localidad no encontrada', false);
+    }
+  }
+
+  remove(locId: number): void {
+    const index = this.locationsSelected.findIndex(item => item.id === locId);
+    if (index >= 0) {
+      this.locationsSelected.splice(index, 1);
+    }
+  }
+
+
+  selected(event: MatAutocompleteSelectedEvent): void {
+    const selectedLugar = event.option.viewValue.trim();
+
+    // Buscar la localidad seleccionada en la lista original
+    const localidad = this.localidadList.find(item => item.lugar === selectedLugar);
+
+    if (localidad) {
+      // Verificar si ya existe en locationsSelected
+      const exists = this.locationsSelected.some(item => item.id === localidad.id);
+
+      if (!exists) {
+        this.locationsSelected.push({ id: localidad.id, nombre: localidad.lugar });
+      }
+    }
+
+    // Limpiar el input
+    this.locationIn = '';
+    this.locInput.nativeElement.value = '';
+    this.localidadListFiltered = [...this.localidadList]; // Resetear el filtro
+    //console.log(this.locationsSelected);
+  }
+
+  preventChipDelete(event: KeyboardEvent): void {
+    //console.log(event);
+    event.stopImmediatePropagation(); // Detiene la propagación inmediata del evento
+    event.preventDefault(); 
+  }
+
+  
+
 }

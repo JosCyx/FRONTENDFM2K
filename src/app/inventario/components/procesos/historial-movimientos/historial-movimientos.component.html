@@ -65,6 +65,11 @@
         <td mat-cell *matCellDef="let element"> {{showLineString(element.kardex)}} </td>
       </ng-container>
 
+      <ng-container matColumnDef="autor">
+        <th mat-header-cell *matHeaderCellDef> Autor </th>
+        <td mat-cell *matCellDef="let element"> {{showLineString(element.autor)}} </td>
+      </ng-container>
+
       <tr mat-header-row *matHeaderRowDef="displayedColumns" class="center-content"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="pointer-cursor"></tr>
     </table>

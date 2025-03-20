@@ -97,5 +97,9 @@ export class ListadoEventosComponent implements OnInit{
     }
   }
 
+  getLugaresList(lugar: string): string[] {
+    if (!lugar) return [];
+    return lugar.split(',').map(item => item.trim()); // Convierte la cadena en un array de localidades
+  }
 
 }

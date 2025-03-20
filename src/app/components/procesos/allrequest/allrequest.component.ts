@@ -71,7 +71,9 @@ export class AllrequestComponent implements OnInit {
 
     //extraer el area del usuario logueado
     const idArea = Number(this.cookieService.get('userArea'));
-
+    
+    console.log(tipoSol, maxNivel, idNomina, idArea);
+    
     //consultar las solicitudes
     this.cabCotService.getAllSolicitudes(tipoSol, maxNivel, idNomina, idArea).subscribe(
       (response: any[]) => {

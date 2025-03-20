@@ -169,7 +169,7 @@
 
 
 
-      <mat-form-field class="example-full-width">
+      <!-- <mat-form-field class="example-full-width">
         <mat-label>ESPACIO</mat-label>
         <input type="text" for="localidad" placeholder="Ingrese el espacio"
           (input)="updateLocalidadListFiltered($event)" matInput [matAutocomplete]="loc" [(ngModel)]="nombreLocalidad"
@@ -179,6 +179,29 @@
             <mat-option [value]="loc.lugar">{{loc.lugar}}</mat-option>
           </ng-container>
         </mat-autocomplete>
+      </mat-form-field> -->
+
+      <mat-form-field class="example-chip-list">
+        <mat-label>ESPACIOS</mat-label>
+        <mat-chip-grid #chipGrid (keydown)="preventChipDelete($event)" [readonly]="checkEditPermission()">
+          <mat-chip-row *ngFor="let loc of locationsSelected" (removed)="remove(loc.id)" >
+            {{loc.nombre}}
+            <button matChipRemove [disabled]="checkEditPermission()">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        </mat-chip-grid>
+        <input placeholder="Ingrese los espacios que ocupará el evento" #locInput [(ngModel)]="locationIn"
+          (input)="updateLocalidadListFiltered($event)"
+          [matChipInputFor]="chipGrid" [matAutocomplete]="loc"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="add($event)"
+          [readonly]="checkEditPermission()"/>
+          <mat-autocomplete autoActiveFirstOption #loc="matAutocomplete" (optionSelected)="selected($event)">
+            <ng-container *ngFor="let loc of localidadListFiltered">
+              <mat-option [value]="loc.lugar">{{loc.lugar}}</mat-option>
+            </ng-container>
+          </mat-autocomplete>
       </mat-form-field>
 
       <!-- select -->
@@ -193,7 +216,7 @@
         </mat-form-field> -->
 
         <mat-form-field class="example-full-width">
-          <mat-label>TIPO DE PAGO</mat-label>
+          <mat-label>FORMA DE PAGO</mat-label>
           <input type="text" for="localidad" placeholder="Ingrese el tipo de pago"
             (input)="updateTipoPagoListFiltered($event)" matInput [matAutocomplete]="tpp" [(ngModel)]="nombreTipoPago"
             [readonly]="checkEditPermission()">
@@ -217,7 +240,11 @@
         </mat-form-field>
       </div>
 
-
+      <mat-form-field class="example-full-width">
+        <mat-label>OBSERVACIONES</mat-label>
+        <textarea matInput placeholder="Ingrese el detalle de producto final" rows="4"
+          [(ngModel)]="gestEvento.observaciones" [readonly]="checkEditPermission()"></textarea>
+      </mat-form-field>
 
     </div>
   </ng-template>
@@ -258,6 +285,7 @@
             <input matInput [matDatepicker]="fechaInicioPicker" [(ngModel)]="FechasObj.fechaInicio"
               (ngModelChange)="onTipoChange(FechasObj.tipo)" [min]="minDate"
               [disabled]="!FechasObj.tipo || fechasDeshabilitadas.fechaInicioDisabled">
+              <!-- <mat-hint>DD/MM/YYYY</mat-hint> -->
             <mat-datepicker-toggle matIconSuffix [for]="fechaInicioPicker"></mat-datepicker-toggle>
             <mat-datepicker #fechaInicioPicker></mat-datepicker>
           </mat-form-field>

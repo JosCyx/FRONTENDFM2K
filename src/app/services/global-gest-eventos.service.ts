@@ -12,6 +12,7 @@ export class GlobalGestEventosService {
   editMode: boolean = false;
   motivoDevolucion: string = '';
   
+  idTipoContratoSelected: number = 0;
   
   constructor(
   ) {

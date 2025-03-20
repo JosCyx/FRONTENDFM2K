@@ -121,11 +121,11 @@
 
 /*eventos finalizados*/
 .day-event-solicitado{
-  background-color: #b8b8b8;
+  background-color: #8c8c8c;
 }
 
 .day-event-solicitado:hover{
-  background-color: #8c8c8c;
+  background-color: #6e6e6e;
 }
 
 /*eventos cancelados*/
@@ -186,6 +186,10 @@
   background-color: #dfeeff; 
   border-radius: 10px; 
   padding: 15px;
+  /*display grid de 3 elementos por columna*/
+  display: grid;
+  grid-template-rows: repeat(3, auto); 
+  grid-auto-flow: column; 
 }
 
 
@@ -256,4 +260,10 @@ mat-form-field{
 .custom-label-select{
   font-size: 9pt;
   margin: 0px;
+}
+
+.custom-select-container{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
 }

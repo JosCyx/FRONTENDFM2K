@@ -28,7 +28,8 @@ export class HistorialMovimientosComponent {
     'proveedor', 
     'destino', 
     'observaciones',
-    'kardex'
+    'kardex',
+    'autor'
   ];
 
   dataSource = new MatTableDataSource<any>();
@@ -52,6 +53,7 @@ export class HistorialMovimientosComponent {
   ngOnInit(): void {
     this.productoService.getProdMov(this.globalInvService.productSelectedID, this.globalInvService.sectorSelected).subscribe(
       (data) => {
+        //console.log('Producto:', this.globalInvService.productSelectedID, ' \nSector:', this.globalInvService.sectorSelected);
         console.log("Movimientos:",data);
         this.dataSource.data = data;
         this.globalInvService.dataSourceCopyHistory = data;
@@ -104,7 +106,7 @@ export class HistorialMovimientosComponent {
     switch (this.filterValue) {
       case 1:
         this.globalInvService.filterHistoryName = '-Ingresos-';
-        newDisplayedColumns = ['fecha', 'ingreso', 'pr_unit', 'pr_total', 'proveedor', 'destino', 'observaciones', 'kardex'];
+        newDisplayedColumns = ['fecha', 'ingreso', 'pr_unit', 'pr_total', 'proveedor', 'destino', 'observaciones', 'kardex', 'autor'];
   
         // Filtrar las filas que tengan 0 en la columna egreso y devolución
         this.dataSource.data = this.dataSource.data.filter(element => element.egreso == 0 && element.devolucion == 0);
@@ -112,21 +114,21 @@ export class HistorialMovimientosComponent {
         break;
       case 2:
         this.globalInvService.filterHistoryName = '-Egresos-';
-        newDisplayedColumns = ['fecha', 'egreso', 'pr_unit', 'pr_total', 'proveedor', 'destino', 'observaciones', 'kardex'];
+        newDisplayedColumns = ['fecha', 'egreso', 'pr_unit', 'pr_total', 'proveedor', 'destino', 'observaciones', 'kardex', 'autor'];
 
         // Filtrar las filas que tengan 0 en la columna ingreso y devolución
         this.dataSource.data = this.dataSource.data.filter(element => element.ingreso == 0 && element.devolucion == 0);
         break;
       case 3:
         this.globalInvService.filterHistoryName = '-Devoluciones-';
-        newDisplayedColumns = ['fecha', 'devolucion', 'pr_unit', 'pr_total', 'proveedor', 'destino', 'observaciones', 'kardex'];
+        newDisplayedColumns = ['fecha', 'devolucion', 'pr_unit', 'pr_total', 'proveedor', 'destino', 'observaciones', 'kardex', 'autor'];
   
         // Filtrar las filas que tengan 0 en la columna ingreso y egreso
         this.dataSource.data = this.dataSource.data.filter(element => element.ingreso == 0 && element.egreso == 0);
         break;
       default:
         this.globalInvService.filterHistoryName = '-Todos-';
-        newDisplayedColumns = ['fecha', 'ingreso', 'egreso', 'devolucion', 'pr_unit', 'pr_total', 'proveedor', 'destino', 'observaciones', 'kardex'];
+        newDisplayedColumns = ['fecha', 'ingreso', 'egreso', 'devolucion', 'pr_unit', 'pr_total', 'proveedor', 'destino', 'observaciones', 'kardex', 'autor'];
   
         // Volver los datos a la normalidad
         this.dataSource.data = this.dataSourceCopy;

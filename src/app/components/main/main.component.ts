@@ -15,7 +15,7 @@ export class MainComponent implements OnInit {
 
   appList: any[] = [];
 
-  constructor(private globalService: GlobalService,
+  constructor(public globalService: GlobalService,
     private router: Router,
     private cookieService: CookieService,
     private documentService: UploadFileService,

@@ -3,6 +3,8 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/authentication/auth.service';
 import { CookieService } from 'ngx-cookie-service';
+import { AplicacionesService } from 'src/app/services/comunicationAPI/seguridad/aplicaciones.service';
+import { GlobalService } from 'src/app/services/global.service';
 
 
 @Component({
@@ -33,7 +35,9 @@ export class LoginComponent implements OnInit{
   constructor(
     private router: Router,
     private authService: AuthService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private appService: AplicacionesService,
+    private globalService: GlobalService
   ) { }
 
   get Username(): FormControl {
@@ -70,6 +74,7 @@ export class LoginComponent implements OnInit{
       //enviar como parametro el valor ingresado en el formulario del usuario y la contraseña
       this.authService.login(this.loginForm.value.username!, this.loginForm.value.password!).subscribe(
         (response: any) => {
+          this.getCurrentImageLogo();
           //mensaje de bienvenida
           this.showmsj = true;
           this.msjExito = `Bienvenido(a) ${response.usuario.usNombre}.`;
@@ -173,5 +178,16 @@ export class LoginComponent implements OnInit{
     );
   }
 
+  getCurrentImageLogo(){
+    this.appService.getCurrentImage().subscribe(
+      response => {
+        //console.log(response);
+        this.globalService.logoUrl = response.currentImage;
+      },
+      error => {
+        console.log(error);
+      }
+    );
+  }
 
 }

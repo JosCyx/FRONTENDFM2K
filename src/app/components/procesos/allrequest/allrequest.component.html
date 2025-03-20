@@ -87,15 +87,28 @@
             <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
           </div>
         </th>
-        <td mat-cell *matCellDef="let element" [matTooltip]="element.column4" matTooltipPosition="above" [matTooltipShowDelay]="700"
-        [matTooltipHideDelay]="0" > 
+        <td mat-cell *matCellDef="let element" [matTooltip]="element.column4" matTooltipPosition="above"
+          [matTooltipShowDelay]="700" [matTooltipHideDelay]="0">
           <span class="truncate-text">{{element.column4}}</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="column5">
-        <th mat-header-cell *matHeaderCellDef> Fecha </th>
-        <td mat-cell *matCellDef="let element"> {{element.column5}} </td>
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="filter-head">
+            Fecha
+            <div style="display: flex; flex-direction: row;">
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(5)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+            </div>
+          </div>
+          <div class="input-container" *ngIf="handleFilter && filterType == 5">
+            <input type="text" #filterInput (input)="applyStrFilter($event)">
+            <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+          </div>
+        </th>
+        <td maFt-cell *matCellDef="let element"> {{element.column5}} </td>
       </ng-container>
 
       <ng-container matColumnDef="column6">
@@ -113,7 +126,7 @@
             <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
           </div>
         </th>
-        <td  [ngClass]="getRowColor(element.column11)" mat-cell *matCellDef="let element"> {{element.column6}} <br>
+        <td [ngClass]="getRowColor(element.column11)" mat-cell *matCellDef="let element"> {{element.column6}} <br>
           <ng-container *ngIf="element.column10 == 1">
             <strong>Sin Presupuesto</strong>
           </ng-container>
@@ -121,7 +134,20 @@
       </ng-container>
 
       <ng-container matColumnDef="column7">
-        <th mat-header-cell *matHeaderCellDef> Estado </th>
+        <th mat-header-cell *matHeaderCellDef>
+          <div class="filter-head">
+            Estado
+            <div style="display: flex; flex-direction: row;">
+              <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(7)"><i
+                  class="bi bi-funnel-fill"></i></button>
+              <!-- <button class="filter-btn" mat-icon-button color="basic"><i class="bi bi-sort-down"></i></button> -->
+            </div>
+          </div>
+          <div class="input-container" *ngIf="handleFilter && filterType == 7">
+            <input type="text" #filterInput (input)="applyStrFilter($event)">
+            <!-- <button matRipple class="clear-button" (click)="clearFilter()">✕</button> -->
+          </div>
+        </th>
         <td mat-cell *matCellDef="let element"> {{element.column7}} </td>
       </ng-container>
 
@@ -173,9 +199,12 @@
       <tr class="row-custom-hover" mat-row *matRowDef="let row; columns: displayedColumns;"
         (click)="selectSol(row.column0)"></tr>
     </table>
-    <mat-paginator [pageSize]="25" [pageSizeOptions]="[5,25, 50, 100, 500]" (page)="handlePage($event)" showFirstLastButtons></mat-paginator>
+    <mat-paginator [pageSize]="25" [pageSizeOptions]="[5,25, 50, 100, 500]" (page)="handlePage($event)"
+      showFirstLastButtons></mat-paginator>
   </div>
-  <p *ngIf="bsqTipoSol == 3" style="font-weight: bold; font-style: italic; font-size: 9pt;">*Si desea filtrar por destino ingrese 0 para visualizar las solicitudes sin destino y 1 para visualizar las que sí tienen destino.</p>
+
+  <p *ngIf="bsqTipoSol == 3" style="font-weight: bold; font-style: italic; font-size: 9pt;">*Si desea filtrar por
+    destino ingrese 0 para visualizar las solicitudes sin destino y 1 para visualizar las que sí tienen destino.</p>
 
 
 </div>

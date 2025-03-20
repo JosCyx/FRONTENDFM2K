@@ -218,6 +218,7 @@ export class VisualizarInventarioComponent {
     const sectorSelected = this.globalInvService.sectorSelected;
     const grupoAutorizado = this.globalInvService.grupoAutorizado;
 
+    //MODIFICAR DATOS SEGÚN EL ENTORNO
     //PRODUCCION 12, DESARROLLO 13
     if (grupoAutorizado.some(grupo => grupo === 12) || grupoAutorizado.some(grupo => grupo === sectorSelected)) {
       if (sectorSelected !== 0) {

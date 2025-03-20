@@ -9,6 +9,14 @@ import { Subject } from 'rxjs';
 import { FinishRequerimentComponent } from '../eventos/components/templates/finish-requeriment/finish-requeriment.component';
 import { AddDimensionesComponent } from '../components/templates/add-dimensiones/add-dimensiones.component';
 import { DevolverDialogComponent } from '../evento_gestion/devolver-dialog/devolver-dialog.component';
+import { FilterModalComponent } from '../evento_gestion/templates/filter-modal/filter-modal.component';
+
+interface Filter {
+  key: any;
+  value?: string;
+  type: string;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -121,4 +129,17 @@ export class DialogServiceService {
       this.confirmResultJustify.next(false);
     }
   }
+
+  ////////////////////////FILTROS DE EVENTOS////////////////////////
+  paramFilterSubject = new Subject<Filter>();
+
+  openFilterDialog(type: string){
+    console.log('openFilterDialog called');
+    this.dialog.open(FilterModalComponent, {
+      data: { type },
+      width: '600px',
+    });
+  }
+
+  
 }

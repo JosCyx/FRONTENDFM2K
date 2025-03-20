@@ -321,7 +321,8 @@ export class CotPdfComponent implements OnInit {
                   ],
                 ],
               },
-            },
+            }
+            /*,
             {
               margin: [0, 10, 0, 0],
               text: 'Desglose de Sectores',
@@ -340,7 +341,7 @@ export class CotPdfComponent implements OnInit {
                   ...this.combinarSecto
                 ],
               },
-            },
+            },*/
           ],
           styles: {
             tableHeader: {

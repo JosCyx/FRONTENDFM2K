@@ -13,7 +13,7 @@ export class MenuAdminComponent {
   isLogin: boolean = false;
   showSB: boolean = false;
 
-  constructor(private globalService: GlobalService,
+  constructor(public globalService: GlobalService,
     private router: Router, 
     private cookieService: CookieService) { }
 

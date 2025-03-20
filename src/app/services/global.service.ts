@@ -17,6 +17,9 @@ export class GlobalService {
   //url de la API publicada
   //APIUrl = "http://192.168.1.234:9193/api";
 
+  //url de la imagen del toolbar
+  logoUrl = "assets/img/logo.webp";
+
   //APIUrl = "https://localhost:7086/api";
   APIUrl: string = '';
   //api2: string = '';

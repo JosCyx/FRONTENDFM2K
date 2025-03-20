@@ -9,35 +9,60 @@
     <div>
       <h2 style="font-style: italic;">{{ getMonthName(currentMonth) }} {{ currentYear }}</h2>
     </div>
-    <div style="display: flex; flex-direction: row; gap: 10px; justify-content: space-between; margin-bottom: 20px;">
-      <!-- Filtro Estados del evento -->
-      <div style="display: flex; flex-direction: column;">
-        <div>
-          <ng-container *appAuthorize="'112'">
-            <mat-radio-group color="primary" (change)="sendEstadoToHandle($event)">
-              <mat-radio-button value="1">Todos</mat-radio-button>
-              <mat-radio-button value="2">Solicitados</mat-radio-button>
-              <mat-radio-button value="3" checked>Aprobados</mat-radio-button>
-              <mat-radio-button value="4">Finalizados</mat-radio-button>
-            </mat-radio-group>
-          </ng-container>
-        </div>
+    <div style="display: flex; flex-direction: column;">
+      <div style="margin-bottom: 10px;">
+        <ng-container *appAuthorize="'112'">
+          <mat-radio-group color="primary" (change)="sendEstadoToHandle($event)">
+            <mat-radio-button value="1">Todos</mat-radio-button>
+            <mat-radio-button value="2">Solicitados</mat-radio-button>
+            <mat-radio-button value="3" checked>Aprobados</mat-radio-button>
+            <mat-radio-button value="4">Finalizados</mat-radio-button>
+          </mat-radio-group>
+        </ng-container>
+      </div>
+      <div
+        style="display: flex; flex-direction: row; gap: 10px; justify-content: space-between; margin-bottom: 20px; align-items: end;">
+        <!-- Filtro de estados -->
+        <!-- Filtro de espacios -->
         <div class="custom-select-container">
-          <label class="custom-label-select">Filtrar por espacio</label>
+          <div class="chip-params">
+            <ng-container *ngIf="paramFilterList.length != 0">
+              <mat-chip-grid #chipGrid>
+                <mat-chip-row *ngFor="let p of paramFilterList" (removed)="remove(p)">
+                  {{p.value}}
+                  <button matChipRemove (click)="remove(p)">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+            </ng-container>
+          </div>
+          <!--  -->
+          <div>
+            <button mat-icon-button class="button-filter" (click)="resetFilter()"><i
+                class="bi bi-arrow-clockwise"></i></button>
+            <button mat-icon-button [matMenuTriggerFor]="menuFilter" class="button-filter"><i
+                class="bi bi-funnel-fill"></i></button>
+            <mat-menu #menuFilter="matMenu">
+              <button mat-menu-item [disabled]="verifyFilterExist('tipo de contrato')"
+                (click)="filterEvent('tipo de contrato')">Tipo de contrato</button>
+              <button mat-menu-item [disabled]="verifyFilterExist('espacio')"
+                (click)="filterEvent('espacio')">Espacio</button>
+            </mat-menu>
+          </div>
+          <!-- <label class="custom-label-select" style="font-weight: bold;">Filtrar por espacio</label>
           <select class="custom-select" [(ngModel)]="nombreLocalidad" (change)="filtroLocalidad()">
 
             <option [value]="0">TODOS</option>
             <option *ngFor="let loc of localidadListFiltered" [value]="loc.id">{{ loc.lugar }}</option>
-          </select>
+          </select> -->
         </div>
-
-      </div>
-
-      <div>
-        <button class="nav-button" mat-mini-fab color="primary"
-          (click)="prevMonth()"><mat-icon>chevron_left</mat-icon></button>
-        <button class="nav-button" mat-mini-fab color="primary"
-          (click)="nextMonth()"><mat-icon>chevron_right</mat-icon></button>
+        <div style="display: flex; flex-direction: row; gap: 10px;">
+          <button class="nav-button" mat-mini-fab color="primary"
+            (click)="prevMonth()"><mat-icon>chevron_left</mat-icon></button>
+          <button class="nav-button" mat-mini-fab color="primary"
+            (click)="nextMonth()"><mat-icon>chevron_right</mat-icon></button>
+        </div>
       </div>
     </div>
   </div>
@@ -71,19 +96,30 @@
               'day-event-aprobado': event.estadop == 30,
               'day-event-finalizado': event.estadop == 40
             }">
-            <p class="truncate-text">
-              <span *ngIf="event.contrato === 1">
+            <div style="display: flex; flex-direction: row; gap: 5px;">
+              <span>
+                <img [src]="event.icon" alt="Indoor Event Icon" class="svg-icon-style" />
+              </span>
+              <!-- <span *ngIf="event.contrato === 1">
                 <img src="assets/icons/hall.svg" alt="Indoor Event Icon" class="svg-icon-style" />
               </span>
               <span *ngIf="event.contrato === 2">
                 <img src="assets/icons/brand.svg" alt="Outdoor Event Icon" class="svg-icon-style" />
               </span>
-              {{event.name}} <br> <span style="font-size: 8pt;">{{event.eventType}}</span>
+              <span *ngIf="event.contrato === 3">
+                <img src="assets/icons/fair.svg" alt="Outdoor Event Icon" class="svg-icon-style" />
+              </span> -->
+              <p class="truncate-text">
+                {{event.name}}
+                <br>
+              </p>
+            </div>
+            <p>
+              <span style="font-size: 8pt; color: rgb(214, 214, 214);">{{event.eventType}}</span>
             </p>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
@@ -91,7 +127,7 @@
     <!-- Columna de leyenda -->
     <div class="div-help">
       <div class="help-leyenda">
-        <div class="leyenda" style="background-color: #b8b8b8;" ></div>
+        <div class="leyenda" style="background-color: #b8b8b8;"></div>
         <div>Solicitado</div>
       </div>
 
@@ -108,12 +144,11 @@
 
     <!-- Columna de información de eventos -->
     <div class="div-help" style="margin-right: 20px;">
-      <p class="help-contrato" style="margin-right: 30px;">
-        <img src="assets/icons/hall-black.svg" alt="Indoor Event Icon" class="svg-icon-style" /> Alquiler de salones
-      </p>
-      <p class="help-contrato">
-        <img src="assets/icons/brand-black.svg" alt="Outdoor Event Icon" class="svg-icon-style" /> Activaciones de marca
-      </p>
+      <ng-container *ngFor="let icon of grayIcons">
+        <p class="help-contrato" style="margin-right: 30px;">
+          <img [src]="icon.tpIconRuta" alt="Indoor Event Icon" class="svg-icon-style" />  {{icon.tpIconNombre}}
+        </p>
+      </ng-container>
     </div>
   </div>
 
@@ -133,7 +168,9 @@
             'estado-txt-finalizado': eventoSelected.estado == 'Finalizado'
           }">{{ eventoSelected.estado }}</p>
         </div>
-        <p style="font-style: italic;">{{ eventoSelected.lugar }}</p>
+        <p style="font-style: italic;"><ng-container *ngFor="let lugar of getLugaresList(eventoSelected.lugar)">
+            {{ lugar }} <br />
+          </ng-container></p>
       </div>
       <div class="title-event">
         <p>{{ eventoSelected.descp }}</p>
@@ -141,6 +178,9 @@
       <div class="title-event">
         <p><span class="bold-txt">Cliente:</span> {{ eventoSelected.cliente }}</p>
         <p><span class="bold-txt">Asesor:</span> {{ eventoSelected.asesor }}</p>
+      </div>
+      <div class="title-event">
+        <p><span class="bold-txt">Obervaciones:</span> {{ eventoSelected.observ }}</p>
       </div>
     </div>
 

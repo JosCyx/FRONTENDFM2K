@@ -1,0 +1,22 @@
+<div>
+    <div>
+        <h2 mat-dialog-title>Seleccionar parámetro de filtrado</h2>
+    </div>
+    <div class="span-divisor"></div>
+    <div mat-dialog-content>
+        <mat-label>Seleccione un {{ data.type }}</mat-label>
+        <mat-form-field>
+            <mat-label>{{ data.type }}</mat-label>
+            <mat-select [(ngModel)]="selectedValue" (ngModelChange)="selectValue()">
+                <ng-container *ngFor="let value of valuesList">
+                    <mat-option [value]="value.key">{{value.value}}</mat-option>
+                </ng-container>
+            </mat-select>
+        </mat-form-field>
+        <span style="font-size: 10pt; font-weight: bold;" *ngIf="data.type == 'espacio'">Asegúrese de seleccionar un tipo de contrato antes de filtrar por espacios, ya que los espacios dependen del tipo de contrato.</span>
+    </div>
+    <div mat-dialog-actions style="justify-content: center; padding-bottom: 20px;">
+        <button mat-raised-button color="warn" (click)="closeDialog()">Cancelar</button>
+        <!-- <button mat-raised-button color="primary" (click)="selectValue()">Aceptar</button> -->
+    </div>
+</div>

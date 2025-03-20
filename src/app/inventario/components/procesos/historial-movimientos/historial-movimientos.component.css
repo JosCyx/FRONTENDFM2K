@@ -6,7 +6,8 @@
 .mat-column-proveedor,
 .mat-column-observaciones,
 .mat-column-destino,
-.mat-column-kardex{
+.mat-column-kardex,
+.mat-column-autor{
   text-align: center;
 }
 

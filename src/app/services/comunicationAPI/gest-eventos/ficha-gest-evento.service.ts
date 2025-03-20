@@ -91,6 +91,14 @@ export class FichaGestEventoService {
     return this.http.post(`${this.APIUrl}/GestevCuotas`, data, { headers: this.getHeadersWithAuthToken() });
   }
 
+  postLocalidades(data: any): Observable<any> {
+    return this.http.post(`${this.APIUrl}/GestevEventoLocalidades`, data, { headers: this.getHeadersWithAuthToken() });
+  }
+
+  deleteLocalidades(id: number): Observable<any> {
+    return this.http.delete(`${this.APIUrl}/GestevEventoLocalidades/DeleteLocByEvento?id=${id}`, { headers: this.getHeadersWithAuthToken() });
+  }
+
   getFichaGestEventoList(): Observable<any> {
     return this.http.get(`${this.APIUrl}/GestevEvento`, { headers: this.getHeadersWithAuthToken() });
   }
@@ -101,6 +109,10 @@ export class FichaGestEventoService {
 
   getLocalidadList(tipoContrato: number): Observable<any> {
     return this.http.get(`${this.APIUrl}/GestevLocalidad/GetGestevLocalidadByArea/${tipoContrato}`, { headers: this.getHeadersWithAuthToken() });
+  }
+
+  getLocSelectedByEvento(idEvento: number): Observable<any> {
+    return this.http.get(`${this.APIUrl}/GestevEventoLocalidades/GetLocSelectedbyEvento/${idEvento}`, { headers: this.getHeadersWithAuthToken() });
   }
 
   getLocalidadLista(): Observable<any> {
@@ -163,5 +175,13 @@ export class FichaGestEventoService {
 
   sendMailEvNotification(tipo: number, estado: number, eventoId: number, eventoNombre: string): Observable<any> {
     return this.http.post(`${this.APIUrl}/GestevEvento/SendMailEvNotification?tipo=${tipo}&estado=${estado}&eventoId=${eventoId}&eventoNombre=${eventoNombre}`, { headers: this.getHeadersWithAuthToken() });
+  }
+
+  sendMailSurvey(idEvento: number): Observable<any> {
+    return this.http.post(`${this.APIUrl}/GestevEvento/SendMailSurvey?idEvento=${idEvento}`, { headers: this.getHeadersWithAuthToken() });
+  }
+
+  GetTpIconsList(color: string): Observable<any> {
+    return this.http.get(`${this.APIUrl}/GestevEvento/GetTpIconsList?color=${color}`, { headers: this.getHeadersWithAuthToken() });
   }
 }

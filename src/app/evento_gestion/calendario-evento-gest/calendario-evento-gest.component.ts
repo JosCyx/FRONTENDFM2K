@@ -4,13 +4,21 @@ import { FichaGestEventoService } from 'src/app/services/comunicationAPI/gest-ev
 import * as _ from 'lodash';
 import { GlobalGestEventosService } from 'src/app/services/global-gest-eventos.service';
 import { Router } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { DialogServiceService } from 'src/app/services/dialog-service.service';
+
+interface Filter {
+  key: any;
+  value?: string;
+  type: string;
+}
 
 interface Day {
   day: number;
-  isToday?: boolean; // Agrega esta propiedad
+  isToday?: boolean;
   belongsToCurrentMonth: boolean;
-  events?: any[]; // Agrega esta propiedad
+  events?: any[];
 }
 
 interface Evento {
@@ -25,6 +33,7 @@ interface Evento {
   contrato: number;
   estadop: number;
   espacio: number;
+  icon: string;
 }
 
 @Component({
@@ -35,7 +44,7 @@ interface Evento {
 export class CalendarioEventoGestComponent {
   @ViewChild('dialogTemplate') dialogTemplate!: TemplateRef<any>;
 
-  days: Day[] = []; // Usa la interfaz Day
+  days: Day[] = []; 
   daysOfWeek: string[] = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
   currentDay: Date = new Date();
   currentMonth: number = this.currentDay.getMonth();
@@ -44,21 +53,6 @@ export class CalendarioEventoGestComponent {
   localidadListFiltered: any[] = [];
   localidadList: any[] = [];
   nombreLocalidad: number = 0;
-  
-
-
-
-  //eventos por dia
-  /*events: Evento[] = [
-    { name: 'Evento 1', startdate: new Date(2024, 9, 8), isMultiDay: false},
-    { name: 'Evento 1.1', date: new Date(2024, 9, 8), isMultiDay: false},
-    { name: 'Evento 1.2', date: new Date(2024, 9, 8), isMultiDay: false, startTime: '8:00', durationHours: 999 },
-    { name: 'Evento 1.3', date: new Date(2024, 9, 8), isMultiDay: false, startTime: '8:00', durationHours: 999 },
-    { name: 'Evento 1.4', date: new Date(2024, 9, 8), isMultiDay: false, startTime: '8:00', durationHours: 999 },
-    { name: 'Evento 2', date: new Date(2024, 9, 15), isMultiDay: false, startTime: '12:00', durationHours: 2 },
-    { name: 'Evento numero 3 en la sala norte', date: new Date(2024, 9, 8), isMultiDay: true, duration: 3, startTime: '10:00', durationHours: 2 },
-    // Agrega más eventos según sea necesario
-  ];*/
 
   events: Evento[] = []
   eventsBackup: Evento[] = [];
@@ -66,17 +60,30 @@ export class CalendarioEventoGestComponent {
 
   eventoSelected: any = {};
 
+  grayIcons: any[] = [];
+
   constructor(
     private dialog: MatDialog,
     private gestEvService: FichaGestEventoService,
     private globalEvGestService: GlobalGestEventosService,
-    private router: Router
+    private router: Router,
+    private announcer: LiveAnnouncer,
+    private dialogService: DialogServiceService
   ) { }
 
 
   ngOnInit(): void {
 
     setTimeout(() => {
+
+      this.gestEvService.GetTpIconsList('G').subscribe(
+        response => {
+          this.grayIcons = _.cloneDeep(response);
+        },
+        error => {
+          console.error(error);
+        }
+      );
 
       this.gestEvService.getLocalidadLista().subscribe(
         response => {
@@ -90,6 +97,7 @@ export class CalendarioEventoGestComponent {
 
       this.gestEvService.getCalendarData().subscribe(
         (data: any) => {
+          console.log("Data: ", data);
 
           this.events = data.map((item: any) => ({
             id: item.id,
@@ -102,15 +110,15 @@ export class CalendarioEventoGestComponent {
             enddateT: new Date(item.enddateT),
             contrato: item.contrato,
             estadop: item.estadop,
-            espacio: item.espacio
+            espacio: item.espacio,
+            icon: item.icono
           }));
 
           //creamos una copia de los datos originales
           this.eventsBackup = _.cloneDeep(this.events);
-
+          //console.log("EventosBK: ", this.eventsBackup);
           this.handleFilterByState(3);
-
-          //console.log("Eventos: ", this.events);
+          console.log("Eventos: ", this.events);
           this.generateCalendar();
         },
         (error: any) => {
@@ -118,20 +126,10 @@ export class CalendarioEventoGestComponent {
         }
       );
     }, 300);
-  }
-
-
-  filtroLocalidad() {
-    if (this.nombreLocalidad == 0) {
-      this.events = _.cloneDeep(this.eventsBackupFiltered);
-      this.generateCalendar();
-    } else {
-      this.events = _.cloneDeep(this.eventsBackupFiltered.filter((ev: any) => ev.espacio == this.nombreLocalidad));
-      this.generateCalendar();
-    }
-  }
+  } 
 
   generateCalendar(): void {
+    //console.log("GENERANDO CALENDARIO...");
     this.days = [];
     const today = new Date();
     const firstDay = new Date(this.currentYear, this.currentMonth, 1);
@@ -186,13 +184,6 @@ export class CalendarioEventoGestComponent {
     this.generateCalendar();
   }
 
-  //obtener eventos de cada dia
-  /*getEventsForDay(date: Date): Evento[] {
-    return this.events.filter(event => {
-      return date >= event.startdate && date <= event.enddate; // Filtrar eventos que abarquen el día actual
-    });
-  }*/
-
   getEventsForDay(date: Date): any[] {
     // Lista que almacenará los eventos del día actual
     const eventsForDay: any[] = [];
@@ -230,16 +221,14 @@ export class CalendarioEventoGestComponent {
   }
 
   showEventDetails(event: any): void {
-    //consultar el evento seleccionado
-    //console.log("Evento seleccionado: ", event);
-
     this.gestEvService.getOneEventData(event.id).subscribe(
       (data: any) => {
         //console.log("Evento encontrado: ", data);
         this.eventoSelected = data[0];
 
         this.dialog.open(this.dialogTemplate, {
-          width: '65%'
+          width: '80%',
+          height: '99%',
         });
 
       },
@@ -254,56 +243,37 @@ export class CalendarioEventoGestComponent {
   }
 
   sendEstadoToHandle(event: any) {
-    //console.log("Estado seleccionado: ", event.value);
     this.handleFilterByState(event.value);
   }
 
   //filtrar eventos por estado
   handleFilterByState(estado: number): void {
-
     if (estado == 1) {
       //mostrar todos los eventos
       this.events = _.cloneDeep(this.eventsBackup);
       this.eventsBackupFiltered = _.cloneDeep(this.events);
       this.nombreLocalidad = 0;
-      this.generateCalendar();
+      this.applyFilter();
     } else if (estado == 2) {
       //filtrar por estado 20 - Solicitado
       this.events = _.cloneDeep(this.eventsBackup.filter((ev: any) => ev.estadop == 20));
       this.eventsBackupFiltered = _.cloneDeep(this.events);
       this.nombreLocalidad = 0;
-      this.generateCalendar();
+      this.applyFilter();
     } else if (estado == 3) {
       //filtrar por estado 30 - Aprobado
       this.events = _.cloneDeep(this.eventsBackup.filter((ev: any) => ev.estadop == 30));
       this.eventsBackupFiltered = _.cloneDeep(this.events);
       this.nombreLocalidad = 0;
-      this.generateCalendar();
+      this.applyFilter();
     } else if (estado == 4) {
       //filtrar por estado 40 - Finalizado
       this.events = _.cloneDeep(this.eventsBackup.filter((ev: any) => ev.estadop == 40));
       this.eventsBackupFiltered = _.cloneDeep(this.events);
       this.nombreLocalidad = 0;
-      this.generateCalendar();
+      this.applyFilter();
     }
   }
-
-
-
-
-
-  filterLocalidad(filterValue: string) {
-    this.localidadListFiltered = this.localidadList.filter(loc =>
-      (loc.locNombre).toLowerCase().includes(filterValue.toLowerCase())
-    );
-  }
-
-  updateLocalidadListFiltered(event: any) {
-    this.filterLocalidad(event.target.value);
-  }
-
-
-
 
   selectEvent(idEvent: number) {
     this.closeEvDialog();
@@ -319,5 +289,87 @@ export class CalendarioEventoGestComponent {
       date1.getMonth() === date2.getMonth() &&
       date1.getFullYear() === date2.getFullYear()
     );
+  }
+
+  getLugaresList(lugar: string): string[] {
+    if (!lugar) return [];
+    return lugar.split(',').map(item => item.trim());
+  }
+
+  /////////////////////////////////////////////////////////////////filtro de eventos///////////////////////////////////////////////////////////
+  paramFilterList: Filter[] = [];
+
+  filterSuscription!: Subscription;
+
+  filterEvent(type: string) {
+    //Comprobación de existencia de suscripción antes de crear una nueva
+    if (this.filterSuscription && !this.filterSuscription.closed) {
+      this.filterSuscription.unsubscribe();
+    }
+
+    this.dialogService.openFilterDialog(type);
+
+    this.filterSuscription = this.dialogService.paramFilterSubject.subscribe(
+      (filtro: Filter) => {
+        this.paramFilterList.push(filtro);
+        this.applyFilter();
+
+        //desuscribirse del observable
+        this.filterSuscription.unsubscribe();
+      }
+    );
+  }
+
+  applyFilter() {
+    //hacer una copia de los eventos filtrados
+    let filteredEvents = _.cloneDeep(this.eventsBackupFiltered);
+    
+    this.paramFilterList.forEach((filtro: Filter) => {
+      switch (filtro.type) {
+        case "tipo de contrato":
+          //console.log("Filtrando por contrato: ", filtro.key);
+          filteredEvents = filteredEvents.filter((ev: any) => ev.contrato == filtro.key);
+          //console.log("Eventos filtrados: ", this.events);
+          break;
+        case "espacio":
+          //console.log("Filtrando por espacio: ", filtro.key);
+          filteredEvents = filteredEvents.filter((ev: any) => ev.espacio.includes(filtro.key));
+          //console.log("Eventos filtrados: ", this.events);
+          break;
+        default:
+          break;
+      }
+    });
+
+    this.events = _.cloneDeep(filteredEvents);
+    this.generateCalendar();
+  }
+
+  remove(filter: any): void {
+    const index = this.paramFilterList.indexOf(filter);
+
+    if (index >= 0) {
+      this.paramFilterList.splice(index, 1);
+      this.announcer.announce(`Removed ${filter.name}`);
+    }
+
+    //si no existe un filtro de tipo de contrato, setear como 0 la variable global
+    if (!this.verifyFilterExist('tipo de contrato')) {
+      this.globalEvGestService.idTipoContratoSelected = 0;
+    }
+
+    this.applyFilter();
+  }
+
+  verifyFilterExist(type: string): boolean {
+    return this.paramFilterList.some((filter: any) => filter.type === type)
+  }
+
+  resetFilter() {
+    this.globalEvGestService.idTipoContratoSelected = 0;
+    this.paramFilterList = [];
+    this.events = _.cloneDeep(this.eventsBackup);
+    this.generateCalendar();
+    this.handleFilterByState(3);
   }
 }

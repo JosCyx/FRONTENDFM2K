@@ -15,7 +15,7 @@ export class MenuInventarioComponent {
   showSB: boolean = false;
 
   constructor(
-    private globalService: GlobalService,
+    public globalService: GlobalService,
     private router: Router,
     private cookieService: CookieService,
     private documentService: UploadFileService
