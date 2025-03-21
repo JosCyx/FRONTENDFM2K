@@ -69,6 +69,11 @@ export class MainComponent implements OnInit {
    // this.router.navigate(['maineventogest']);
     this.router.navigate(['calendario-evento-gest']);
   }
+  
+  // AUSENTISMOS
+  goAusentismos(){
+    this.router.navigate(['vista-registro-ausentismo']);
+  }
 
   clearCookies() {
     const cookies = this.cookieService.getAll();

@@ -46,6 +46,14 @@ import { MainEventoGestComponent } from './evento_gestion/main-evento-gest/main-
 import { FormularioEventoGestComponent } from './evento_gestion/formulario-evento-gest/formulario-evento-gest.component';
 import { CalendarioEventoGestComponent } from './evento_gestion/calendario-evento-gest/calendario-evento-gest.component';
 import { ListadoEventosComponent } from './evento_gestion/listado-eventos/listado-eventos.component';
+import { VistaRegistroAusentismoComponent } from './talento_humano/components/vista-registro-ausentismo/vista-registro-ausentismo.component';
+import { VistaListadoAusentismosComponent } from './talento_humano/components/vista-listado-ausentismos/vista-listado-ausentismos.component';
+import { VistaListadoMarcacionesComponent } from './talento_humano/components/vista-listado-marcaciones/vista-listado-marcaciones.component';
+import { VistaAdminTipoEstadoHistComponent } from './talento_humano/components/vista-admin-tipo-estado-hist/vista-admin-tipo-estado-hist.component';
+import { VistaAdminParametrosComponent } from './talento_humano/components/vista-admin-parametros/vista-admin-parametros.component';
+import { VistaAdminMotivosComponent } from './talento_humano/components/vista-admin-motivos/vista-admin-motivos.component';
+import { VistaAdminJefeInmComponent } from './talento_humano/components/vista-admin-jefe-inm/vista-admin-jefe-inm.component';
+import { VistaAdminEstadoProcesoComponent } from './talento_humano/components/vista-admin-estado-proceso/vista-admin-estado-proceso.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -99,8 +107,17 @@ const routes: Routes = [
   { path: 'maineventogest', component: MainEventoGestComponent, canActivate: [AuthGuard] },
   { path: 'addEventoGest', component: FormularioEventoGestComponent, canActivate: [AuthGuard] },
   { path: 'calendario-evento-gest', component: CalendarioEventoGestComponent, canActivate: [AuthGuard] },
-  { path: 'lista-ev-gest', component: ListadoEventosComponent, canActivate: [AuthGuard] }
+  { path: 'lista-ev-gest', component: ListadoEventosComponent, canActivate: [AuthGuard] },
   
+  //AUSENTISMOS
+  {path: 'vista-registro-ausentismo', component: VistaRegistroAusentismoComponent, canActivate: [AuthGuard]},
+  {path: 'vista-listado-ausentismos', component: VistaListadoAusentismosComponent, canActivate: [AuthGuard]},
+  {path: 'vista-listado-marcaciones', component: VistaListadoMarcacionesComponent, canActivate: [AuthGuard]},
+  {path: 'vista-admin-tipo-estado-hist', component: VistaAdminTipoEstadoHistComponent, canActivate: [AuthGuard]},
+  {path: 'vista-admin-parametros', component: VistaAdminParametrosComponent, canActivate: [AuthGuard]},
+  {path: 'vista-admin-motivos', component: VistaAdminMotivosComponent, canActivate: [AuthGuard]},
+  {path: 'vista-admin-jefe-inm', component: VistaAdminJefeInmComponent, canActivate: [AuthGuard]},
+  {path: 'vista-admin-estado-proceso', component: VistaAdminEstadoProcesoComponent, canActivate: [AuthGuard]}
 ];
 
 @NgModule({
