@@ -1,0 +1,39 @@
+<mat-toolbar class="toolbar-custom">
+    <div class="header-container">
+      <a routerLink="/main"><img [src]="globalService.logoUrl"  alt="logo" class="logo" width="200"></a>
+    </div>
+    <span class="example-spacer"></span>
+    <div>
+      <button mat-raised-button color="warn" class="ml-2 text-end" (click)="logOut()">Cerrar sesión <i class="bi bi-person-circle"></i></button>
+    </div>
+  </mat-toolbar>
+  <p class="username-header">Bienvenido: {{userName}}</p>
+  
+  <div class="sidebar">
+    <ul class="nav flex-column"> 
+  
+      <li class="nav-item dropdown" *appAuthorize="'106'">
+        <button mat-stroked-button>
+          Consultas
+        </button>
+        
+        <div class="menu">
+          <a *appAuthorize="'108'" class="item" mat-button routerLink="/calendario-evento-gest">Reporte de marcaciones</a>
+          <a *appAuthorize="'109'" class="item" mat-button routerLink="/lista-ev-gest">Listado de ausentismos</a>
+        </div>
+      </li>
+  
+      <li class="nav-item dropdown" *appAuthorize="'105'">
+        <button mat-stroked-button>
+          Procesos
+        </button>
+        <div class="menu">
+          <a *appAuthorize="'107'" class="item" mat-button routerLink="/addEventoGest" >Justificar ausentismo</a>
+        </div>
+      </li>
+    </ul>
+    <div class="regresar">
+      <button class="back-button" mat-raised-button onclick="history.back()"><i class="bi bi-arrow-left h4"></i></button> 
+    </div>
+  </div>
+  

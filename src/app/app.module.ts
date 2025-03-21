@@ -131,6 +131,8 @@ import { VistaAdminParametrosComponent } from './talento_humano/components/vista
 import { VistaAdminMotivosComponent } from './talento_humano/components/vista-admin-motivos/vista-admin-motivos.component';
 import { VistaAdminEstadoProcesoComponent } from './talento_humano/components/vista-admin-estado-proceso/vista-admin-estado-proceso.component';
 import { VistaAdminTipoEstadoHistComponent } from './talento_humano/components/vista-admin-tipo-estado-hist/vista-admin-tipo-estado-hist.component';
+import { MainTthhComponent } from './talento_humano/components/main-tthh/main-tthh.component';
+import { MenuTthhComponent } from './talento_humano/components/menu-tthh/menu-tthh.component';
 
 @NgModule({
   declarations: [
@@ -217,7 +219,9 @@ import { VistaAdminTipoEstadoHistComponent } from './talento_humano/components/v
     VistaAdminParametrosComponent,
     VistaAdminMotivosComponent,
     VistaAdminEstadoProcesoComponent,
-    VistaAdminTipoEstadoHistComponent
+    VistaAdminTipoEstadoHistComponent,
+    MainTthhComponent,
+    MenuTthhComponent
   ],
   imports: [
     BrowserModule,
