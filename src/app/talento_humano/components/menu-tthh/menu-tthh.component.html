@@ -31,6 +31,20 @@
           <a *appAuthorize="'107'" class="item" mat-button routerLink="/vista-registro-ausentismo" >Justificar ausentismo</a>
         </div>
       </li>
+
+      <li class="nav-item dropdown" *appAuthorize="'105'">
+        <button mat-stroked-button>
+          Configuración
+        </button>
+        <div class="menu">
+          <a *appAuthorize="'107'" class="item" mat-button routerLink="/" >Autorización de usuarios</a>
+          <a *appAuthorize="'107'" class="item" mat-button routerLink="/" >Estados del proceso</a>
+          <a *appAuthorize="'107'" class="item" mat-button routerLink="/" >Excepciones laborales</a>
+          <a *appAuthorize="'107'" class="item" mat-button routerLink="/" >Jefe inmediato</a>
+          <a *appAuthorize="'107'" class="item" mat-button routerLink="/" >Motivos</a>
+          <a *appAuthorize="'107'" class="item" mat-button routerLink="/" >Parámetros</a>
+        </div>
+      </li>
     </ul>
     <div class="regresar">
       <button class="back-button" mat-raised-button onclick="history.back()"><i class="bi bi-arrow-left h4"></i></button> 
