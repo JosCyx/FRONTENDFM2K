@@ -72,7 +72,7 @@ export class MainComponent implements OnInit {
   
   // AUSENTISMOS
   goAusentismos(){
-    this.router.navigate(['vista-registro-ausentismo']);
+    this.router.navigate(['vista-listado-marcaciones']);
   }
 
   clearCookies() {
