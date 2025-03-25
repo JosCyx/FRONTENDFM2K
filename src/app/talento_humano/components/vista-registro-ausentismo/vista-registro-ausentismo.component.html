@@ -1,5 +1,140 @@
 <app-menu-tthh></app-menu-tthh>
 
 <div class="container">
-    REGISTRO DE ausentismo
+  <h2 class="font-weight-bolt">TALENTO HUMANO</h2>
+
+  <h3 class="font-weight-bold" style="padding-top: 10pt">Registrar justificación de ausentismo</h3>
+
+  <ng-container *ngIf="loading">
+    <div class="custom-spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!loading">
+    <div class="custom-form">
+
+
+      <div class="aus-info">
+
+        <mat-form-field class="example-full-width" appearance="outline">
+          <mat-label>Fecha</mat-label>
+          <input matInput [value]="fechaString" readonly>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width" appearance="outline">
+          <mat-label>Solicitante</mat-label>
+          <input matInput [value]="usuarioName" readonly>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width" appearance="outline">
+          <mat-label>Motivo</mat-label>
+          <input matInput [matAutocomplete]="auto" [(ngModel)]="motivoAusName">
+          <mat-autocomplete #auto="matAutocomplete">
+            <ng-container *ngFor="let motivo of motivoList">
+              <mat-option [value]="">opcion 1</mat-option>
+            </ng-container>
+          </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field class="example-full-width" appearance="outline">
+          <mat-label>Observación</mat-label>
+          <textarea matInput style="max-height: 250px;" [(ngModel)]="observacionAus"></textarea>
+        </mat-form-field>
+
+        <!-- <mat-form-field>
+          <mat-label>Rango de fechas</mat-label>
+          <mat-date-range-input [rangePicker]="picker">
+            <input matStartDate placeholder="Desde" readonly>
+            <input matEndDate placeholder="Hasta" readonly>
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field> -->
+
+
+
+        <div class="datetime-container">
+          <!-- Selección de fecha -->
+          <mat-form-field appearance="outline">
+            <mat-label>Desde</mat-label>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="selectedStartDate">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Hora</mat-label>
+            <input matInput type="number" min="0" max="23" [(ngModel)]="selectedStartHour" (ngModelChange)="verifyValidHour(1)">
+            <span class="invalid-date-message" *ngIf="!validStartHour">Hora no válida</span>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Minutos</mat-label>
+            <input matInput type="number" min="0" max="59" [(ngModel)]="selectedStartMinutes" (ngModelChange)="verifyValidMinutes(1)">
+            <span class="invalid-date-message" *ngIf="!validStartMinutes">Minutos no válidos</span>
+          </mat-form-field>
+        </div>
+
+        <div class="datetime-container">
+          <!-- Selección de fecha -->
+          <mat-form-field appearance="outline">
+            <mat-label>Hasta</mat-label>
+            <input matInput [matDatepicker]="picker" [(ngModel)]="selectedEndDate">
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Hora</mat-label>
+            <input matInput type="number" min="0" max="23" [(ngModel)]="selectedEndHour" (ngModelChange)="verifyValidHour(2)">
+            <span class="invalid-date-message" *ngIf="!validEndHour">Hora no válida</span>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Minutos</mat-label>
+            <input matInput type="number" min="0" max="59" [(ngModel)]="selectedEndMinutes" (ngModelChange)="verifyValidMinutes(2)">
+            <span class="invalid-date-message" *ngIf="!validEndMinutes">Minutos no válidos</span>
+          </mat-form-field>
+
+        </div>
+
+
+      </div>
+
+
+      <div class="aus-documentacion">
+        <button type="button" mat-raised-button color="primary" style="margin-bottom: 5px;"
+            (click)="fileInput.click()">Subir archivos <i class="bi bi-upload"></i></button>
+          <input hidden (change)="onFileSelected($event)" #fileInput type="file"
+            accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xlsx" id="file">
+        <div class="aus-doc-list">
+
+          <ng-container *ngFor="let doc of documentList">
+            <mat-card class="custom-card" [matTooltip]="doc.name" matTooltipPosition="above"
+            [matTooltipShowDelay]="700" [matTooltipHideDelay]="0">
+              <div class="card-header">
+                <button mat-mini-fab color="warn" (click)="deleteFile(doc.name)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+              <img mat-card-sm-image [src]="doc.img">
+              <span class="truncate-text" style="font: 9pt; padding: 5px;">{{doc.name}}</span>
+            </mat-card>
+          </ng-container>
+
+          <!-- <p>Archivo.pdf</p>
+          <button mat-mini-fab color="warn"><mat-icon>delete</mat-icon></button> -->
+
+        </div>
+      </div>
+
+
+    </div>
+    <div class="div-buttons">
+      <button mat-raised-button color="warn">Cancelar</button>
+      <button mat-raised-button color="primary">Registrar</button>
+    </div>
+  </ng-container>
+
 </div>

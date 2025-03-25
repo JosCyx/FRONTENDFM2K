@@ -103,6 +103,9 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
     correo: '',
   }
 
+  //crear variable d fecha con el valor del 24 de marzo de 2025
+  maxDate: Date = new Date(2025, 2, 24);
+
   currentEvEstado: number = 10;
   currentUserLogued: string = this.cookieService.get('userIdNomina');
   currentEvSeller: string = '';
