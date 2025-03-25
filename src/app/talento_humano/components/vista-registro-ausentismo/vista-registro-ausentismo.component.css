@@ -1,7 +1,93 @@
-.container{
-    width: 85%;
-    margin: 0 auto;
-    padding-top: 150px;
-    padding-bottom: 30px;
-    margin-right: 60px;
-  }
+.container {
+  padding-top: 120px;
+  width: 70%;
+  margin: 0 auto;
+  text-align: left;
+  padding-bottom: 50px;
+}
+
+.custom-form {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #e4e8ff57;
+  color: black;
+}
+
+.aus-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+
+.div-buttons{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 10px;
+}
+
+.aus-doc-list{
+  margin-top: 15px; 
+  background-color: #c8d0ff57; 
+  border-radius: 10px;
+  padding: 10px; 
+  height: 100%;
+  display: flex;
+  gap: 10px;
+}
+
+.custom-card {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  height: 200px; 
+  width: 150px; 
+  max-width: none; 
+  margin: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.datetime-container{
+  display: flex;
+  gap: 10px;
+}
+
+.time-container{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.datetime-container mat-form-field {
+  width: auto !important;
+  flex: 1;
+  min-width: 100px; /* Ajusta este valor según necesites */
+}
+
+.invalid-date-message{
+  color: red;
+  font-size: 9px;
+  font-style: italic;
+}
+
+.card-header {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.card-header button {
+  transform: scale(0.6); /* Reduce el tamaño del botón */
+}
+
+.truncate-text {
+  width: 100%;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}

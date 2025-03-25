@@ -134,6 +134,8 @@ import { VistaAdminTipoEstadoHistComponent } from './talento_humano/components/v
 import { MainTthhComponent } from './talento_humano/components/main-tthh/main-tthh.component';
 import { MenuTthhComponent } from './talento_humano/components/menu-tthh/menu-tthh.component';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -257,7 +259,8 @@ import { MenuTthhComponent } from './talento_humano/components/menu-tthh/menu-tt
     MatButtonToggleModule,
     MatTooltipModule,
     MatChipsModule,
-    FormsModule // Agrega FormsModule al array de imports
+    FormsModule, // Agrega FormsModule al array de imports
+
   ],
   providers: [AuthService, MatDialog, DialogServiceService, {provide: MAT_DATE_LOCALE, useValue: 'es-EN'}],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
