@@ -5,3 +5,10 @@
     padding-bottom: 30px;
     margin-right: 60px;
   }
+  
+.custom-form {
+  display: flex;
+  padding-bottom: 20px;
+  width: 70%;
+  margin: 0 auto;
+}

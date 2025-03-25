@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
-import { GlobalService } from './global.service';
+
 import { HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { GlobalService } from '../../global.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class GlobalAusService {
+export class MarcacionesService {
   APIUrl = this.globalService.APIUrl;
 
-  //NO SE USA ESTE SERVICIO
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
@@ -21,7 +21,7 @@ export class GlobalAusService {
       (configLoaded) => {
         if (configLoaded) {
           this.APIUrl = this.globalService.getApiUrl();
-          //console.log("Url nomina service:", this.APIUrl);
+          console.log("Url service:", this.APIUrl);
           // Ahora puedes usar apiUrl de manera segura.
         }
       }
@@ -38,12 +38,14 @@ export class GlobalAusService {
       'Authorization': `Bearer ${authToken}`
     });
   }
-  
+
   //get general data
-  /*getGeneralData(usuario: string, fechaInicio: string, fechaFin: string): Observable<any> {
+  getGeneralData(usuario: string, fechaInicio: Date, fechaFin: Date): Observable<any> {
+    console.log(this.APIUrl);
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get(`${this.APIUrl}/Marcaciones/GetMarcaciones?usuario=${usuario}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`, { headers: headers });
+    const fechaInicioString = fechaInicio.toISOString().split('T')[0];
+    const fechaFinString = fechaFin.toISOString().split('T')[0];
+    return this.http.get(`${this.APIUrl}/AusMarcaciones/GetMarcaciones?usuario=${usuario}&fechaInicio=${fechaInicioString}&fechaFin=${fechaFinString}`, { headers: headers });
   }
-*/
 
 }

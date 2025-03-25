@@ -104,6 +104,7 @@ export class FichaGestEventoService {
   }
 
   getClientesList(): Observable<any> {
+    console.log("URL:", this.APIUrl);
     return this.http.get(`${this.APIUrl}/GestevClientes`, { headers: this.getHeadersWithAuthToken() });
   }
 

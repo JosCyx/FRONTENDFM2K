@@ -1,5 +1,71 @@
 <app-menu-tthh></app-menu-tthh>
 
 <div class="container">
-    LISTADO DE AUSENTISMOS
+    <h1 style="text-align: center;"><b>LISTADO DE AUSENTISMOS</b></h1>
+    <div class="formulariodiv">
+       <div style="width: 100%;">
+    
+        <div style="display: flex; flex-direction: row; gap: 10px;">
+            <div class="custom-form">
+            <mat-form-field>
+                <mat-label>Seleccione el area</mat-label>
+                <mat-select mat-select [(ngModel)]="areaSelected">
+                  <mat-option *ngFor="let area of areaList" [value]="area.codigo">
+                    {{ area.nombre }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          
+            <mat-form-field>
+              <mat-label>Selecciona la Fecha Inicio</mat-label>
+              <input matInput [matDatepicker]="picker1" [(ngModel)]="selectedFechaInicio" (dateChange)="onDateChange()">
+              <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Selecciona la Fecha Fin</mat-label>
+                <input matInput [matDatepicker]="picker2" [(ngModel)]="selectedFechaFin" (dateChange)="onDateChange()">
+                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2 color="primary"></mat-datepicker>
+            </mat-form-field>
+
+        </div>
+    </div>
+  </div>  
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="Area">
+          <th mat-header-cell *matHeaderCellDef> Area</th>
+          <td mat-cell *matCellDef="let element"> {{element.Area}} </td>
+      ></ng-container>
+      <ng-container matColumnDef="Departamento">
+          <th mat-header-cell *matHeaderCellDef> Departamento </th>
+          <td mat-cell *matCellDef="let element"> {{element.Departamento}} </td>
+      ></ng-container>
+      <ng-container matColumnDef="Solicitante">
+          <th mat-header-cell *matHeaderCellDef> Solicitante </th>
+          <td mat-cell *matCellDef="let element"> {{element.Solicitante}} </td>
+      ></ng-container>
+      <ng-container matColumnDef="fecha">
+          <th mat-header-cell *matHeaderCellDef> Fecha </th>
+          <td mat-cell *matCellDef="let element"> {{element.fecha}} </td>
+      ></ng-container>
+      <ng-container matColumnDef="Motivo">
+          <th mat-header-cell *matHeaderCellDef> Motivo </th>
+          <td mat-cell *matCellDef="let element"> {{element.Motivo}} </td>
+      ></ng-container>
+      <ng-container matColumnDef="Estado">
+          <th mat-header-cell *matHeaderCellDef> Estado </th>
+          <td mat-cell *matCellDef="let element"> {{element.Estado}} </td>
+      ></ng-container>
+       <!-- Fila de encabezado -->
+       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+       <!-- Fila de datos -->
+       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+      <mat-paginator #paginator [pageSizeOptions]="[5, 10, 20]"showFirstLastButtons="true"></mat-paginator>
+      </div>
+
 </div>
