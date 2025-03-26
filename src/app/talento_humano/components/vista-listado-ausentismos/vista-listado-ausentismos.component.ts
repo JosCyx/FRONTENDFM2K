@@ -1,8 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { AusentismosService } from 'src/app/services/comunicationAPI/tthh/ausentismos.service';
+import { GlobalAusService } from 'src/app/services/global-aus.service';
 
 @Component({
   selector: 'app-vista-listado-ausentismos',
@@ -23,7 +25,9 @@ export class VistaListadoAusentismosComponent {
      constructor(
       //public globalAusService: GlobalAusService,
       private cookieService: CookieService,
-      private AusentismosService: AusentismosService
+      private AusentismosService: AusentismosService,
+      private globalAusService: GlobalAusService,
+      private router: Router
     ) { 
       //this.confirmSubscription = this.globalAusService.
       //confirmObserv.subscribe()
@@ -89,4 +93,14 @@ export class VistaListadoAusentismosComponent {
       return { fechaInicio, fechaFin };
     }
     
+    selectRow(row: any) {
+      //cargar id del evento seleccionado y redirigir a la siguiente vista
+      this.globalAusService.idAusentismoSelected = row.id;
+      this.globalAusService.creationMode = false;
+  
+      this.router.navigate(['vista-registro-ausentismo']);
+      
+      
+  
+    }
 }

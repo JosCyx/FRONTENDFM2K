@@ -41,7 +41,7 @@ export class MarcacionesService {
 
   //get general data
   getGeneralData(usuario: string, fechaInicio: Date, fechaFin: Date): Observable<any> {
-    console.log(this.APIUrl);
+
     const headers = this.getHeadersWithAuthToken();
     const fechaInicioString = fechaInicio.toISOString().split('T')[0];
     const fechaFinString = fechaFin.toISOString().split('T')[0];

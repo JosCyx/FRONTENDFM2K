@@ -91,3 +91,9 @@
   overflow: hidden; 
   text-overflow: ellipsis; 
 }
+
+.requerido-doc{
+  color: red;
+  font-size: 10px;
+  font-style: italic;
+}

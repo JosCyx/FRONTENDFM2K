@@ -29,10 +29,11 @@
 
         <mat-form-field class="example-full-width" appearance="outline">
           <mat-label>Motivo</mat-label>
-          <input matInput [matAutocomplete]="auto" [(ngModel)]="motivoAusName">
-          <mat-autocomplete #auto="matAutocomplete">
-            <ng-container *ngFor="let motivo of motivoList">
-              <mat-option [value]="">opcion 1</mat-option>
+          <input matInput (input)="updateMotivosListFiltered($event)" [matAutocomplete]="auto" [(ngModel)]="motivoAusName" 
+          (ngModelChange)="onMotivoSelected($event)">
+          <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+            <ng-container *ngFor="let motivo of motivoListFiltered">
+              <mat-option [value]="motivo.motDescripcion" (onSelectionChange)="setMotivo(motivo)">{{motivo.motDescripcion}}<span *ngIf="motivo.motIfDocument === 1" class="requerido-doc"> - Requiere documento</span></mat-option>
             </ng-container>
           </mat-autocomplete>
         </mat-form-field>
@@ -58,9 +59,9 @@
           <!-- Selección de fecha -->
           <mat-form-field appearance="outline">
             <mat-label>Desde</mat-label>
-            <input matInput [matDatepicker]="picker" [(ngModel)]="selectedStartDate">
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+            <input matInput [matDatepicker]="StartDate" [(ngModel)]="selectedStartDate">
+            <mat-datepicker-toggle matIconSuffix [for]="StartDate"></mat-datepicker-toggle>
+            <mat-datepicker #StartDate></mat-datepicker>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -80,9 +81,9 @@
           <!-- Selección de fecha -->
           <mat-form-field appearance="outline">
             <mat-label>Hasta</mat-label>
-            <input matInput [matDatepicker]="picker" [(ngModel)]="selectedEndDate">
-            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+            <input matInput [matDatepicker]="EndDate" [(ngModel)]="selectedEndDate">
+            <mat-datepicker-toggle matIconSuffix [for]="EndDate"></mat-datepicker-toggle>
+            <mat-datepicker #EndDate></mat-datepicker>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
@@ -105,7 +106,7 @@
 
       <div class="aus-documentacion">
         <button type="button" mat-raised-button color="primary" style="margin-bottom: 5px;"
-            (click)="fileInput.click()">Subir archivos <i class="bi bi-upload"></i></button>
+            (click)="fileInput.click()">Subir documentos <i class="bi bi-upload"></i></button>
           <input hidden (change)="onFileSelected($event)" #fileInput type="file"
             accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xlsx" id="file">
         <div class="aus-doc-list">
@@ -132,8 +133,9 @@
 
     </div>
     <div class="div-buttons">
-      <button mat-raised-button color="warn">Cancelar</button>
-      <button mat-raised-button color="primary">Registrar</button>
+      <button mat-raised-button color="warn" (click)="clearForm()">Cancelar</button>
+      <button mat-raised-button color="primary" (click)="triggerEnvio(false)">Guardar</button>
+      <button mat-raised-button style="background-color: #00dd1d !important;" (click)="triggerEnvio(true)">Guardar y enviar</button>
     </div>
   </ng-container>
 
