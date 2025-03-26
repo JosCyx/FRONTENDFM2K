@@ -12,7 +12,7 @@ import { GlobalAusService } from 'src/app/services/global-aus.service';
   styleUrls: ['./vista-listado-ausentismos.component.css']
 })
 export class VistaListadoAusentismosComponent {
-  @ViewChild('MatPaginator') paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
     displayedColumns: string[] = ['Area', 'Departamento', 'Solicitante', 'fecha', 'Motivo', 'Estado'];
     dataSource =new MatTableDataSource<any>();
@@ -39,10 +39,7 @@ export class VistaListadoAusentismosComponent {
         this.listarOp();
       }, 200);
     }
-    ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
-    }
-    
+
     onOpChange() {
       if (this.selectedFechaInicio && this.selectedFechaFin && this.opSelected) {
         this.listarAusentismos(this.opSelected, this.selectedFechaInicio, this.selectedFechaFin);

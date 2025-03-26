@@ -1,9 +1,8 @@
 .container{
-    width: 85%;
+    width: 75%;
     margin: 0 auto;
     padding-top: 110px;
     padding-bottom: 30px;
-    margin-right: 60px;
   }
   
 .custom-form {
@@ -11,4 +10,8 @@
   padding-bottom: 20px;
   width: 70%;
   margin: 0 auto;
+}
+
+mat-form-field {
+  width: 100% !important;;
 }

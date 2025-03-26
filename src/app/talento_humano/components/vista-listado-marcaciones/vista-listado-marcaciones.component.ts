@@ -10,7 +10,7 @@ import { MarcacionesService } from 'src/app/services/comunicationAPI/tthh/marcac
   styleUrls: ['./vista-listado-marcaciones.component.css']
 })
 export class VistaListadoMarcacionesComponent {
-    @ViewChild('MatPaginator') paginator!: MatPaginator;
+    @ViewChild(MatPaginator) paginator!: MatPaginator;
 
     displayedColumns: string[] = ['fecha', 'tp_marc', 'hora', 'ubicacion', 'estado', 'horas_trabajadas','tipo_jornada'];
     dataSource =new MatTableDataSource<any>();
@@ -38,9 +38,6 @@ export class VistaListadoMarcacionesComponent {
       }, 200);
     }
 
-    ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
-    }
   
     // Se ejecuta cada vez que cambia alguna de las fechas
     onDateChange() {

@@ -6,7 +6,7 @@
         <div style="width: 100%;">
 
             <div style="display: flex; flex-direction: row; gap: 10px;">
-                <div class="custom-form">
+                
                     <mat-form-field>
                         <mat-label>Seleccione el Metodo de Busqueda</mat-label>
                         <mat-select mat-select [(ngModel)]="opSelected" (selectionChange)="onOpChange()">
@@ -15,7 +15,8 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                </div>
+                
+                <div class="custom-form"></div>
                 <mat-form-field>
                     <mat-label>Selecciona la Fecha Inicio</mat-label>
                     <input matInput [matDatepicker]="picker1" [(ngModel)]="selectedFechaInicio"
@@ -31,8 +32,8 @@
                     <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
                     <mat-datepicker #picker2 color="primary"></mat-datepicker>
                 </mat-form-field>
-
             </div>
+
         </div>
     </div>
     <div class="mat-elevation-z8">
@@ -73,7 +74,7 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="row-custom-hover"
                 (click)="selectRow(row)"></tr>
         </table>
-        <mat-paginator #paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons="true"></mat-paginator>
+        <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons="true"></mat-paginator>
     </div>
 
 </div>
