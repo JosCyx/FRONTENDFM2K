@@ -38,36 +38,18 @@ export class AusentismosService {
     });
   }
 
-  getAusSolicitante(usuario: string, fechaInicio: Date, fechaFin: Date): Observable<any> {
-
-    const headers = this.getHeadersWithAuthToken();
-    const fechaInicioString = fechaInicio.toISOString().split('T')[0];
-    const fechaFinString = fechaFin.toISOString().split('T')[0];
-    return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismo?op=${1}&fechaInicio=${fechaInicioString}&fechaFin=${fechaFinString}&solcitante=${usuario}`, { headers: headers });
+  getAusentismo(opSelected:number,fechaInicio: Date, fechaFin: Date, usuario: string | null= null): Observable<any> {
+      console.log(this.APIUrl);
+      const headers = this.getHeadersWithAuthToken();
+      const fechaInicioString = fechaInicio.toISOString().split('T')[0];
+      const fechaFinString = fechaFin.toISOString().split('T')[0];
+      return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismo?op=${opSelected}&fechaInicio=${fechaInicioString}&fechaFin=${fechaFinString}&solicitante=${usuario}`, {headers: headers });
   }
 
-  getJefeInmediato(jefeInmediato: string, fechaInicio: Date, fechaFin: Date): Observable<any> {
 
+  getOpList(){
     const headers = this.getHeadersWithAuthToken();
-    const fechaInicioString = fechaInicio.toISOString().split('T')[0];
-    const fechaFinString = fechaFin.toISOString().split('T')[0];
-    return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismo?op=${2}&fechaInicio=${fechaInicioString}&fechaFin=${fechaFinString}&jefeInmediato=${jefeInmediato}`, { headers: headers });
-  }
-
-  getAusbyArea(area: number, fechaInicio: Date, fechaFin: Date): Observable<any> {
-
-    const headers = this.getHeadersWithAuthToken();
-    const fechaInicioString = fechaInicio.toISOString().split('T')[0];
-    const fechaFinString = fechaFin.toISOString().split('T')[0];
-    return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismo?op=${3}&fechaInicio=${fechaInicioString}&fechaFin=${fechaFinString}&area=${area}`, { headers: headers });
-  }
-
-  getAllforAdmin(fechaInicio: Date, fechaFin: Date): Observable<any> {
-
-    const headers = this.getHeadersWithAuthToken();
-    const fechaInicioString = fechaInicio.toISOString().split('T')[0];
-    const fechaFinString = fechaFin.toISOString().split('T')[0];
-    return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismo?op=${4}&fechaInicio=${fechaInicioString}&fechaFin=${fechaFinString}`, { headers: headers });
+    return this.http.get(`${this.APIUrl}/AusAdmin/GetOpList`, { headers: headers });
   }
 
   getMotivosAus(): Observable<any> {

@@ -1,9 +1,8 @@
 .container{
-    width: 85%;
+    width: 75%;
     margin: 0 auto;
     padding-top: 110px;
     padding-bottom: 30px;
-    margin-right: 60px;
   }
   
 .custom-form {
@@ -16,4 +15,8 @@
 .row-custom-hover:hover{
   background-color: #dfeeff !important;
   cursor: pointer;
+}
+
+mat-form-field {
+  width: 100% !important;;
 }

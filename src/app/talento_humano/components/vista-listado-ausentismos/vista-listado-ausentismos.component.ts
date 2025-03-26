@@ -12,55 +12,45 @@ import { GlobalAusService } from 'src/app/services/global-aus.service';
   styleUrls: ['./vista-listado-ausentismos.component.css']
 })
 export class VistaListadoAusentismosComponent {
-  @ViewChild('MatPaginator') paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
     displayedColumns: string[] = ['Area', 'Departamento', 'Solicitante', 'fecha', 'Motivo', 'Estado'];
     dataSource =new MatTableDataSource<any>();
-    areaSelected: number = 0;
-    areaList: any[] = [];
+    opSelected: number = 1;
+    opList: any[] = [];
     selectedFechaInicio: Date | null = null;
     selectedFechaFin: Date | null = null;
     ausentismosList: any[] = [];
 
      constructor(
-      //public globalAusService: GlobalAusService,
       private cookieService: CookieService,
       private AusentismosService: AusentismosService,
       private globalAusService: GlobalAusService,
       private router: Router
     ) { 
-      //this.confirmSubscription = this.globalAusService.
-      //confirmObserv.subscribe()
+
     }
     ngOnInit(): void {
       setTimeout(() => {
         const { fechaInicio, fechaFin } = this.calcularRangoMensual(new Date());
         this.selectedFechaInicio= this.calcularRangoMensual(new Date()).fechaInicio;
         this.selectedFechaFin= this.calcularRangoMensual(new Date()).fechaFin;
-        this.listarAusentismos(fechaInicio, fechaFin);
-        this.consultarArea(this.areaSelected, fechaInicio, fechaFin);
-        //this.tipoArea$ = this.AusentismosService.getTipoArea();
+        this.listarAusentismos(this.opSelected, fechaInicio, fechaFin);
+        this.listarOp();
       }, 200);
     }
-    ngAfterViewInit() {
-      this.dataSource.paginator = this.paginator;
-    }
-  
-    // Se ejecuta cada vez que cambia alguna de las fechas
-    onDateChange() {
-      // Verifica que ambos valores hayan sido seleccionados
-      if (this.selectedFechaInicio && this.selectedFechaFin) {
-        this.listarAusentismos(this.selectedFechaInicio, this.selectedFechaFin);
-      }else if (this.selectedFechaInicio && this.selectedFechaFin &&  this.areaSelected){
-        this.consultarArea(this.areaSelected, this.selectedFechaInicio, this.selectedFechaFin);
+
+    onOpChange() {
+      if (this.selectedFechaInicio && this.selectedFechaFin && this.opSelected) {
+        this.listarAusentismos(this.opSelected, this.selectedFechaInicio, this.selectedFechaFin);
       }
     }
-
-    listarAusentismos(fechaInicio: Date, fechaFin: Date){
-      this.AusentismosService.getAusSolicitante(this.cookieService.get('userIdNomina'), fechaInicio, fechaFin).subscribe(
+    listarAusentismos(opSelected: any, fechaInicio: Date, fechaFin: Date){
+      console.log("ListaAus",opSelected, fechaInicio, fechaFin);
+      this.AusentismosService.getAusentismo(opSelected, fechaInicio, fechaFin, this.cookieService.get('userIdNomina')).subscribe(
         (data) => {
           this.ausentismosList = data;
-          console.log(this.ausentismosList);
+          console.log("Ausentismo List",this.ausentismosList);
           this.dataSource.data = this.ausentismosList;
           this.dataSource.paginator = this.paginator;
         },
@@ -71,21 +61,18 @@ export class VistaListadoAusentismosComponent {
       this.dataSource.data = [];
     }
 
-    consultarArea(areaSelected:number,fechaInicio: Date, fechaFin: Date ){
-      console.log(areaSelected);
-      this.AusentismosService.getAusbyArea(areaSelected, fechaInicio, fechaFin).subscribe(
-        (data) => {
-          this.ausentismosList = data;
-          console.log("area",this.areaList);
-          this.dataSource.data = this.areaList;
-          this.dataSource.paginator = this.paginator;
+
+    listarOp(){
+      this.AusentismosService.getOpList().subscribe(
+        (exito: any) => {
+          this.opList = exito;
+          console.log("Op List", exito)
         },
-        (error) => {
-          console.log(error);
+        error => {
+          console.log(error)
         }
-      );
-      this.dataSource.data = [];
-    }
+      )
+    } 
 
     calcularRangoMensual(fechaReferencia: Date): { fechaInicio: Date, fechaFin: Date } {
       const fechaInicio = new Date(fechaReferencia.getFullYear(), fechaReferencia.getMonth(), 1); // Primer día del mes
