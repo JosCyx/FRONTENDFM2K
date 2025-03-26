@@ -14,28 +14,26 @@ export class VistaListadoAusentismosComponent {
 
     displayedColumns: string[] = ['Area', 'Departamento', 'Solicitante', 'fecha', 'Motivo', 'Estado'];
     dataSource =new MatTableDataSource<any>();
-    areaSelected: number = 0;
-    areaList: any[] = [];
+    areaSelected: number = 1;
+    opSelected: string = '';
+    opList: any[] = [];
     selectedFechaInicio: Date | null = null;
     selectedFechaFin: Date | null = null;
     ausentismosList: any[] = [];
 
      constructor(
-      //public globalAusService: GlobalAusService,
       private cookieService: CookieService,
       private AusentismosService: AusentismosService
     ) { 
-      //this.confirmSubscription = this.globalAusService.
-      //confirmObserv.subscribe()
+
     }
     ngOnInit(): void {
       setTimeout(() => {
         const { fechaInicio, fechaFin } = this.calcularRangoMensual(new Date());
         this.selectedFechaInicio= this.calcularRangoMensual(new Date()).fechaInicio;
         this.selectedFechaFin= this.calcularRangoMensual(new Date()).fechaFin;
-        this.listarAusentismos(fechaInicio, fechaFin);
-        this.consultarArea(this.areaSelected, fechaInicio, fechaFin);
-        //this.tipoArea$ = this.AusentismosService.getTipoArea();
+        this.listarAusentismos(this.opSelected, fechaInicio, fechaFin);
+        this.listarOp();
       }, 200);
     }
     ngAfterViewInit() {
@@ -46,17 +44,19 @@ export class VistaListadoAusentismosComponent {
     onDateChange() {
       // Verifica que ambos valores hayan sido seleccionados
       if (this.selectedFechaInicio && this.selectedFechaFin) {
-        this.listarAusentismos(this.selectedFechaInicio, this.selectedFechaFin);
-      }else if (this.selectedFechaInicio && this.selectedFechaFin &&  this.areaSelected){
-        this.consultarArea(this.areaSelected, this.selectedFechaInicio, this.selectedFechaFin);
+        this.listarAusentismos(this.opSelected, this.selectedFechaInicio, this.selectedFechaFin);
       }
     }
-
-    listarAusentismos(fechaInicio: Date, fechaFin: Date){
-      this.AusentismosService.getAusSolicitante(this.cookieService.get('userIdNomina'), fechaInicio, fechaFin).subscribe(
+    onOpChange() {
+      if (this.selectedFechaInicio && this.selectedFechaFin && this.opSelected) {
+        this.listarAusentismos(this.opSelected, this.selectedFechaInicio, this.selectedFechaFin);
+      }
+    }
+    listarAusentismos(opSelected: any, fechaInicio: Date, fechaFin: Date){
+      this.AusentismosService.getAusentismo(opSelected, fechaInicio, fechaFin, this.cookieService.get('userIdNomina')).subscribe(
         (data) => {
           this.ausentismosList = data;
-          console.log(this.ausentismosList);
+          console.log("Ausentismo List",this.ausentismosList);
           this.dataSource.data = this.ausentismosList;
           this.dataSource.paginator = this.paginator;
         },
@@ -67,26 +67,24 @@ export class VistaListadoAusentismosComponent {
       this.dataSource.data = [];
     }
 
-    consultarArea(areaSelected:number,fechaInicio: Date, fechaFin: Date ){
-      console.log(areaSelected);
-      this.AusentismosService.getAusbyArea(areaSelected, fechaInicio, fechaFin).subscribe(
-        (data) => {
-          this.ausentismosList = data;
-          console.log("area",this.areaList);
-          this.dataSource.data = this.areaList;
-          this.dataSource.paginator = this.paginator;
+
+    listarOp(){
+      this.AusentismosService.getOpList().subscribe(
+        (exito: any) => {
+          this.opList = exito;
+          console.log("Area List",exito)
         },
-        (error) => {
-          console.log(error);
+        error => {
+          console.log(error)
         }
-      );
-      this.dataSource.data = [];
-    }
+      )
+    } 
+
 
     calcularRangoMensual(fechaReferencia: Date): { fechaInicio: Date, fechaFin: Date } {
       const fechaInicio = new Date(fechaReferencia.getFullYear(), fechaReferencia.getMonth(), 1); // Primer día del mes
       const fechaFin = new Date(fechaReferencia.getFullYear(), fechaReferencia.getMonth() + 1, 0); // Último día del mes
       return { fechaInicio, fechaFin };
     }
-    
+     
 }

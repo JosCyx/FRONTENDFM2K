@@ -7,16 +7,15 @@
     
         <div style="display: flex; flex-direction: row; gap: 10px;">
             <div class="custom-form">
-            <mat-form-field>
-                <mat-label>Seleccione el area</mat-label>
-                <mat-select mat-select [(ngModel)]="areaSelected">
-                  <mat-option *ngFor="let area of areaList" [value]="area.codigo">
-                    {{ area.nombre }}
+              <mat-form-field>
+                <mat-label>Seleccione el Metodo de Busqueda</mat-label>
+                <mat-select mat-select [(ngModel)]="opSelected" (selectionChange)="onOpChange()">
+                  <mat-option *ngFor="let op of opList" [value]="op.op_id">
+                    {{ op.op_nombre}}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
             </div>
-          
             <mat-form-field>
               <mat-label>Selecciona la Fecha Inicio</mat-label>
               <input matInput [matDatepicker]="picker1" [(ngModel)]="selectedFechaInicio" (dateChange)="onDateChange()">
