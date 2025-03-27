@@ -46,11 +46,9 @@ export class VistaListadoAusentismosComponent {
       }
     }
     listarAusentismos(opSelected: any, fechaInicio: Date, fechaFin: Date){
-      console.log("ListaAus",opSelected, fechaInicio, fechaFin);
       this.AusentismosService.getAusentismo(opSelected, fechaInicio, fechaFin, this.cookieService.get('userIdNomina')).subscribe(
         (data) => {
           this.ausentismosList = data;
-          console.log("Ausentismo List",this.ausentismosList);
           this.dataSource.data = this.ausentismosList;
           this.dataSource.paginator = this.paginator;
         },
@@ -66,7 +64,7 @@ export class VistaListadoAusentismosComponent {
       this.AusentismosService.getOpList().subscribe(
         (exito: any) => {
           this.opList = exito;
-          console.log("Op List", exito)
+          //console.log("Op List", exito)
         },
         error => {
           console.log(error)
@@ -82,6 +80,7 @@ export class VistaListadoAusentismosComponent {
     
     selectRow(row: any) {
       //cargar id del evento seleccionado y redirigir a la siguiente vista
+      console.log(row);
       this.globalAusService.idAusentismoSelected = row.id;
       this.globalAusService.creationMode = false;
   

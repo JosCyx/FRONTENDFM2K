@@ -20,7 +20,7 @@ export class AusentismosService {
       (configLoaded) => {
         if (configLoaded) {
           this.APIUrl = this.globalService.getApiUrl();
-          console.log("Url service:", this.APIUrl);
+          //console.log("Url service:", this.APIUrl);
           // Ahora puedes usar apiUrl de manera segura.
         }
       }
@@ -38,16 +38,15 @@ export class AusentismosService {
     });
   }
 
-  getAusentismo(opSelected:number,fechaInicio: Date, fechaFin: Date, usuario: string | null= null): Observable<any> {
-      console.log(this.APIUrl);
-      const headers = this.getHeadersWithAuthToken();
-      const fechaInicioString = fechaInicio.toISOString().split('T')[0];
-      const fechaFinString = fechaFin.toISOString().split('T')[0];
-      return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismo?op=${opSelected}&fechaInicio=${fechaInicioString}&fechaFin=${fechaFinString}&solicitante=${usuario}`, {headers: headers });
+  getAusentismo(opSelected: number, fechaInicio: Date, fechaFin: Date, usuario: string | null = null): Observable<any> {
+    const headers = this.getHeadersWithAuthToken();
+    const fechaInicioString = fechaInicio.toISOString().split('T')[0];
+    const fechaFinString = fechaFin.toISOString().split('T')[0];
+    return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismo?op=${opSelected}&fechaInicio=${fechaInicioString}&fechaFin=${fechaFinString}&solicitante=${usuario}`, { headers: headers });
   }
 
 
-  getOpList(){
+  getOpList() {
     const headers = this.getHeadersWithAuthToken();
     return this.http.get(`${this.APIUrl}/AusAdmin/GetOpList`, { headers: headers });
   }
@@ -62,11 +61,11 @@ export class AusentismosService {
     return this.http.post(`${this.APIUrl}/Ausentismos/InsertarAusentismo`, data, { headers: headers });
   }
 
-  postArchivoAus(idAus: number, file: any): Observable<any> {
+  postArchivoAus(idAus: number, file: any, isNew: boolean): Observable<any> {
     const formData = new FormData();
-    formData.append('doc', file);  
+    formData.append('doc', file);
     formData.append('idAus', idAus.toString());
-
+    formData.append('isNew', isNew.toString());
 
     let headers = this.getHeadersWithAuthToken();
     headers = headers.delete('Content-Type');
@@ -76,7 +75,28 @@ export class AusentismosService {
 
   getAusentismoById(idAus: number): Observable<any> {
     const headers = this.getHeadersWithAuthToken();
-    return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismoById?idAus=${idAus}`, { headers: headers });
+    return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismoById?ausId=${idAus}`, { headers: headers });
   }
-  
+
+  /* downloadAusFile(ruta: string): Observable<Blob> {
+     const headers = this.getHeadersWithAuthToken();
+     return this.http.get(`${this.APIUrl}/Ausentismos/DownloadAusFile?ruta=${encodeURIComponent(ruta)}`, { 
+       headers: headers, 
+       responseType: 'blob' 
+     });
+   }*/
+
+  downloadAusFile(ruta: string) {
+    const encodedRuta = encodeURIComponent(ruta);
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get(`${this.APIUrl}/Ausentismos/DownloadAusFile?ruta=${encodedRuta}`, {
+      headers: headers,
+      responseType: 'blob'
+    });
+  }
+
+  deleteAusFile(fileName: string): Observable<any> {
+    return this.http.delete(`${this.APIUrl}/Ausentismos/EliminarArchivo?fileName=${fileName}`);
+  }
+
 }

@@ -51,6 +51,11 @@
   align-items: center;
 }
 
+.custom-card:hover{
+  background-color: #dfeeff;
+  cursor: pointer;
+}
+
 .datetime-container{
   display: flex;
   gap: 10px;
@@ -77,8 +82,8 @@
 
 .card-header {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 1px;
+  right: 1px;
 }
 
 .card-header button {
