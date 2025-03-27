@@ -12,20 +12,17 @@
   </ng-container>
 
   <ng-container *ngIf="!loading">
-
     <mat-tab-group animationDuration="0ms">
       <mat-tab label="Registro de Ausentismo">
-        <div *ngTemplateOutlet="registroAus"></div>
+        <div style *ngTemplateOutlet="registroAus"></div>
       </mat-tab>
-      <mat-tab label="Autorizar Ausentismo">
+      <mat-tab label="Autorizar Ausentismo" *ngIf="estadoProcesoAus > 10">
         <div *ngTemplateOutlet="autorizarAus"></div>
       </mat-tab>
     </mat-tab-group>
-
   </ng-container>
 
-  
-  <!-- plantilla de registro ausentismo -->
+
   <ng-template #registroAus>
     <div class="custom-form">
       <div class="aus-info">
@@ -41,8 +38,8 @@
 
         <mat-form-field class="example-full-width" appearance="outline">
           <mat-label>Motivo</mat-label>
-          <input matInput (input)="updateMotivosListFiltered($event)" [matAutocomplete]="auto" [(ngModel)]="motivoAusName" 
-          (ngModelChange)="onMotivoSelected($event)" [readonly]="estadoProcesoAus > 10">
+          <input matInput (input)="updateMotivosListFiltered($event)" [matAutocomplete]="auto"
+            [(ngModel)]="motivoAusName" (ngModelChange)="onMotivoSelected($event)" [readonly]="estadoProcesoAus > 10">
           <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
             <ng-container *ngFor="let motivo of motivoListFiltered">
               <mat-option [value]="motivo.motDescripcion"
@@ -54,7 +51,8 @@
 
         <mat-form-field class="example-full-width" appearance="outline">
           <mat-label>Observación</mat-label>
-          <textarea matInput style="max-height: 250px;" [(ngModel)]="observacionAus" [readonly]="estadoProcesoAus > 10"></textarea>
+          <textarea matInput style="max-height: 250px;" [(ngModel)]="observacionAus"
+            [readonly]="estadoProcesoAus > 10"></textarea>
         </mat-form-field>
 
 
@@ -62,20 +60,24 @@
           <!-- Selección de fecha -->
           <mat-form-field appearance="outline">
             <mat-label>Desde</mat-label>
-            <input matInput [matDatepicker]="StartDate" [(ngModel)]="selectedStartDate" [readonly]="estadoProcesoAus > 10">
-            <mat-datepicker-toggle matIconSuffix [for]="StartDate" *ngIf="estadoProcesoAus == 10"></mat-datepicker-toggle>
+            <input matInput [matDatepicker]="StartDate" [(ngModel)]="selectedStartDate"
+              [readonly]="estadoProcesoAus > 10">
+            <mat-datepicker-toggle matIconSuffix [for]="StartDate"
+              *ngIf="estadoProcesoAus == 10"></mat-datepicker-toggle>
             <mat-datepicker #StartDate></mat-datepicker>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Hora</mat-label>
-            <input matInput type="number" min="0" max="23" [(ngModel)]="selectedStartHour" (ngModelChange)="verifyValidHour(1)" [readonly]="estadoProcesoAus > 10">
+            <input matInput type="number" min="0" max="23" [(ngModel)]="selectedStartHour"
+              (ngModelChange)="verifyValidHour(1)" [readonly]="estadoProcesoAus > 10">
             <span class="invalid-date-message" *ngIf="!validStartHour">Hora no válida</span>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Minutos</mat-label>
-            <input matInput type="number" min="0" max="59" [(ngModel)]="selectedStartMinutes" (ngModelChange)="verifyValidMinutes(1)" [readonly]="estadoProcesoAus > 10">
+            <input matInput type="number" min="0" max="59" [(ngModel)]="selectedStartMinutes"
+              (ngModelChange)="verifyValidMinutes(1)" [readonly]="estadoProcesoAus > 10">
             <span class="invalid-date-message" *ngIf="!validStartMinutes">Minutos no válidos</span>
           </mat-form-field>
         </div>
@@ -91,13 +93,15 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Hora</mat-label>
-            <input matInput type="number" min="0" max="23" [(ngModel)]="selectedEndHour" (ngModelChange)="verifyValidHour(2)" [readonly]="estadoProcesoAus > 10">
+            <input matInput type="number" min="0" max="23" [(ngModel)]="selectedEndHour"
+              (ngModelChange)="verifyValidHour(2)" [readonly]="estadoProcesoAus > 10">
             <span class="invalid-date-message" *ngIf="!validEndHour">Hora no válida</span>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Minutos</mat-label>
-            <input matInput type="number" min="0" max="59" [(ngModel)]="selectedEndMinutes" (ngModelChange)="verifyValidMinutes(2)" [readonly]="estadoProcesoAus > 10">
+            <input matInput type="number" min="0" max="59" [(ngModel)]="selectedEndMinutes"
+              (ngModelChange)="verifyValidMinutes(2)" [readonly]="estadoProcesoAus > 10">
             <span class="invalid-date-message" *ngIf="!validEndMinutes">Minutos no válidos</span>
           </mat-form-field>
         </div>
@@ -107,16 +111,17 @@
       <div class="aus-documentacion">
         <ng-container *ngIf="estadoProcesoAus == 10">
           <button type="button" mat-raised-button color="primary" style="margin-bottom: 5px;"
-          (click)="fileInput.click()">Subir documentos <i class="bi bi-upload"></i></button>
+            (click)="fileInput.click()">Subir documentos <i class="bi bi-upload"></i></button>
           <input hidden (change)="onFileSelected($event)" #fileInput type="file"
-          accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xlsx" id="file">
+            accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xlsx" id="file">
         </ng-container>
         <div class="aus-doc-list">
           <ng-container *ngFor="let doc of documentList">
-            <mat-card class="custom-card" [matTooltip]="doc.name" matTooltipPosition="above"
-            [matTooltipShowDelay]="700" [matTooltipHideDelay]="0" (click)="openFile(doc)">
+            <mat-card class="custom-card" [matTooltip]="doc.name" matTooltipPosition="above" [matTooltipShowDelay]="700"
+              [matTooltipHideDelay]="0" (click)="openFile(doc)">
               <div class="card-header" *ngIf="estadoProcesoAus == 10">
-                <button mat-mini-fab color="warn" (click)="deleteFile(doc.name); $event.stopPropagation()" style="z-index: 20 !important;">
+                <button mat-mini-fab color="warn" (click)="deleteFile(doc.name); $event.stopPropagation()"
+                  style="z-index: 20 !important;">
                   <mat-icon>close</mat-icon>
                 </button>
               </div>
@@ -126,26 +131,30 @@
           </ng-container>
         </div>
       </div>
-
     </div>
-    <div class="div-buttons" >
+  </ng-template>
+  
+  <!-- plantilla de registro de autorizar ausentismo -->
+  <ng-template #autorizarAus>
+    <div class="custom-form">
+      <div class="div-buttonsAut">
+        <button mat-raised-button color="primary" (click)="openDialog()">Devolver</button>
+        <button mat-raised-button color="warn" (click)="openDialog()">Anular</button>
+        <button mat-raised-button style="background-color: #00dd1d !important;"
+        (click)="openDialog()">Autorizar</button>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-container *ngIf="!loading">
+
+    <div class="div-buttons">
       <button mat-raised-button color="warn" (click)="clearForm()">Salir</button>
       <ng-container *ngIf="estadoProcesoAus == 10">
         <button mat-raised-button color="primary" (click)="triggerEnvio(false)">Guardar</button>
-        <button mat-raised-button style="background-color: #00dd1d !important;" (click)="triggerEnvio(true)">Guardar y enviar</button>
-      </ng-container>
-    </div>
-    
-</ng-template>
-
-<!-- plantilla de registro de autorizar ausentismo -->
-<ng-template #autorizarAus>
-  <div class="custom-form">
-    <div class="div-buttonsAut">
-      <button mat-raised-button color="primary" (click)="openDialog()">Devolver</button>
-      <button mat-raised-button color="warn" (click)="openDialog()">Anular</button>
-      <button mat-raised-button style="background-color: #00dd1d !important;" 
-      (click)="openDialog()" >Autorizar</button>
-    </div>
-  </div>
-</ng-template>
+        <button mat-raised-button style="background-color: #00dd1d !important;" (click)="triggerEnvio(true)">Guardar y
+          enviar</button>
+        </ng-container>
+      </div>
+    </ng-container>
+</div>
