@@ -38,40 +38,107 @@
     </div>
     <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            
             <ng-container matColumnDef="Area">
-                <th mat-header-cell *matHeaderCellDef> Area</th>
+                <th mat-header-cell *matHeaderCellDef> 
+                    <div class="filter-head">
+                        Area 
+                        <div style="display: flex; flex-direction: row;">
+                          <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(1)"><i
+                              class="bi bi-funnel-fill"></i></button>
+                        </div>
+                      </div>
+                      <div class="input-container" *ngIf="handleFilter && filterType == 1">
+                        <input type="text" #filterInput (input)="applyStrFilter($event)">
+                      </div>
+                    </th>
                 <td mat-cell *matCellDef="let element"> {{element.area}} </td>
-                >
             </ng-container>
+
             <ng-container matColumnDef="Departamento">
-                <th mat-header-cell *matHeaderCellDef> Departamento </th>
+                <th mat-header-cell *matHeaderCellDef> 
+                    <div class="filter-head">
+                        Departamento 
+                        <div style="display: flex; flex-direction: row;">
+                          <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(2)"><i
+                              class="bi bi-funnel-fill"></i></button>
+                        </div>
+                      </div>
+                      <div class="input-container" *ngIf="handleFilter && filterType == 2">
+                        <input type="text" #filterInput (input)="applyStrFilter($event)">
+                      </div>
+                    </th>
                 <td mat-cell *matCellDef="let element"> {{element.departamento}} </td>
-                >
+
             </ng-container>
             <ng-container matColumnDef="Solicitante">
-                <th mat-header-cell *matHeaderCellDef> Solicitante </th>
+                <th mat-header-cell *matHeaderCellDef> 
+                    <div class="filter-head">
+                        Solicitante 
+                        <div style="display: flex; flex-direction: row;">
+                          <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(3)"><i
+                              class="bi bi-funnel-fill"></i></button>
+                        </div>
+                      </div>
+                      <div class="input-container" *ngIf="handleFilter && filterType == 3">
+                        <input type="text" #filterInput (input)="applyStrFilter($event)">
+                      </div>
+                    </th>
                 <td mat-cell *matCellDef="let element"> {{element.solicitante}} </td>
-                >
+
             </ng-container>
             <ng-container matColumnDef="fecha">
-                <th mat-header-cell *matHeaderCellDef> Fecha </th>
+                <th mat-header-cell *matHeaderCellDef> 
+                    <div class="filter-head">
+                        Fecha 
+                        <div style="display: flex; flex-direction: row;">
+                          <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(4)"><i
+                              class="bi bi-funnel-fill"></i></button>
+                        </div>
+                      </div>
+                      <div class="input-container" *ngIf="handleFilter && filterType == 4">
+                        <input type="text" #filterInput (input)="applyStrFilter($event)">
+                      </div>
+                    </th>
                 <td mat-cell *matCellDef="let element"> {{element.fecha}} </td>
-                >
+
             </ng-container>
             <ng-container matColumnDef="Motivo">
-                <th mat-header-cell *matHeaderCellDef> Motivo </th>
+                <th mat-header-cell *matHeaderCellDef> 
+                    <div class="filter-head">
+                        Motivo 
+                        <div style="display: flex; flex-direction: row;">
+                          <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(5)"><i
+                              class="bi bi-funnel-fill"></i></button>
+                        </div>
+                      </div>
+                      <div class="input-container" *ngIf="handleFilter && filterType == 5">
+                        <input type="text" #filterInput (input)="applyStrFilter($event)">
+                      </div>
+                    </th>
                 <td mat-cell *matCellDef="let element"> {{element.motivo}} </td>
-                >
+
             </ng-container>
             <ng-container matColumnDef="Estado">
-                <th mat-header-cell *matHeaderCellDef> Estado </th>
+                <th mat-header-cell *matHeaderCellDef> 
+                    <div class="filter-head">
+                        Estado 
+                        <div style="display: flex; flex-direction: row;">
+                          <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(6)"><i
+                              class="bi bi-funnel-fill"></i></button>
+                        </div>
+                      </div>
+                      <div class="input-container" *ngIf="handleFilter && filterType == 6">
+                        <input type="text" #filterInput (input)="applyStrFilter($event)">
+                      </div>
+                    </th>
                 <td mat-cell *matCellDef="let element"> {{element.estado}} </td>
-                >
+
             </ng-container>
             <!-- Fila de encabezado -->
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <!-- Fila de datos -->
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="row-custom-hover"
+            <tr class="row-custom-hover" mat-row *matRowDef="let row; columns: displayedColumns;" class="row-custom-hover"
                 (click)="selectRow(row)"></tr>
         </table>
         <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons="true"></mat-paginator>

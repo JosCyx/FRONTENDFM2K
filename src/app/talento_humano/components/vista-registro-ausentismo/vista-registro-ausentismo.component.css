@@ -29,6 +29,15 @@
   padding-top: 10px;
 }
 
+
+.div-buttonsAut{
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 10px;
+}
+
+
 .aus-doc-list{
   margin-top: 15px; 
   background-color: #c8d0ff57; 

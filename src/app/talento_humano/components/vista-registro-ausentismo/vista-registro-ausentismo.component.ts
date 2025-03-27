@@ -13,6 +13,10 @@ import { GlobalService } from 'src/app/services/global.service';
 export class VistaRegistroAusentismoComponent {
   @ViewChild('fileInput') fileInput: any;
 
+  //Alerta
+  // alert: boolean = false;
+  // alertText: string = '';
+
   motivoAusId!: number;
   motivoAusName: string = '';
   observacionAus: string = '';
@@ -404,4 +408,24 @@ export class VistaRegistroAusentismoComponent {
     });
   }
 
+
+  openDialog(): void {
+    
+
+  }
+
+
+  DevolverAut(){
+    
+  }
+
+  
+  AnularAut(){
+
+  }
+
+  
+  AutorizarAut(){
+
+  }
 }

@@ -12,11 +12,22 @@
   </ng-container>
 
   <ng-container *ngIf="!loading">
+
+    <mat-tab-group animationDuration="0ms">
+      <mat-tab label="Registro de Ausentismo">
+        <div *ngTemplateOutlet="registroAus"></div>
+      </mat-tab>
+      <mat-tab label="Autorizar Ausentismo">
+        <div *ngTemplateOutlet="autorizarAus"></div>
+      </mat-tab>
+    </mat-tab-group>
+
+  </ng-container>
+
+  <!-- plantilla de registro ausentismo -->
+  <ng-template #registroAus>
     <div class="custom-form">
-
-
       <div class="aus-info">
-
         <mat-form-field class="example-full-width" appearance="outline">
           <mat-label>Fecha</mat-label>
           <input matInput [value]="fechaString" readonly>
@@ -29,11 +40,13 @@
 
         <mat-form-field class="example-full-width" appearance="outline">
           <mat-label>Motivo</mat-label>
-          <input matInput (input)="updateMotivosListFiltered($event)" [matAutocomplete]="auto" [(ngModel)]="motivoAusName" 
-          (ngModelChange)="onMotivoSelected($event)">
+          <input matInput (input)="updateMotivosListFiltered($event)" [matAutocomplete]="auto"
+            [(ngModel)]="motivoAusName" (ngModelChange)="onMotivoSelected($event)">
           <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
             <ng-container *ngFor="let motivo of motivoListFiltered">
-              <mat-option [value]="motivo.motDescripcion" (onSelectionChange)="setMotivo(motivo)">{{motivo.motDescripcion}}<span *ngIf="motivo.motIfDocument === 1" class="requerido-doc"> - Requiere documento</span></mat-option>
+              <mat-option [value]="motivo.motDescripcion"
+                (onSelectionChange)="setMotivo(motivo)">{{motivo.motDescripcion}}<span
+                  *ngIf="motivo.motIfDocument === 1" class="requerido-doc"> - Requiere documento</span></mat-option>
             </ng-container>
           </mat-autocomplete>
         </mat-form-field>
@@ -42,17 +55,6 @@
           <mat-label>Observación</mat-label>
           <textarea matInput style="max-height: 250px;" [(ngModel)]="observacionAus"></textarea>
         </mat-form-field>
-
-        <!-- <mat-form-field>
-          <mat-label>Rango de fechas</mat-label>
-          <mat-date-range-input [rangePicker]="picker">
-            <input matStartDate placeholder="Desde" readonly>
-            <input matEndDate placeholder="Hasta" readonly>
-          </mat-date-range-input>
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-date-range-picker #picker></mat-date-range-picker>
-        </mat-form-field> -->
-
 
 
         <div class="datetime-container">
@@ -66,13 +68,15 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Hora</mat-label>
-            <input matInput type="number" min="0" max="23" [(ngModel)]="selectedStartHour" (ngModelChange)="verifyValidHour(1)">
+            <input matInput type="number" min="0" max="23" [(ngModel)]="selectedStartHour"
+              (ngModelChange)="verifyValidHour(1)">
             <span class="invalid-date-message" *ngIf="!validStartHour">Hora no válida</span>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Minutos</mat-label>
-            <input matInput type="number" min="0" max="59" [(ngModel)]="selectedStartMinutes" (ngModelChange)="verifyValidMinutes(1)">
+            <input matInput type="number" min="0" max="59" [(ngModel)]="selectedStartMinutes"
+              (ngModelChange)="verifyValidMinutes(1)">
             <span class="invalid-date-message" *ngIf="!validStartMinutes">Minutos no válidos</span>
           </mat-form-field>
         </div>
@@ -88,32 +92,31 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Hora</mat-label>
-            <input matInput type="number" min="0" max="23" [(ngModel)]="selectedEndHour" (ngModelChange)="verifyValidHour(2)">
+            <input matInput type="number" min="0" max="23" [(ngModel)]="selectedEndHour"
+              (ngModelChange)="verifyValidHour(2)">
             <span class="invalid-date-message" *ngIf="!validEndHour">Hora no válida</span>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Minutos</mat-label>
-            <input matInput type="number" min="0" max="59" [(ngModel)]="selectedEndMinutes" (ngModelChange)="verifyValidMinutes(2)">
+            <input matInput type="number" min="0" max="59" [(ngModel)]="selectedEndMinutes"
+              (ngModelChange)="verifyValidMinutes(2)">
             <span class="invalid-date-message" *ngIf="!validEndMinutes">Minutos no válidos</span>
           </mat-form-field>
-
         </div>
-
-
       </div>
 
 
       <div class="aus-documentacion">
         <button type="button" mat-raised-button color="primary" style="margin-bottom: 5px;"
-            (click)="fileInput.click()">Subir documentos <i class="bi bi-upload"></i></button>
-          <input hidden (change)="onFileSelected($event)" #fileInput type="file"
-            accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xlsx" id="file">
-        <div class="aus-doc-list">
+          (click)="fileInput.click()">Subir documentos <i class="bi bi-upload"></i></button>
+        <input hidden (change)="onFileSelected($event)" #fileInput type="file"
+          accept=".png, .jpg, .jpeg, .pdf, .doc, .docx, .xlsx" id="file">
 
+        <div class="aus-doc-list">
           <ng-container *ngFor="let doc of documentList">
-            <mat-card class="custom-card" [matTooltip]="doc.name" matTooltipPosition="above"
-            [matTooltipShowDelay]="700" [matTooltipHideDelay]="0">
+            <mat-card class="custom-card" [matTooltip]="doc.name" matTooltipPosition="above" [matTooltipShowDelay]="700"
+              [matTooltipHideDelay]="0">
               <div class="card-header">
                 <button mat-mini-fab color="warn" (click)="deleteFile(doc.name)">
                   <mat-icon>close</mat-icon>
@@ -123,20 +126,93 @@
               <span class="truncate-text" style="font: 9pt; padding: 5px;">{{doc.name}}</span>
             </mat-card>
           </ng-container>
-
-          <!-- <p>Archivo.pdf</p>
-          <button mat-mini-fab color="warn"><mat-icon>delete</mat-icon></button> -->
-
         </div>
       </div>
 
+      <div class="div-buttons">
+        <button mat-raised-button color="warn" (click)="clearForm()">Cancelar</button>
+        <button mat-raised-button color="primary" (click)="triggerEnvio(false)">Guardar</button>
+        <button mat-raised-button style="background-color: #00dd1d !important;" (click)="triggerEnvio(true)">Guardar y
+          enviar</button>
+      </div>
+    </div>
+  </ng-template>
 
+  <!-- plantilla de registro de autorizar ausentismo -->
+  <ng-template #autorizarAus>
+    <div class="custom-form">
+      <div class="div-buttonsAut">
+        <button mat-raised-button color="primary" (click)="openDialog()">Devolver</button>
+        <button mat-raised-button color="warn" (click)="openDialog()">Anular</button>
+        <button mat-raised-button style="background-color: #00dd1d !important;" 
+        (click)="openDialog()" >Autorizar</button>
+      </div>
     </div>
-    <div class="div-buttons">
-      <button mat-raised-button color="warn" (click)="clearForm()">Cancelar</button>
-      <button mat-raised-button color="primary" (click)="triggerEnvio(false)">Guardar</button>
-      <button mat-raised-button style="background-color: #00dd1d !important;" (click)="triggerEnvio(true)">Guardar y enviar</button>
+  </ng-template>
+
+
+  <!-- <div class="modal fade" #exampleModal id="DevolverAut" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header justify-content-center">
+          <h3 class="font-weight-bold" id="exampleModalLabel">
+            ¿Está seguro que desea devolver este ausentismo?
+          </h3>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="DevolverAut()">
+            Confirmar
+          </button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal">
+            Cancelar
+          </button>
+        </div>
+      </div>
     </div>
-  </ng-container>
+  </div>
+
+  <div class="modal fade" #exampleModal id="AnularAut" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header justify-content-center">
+          <h3 class="font-weight-bold" id="exampleModalLabel">
+            ¿Está seguro que desea anular este ausentismo?
+          </h3>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="AnularAut()">
+            Confirmar
+          </button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal fade" #exampleModal id="AutorizarAut" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header justify-content-center">
+          <h3 class="font-weight-bold" id="exampleModalLabel">
+            ¿Está seguro que desea autorizar este ausentismo?
+          </h3>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" (click)="AutorizarAut()">
+            Confirmar
+          </button>
+          <button type="button" class="btn btn-danger" data-dismiss="modal">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div> -->
 
 </div>

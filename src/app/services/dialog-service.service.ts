@@ -140,6 +140,4 @@ export class DialogServiceService {
       width: '600px',
     });
   }
-
-  
 }

@@ -20,3 +20,63 @@
 mat-form-field {
   width: 100% !important;;
 }
+
+
+/*filtros*/
+.filter-head {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  padding: 0 10px 0 10px;
+}
+
+.filter-btn {
+  font-size: 10pt;
+  width: 30px !important;
+  height: 30px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 2px;
+}
+
+::ng-deep .mat-menu-item {
+  font-size: 10pt !important;
+}
+
+.filter-input {
+  width: 100%;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-container input {
+  width: 100%;
+  padding-right: 10px;
+  /* espacio para el botón */
+  box-sizing: border-box;
+}
+
+.input-container .clear-button {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  outline: none;
+}
+
+/* For Chrome, Safari, Edge, and Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
