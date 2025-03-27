@@ -116,7 +116,7 @@
           <ng-container *ngFor="let doc of documentList">
             <mat-card class="custom-card" [matTooltip]="doc.name" matTooltipPosition="above"
             [matTooltipShowDelay]="700" [matTooltipHideDelay]="0" (click)="openFile(doc)">
-              <div class="card-header">
+              <div class="card-header" *ngIf="estadoProcesoAus == 10">
                 <button mat-mini-fab color="warn" (click)="deleteFile(doc.name); $event.stopPropagation()" style="z-index: 20 !important;">
                   <mat-icon>close</mat-icon>
                 </button>

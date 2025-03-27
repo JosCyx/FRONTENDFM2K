@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { catchError, forkJoin, map, of } from 'rxjs';
+import { EmpleadosService } from 'src/app/services/comunicationAPI/seguridad/empleados.service';
 import { AusentismosService } from 'src/app/services/comunicationAPI/tthh/ausentismos.service';
 import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { GlobalAusService } from 'src/app/services/global-aus.service';
@@ -19,8 +20,8 @@ export class VistaRegistroAusentismoComponent {
   motivoAusName: string = '';
   observacionAus: string = '';
 
-  usuarioName: string = this.cookieService.get('userName');
-  fechaString: string = this.globalService.formatDateToSpanish(new Date());
+  usuarioName!: string;
+  fechaString!: string;
 
   loading: boolean = true;
 
@@ -51,17 +52,20 @@ export class VistaRegistroAusentismoComponent {
     private dialogService: DialogServiceService,
     private ausentismoService: AusentismosService,
     private globalAusService: GlobalAusService,
-    private router: Router
+    private router: Router,
+    private empService: EmpleadosService
   ) { }
 
   ngOnInit() {
-    this.loading = false;
+    this.loading = true;
 
     setTimeout(() => {
       this.ausentismoService.getMotivosAus().subscribe(
         (res: any) => {
           this.motivoList = res;
           this.motivoListFiltered = res;
+
+          this.loading = false;
         },
         (error) => {
           console.log(error);
@@ -74,7 +78,7 @@ export class VistaRegistroAusentismoComponent {
       if (!this.creationMode) {
         //buscar y cargar los datos del ausentismo seleccionado
         const ausId = this.globalAusService.idAusentismoSelected;
-        console.log("ausId: ", ausId);
+        //console.log("ausId: ", ausId);
 
         this.ausentismoService.getAusentismoById(ausId).subscribe(
           (res: any) => {
@@ -94,20 +98,40 @@ export class VistaRegistroAusentismoComponent {
 
               this.estadoProcesoAus = res.aus.ausEstadoProceso;
 
+              this.empService.getEmpleadoByNomina(res.aus.ausIdSolicitante).subscribe(
+                (res: any) => {
+                  this.usuarioName = res[0].empleadoNombres + ' ' + res[0].empleadoApellidos;
+                },
+                (error) => {
+                  console.log(error);
+                }
+              )
+
+              if(this.estadoProcesoAus === 10){
+                this.fechaString = this.globalService.formatDateToSpanish(new Date())
+              } else {
+                this.fechaString = this.globalService.formatDateToSpanish(new Date(res.aus.ausFechaIngreso))
+              }
+
               // Cargar los documentos
               this.documentList = res.docs.map((doc: any) => ({
                 name: doc.ausDocNombre,
                 img: this.getFileIcon(doc.ausDocNombre), // Función para obtener un ícono según la extensión
                 ruta: doc.ausDocRuta
               }));
+
+              this.loading = false;
             }
           },
           (error) => {
             console.log(error);
           }
         );
+      } else {
+        this.usuarioName = this.cookieService.get('userName');
+        this.fechaString = this.globalService.formatDateToSpanish(new Date())
       }
-    }, 350);
+    }, 300);
   }
 
   ngOnDestroy() {
@@ -273,8 +297,8 @@ export class VistaRegistroAusentismoComponent {
 
   deleteFile(doc: string) {
     const ruta = this.documentList.find((docItem) => docItem.name === doc)?.ruta;
-    
-    if(ruta){
+
+    if (ruta) {
       //si tiene una ruta, eliminarlo de la base de datos
       this.ausentismoService.deleteAusFile(doc).subscribe(
         (res: any) => {
@@ -408,7 +432,7 @@ export class VistaRegistroAusentismoComponent {
 
             this.ausentismoService.postAusentismo(data).subscribe(
               (res: any) => {
-                console.log("REGISTRO GUARDADO: ",res);
+                console.log("REGISTRO GUARDADO: ", res);
                 if (res) {
                   if (this.requiredDocument && this.documentList.length > 0) {
                     // Si requiere documentación, primero guarda los archivos
@@ -437,14 +461,14 @@ export class VistaRegistroAusentismoComponent {
   saveFiles(ausId: number) {
     let filesProcessed = 0;
     let hasError = false;
-  
+
     // Array de observables para descargar archivos
     const downloadObservables = this.documentList.map((doc) => {
       if (doc.ruta) {
         return this.ausentismoService.downloadAusFile(doc.ruta).pipe(
           map((blob) => {
             doc.file = new File([blob], doc.name, { type: doc.img });
-            console.log("Archivo descargado y asignado:", doc);
+            //console.log("Archivo descargado y asignado:", doc);
             return doc;
           }),
           catchError((error) => {
@@ -455,7 +479,7 @@ export class VistaRegistroAusentismoComponent {
       }
       return of(doc); // Si no tiene ruta, simplemente devolver el documento tal cual
     });
-  
+
     // Esperar todas las descargas antes de enviar los archivos
     forkJoin(downloadObservables).subscribe((docs) => {
       docs.forEach((doc) => {
@@ -472,7 +496,7 @@ export class VistaRegistroAusentismoComponent {
             hasError = true;
             filesProcessed++;
             this.callMessage("Error al registrar un archivo.", false);
-  
+
             if (filesProcessed === this.documentList.length && !hasError) {
               this.callMessage("Ausentismo registrado correctamente.", true);
               this.clearForm();
@@ -482,7 +506,7 @@ export class VistaRegistroAusentismoComponent {
       });
     });
   }
-  
+
 
   /*openFile(doc: any) {
     console.log(doc);
@@ -508,45 +532,45 @@ export class VistaRegistroAusentismoComponent {
     }
   }*/
 
-    openFile(doc: any) {
-      console.log(doc);
-    
-      // Verificar si el archivo ya está cargado en la lista
-      const existingFile = this.documentList.find((item: any) => item.name === doc.name);
-    
-      if (existingFile && existingFile.file) {
-        // El archivo está en memoria, lo abrimos con un Blob
-        const fileURL = URL.createObjectURL(existingFile.file);
-        const a = document.createElement('a');
-        a.href = fileURL;
-        a.download = doc.name; // Mantener el nombre original
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      } else {
-        // El archivo no está en memoria, solicitarlo al servidor
-        this.ausentismoService.downloadAusFile(doc.ruta).subscribe(
-          (blob) => {
-            const fileURL = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = fileURL;
-            a.download = doc.name; // Mantener el nombre original
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(fileURL); // Liberar la URL del blob
-          },
-          (error) => {
-            console.error("Error al obtener el archivo:", error);
-            if(error.status === 404){
-              this.callMessage("El archivo se ha eliminado del servidor o no se encuentra disponible.", false);
-            }else{
-              this.callMessage("Error al obtener el archivo.", false);
-            }
+  openFile(doc: any) {
+    console.log(doc);
+
+    // Verificar si el archivo ya está cargado en la lista
+    const existingFile = this.documentList.find((item: any) => item.name === doc.name);
+
+    if (existingFile && existingFile.file) {
+      // El archivo está en memoria, lo abrimos con un Blob
+      const fileURL = URL.createObjectURL(existingFile.file);
+      const a = document.createElement('a');
+      a.href = fileURL;
+      a.download = doc.name; // Mantener el nombre original
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      // El archivo no está en memoria, solicitarlo al servidor
+      this.ausentismoService.downloadAusFile(doc.ruta).subscribe(
+        (blob) => {
+          const fileURL = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = fileURL;
+          a.download = doc.name; // Mantener el nombre original
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(fileURL); // Liberar la URL del blob
+        },
+        (error) => {
+          console.error("Error al obtener el archivo:", error);
+          if (error.status === 404) {
+            this.callMessage("El archivo se ha eliminado del servidor o no se encuentra disponible.", false);
+          } else {
+            this.callMessage("Error al obtener el archivo.", false);
           }
-        );
-      }
+        }
+      );
     }
-    
+  }
+
 
 }

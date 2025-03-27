@@ -80,7 +80,7 @@ export class VistaListadoAusentismosComponent {
     
     selectRow(row: any) {
       //cargar id del evento seleccionado y redirigir a la siguiente vista
-      console.log(row);
+      //console.log(row);
       this.globalAusService.idAusentismoSelected = row.id;
       this.globalAusService.creationMode = false;
   
