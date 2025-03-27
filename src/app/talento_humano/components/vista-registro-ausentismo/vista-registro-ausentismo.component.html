@@ -16,7 +16,7 @@
       <mat-tab label="Registro de Ausentismo">
         <div style *ngTemplateOutlet="registroAus"></div>
       </mat-tab>
-      <mat-tab label="Autorizar Ausentismo">
+      <mat-tab label="Autorizar Ausentismo" *ngIf="estadoProcesoAus > 10">
         <div *ngTemplateOutlet="autorizarAus"></div>
       </mat-tab>
     </mat-tab-group>
@@ -131,21 +131,9 @@
           </ng-container>
         </div>
       </div>
-      
-      
-      <div class="div-buttons">
-        <button mat-raised-button color="warn" (click)="clearForm()">Salir</button>
-        <ng-container *ngIf="estadoProcesoAus == 10">
-          <button mat-raised-button color="primary" (click)="triggerEnvio(false)">Guardar</button>
-          <button mat-raised-button style="background-color: #00dd1d !important;" (click)="triggerEnvio(true)">Guardar y
-            enviar</button>
-          </ng-container>
-        </div>
-      </div>
-
+    </div>
   </ng-template>
-
-
+  
   <!-- plantilla de registro de autorizar ausentismo -->
   <ng-template #autorizarAus>
     <div class="custom-form">
@@ -153,8 +141,20 @@
         <button mat-raised-button color="primary" (click)="openDialog()">Devolver</button>
         <button mat-raised-button color="warn" (click)="openDialog()">Anular</button>
         <button mat-raised-button style="background-color: #00dd1d !important;"
-          (click)="openDialog()">Autorizar</button>
+        (click)="openDialog()">Autorizar</button>
       </div>
     </div>
   </ng-template>
+
+  <ng-container *ngIf="!loading">
+
+    <div class="div-buttons">
+      <button mat-raised-button color="warn" (click)="clearForm()">Salir</button>
+      <ng-container *ngIf="estadoProcesoAus == 10">
+        <button mat-raised-button color="primary" (click)="triggerEnvio(false)">Guardar</button>
+        <button mat-raised-button style="background-color: #00dd1d !important;" (click)="triggerEnvio(true)">Guardar y
+          enviar</button>
+        </ng-container>
+      </div>
+    </ng-container>
 </div>

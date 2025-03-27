@@ -413,7 +413,7 @@ export class VistaRegistroAusentismoComponent {
   }
 
   triggerEnvio(send: boolean) {
-    const accion = send ? 'enviar' : 'guardar';
+    const accion = send ? 'guardar y enviar' : 'guardar';
 
     const confirmDialogSubscription = this.dialogService.openMessageEvDialog(`¿Está seguro que desea ${accion} esta justificación?`).subscribe(
       async (response) => {
