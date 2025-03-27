@@ -71,7 +71,7 @@ export class VistaListadoAusentismosComponent {
       this.AusentismosService.getOpList().subscribe(
         (exito: any) => {
           this.opList = exito;
-          console.log("Op List", exito)
+          //console.log("Op List", exito)
         },
         error => {
           console.log(error)
@@ -87,6 +87,7 @@ export class VistaListadoAusentismosComponent {
     
     selectRow(row: any) {
       //cargar id del evento seleccionado y redirigir a la siguiente vista
+      //console.log(row);
       this.globalAusService.idAusentismoSelected = row.id;
       this.globalAusService.creationMode = false;
   
