@@ -4,12 +4,14 @@ import { DialogComponentComponent } from 'src/app/components/templates/dialog-co
 import { RegistrarProductoComponent } from '../inventario/dialogs/registrar-producto/registrar-producto.component';
 import { AsignarProductoComponent } from '../inventario/dialogs/asignar-producto/asignar-producto.component';
 import { RegistrarMovimientoComponent } from '../inventario/dialogs/registrar-movimiento/registrar-movimiento.component';
-import { MessageDialogComponent } from '../eventos/components/templates/message-dialog/message-dialog.component';
 import { Subject } from 'rxjs';
 import { FinishRequerimentComponent } from '../eventos/components/templates/finish-requeriment/finish-requeriment.component';
 import { AddDimensionesComponent } from '../components/templates/add-dimensiones/add-dimensiones.component';
 import { DevolverDialogComponent } from '../evento_gestion/devolver-dialog/devolver-dialog.component';
 import { FilterModalComponent } from '../evento_gestion/templates/filter-modal/filter-modal.component';
+import { MessageDialogTthhComponent } from '../talento_humano/template/message-dialog-tthh/message-dialog-tthh.component';
+import { MessageDialogComponent } from '../eventos/components/templates/message-dialog/message-dialog.component';
+
 
 interface Filter {
   key: any;
@@ -85,6 +87,18 @@ export class DialogServiceService {
     }
   }
 
+
+  //AUSENTISMOS
+  openMessageEvDialogA(message: string) {
+    const dialogRef = this.dialog.open(MessageDialogTthhComponent, {
+      data: { mensaje: message },
+      width: '600px',
+    });
+  
+    return dialogRef.afterClosed(); // Retorna el observable con el valor del comentario
+  }
+
+  
   //GESTION DE EVENTOS
   private confirmResultSubjectGestev = new Subject<boolean>();
 

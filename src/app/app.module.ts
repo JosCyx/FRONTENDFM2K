@@ -134,7 +134,7 @@ import { VistaAdminTipoEstadoHistComponent } from './talento_humano/components/v
 import { MainTthhComponent } from './talento_humano/components/main-tthh/main-tthh.component';
 import { MenuTthhComponent } from './talento_humano/components/menu-tthh/menu-tthh.component';
 
-
+import { MessageDialogTthhComponent } from './talento_humano/template/message-dialog-tthh/message-dialog-tthh.component';
 
 @NgModule({
   declarations: [
@@ -223,7 +223,8 @@ import { MenuTthhComponent } from './talento_humano/components/menu-tthh/menu-tt
     VistaAdminEstadoProcesoComponent,
     VistaAdminTipoEstadoHistComponent,
     MainTthhComponent,
-    MenuTthhComponent
+    MenuTthhComponent,
+    MessageDialogTthhComponent
   ],
   imports: [
     BrowserModule,

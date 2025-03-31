@@ -111,7 +111,7 @@ export class VistaRegistroAusentismoComponent {
                 }
               )
 
-              if(this.estadoProcesoAus === 10){
+              if (this.estadoProcesoAus === 10) {
                 this.fechaString = this.globalService.formatDateToSpanish(new Date())
               } else {
                 this.fechaString = this.globalService.formatDateToSpanish(new Date(res.aus.ausFechaIngreso))
@@ -577,24 +577,83 @@ export class VistaRegistroAusentismoComponent {
   }
 
 
+  ///////////////////////////
 
-  openDialog(): void {
-    
+  AutorizarAut() {
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialogA(`¿Está seguro que desea devolver esta justificación?`).subscribe(
+      async (resultadoDialog) => {
+        confirmDialogSubscription.unsubscribe();
+        const ausId = this.globalAusService.idAusentismoSelected;
+        const comentario = resultadoDialog;
+        const usuario = this.cookieService.get('userIdNomina');
 
+        if (resultadoDialog !== undefined) {
+          console.log(ausId, usuario, comentario);
+          this.ausentismoService.getAutorizacion(1, ausId, usuario, comentario)
+            .subscribe(
+              (res) => {
+                console.log('Autorización realizada correctamente', res);
+                // Puedes actualizar el UI o notificar al usuario aquí
+              },
+              (err) => {
+                console.error('Error en la autorización', err);
+              }
+            );
+
+        }
+      }
+    );
   }
 
+  AnularAut() {
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialogA(`¿Está seguro que desea devolver esta justificación?`).subscribe(
+      async (resultadoDialog) => {
+        confirmDialogSubscription.unsubscribe();
+        const ausId = this.globalAusService.idAusentismoSelected;
+        const comentario = resultadoDialog;
+        const usuario = this.cookieService.get('userIdNomina');
 
-  DevolverAut(){
-    
+        if (resultadoDialog !== undefined) {
+          console.log(ausId, usuario, comentario);
+          this.ausentismoService.getAutorizacion(2, ausId, usuario, comentario)
+            .subscribe(
+              (res) => {
+                console.log('Anulado correctamente', res);
+              },
+              (err) => {
+                console.error('Error', err);
+              }
+            );
+
+        }
+      }
+    );
   }
 
-  
-  AnularAut(){
+  DevolverAut() {
+    //const accion = send ? 'devolver' : 'anular';
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialogA(`¿Está seguro que desea devolver esta justificación?`).subscribe(
+      async (resultadoDialog) => {
+        confirmDialogSubscription.unsubscribe();
+        const ausId = this.globalAusService.idAusentismoSelected;
+        const comentario = resultadoDialog;
+        const usuario = this.cookieService.get('userIdNomina');
 
+        if (resultadoDialog !== undefined) {
+          console.log(ausId, usuario, comentario);
+          this.ausentismoService.getAutorizacion(3, ausId, usuario, comentario)
+            .subscribe(
+              (res) => {
+                console.log('Devuelto correctamente', res);
+              },
+              (err) => {
+                console.error('Error en la devolución', err);
+              }
+            );
+
+        }
+      }
+    );
   }
 
-  
-  AutorizarAut(){
-
-  }
 }
