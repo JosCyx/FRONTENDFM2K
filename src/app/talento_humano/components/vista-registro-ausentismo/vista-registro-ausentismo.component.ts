@@ -608,6 +608,7 @@ export class VistaRegistroAusentismoComponent {
               (res) => {
                 console.log('Justificación aprobada correctamente', res);
                 this.callMessage(`Justificación ${actionstr2} correctamente.`, true);
+                this.router.navigate(['vista-listado-ausentismos']);
               },
               (err) => {
                 console.error('Error en la autorización', err);
