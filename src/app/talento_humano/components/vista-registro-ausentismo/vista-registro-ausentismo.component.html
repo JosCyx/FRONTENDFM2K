@@ -16,7 +16,7 @@
       <mat-tab label="Registro de Ausentismo">
         <div style *ngTemplateOutlet="registroAus"></div>
       </mat-tab>
-      <mat-tab label="Autorizar Ausentismo" *ngIf="estadoProcesoAus > 10">
+      <mat-tab label="Autorizar Ausentismo" *ngIf="estadoProcesoAus > 10 && estadoProcesoAus < 40">
         <div *ngTemplateOutlet="autorizarAus"></div>
       </mat-tab>
     </mat-tab-group>
@@ -138,10 +138,10 @@
   <ng-template #autorizarAus>
     <div class="custom-form">
       <div class="div-buttonsAut">
-        <button mat-raised-button color="primary" (click)="openDialog()">Devolver</button>
-        <button mat-raised-button color="warn" (click)="openDialog()">Anular</button>
+        <button mat-raised-button color="primary" (click)="AutorizarAut(3)">Devolver</button>
+        <button mat-raised-button color="warn" (click)="AutorizarAut(2)">Rechazar</button>
         <button mat-raised-button style="background-color: #00dd1d !important;"
-        (click)="openDialog()">Autorizar</button>
+        (click)="AutorizarAut(1)">Autorizar</button>
       </div>
     </div>
   </ng-template>

@@ -111,7 +111,7 @@ export class VistaRegistroAusentismoComponent {
                 }
               )
 
-              if(this.estadoProcesoAus === 10){
+              if (this.estadoProcesoAus === 10) {
                 this.fechaString = this.globalService.formatDateToSpanish(new Date())
               } else {
                 this.fechaString = this.globalService.formatDateToSpanish(new Date(res.aus.ausFechaIngreso))
@@ -591,24 +591,48 @@ export class VistaRegistroAusentismoComponent {
   }
 
 
+  ///////////////////////////
 
-  openDialog(): void {
-    
 
+  AutorizarAut(action:number) {
+    let actionstr1 = '';
+    let actionstr2 = '';
+    if (action === 1) {
+      actionstr1 = 'autorizar';
+      actionstr2 = 'aprobada';
+    } else if (action === 2) {
+      actionstr1 = 'rechazar';
+      actionstr2 = 'rechazada';
+    }else if (action === 3) {
+      actionstr1 = 'devolver'; 
+      actionstr2 = 'devuelta';
+    }
+
+    const confirmDialogSubscription = this.dialogService.openMessageEvDialogA(`¿Está seguro que desea ${actionstr1} esta justificación?`).subscribe(
+      async (resultadoDialog) => {
+        confirmDialogSubscription.unsubscribe();
+        const ausId = this.globalAusService.idAusentismoSelected;
+        const comentario = resultadoDialog;
+        const usuario = this.cookieService.get('userIdNomina');
+
+        if (resultadoDialog !== undefined) {
+          console.log(ausId, usuario, comentario);
+          this.ausentismoService.getAutorizacion(action, ausId, usuario, comentario)
+            .subscribe(
+              (res) => {
+                console.log('Justificación aprobada correctamente', res);
+                this.callMessage(`Justificación ${actionstr2} correctamente.`, true);
+                this.router.navigate(['vista-listado-ausentismos']);
+              },
+              (err) => {
+                console.error('Error en la autorización', err);
+                this.callMessage(`Error al ${actionstr1} la justificación.`, false);
+              }
+            );
+
+        }
+      }
+    );
   }
-
-
-  DevolverAut(){
-    
-  }
-
   
-  AnularAut(){
-
-  }
-
-  
-  AutorizarAut(){
-
-  }
 }

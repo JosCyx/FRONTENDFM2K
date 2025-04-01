@@ -4,29 +4,28 @@ import { DialogServiceService } from 'src/app/services/dialog-service.service';
 import { GlobalAusService } from 'src/app/services/global-aus.service';
 
 @Component({
-  selector: 'app-message-dialog',
-  templateUrl: './message-dialog.component.html',
-  styleUrls: ['./message-dialog.component.css']
+  selector: 'app-message-dialog-tthh',
+  templateUrl: './message-dialog-tthh.component.html',
+  styleUrls: ['./message-dialog-tthh.component.css']
 })
-export class MessageDialogComponent {
-  
+export class MessageDialogTthhComponent {
+  observacionAus = this.globalService.autObservacion;
 
   constructor(
     public globalService: GlobalAusService,
     private dialogService: DialogServiceService,
-    public dialogRef: MatDialogRef<MessageDialogComponent>,
+    public dialogRef: MatDialogRef<MessageDialogTthhComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { mensaje: string }
   ) {
   }
 
-  closeDialog() {
-    this.dialogService.setConfirmResult(false);
+  closeDialogAut() {
+    //this.dialogService.setConfirmResultA(false);
     this.dialogRef.close();
   }
 
-  confirmAction() {
-    this.dialogService.setConfirmResult(true);
-    this.dialogRef.close();
+  confirmActionAut() {
+    //this.dialogService.setConfirmResultA(true);
+    this.dialogRef.close(this.observacionAus);
   }
-
 }

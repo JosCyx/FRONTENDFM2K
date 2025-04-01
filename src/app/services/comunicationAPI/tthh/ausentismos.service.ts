@@ -99,4 +99,9 @@ export class AusentismosService {
     return this.http.delete(`${this.APIUrl}/Ausentismos/EliminarArchivo?fileName=${fileName}`);
   }
 
+  getAutorizacion(action: number,ausId:number, usuario:string, comentario:string): Observable<any> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(`${this.APIUrl}/Ausentismos/AutAusentismo?ausentismo=${ausId}&usuario=${usuario}&comentario=${comentario}&action=${action}`, { headers: headers });
+  }
+
 }
