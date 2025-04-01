@@ -86,7 +86,7 @@ export class VistaRegistroAusentismoComponent {
 
         this.ausentismoService.getAusentismoById(ausId).subscribe(
           (res: any) => {
-            //console.log("ausentismo seleccionado: ", res);
+            console.log("ausentismo seleccionado: ", res);
             if (res) {
               this.motivoAusId = res.aus.ausMotivo;
               this.motivoAusName = this.motivoList.find(mot => mot.motId === res.aus.ausMotivo).motDescripcion;
@@ -421,29 +421,43 @@ export class VistaRegistroAusentismoComponent {
         if (response) {
 
           const isValid = this.validarFormulario();
-          const lvl = send ? 20 : 10;
+          let lvl = send ? 20 : 10; //si envia, el nivel es 20(solicitado), si no, es 10
+          let idAus = 0; //inicializar idAus a 0
+          //si el ausentismo ya fue creado, se debe actualizar
+
+
+          //incluir el id del ausentismo en caso de que creationMode sea false
+          if (!this.creationMode) {
+            idAus = this.globalAusService.idAusentismoSelected;
+          }
 
           if (isValid) {
             const data = {
+              ausId: idAus,
               ausIdSolicitante: this.cookieService.get('userIdNomina'),
               ausFechaIngreso: this.getLocalDate(new Date()),
               ausMotivo: this.motivoAusId,
               ausDesde: this.getLocalDate(this.getFinalDate(this.selectedStartDate, this.selectedStartHour, this.selectedStartMinutes)),
               ausHasta: this.getLocalDate(this.getFinalDate(this.selectedEndDate, this.selectedEndHour, this.selectedEndMinutes)),
               ausObservacion: this.observacionAus,
-              ausEstadoProceso: lvl
+              ausEstadoProceso: lvl,
+              ausEstadoValido: 1
             };
+
+            //console.log("Datos a enviar: ", data);
+
+            const accion = send ? 'enviado' : 'registrado';
 
             this.ausentismoService.postAusentismo(data).subscribe(
               (res: any) => {
-                console.log("REGISTRO GUARDADO: ", res);
+                //console.log("REGISTRO GUARDADO: ", res);
                 if (res) {
                   if (this.requiredDocument && this.documentList.length > 0) {
                     // Si requiere documentación, primero guarda los archivos
                     this.saveFiles(res);
                   } else {
                     // Si no requiere documentos, muestra éxito y limpia el formulario
-                    this.callMessage('Ausentismo registrado correctamente.', true);
+                    this.callMessage(`Ausentismo ${accion} correctamente`, true);
                     this.clearForm();
                   }
                 }

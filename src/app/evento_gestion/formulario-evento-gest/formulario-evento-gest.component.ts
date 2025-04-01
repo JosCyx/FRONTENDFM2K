@@ -1078,7 +1078,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
         this.callMensaje(`Evento ${op} con éxito`, true);
 
         //enviar correo de confirmacion
-        //si el estado actual de la solicitud es 10, enviar correo de solicitud, si es 20 enviar correo de aprobacion
+        //si el estado actual de la solicitud es 10(solicitado), enviar correo de solicitud, si es 20 enviar correo de aprobacion
         if (this.currentEvEstado == 10) {
           this.fichaGestEvService.sendMailEvNotification(1, 20, idEvent, eventoNombre).subscribe(
             (response) => {
@@ -1098,7 +1098,7 @@ export class FormularioEventoGestComponent implements OnInit, OnDestroy {
             }
           );
         } else if (this.currentEvEstado == 30) {
-          //si el estado es finalizado, enviar correo de encuesta
+          //si el estado actual aprobado y pasa hacia finalizado, enviar correo de encuesta
           this.fichaGestEvService.sendMailSurvey(idEvent).subscribe(
             (response) => {
               console.log("Correo enviado", response);

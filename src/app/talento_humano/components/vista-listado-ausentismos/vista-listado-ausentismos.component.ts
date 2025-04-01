@@ -16,7 +16,7 @@ export class VistaListadoAusentismosComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild('filterInput') filterInput!: ElementRef; 
 
-    displayedColumns: string[] = ['Area', 'Departamento', 'Solicitante', 'fecha', 'Motivo', 'Estado'];
+    displayedColumns: string[] = ['Codigo', 'Area', 'Departamento', 'Solicitante', 'fecha', 'Motivo', 'Estado'];
     dataSource =new MatTableDataSource<any>();
     dataSourceOriginal = new MatTableDataSource<any>();
 
@@ -156,6 +156,10 @@ export class VistaListadoAusentismosComponent {
         } else if (this.filterType === 6) {
           this.dataSource.data = this.dataSourceOriginal.data.filter(item =>
             item.estado.toLowerCase().includes(this.filterStrContent.toLowerCase())
+          );
+        } else if (this.filterType === 7) {
+          this.dataSource.data = this.dataSourceOriginal.data.filter(item =>
+            item.codigo.toLowerCase().includes(this.filterStrContent.toLowerCase())
           );
         }
       }
