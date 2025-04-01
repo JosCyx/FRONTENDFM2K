@@ -138,10 +138,10 @@
   <ng-template #autorizarAus>
     <div class="custom-form">
       <div class="div-buttonsAut">
-        <button mat-raised-button color="primary" (click)="DevolverAut()">Devolver</button>
-        <button mat-raised-button color="warn" (click)="AnularAut()">Rechazar</button>
+        <button mat-raised-button color="primary" (click)="AutorizarAut(3)">Devolver</button>
+        <button mat-raised-button color="warn" (click)="AutorizarAut(2)">Rechazar</button>
         <button mat-raised-button style="background-color: #00dd1d !important;"
-        (click)="AutorizarAut()">Autorizar</button>
+        (click)="AutorizarAut(1)">Autorizar</button>
       </div>
     </div>
   </ng-template>
