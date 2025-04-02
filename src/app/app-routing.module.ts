@@ -54,6 +54,7 @@ import { VistaAdminParametrosComponent } from './talento_humano/components/vista
 import { VistaAdminMotivosComponent } from './talento_humano/components/vista-admin-motivos/vista-admin-motivos.component';
 import { VistaAdminJefeInmComponent } from './talento_humano/components/vista-admin-jefe-inm/vista-admin-jefe-inm.component';
 import { VistaAdminEstadoProcesoComponent } from './talento_humano/components/vista-admin-estado-proceso/vista-admin-estado-proceso.component';
+import { VistaReporteComponent } from './talento_humano/components/vista-reporte/vista-reporte.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -112,6 +113,7 @@ const routes: Routes = [
   //AUSENTISMOS
   {path: 'vista-registro-ausentismo', component: VistaRegistroAusentismoComponent, canActivate: [AuthGuard]},
   {path: 'vista-listado-ausentismos', component: VistaListadoAusentismosComponent, canActivate: [AuthGuard]},
+  {path: 'vista-listado-Reporte', component: VistaReporteComponent, canActivate: [AuthGuard]},
   {path: 'vista-listado-marcaciones', component: VistaListadoMarcacionesComponent, canActivate: [AuthGuard]},
   {path: 'vista-admin-tipo-estado-hist', component: VistaAdminTipoEstadoHistComponent, canActivate: [AuthGuard]},
   {path: 'vista-admin-parametros', component: VistaAdminParametrosComponent, canActivate: [AuthGuard]},
