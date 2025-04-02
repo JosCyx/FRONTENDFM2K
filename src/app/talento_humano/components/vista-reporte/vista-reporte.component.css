@@ -1,0 +1,40 @@
+.container {
+  width: 75%;
+  margin: 0 auto;
+  padding-top: 110px;
+  padding-bottom: 30px;
+}
+.custom-form {
+  display: flex;
+  padding-bottom: 20px;
+  width: 70%;
+  margin: 0 auto;
+}
+mat-form-field {
+  width: 100% !important;
+}
+
+::ng-deep .mat-menu-item {
+  font-size: 10pt !important;
+}
+
+.filter-input {
+  width: 100%;
+}
+/* For Chrome, Safari, Edge, and Opera */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.Diagrama {
+}
+.table {
+  width: 400px;
+  height: 400px;
+}
