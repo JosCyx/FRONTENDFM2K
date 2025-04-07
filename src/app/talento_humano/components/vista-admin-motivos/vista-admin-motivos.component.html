@@ -1,1 +1,213 @@
-<p>vista-admin-motivos works!</p>
+<app-menu-tthh></app-menu-tthh>
+
+<div class="container">
+  <h1>INGRESAR MOTIVOS</h1>
+  <div class="">
+    <nav class=" navbar-expand-lg navbar-light bg-light">
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <button
+            class="btn btn-primary m-2"
+            (click)="changeView('consulta')"
+            *appAuthorize="'2'"
+          >
+            Consultar
+          </button>
+          <button
+            class="btn btn-primary m-2"
+            (click)="changeView('crear')"
+            *appAuthorize="'1'"
+          >
+            Crear
+          </button>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+    <!--FORMULARIO PARA CREAR LOS MOTIVOS-->
+    <ng-container *appAuthorize="'1'">
+      <div class="formMotivo" *ngIf="changeview === 'crear'">
+        <h3 class="font-weight-bold" style="padding-top: 20pt">
+          Ingreso de motivos
+        </h3>
+        <form class="form-motivo">
+          <div class="form cmp-form">
+            <label class="form-label">Motivo</label>
+            <input
+              [(ngModel)]="motivo"
+              name="motivo"
+              type="text"
+              id="form12"
+              class="form-control"
+              placeholder="Ingrese el nombre del motivo"
+            />
+          </div>
+          <div class="form cmp-form">
+            <span class="radio-label">¿Requiere documento?</span>
+            <mat-radio-group name="document" [(ngModel)]="document" class="radio-buttons">
+              <mat-radio-button [value]=1>Sí</mat-radio-button>
+              <mat-radio-button [value]=2>No</mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <div class="form cmp-form">
+            <label class="form-label">Estado:</label>
+            <select class="form-select" name="estado" [(ngModel)]="estado">
+              <option disabled selected value="">Selecciona un estado...</option>
+              <option [value]=1>Activo</option>
+              <option [value]=0>Inactivo</option>
+            </select>
+          </div>
+          <div class="form cmp-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Días Máximos</mat-label>
+            <input matInput type="number" name="maxDias" [(ngModel)]="maxDias">
+          </mat-form-field>
+        </div>
+          <div *ngIf="showmsj" class="alert alert-success" role="alert">
+              <span
+                ><i class="bi bi-check-circle-fill"> {{ mensajeExito }}</i></span
+              >
+            </div>
+            <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+              <span
+                ><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span
+              >
+            </div>
+        </form>
+        <div class="text-end" *appAuthorize="'1'">
+          <button
+            [disabled]="!motivo || estado === null || !maxDias|| document === null "
+            type="submit"
+            class="btn btn-primary m-2"
+            (click)="guardarMotivo()"
+          >
+            Agregar motivo
+          </button>
+          <button class="btn btn-danger m-2" (click)="cancelar()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+
+    <!--LISTA DE MOTIVOS-->
+  <ng-container *appAuthorize="'2'">
+    <div class="listMotivo" *ngIf="changeview === 'consulta'">
+      <h3 class="font-weight-bold" style="padding-top: 20pt">
+        Motivos registrados
+      </h3>
+      <p
+        class="text-danger no-motivo text-center"
+        *ngIf="motivoList.length === 0"
+      >
+        No hay motivos registrados.
+      </p>
+      <div class="align-items-center input-group mb-3 justify-content-end">
+        <button class="btn btn-primary" (click)="prevPage()">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <button class="btn btn-primary" (click)="nextPage()">
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+      <table
+        class="table table-bordered text-center table-hover"
+        *ngIf="motivoList.length != 0"
+      >
+        <thead>
+          <tr>
+            <th scope="col">Motivo</th>
+            <th scope="col">Documento</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Días Máximos</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let item of motivoList | paginate: { itemsPerPage: 10, currentPage: currentPage } ; let i = index  ">
+            <tr (click)="editarMotivo(item)">
+              <td>{{ item.motDescripcion }}</td>
+              <td [ngSwitch]="item.motIfDocument | number">
+                <span *ngSwitchCase=1>Sí</span>
+                <span *ngSwitchCase=0>No</span>
+              </td>
+              <td [ngSwitch]="item.motEstado | number">
+                <span *ngSwitchCase=1>Activo</span>
+                <span *ngSwitchCase=0>Inactivo</span>
+              </td>
+              <td>{{ item.motMaxDias }}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+   <!--FORMULARIO PARA EDITAR MOTIVOS-->
+   <ng-container *appAuthorize="'1'">
+    <div class="formMotivo" *ngIf="changeview === 'editar'">
+      <h3 class="font-weight-bold" style="padding-top: 20pt">
+        Editar Motivos
+      </h3>
+      <form class="form-motivo">
+        <div class="form cmp-form">
+          <label class="form-label">Motivo</label>
+          <input
+            [(ngModel)]="motivo"
+            name="motivo"
+            type="text"
+            id="form12"
+            class="form-control"
+          />
+        </div>
+        <div class="form cmp-form">
+          <span class="radio-label">¿Requiere documento?</span>
+          <mat-radio-group name="document" [(ngModel)]="document" class="radio-buttons">
+            <mat-radio-button [value]=1>Sí</mat-radio-button>
+            <mat-radio-button [value]=2>No</mat-radio-button>
+          </mat-radio-group>
+        </div>
+        <div class="form cmp-form">
+          <label class="form-label">Estado:</label>
+          <select class="form-select" name="estado" [(ngModel)]="estado">
+            <option disabled selected value="">Selecciona un estado...</option>
+            <option [value]=1>Activo</option>
+            <option [value]=0>Inactivo</option>
+          </select>
+        </div>
+        <div class="form cmp-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Días Máximos</mat-label>
+          <input matInput type="number" name="maxDias" [(ngModel)]="maxDias">
+        </mat-form-field>
+      </div>
+      </form>
+      <div>
+      </div>
+      <div class="text-end" *appAuthorize="'3'">
+        <button
+          [disabled]="!motivo || estado === null || !maxDias|| document === null  "
+          type="submit"
+          class="btn btn-primary m-2"
+          (click)="guardarEdicion()"
+        >
+          Guardar cambios
+        </button>
+        <button class="btn btn-danger m-2" (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+      <div *ngIf="showmsj" class="alert alert-success" role="alert">
+        <span
+          ><i class="bi bi-check-circle-fill"> {{ mensajeExito }}</i></span
+        >
+      </div>
+      <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+        <span
+          ><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span
+        >
+      </div>
+    </div>
+  </ng-container>
+</div>
