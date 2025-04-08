@@ -5,10 +5,10 @@
     <div class="formulariodiv">
         <div style="width: 100%;">
 
-            <div style="display: flex; flex-direction: row; gap: 10px;">
+            <div style="display: flex; flex-direction: row; gap: 10px; width: 80%; margin: 0 auto;">
                 
                     <mat-form-field>
-                        <mat-label>Seleccione el Metodo de Busqueda</mat-label>
+                        <mat-label>Seleccione el Método de Búsqueda</mat-label>
                         <mat-select mat-select [(ngModel)]="opSelected" (selectionChange)="onOpChange()">
                             <mat-option *ngFor="let op of opList" [value]="op.opValor">
                                 {{ op.opNombre}}
@@ -16,8 +16,8 @@
                         </mat-select>
                     </mat-form-field>
                 
-                <div class="custom-form"></div>
-                <mat-form-field>
+                
+                <!-- <mat-form-field>
                     <mat-label>Selecciona la Fecha de Inicio</mat-label>
                     <input matInput [matDatepicker]="picker1" [(ngModel)]="selectedFechaInicio"
                         (dateChange)="onOpChange()">
@@ -31,7 +31,7 @@
                         (dateChange)="onOpChange()">
                     <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
                     <mat-datepicker #picker2 color="primary"></mat-datepicker>
-                </mat-form-field>
+                </mat-form-field> -->
             </div>
 
         </div>
@@ -58,7 +58,7 @@
             <ng-container matColumnDef="Area">
                 <th mat-header-cell *matHeaderCellDef> 
                     <div class="filter-head">
-                        Area 
+                        Área 
                         <div style="display: flex; flex-direction: row;">
                           <button class="filter-btn" mat-icon-button color="basic" (click)="setFilterType(1)"><i
                               class="bi bi-funnel-fill"></i></button>

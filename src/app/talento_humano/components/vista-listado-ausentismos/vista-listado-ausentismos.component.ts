@@ -51,13 +51,14 @@ export class VistaListadoAusentismosComponent {
     }
     listarAusentismos(opSelected: number, fechaInicio: Date, fechaFin: Date){
       console.log("ListaAus",opSelected, fechaInicio, fechaFin);
-      this.AusentismosService.getAusentismo(opSelected, fechaInicio, fechaFin, this.cookieService.get('userIdNomina')).subscribe(
+      this.AusentismosService.getAusentismo(opSelected, /*fechaInicio, fechaFin,*/ this.cookieService.get('userIdNomina')).subscribe(
         (data) => {
           this.ausentismosList = data;
           console.log("Ausentismo List",this.ausentismosList);
           this.dataSourceOriginal.data = this.ausentismosList;
           this.dataSourceOriginal.paginator = this.paginator;
           this.dataSource.data = this.dataSourceOriginal.data;
+          this.dataSource.paginator = this.paginator;
         },
         (error) => {
           console.log(error);

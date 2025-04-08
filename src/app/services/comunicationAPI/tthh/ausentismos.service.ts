@@ -38,11 +38,12 @@ export class AusentismosService {
     });
   }
 
-  getAusentismo(opSelected: number, fechaInicio: Date, fechaFin: Date, usuario: string | null = null): Observable<any> {
+  getAusentismo(opSelected: number, /*fechaInicio: Date, fechaFin: Date,*/ usuario: string | null = null): Observable<any> {
     const headers = this.getHeadersWithAuthToken();
-    const fechaInicioString = fechaInicio.toISOString().split('T')[0];
+    /*const fechaInicioString = fechaInicio.toISOString().split('T')[0];
     const fechaFinString = fechaFin.toISOString().split('T')[0];
-    return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismo?op=${opSelected}&fechaInicio=${fechaInicioString}&fechaFin=${fechaFinString}&solicitante=${usuario}`, { headers: headers });
+    return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismo?op=${opSelected}&fechaInicio=${fechaInicioString}&fechaFin=${fechaFinString}&solicitante=${usuario}`, { headers: headers });*/
+    return this.http.get(`${this.APIUrl}/Ausentismos/GetAusentismo?op=${opSelected}&solicitante=${usuario}`, { headers: headers });
   }
 
 

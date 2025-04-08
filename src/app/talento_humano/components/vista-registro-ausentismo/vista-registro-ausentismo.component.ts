@@ -601,12 +601,12 @@ export class VistaRegistroAusentismoComponent {
       actionstr1 = 'autorizar';
       actionstr2 = 'aprobada';
     } else if (action === 2) {
-      actionstr1 = 'rechazar';
-      actionstr2 = 'rechazada';
-    }else if (action === 3) {
       actionstr1 = 'devolver'; 
       actionstr2 = 'devuelta';
-    }
+    } else if (action === 3) {
+      actionstr1 = 'rechazar';
+      actionstr2 = 'rechazada';
+    } 
 
     const confirmDialogSubscription = this.dialogService.openMessageEvDialogA(`¿Está seguro que desea ${actionstr1} esta justificación?`).subscribe(
       async (resultadoDialog) => {
