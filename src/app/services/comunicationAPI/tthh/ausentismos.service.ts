@@ -5,6 +5,8 @@ import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -103,6 +105,31 @@ export class AusentismosService {
   getAutorizacion(action: number,ausId:number, usuario:string, comentario:string): Observable<any> {
     const headers = this.getHeadersWithAuthToken();
     return this.http.post(`${this.APIUrl}/Ausentismos/AutAusentismo?ausentismo=${ausId}&usuario=${usuario}&comentario=${comentario}&action=${action}`, { headers: headers });
+  }
+
+////////////////////////////////////////
+  postMotivoAus(data: any): Observable<any> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(`${this.APIUrl}/Ausentismos/InsertarMotivoAus`, data, { headers: headers });
+  }
+  
+  postParametro(data: any): Observable<any> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.post(`${this.APIUrl}/Ausentismos/InsertarParametro`, data, { headers: headers });
+  }
+  getParamList(): Observable<any> { 
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.get(`${this.APIUrl}/AusAdmin/GetParamList`, { headers: headers });
+  }
+  
+  updateParametro(ParamId: number | string, data: any): Observable<any> {
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(`${this.APIUrl}/Ausentismos/UpdateParametro/${ParamId}`, data, { headers: headers });
+  }
+
+  updateMotivoAus(MotId: number | string, data: any): Observable<any> {    
+    const headers = this.getHeadersWithAuthToken();
+    return this.http.put(`${this.APIUrl}/Ausentismos/updateMotivoAus/${MotId}`, data, { headers: headers });
   }
 
 }

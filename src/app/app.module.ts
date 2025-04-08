@@ -1,6 +1,6 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule,HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
 //Dependencias  Angular PDF View
 //Material UI Angular
@@ -8,8 +8,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 //-------
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-
-
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -24,7 +22,7 @@ import { UsuariosComponent } from './components/seguridad/usuarios/usuarios.comp
 import { RolesComponent } from './components/seguridad/roles/roles.component';
 import { LoginComponent } from './components/login/login.component';
 import { MainComponent } from './components/main/main.component';
-import { FormsModule,ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SolicotiComponent } from './components/procesos/solicoti/solicoti.component';
 import { SoliocComponent } from './components/procesos/solioc/solioc.component';
 import { SolipagoComponent } from './components/procesos/solipago/solipago.component';
@@ -72,17 +70,17 @@ import { VisualizarInventarioComponent } from './inventario/components/procesos/
 import { DetalleComponent } from './inventario/components/procesos/detalle-producto/detalle-producto.component';
 import { HistorialMovimientosComponent } from './inventario/components/procesos/historial-movimientos/historial-movimientos.component';
 import { MenuInventarioComponent } from './components/templates/menu-inventario/menu-inventario.component';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatSelectModule} from '@angular/material/select';
-import {MatListModule} from '@angular/material/list';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RegistrarProductoComponent } from './inventario/dialogs/registrar-producto/registrar-producto.component';
 import { AsignarProductoComponent } from './inventario/dialogs/asignar-producto/asignar-producto.component';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { RegistrarMovimientoComponent } from './inventario/dialogs/registrar-movimiento/registrar-movimiento.component';
-import {MatSortModule} from '@angular/material/sort';
-import {MatMenuModule} from '@angular/material/menu';
-import {MatRadioModule} from '@angular/material/radio';
+import { MatSortModule } from '@angular/material/sort';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioModule } from '@angular/material/radio';
 //INVENTARIO
 
 //COMUNICACION INTERNA//
@@ -93,23 +91,23 @@ import { AlertaEventoComponent } from './comint/components/procesos/alerta-event
 import { AlertaEventoListComponent } from './comint/components/procesos/alerta-evento-list/alerta-evento-list.component';
 import { MainComintComponent } from './comint/components/templates/main-comint/main-comint.component';
 import { MenuComintComponent } from './comint/components/templates/menu-comint/menu-comint.component';
-import {MatTabsModule} from '@angular/material/tabs';
+import { MatTabsModule } from '@angular/material/tabs';
 import { MainEventoComponent } from './eventos/components/main-evento/main-evento.component';
 import { FormularioEventoComponent } from './eventos/components/formulario-evento/formulario-evento.component';
 import { MenuEventoComponent } from './eventos/components/templates/menu-evento/menu-evento.component';
-import {MatExpansionModule} from '@angular/material/expansion';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { AutoResizeDirective } from './directives/auto-resize.directive';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { HistorialEventoComponent } from './eventos/components/historial-evento/historial-evento.component';
 import { CalendarioEventoComponent } from './eventos/components/calendario-evento/calendario-evento.component';
-import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MessageDialogComponent } from './eventos/components/templates/message-dialog/message-dialog.component';
 import { FinishRequerimentComponent } from './eventos/components/templates/finish-requeriment/finish-requeriment.component';
-import { AppEvDisableDirective } from './directives/app-ev-disable.directive'
+import { AppEvDisableDirective } from './directives/app-ev-disable.directive';
 import { AddDimensionesComponent } from './components/templates/add-dimensiones/add-dimensiones.component';
 import { SalesReportComponent } from './components/procesos/sales-report/sales-report.component';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { DimensionConfComponent } from './components/configuracion/dimension-conf/dimension-conf.component';
 import { DimensionesHelpPageComponent } from './components/templates/dimensiones-help-page/dimensiones-help-page.component';
 import { MainEventoGestComponent } from './evento_gestion/main-evento-gest/main-evento-gest.component';
@@ -119,9 +117,9 @@ import { FormularioEventoGestComponent } from './evento_gestion/formulario-event
 import { CalendarioEventoGestComponent } from './evento_gestion/calendario-evento-gest/calendario-evento-gest.component';
 import { ListadoEventosComponent } from './evento_gestion/listado-eventos/listado-eventos.component';
 import { DevolverDialogComponent } from './evento_gestion/devolver-dialog/devolver-dialog.component';
-import { registerLocaleData } from '@angular/common';
+import { CommonModule, DatePipe, registerLocaleData } from '@angular/common';
 
-import {MatChipsModule} from '@angular/material/chips';
+import { MatChipsModule } from '@angular/material/chips';
 import { FilterModalComponent } from './evento_gestion/templates/filter-modal/filter-modal.component';
 import { VistaRegistroAusentismoComponent } from './talento_humano/components/vista-registro-ausentismo/vista-registro-ausentismo.component';
 import { VistaListadoAusentismosComponent } from './talento_humano/components/vista-listado-ausentismos/vista-listado-ausentismos.component';
@@ -135,6 +133,9 @@ import { MainTthhComponent } from './talento_humano/components/main-tthh/main-tt
 import { MenuTthhComponent } from './talento_humano/components/menu-tthh/menu-tthh.component';
 
 import { MessageDialogTthhComponent } from './talento_humano/template/message-dialog-tthh/message-dialog-tthh.component';
+import { VistaReporteComponent } from './talento_humano/components/vista-reporte/vista-reporte.component';
+import { GraphComponent } from './talento_humano/components/vista-reporte/graph/graph.component';
+import { NgChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -224,7 +225,9 @@ import { MessageDialogTthhComponent } from './talento_humano/template/message-di
     VistaAdminTipoEstadoHistComponent,
     MainTthhComponent,
     MenuTthhComponent,
-    MessageDialogTthhComponent
+    MessageDialogTthhComponent,
+    VistaReporteComponent,
+    GraphComponent,
   ],
   imports: [
     BrowserModule,
@@ -246,7 +249,7 @@ import { MessageDialogTthhComponent } from './talento_humano/template/message-di
     MatInputModule,
     MatCardModule,
     MatFormFieldModule,
-    MatSelectModule  ,
+    MatSelectModule,
     MatListModule,
     BrowserModule,
     MatToolbarModule,
@@ -260,12 +263,18 @@ import { MessageDialogTthhComponent } from './talento_humano/template/message-di
     MatButtonToggleModule,
     MatTooltipModule,
     MatChipsModule,
-    FormsModule, // Agrega FormsModule al array de imports
-
+    FormsModule,
+    CommonModule,
+    NgChartsModule, // Agrega FormsModule al array de imports
   ],
-  providers: [AuthService, MatDialog, DialogServiceService, {provide: MAT_DATE_LOCALE, useValue: 'es-EN'}],
+  providers: [
+    AuthService,
+    MatDialog,
+    DialogServiceService,
+    DatePipe,
+    { provide: MAT_DATE_LOCALE, useValue: 'es-EN' },
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
-
+export class AppModule {}

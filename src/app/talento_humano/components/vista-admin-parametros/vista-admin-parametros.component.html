@@ -1,1 +1,129 @@
-<p>vista-admin-parametros works!</p>
+<app-menu-tthh></app-menu-tthh>
+
+<div class="container">
+  <h1>INGRESAR PARAMETROS</h1>
+  <div class="">
+    <nav class=" navbar-expand-lg navbar-light bg-light">
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <button class="btn btn-primary m-2" (click)="changeView('consulta')" *appAuthorize="'2'">
+            Consultar
+          </button>
+          <button class="btn btn-primary m-2" (click)="changeView('crear')" *appAuthorize="'1'">
+            Crear
+          </button>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <!--FORMULARIO PARA CREAR LOS PARAMETROS-->
+  <ng-container *appAuthorize="'1'">
+    <div class="formParametro" *ngIf="changeview === 'crear'">
+      <h3 class="font-weight-bold" style="padding-top: 20pt">
+        Ingreso de Parametros
+      </h3>
+      <form class="form-parametro">
+        <div class="form cmp-form">
+          <label class="form-label">Parametros</label>
+          <input [(ngModel)]="nombre" name="nombre" type="text" id="form12" class="form-control"
+            placeholder="Ingrese el nombre del parametro" />
+        </div>
+        <div class="form cmp-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Valor</mat-label>
+            <input matInput type="number" name="valor" [(ngModel)]="valor">
+          </mat-form-field>
+        </div>
+        <div *ngIf="showmsj" class="alert alert-success" role="alert">
+          <span><i class="bi bi-check-circle-fill"> {{ mensajeExito }}</i></span>
+        </div>
+        <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+          <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
+        </div>
+      </form>
+      <div class="text-end" *appAuthorize="'1'">
+        <button [disabled]="!nombre || !valor" type="submit" class="btn btn-primary m-2" (click)="guardarParam()">
+          Agregar parametro
+        </button>
+        <button class="btn btn-danger m-2" (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+  <!--LISTA DE PARAMETROS-->
+  <ng-container *appAuthorize="'2'">
+    <div class="listParametro" *ngIf="changeview === 'consulta'">
+      <h3 class="font-weight-bold" style="padding-top: 20pt">
+        Parametros registrados
+      </h3>
+      <p class="text-danger no-param text-center" *ngIf="parametroList.length === 0">
+        No hay parametros registrados.
+      </p>
+      <div class="align-items-center input-group mb-3 justify-content-end">
+        <button class="btn btn-primary" (click)="prevPage()">
+          <i class="bi bi-arrow-left"></i>
+        </button>
+        <button class="btn btn-primary" (click)="nextPage()">
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+      <table class="table table-bordered text-center table-hover" *ngIf="parametroList.length != 0">
+        <thead>
+          <tr>
+            <th scope="col">Nombre</th>
+            <th scope="col">Valor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container
+            *ngFor="let item of parametroList | paginate: { itemsPerPage: 10, currentPage: currentPage } ; let i = index  ">
+            <tr (click)="editarParam(item)">
+              <td>{{ item.paramNombre }}</td>
+              <td>{{ item.paramValor }}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+  <!--FORMULARIO PARA EDITAR PARAMETROS-->
+  <ng-container *appAuthorize="'1'">
+    <div class="formParametro" *ngIf="changeview === 'editar'">
+      <h3 class="font-weight-bold" style="padding-top: 20pt">
+        Editar Parametros
+      </h3>
+      <form class="form-parametro">
+        <div class="form cmp-form">
+          <label class="form-label">Parametros</label>
+          <input [(ngModel)]="nombre" name="param" type="text" id="form12" class="form-control" />
+        </div>
+        <div class="form cmp-form">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Valor</mat-label>
+            <input matInput type="number" name="valor" [(ngModel)]="valor">
+          </mat-form-field>
+        </div>
+      </form>
+      <div>
+      </div>
+      <div class="text-end" *appAuthorize="'3'">
+        <button [disabled]="!nombre || !valor " type="submit" class="btn btn-primary m-2" (click)="guardarEdicion()">
+          Guardar cambios
+        </button>
+        <button class="btn btn-danger m-2" (click)="cancelar()">
+          Cancelar
+        </button>
+      </div>
+      <div *ngIf="showmsj" class="alert alert-success" role="alert">
+        <span><i class="bi bi-check-circle-fill"> {{ mensajeExito }}</i></span>
+      </div>
+      <div *ngIf="showmsjerror" class="alert alert-danger" role="alert">
+        <span><i class="bi bi-exclamation-triangle-fill"> {{ msjError }}</i></span>
+      </div>
+    </div>
+  </ng-container>
+</div>

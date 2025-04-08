@@ -1,0 +1,52 @@
+.container {
+  padding-top: 120px;
+  width: 70%;
+  margin: 0 auto;
+  text-align: left;
+  padding-bottom: 50px;
+}
+h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espacio entre elementos */
+}
+
+.full-width {
+  width: 100%;
+}
+
+.cmp-form {
+  margin: 15px;
+}
+
+.form-label {
+  padding-top: 5px;
+}
+
+.listParametro,
+.formParametro {
+  padding-top: 30pt;
+  padding-bottom: 100px;
+  width: 65%;
+  margin: 0 auto;
+}
+
+.no-parametro {
+  border: 1px red solid;
+  border-radius: 5px;
+  padding: 8pt;
+}
+
+a:hover {
+  cursor: pointer;
+}
+.table-hover tbody tr:hover {
+  cursor: pointer;
+}
+

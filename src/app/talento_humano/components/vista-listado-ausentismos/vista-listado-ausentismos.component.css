@@ -1,10 +1,10 @@
-.container{
-    width: 75%;
-    margin: 0 auto;
-    padding-top: 110px;
-    padding-bottom: 30px;
-  }
-  
+.container {
+  width: 75%;
+  margin: 0 auto;
+  padding-top: 110px;
+  padding-bottom: 30px;
+}
+
 .custom-form {
   display: flex;
   padding-bottom: 20px;
@@ -12,15 +12,14 @@
   margin: 0 auto;
 }
 
-.row-custom-hover:hover{
+.row-custom-hover:hover {
   background-color: #dfeeff !important;
   cursor: pointer;
 }
 
 mat-form-field {
-  width: 100% !important;;
+  width: 100% !important;
 }
-
 
 /*filtros*/
 .filter-head {
