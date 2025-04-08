@@ -50,84 +50,64 @@ const ELEMENT_DATA: PeriodicElement[] = [
   providers: [DatePipe],
 })
 export class VistaReporteComponent implements OnInit {
-  opSelected = signal<number>(1);
   opList: WritableSignal<any[]> = signal<any[]>([1, 2]);
   selectedFechaInicio = signal<Date | null>(null);
   selectedFechaFin = signal<Date | null>(null);
-  selectedFechaInicioFormateada = signal<string | null>(null);
-  selectedFechaFinFormateada = signal<string | null>(null);
+
   ReporList = signal<DataResultado[]>([]);
+  selectedFechaInicioFormateada = computed(() =>
+    this.selectedFechaInicio()
+      ? this.datePipe.transform(this.selectedFechaInicio(), 'yyyy-MM-dd') || ''
+      : null
+  );
+  selectedFechaFinFormateada = computed(() =>
+    this.selectedFechaFin()
+      ? this.datePipe.transform(this.selectedFechaFin(), 'yyyy-MM-dd') || ''
+      : null
+  );
+  private debounceTimer: any = null;
   constructor(
     private cookieService: CookieService,
     private ReporteAusentismo: ReporteAusService,
     private globalAusService: GlobalAusService,
     private datePipe: DatePipe,
     private router: Router
-  ) {
-    effect(() => {
-      console.log(
-        'CAMBIOWSWS',
-        this.selectedFechaInicio(),
-        this.selectedFechaFin(),
-        this.opSelected()
-      );
-      console.log(
-        'formato',
-        this.opSelected(),
-        this.selectedFechaInicioFormateada(),
-        this.selectedFechaFinFormateada()
-      );
-    });
-  }
+  ) {}
+  private fetchReportEffect = effect(() => {
+    const fechaInicio = this.selectedFechaInicioFormateada();
+    const fechaFin = this.selectedFechaFinFormateada();
+
+    if (fechaInicio && fechaFin) {
+      console.log('⌛ Esperando 500ms para llamar la API...');
+
+      // Limpiamos el debounce anterior
+      clearTimeout(this.debounceTimer);
+
+      this.debounceTimer = setTimeout(() => {
+        console.log('📡 Llamando API con debounce:', fechaInicio, fechaFin);
+        this.Reportes(this.opList()[0]);
+        this.Reportes(this.opList()[1]);
+      }, 500); // ⏳ Espera 500ms antes de llamar la API
+    }
+  });
   ngOnInit(): void {
     setTimeout(() => {
       const { fechaInicio, fechaFin } = this.calcularRangoMensual(new Date());
       this.selectedFechaInicio.set(fechaInicio as Date);
       this.selectedFechaFin.set(fechaFin as Date);
-      this.selectedFechaInicioFormateada.set(
-        this.datePipe.transform(fechaInicio, 'yyyy, MM dd') || ''
-      );
-      this.selectedFechaFinFormateada.set(
-        this.datePipe.transform(fechaFin, 'yyyy, MM dd') || ''
-      );
       this.Reportes(this.opList()[0]);
     }, 200);
   }
+
   displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
   dataSource = ELEMENT_DATA;
 
-  onOpChange() {
-    console.log(
-      'opSsfdsdfdfdfdfdelected',
-      this.opSelected(),
-      this.selectedFechaInicio(),
-      this.selectedFechaFin()
-    );
-    this.opSelected.update((prev) => {
-      return prev === this.opList()[0] ? this.opList()[1] : this.opList()[0];
-    });
-    if (
-      this.selectedFechaInicio() &&
-      this.selectedFechaFin() &&
-      this.opSelected()
-    ) {
-      console.log('enntrar aqui');
-
-      // this.Reportes();
-    }
-  }
   onchangeFechaInicio(event: Date) {
     console.log('event', event);
-    this.selectedFechaInicio.update(() => event);
-    this.selectedFechaInicioFormateada.update(
-      () => this.datePipe.transform(event, 'yyyy, MM dd') || ''
-    );
+    this.selectedFechaInicio.set(event);
   }
   onchangeFechaFin(event: Date) {
-    this.selectedFechaFin.update(() => event);
-    this.selectedFechaFinFormateada.update(
-      () => this.datePipe.transform(event, 'yyyy, MM dd') || ''
-    );
+    this.selectedFechaFin.set(event);
   }
 
   Reportes(opSelecte: number) {
@@ -138,7 +118,7 @@ export class VistaReporteComponent implements OnInit {
       opSelecte
     ).subscribe({
       next: (data: any) => {
-        console.log('Reporte', data);
+        console.log('ReporteList', this.ReporList());
         this.ReporList.set(data);
       },
       error: (error) => {

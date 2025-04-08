@@ -1,8 +1,13 @@
 import { style } from '@angular/animations';
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, Input, OnInit } from '@angular/core';
 import { ChartOptions, ChartData, ChartType } from 'chart.js';
 import { bind } from 'lodash';
 import { BaseChartDirective } from 'ng2-charts';
+
+interface DataResultado {
+  Nombre: string;
+  Total: number;
+}
 
 @Component({
   selector: 'app-graph',
@@ -12,9 +17,13 @@ import { BaseChartDirective } from 'ng2-charts';
     style: 'display: block; width:300px; height: 300px;',
   },
 })
-export class GraphComponent {
+export class GraphComponent implements OnInit {
   //input , output
-  @Input() public data: any;
+  @Input() public datas: any;
+  constructor() {}
+  ngOnInit(): void {
+    console.log('GraphComponent constructor called', this.datas);
+  }
   public barChartOptions: ChartOptions = {
     responsive: true,
   };

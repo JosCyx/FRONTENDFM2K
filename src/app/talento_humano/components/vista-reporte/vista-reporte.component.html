@@ -50,7 +50,7 @@
   </div>
   <div class="menu">
     <div class="Diagrama">
-      <app-graph [data]="" />
+      <app-graph *ngIf="opList()[0]" [datas]="ReporList()" />
     </div>
     <div class="tabla">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
